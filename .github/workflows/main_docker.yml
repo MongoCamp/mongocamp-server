@@ -1,8 +1,8 @@
-name: Run Tests
+name: Build Docker Container
 
 on:
   push:
-    branches:
+    tags:
       - *
 
 jobs:
@@ -29,5 +29,5 @@ jobs:
         uses: olafurpg/setup-scala@v10
         with:
           java-version: ${{ matrix.jdk }}
-      - name: Run tests
-        run: sbt test
+      - name: Build Docker Container for GitHub Registry
+        run: sbt docker:publish
