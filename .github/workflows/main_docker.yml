@@ -3,7 +3,6 @@ name: Build Docker Container
 on:
   push:
     tags:
-      - *
 
 jobs:
   test:
