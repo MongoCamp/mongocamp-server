@@ -18,12 +18,11 @@ abstract class BaseRoute extends ConnectionFunctions with SchemaDerivation with 
   implicit def convertErrorResponseToResult(error: (StatusCode, ErrorDescription)): (StatusCode, ErrorDescription, ErrorDescription) =
     (error._1, error._2, error._2)
 
-  protected val baseEndpoint =
-    endpoint.errorOut(errorEndpointDefinition)
+  protected val baseEndpoint = endpoint.errorOut(errorEndpointDefinition)
 
   protected val mongoConnectionEndpoint = {
     if (globalConfigBoolean("mongorest.connection.all")) {
-      endpoint.securityIn(connectionParameter).errorOut(errorEndpointDefinition).serverSecurityLogic(connection => login(connection))
+      baseEndpoint.securityIn(connectionParameter).serverSecurityLogic(connection => login(connection))
     }
     else {
       val host       = globalConfigString("mongorest.connection.host")
@@ -33,7 +32,7 @@ abstract class BaseRoute extends ConnectionFunctions with SchemaDerivation with 
       val password   = globalConfigStringOption("mongorest.connection.password")
       val authdb     = globalConfigStringOption("mongorest.connection.authdb")
       val connection = MongoConnection(host, port, database, username, password, authdb)
-      endpoint.errorOut(errorEndpointDefinition).serverSecurityLogic(_ => login(connection))
+      baseEndpoint.serverSecurityLogic(_ => login(connection))
     }
   }
 

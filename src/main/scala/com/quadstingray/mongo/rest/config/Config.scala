@@ -36,7 +36,7 @@ trait Config extends LazyLogging {
       key,
       (key: String) => Option(key),
       (key: String) => {
-        try Some(conf.getString(key))
+        try Some(conf.getString(key)).filterNot(_.isEmpty)
         catch {
           case _: Exception => None
         }

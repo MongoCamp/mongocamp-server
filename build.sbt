@@ -25,6 +25,8 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.10"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10.13"
 
+libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.0.3"
+
 dependencyOverrides += "org.slf4j" % "slf4j-api" % "1.7.30"
 
 dependencyOverrides += "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0"
