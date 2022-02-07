@@ -1,7 +1,6 @@
 name: Run Tests
 
-on:
-  push:
+on: [push, pull_request]
 
 jobs:
   test:
@@ -10,7 +9,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        jdk: [openjdk:1.17.0]
+        jdk: [openjdk@1.17.0]
     steps:
       - uses: actions/checkout@v2
       - name: Cache SBT ivy cache
