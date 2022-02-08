@@ -1,5 +1,0 @@
-# MongoRest
-
-## Todos
-* Doku
-* Tests
