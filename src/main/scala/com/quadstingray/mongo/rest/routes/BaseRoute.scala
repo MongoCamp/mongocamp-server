@@ -3,17 +3,17 @@ package com.quadstingray.mongo.rest.routes
 import com.quadstingray.mongo.rest.config.Config
 import com.quadstingray.mongo.rest.converter.CirceSchema
 import com.quadstingray.mongo.rest.exception.ErrorDefinition.errorEndpointDefinition
-import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.MongoConnection
-import com.quadstingray.mongo.rest.routes.parameter.connection.ConnectionFunctions
-import com.sfxcode.nosql.mongo.database.DatabaseProvider
+import com.quadstingray.mongo.rest.exception.{ ErrorDescription, MongoRestException }
+import com.quadstingray.mongo.rest.model.UserInformation
 import sttp.model.StatusCode
+import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir._
 import sttp.tapir.generic.SchemaDerivation
+import sttp.tapir.model.UsernamePassword
 
 import scala.concurrent.Future
 
-abstract class BaseRoute extends ConnectionFunctions with SchemaDerivation with Config with CirceSchema {
+abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
 
   implicit def convertErrorResponseToResult(error: (StatusCode, ErrorDescription)): (StatusCode, ErrorDescription, ErrorDescription) =
     (error._1, error._2, error._2)
@@ -21,26 +21,41 @@ abstract class BaseRoute extends ConnectionFunctions with SchemaDerivation with 
   protected val baseEndpoint = endpoint.errorOut(errorEndpointDefinition)
 
   protected val mongoConnectionEndpoint = {
-    if (globalConfigBoolean("mongorest.connection.all")) {
-      baseEndpoint.securityIn(connectionParameter).serverSecurityLogic(connection => login(connection))
+    val token = auth.apiKey(
+      header[Option[String]]("X-AUTH-APIKEY").example(Some("secret1234")).description("Static API Key of the User")
+    )
+    val bearer             = auth.bearer[Option[String]]()
+    val basicAuth          = auth.basic[Option[UsernamePassword]](WWWAuthenticateChallenge.basic("MongoRest Login"))
+    val isAuthBasicEnabled = globalConfigBoolean("mongorest.auth.basic")
+    val isAuthTokenEnabled = globalConfigBoolean("mongorest.auth.token")
+
+    val authInput = if (!isAuthBasicEnabled && !isAuthTokenEnabled) {
+      bearer.mapTo[AuthInputBearer]
+    }
+    else if (isAuthBasicEnabled && !isAuthTokenEnabled) {
+      bearer.and(basicAuth).mapTo[AuthInputWithBasic]
+    }
+    else if (!isAuthBasicEnabled && isAuthTokenEnabled) {
+      bearer.and(token).mapTo[AuthInputWithToken]
+    }
+    else if (isAuthBasicEnabled && isAuthTokenEnabled) {
+      basicAuth.and(basicAuth).and(token).mapTo[AuthInputAllMethods]
     }
     else {
-      val host       = globalConfigString("mongorest.connection.host")
-      val port       = globalConfigInt("mongorest.connection.port")
-      val database   = globalConfigString("mongorest.connection.database")
-      val username   = globalConfigStringOption("mongorest.connection.username")
-      val password   = globalConfigStringOption("mongorest.connection.password")
-      val authdb     = globalConfigStringOption("mongorest.connection.authdb")
-      val connection = MongoConnection(host, port, database, username, password, authdb)
-      baseEndpoint.serverSecurityLogic(_ => login(connection))
+      throw MongoRestException("not expected setting", StatusCode.InternalServerError)
     }
+    baseEndpoint.securityIn(authInput).serverSecurityLogic(connection => login(connection))
   }
 
-  def login(connection: MongoConnection): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DatabaseProvider]] =
+  abstract class AuthInput
+  case class AuthInputAllMethods(bearerToken: Option[String], basic: Option[UsernamePassword], apiToken: Option[String]) extends AuthInput
+  case class AuthInputWithToken(bearerToken: Option[String], apiToken: Option[String])                                   extends AuthInput
+  case class AuthInputWithBasic(bearerToken: Option[String], basic: Option[UsernamePassword])                            extends AuthInput
+  case class AuthInputBearer(bearerToken: Option[String])                                                                extends AuthInput
+
+  def login(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] =
     Future.successful {
-      val dbProvider = DatabaseProvider(MongoConnection.toMongoConfig(connection))
-      dbProvider.collectionInfos()
-      Right(dbProvider)
+      Right(UserInformation("test"))
     }
 
   lazy val collectionEndpoint = mongoConnectionEndpoint.in("collections").in(path[String]("collectionName").description("The name of your MongoDb Collection"))

@@ -1,11 +1,11 @@
 package com.quadstingray.mongo.rest.routes
 
 import com.quadstingray.mongo.rest.BuildInfo
-import com.quadstingray.mongo.rest.config.SystemEnvironment
+import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.Version
+import com.quadstingray.mongo.rest.model.{ UserInformation, Version }
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.{ CollectionStatus, DatabaseInfo, DatabaseProvider }
+import com.sfxcode.nosql.mongo.database.{ CollectionStatus, DatabaseInfo }
 import io.circe.generic.auto._
 import org.joda.time.DateTime
 import sttp.model.{ Method, StatusCode }
@@ -14,7 +14,7 @@ import sttp.tapir.json.circe.jsonBody
 
 import scala.concurrent.Future
 
-object InformationRoutes extends BaseRoute with SystemEnvironment {
+object InformationRoutes extends BaseRoute {
 
   val version = baseEndpoint
     .in("version")
@@ -28,7 +28,7 @@ object InformationRoutes extends BaseRoute with SystemEnvironment {
 
   def createVersion(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Version]] = {
     Future.successful(
-      Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate, systemStage))
+      Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate))
     )
   }
 
@@ -42,12 +42,11 @@ object InformationRoutes extends BaseRoute with SystemEnvironment {
     .name("databaseList")
     .serverLogic(connection => _ => databaseList(connection))
 
-  def databaseList(database: DatabaseProvider): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
+  def databaseList(user: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(
       Right(
         {
-          val result = database.databaseNames
-          database.closeClient()
+          val result = MongoDatabase.databaseProvider.databaseNames
           result
         }
       )
@@ -64,12 +63,11 @@ object InformationRoutes extends BaseRoute with SystemEnvironment {
     .name("collectionList")
     .serverLogic(connection => _ => collectionList(connection))
 
-  def collectionList(database: DatabaseProvider): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
+  def collectionList(user: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(
       Right(
         {
-          val result = database.collectionNames()
-          database.closeClient()
+          val result = MongoDatabase.databaseProvider.collectionNames()
           result
         }
       )
@@ -88,15 +86,14 @@ object InformationRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => collection => collectionStatus(connection, collection))
 
   def collectionStatus(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, Boolean)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
     Future.successful(
       Right(
         {
-          val dao    = database.dao(parameter._1)
+          val dao    = MongoDatabase.databaseProvider.dao(parameter._1)
           val result = dao.collectionStatus.result()
-          database.closeClient()
           if (parameter._2) {
             result
           }
@@ -119,12 +116,11 @@ object InformationRoutes extends BaseRoute with SystemEnvironment {
     .name("databaseInfos")
     .serverLogic(connection => _ => databaseInfos(connection))
 
-  def databaseInfos(database: DatabaseProvider): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
+  def databaseInfos(user: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
     Future.successful(
       Right(
         {
-          val result = database.databaseInfos
-          database.closeClient()
+          val result = MongoDatabase.databaseProvider.databaseInfos
           result
         }
       )

@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
 import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
 import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
 import akka.http.scaladsl.server.{ Route, RouteConcatenation }
-import com.quadstingray.mongo.rest.config.{ Config, GlobalConstants, SystemEnvironment }
+import com.quadstingray.mongo.rest.config.{ Config, GlobalConstants }
 import com.quadstingray.mongo.rest.interceptor.cors.Cors
 import com.quadstingray.mongo.rest.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
 import com.quadstingray.mongo.rest.routes.docs.DocsRoutes
@@ -20,10 +20,7 @@ import sttp.tapir.server.ServerEndpoint
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ ExecutionContext, Future }
 
-trait RestServer extends LazyLogging with RouteConcatenation with SystemEnvironment with Config {
-
-  val systemSetting: String = globalConfigString("system.stage", "Production")
-  setSystemStage(systemSetting)
+trait RestServer extends LazyLogging with RouteConcatenation with Config {
 
   implicit val actorSystem: ActorSystem = GlobalConstants.actorSystem
 

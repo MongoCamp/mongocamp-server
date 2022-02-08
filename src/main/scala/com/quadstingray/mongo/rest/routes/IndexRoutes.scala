@@ -1,10 +1,11 @@
 package com.quadstingray.mongo.rest.routes
 
-import com.quadstingray.mongo.rest.config.SystemEnvironment
+import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
+import com.quadstingray.mongo.rest.model.UserInformation
 import com.quadstingray.mongo.rest.model.index.{ IndexCreateRequest, IndexCreateResponse, IndexDropResponse, IndexOptionsRequest }
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.{ DatabaseProvider, MongoIndex }
+import com.sfxcode.nosql.mongo.database.MongoIndex
 import io.circe.generic.auto._
 import org.mongodb.scala.model.IndexOptions
 import sttp.capabilities.WebSockets
@@ -17,7 +18,7 @@ import sttp.tapir.server.ServerEndpoint
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
-object IndexRoutes extends BaseRoute with SystemEnvironment {
+object IndexRoutes extends BaseRoute {
 
   val listIndexEndpoint = collectionEndpoint
     .in("index")
@@ -30,15 +31,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => listIndicesInCollection(connection, parameter))
 
   def listIndicesInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[MongoIndex]]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter)
           val response = dao.indexList()
-          database.closeClient()
           response
         }
       )
@@ -57,15 +57,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => indexByNameInCollection(connection, parameter))
 
   def indexByNameInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, String)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[MongoIndex]]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter._1)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter._1)
           val response = dao.indexForName(parameter._2)
-          database.closeClient()
           response
         }
       )
@@ -84,15 +83,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => createIndexByBsonInCollection(connection, parameter))
 
   def createIndexByBsonInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, IndexCreateRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter._1)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter._1)
           val response = dao.createIndex(parameter._2.keys, requestToDBIndexOptions(parameter._2.indexOptionsRequest)).result()
-          database.closeClient()
           IndexCreateResponse(response)
         }
       )
@@ -114,15 +112,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => createIndexForFieldInCollection(connection, parameter))
 
   def createIndexForFieldInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, String, Boolean, IndexOptionsRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter._1)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter._1)
           val response = dao.createIndexForField(parameter._2, parameter._3, requestToDBIndexOptions(parameter._4)).result()
-          database.closeClient()
           IndexCreateResponse(response)
         }
       )
@@ -145,15 +142,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => createUniqueIndexForFieldInCollection(connection, parameter))
 
   def createUniqueIndexForFieldInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, String, Boolean, Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter._1)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter._1)
           val response = dao.createUniqueIndexForField(parameter._2, parameter._3, parameter._4).result()
-          database.closeClient()
           IndexCreateResponse(response)
         }
       )
@@ -181,15 +177,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => createExpiringIndexForFieldInCollection(connection, parameter))
 
   def createExpiringIndexForFieldInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, String, String, Boolean, Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter._1)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter._1)
           val response = dao.createExpiringIndexForField(parameter._2, Duration(parameter._3), parameter._4, parameter._5).result()
-          database.closeClient()
           IndexCreateResponse(response)
         }
       )
@@ -211,15 +206,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => createTextIndexForFieldInCollection(connection, parameter))
 
   def createTextIndexForFieldInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, String, IndexOptionsRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao      = database.dao(parameter._1)
+          val dao      = MongoDatabase.databaseProvider.dao(parameter._1)
           val response = dao.createTextIndexForField(parameter._2, requestToDBIndexOptions(parameter._3)).result()
-          database.closeClient()
           IndexCreateResponse(response)
         }
       )
@@ -238,15 +232,14 @@ object IndexRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => dropIndexForFieldInCollection(connection, parameter))
 
   def dropIndexForFieldInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, String)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexDropResponse]] = {
     Future.successful(
       Right(
         {
-          val dao = database.dao(parameter._1)
+          val dao = MongoDatabase.databaseProvider.dao(parameter._1)
           dao.dropIndexForName(parameter._2).result()
-          database.closeClient()
           IndexDropResponse(true)
         }
       )

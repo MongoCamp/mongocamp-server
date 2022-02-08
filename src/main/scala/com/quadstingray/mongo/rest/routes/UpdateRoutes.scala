@@ -1,10 +1,9 @@
 package com.quadstingray.mongo.rest.routes
 
-import com.quadstingray.mongo.rest.config.SystemEnvironment
+import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.{ ErrorCodes, ErrorDescription, MongoRestException }
-import com.quadstingray.mongo.rest.model.{ ReplaceOrUpdateRequest, ReplaceResponse, UpdateResponse }
+import com.quadstingray.mongo.rest.model.{ ReplaceOrUpdateRequest, ReplaceResponse, UpdateResponse, UserInformation }
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
@@ -14,7 +13,7 @@ import sttp.tapir.server.ServerEndpoint
 
 import scala.concurrent.Future
 
-object UpdateRoutes extends BaseRoute with SystemEnvironment {
+object UpdateRoutes extends BaseRoute {
 
   val replaceEndpoint = collectionEndpoint
     .in("replace")
@@ -28,13 +27,13 @@ object UpdateRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => replaceInCollection(connection, parameter))
 
   def replaceInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, ReplaceOrUpdateRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), ReplaceResponse]] = {
     Future.successful(
       Right(
         {
-          val dao         = database.dao(parameter._1)
+          val dao         = MongoDatabase.databaseProvider.dao(parameter._1)
           val documentMap = parameter._2.document
           if (parameter._2.filter.isEmpty && !documentMap.contains("_id")) {
             throw MongoRestException("no field _id for replace request found", StatusCode.BadRequest, ErrorCodes.idMissingForReplace)
@@ -53,7 +52,6 @@ object UpdateRoutes extends BaseRoute with SystemEnvironment {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          database.closeClient()
           insertedResult
         }
       )
@@ -72,13 +70,13 @@ object UpdateRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => updateInCollection(connection, parameter))
 
   def updateInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, ReplaceOrUpdateRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UpdateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao         = database.dao(parameter._1)
+          val dao         = MongoDatabase.databaseProvider.dao(parameter._1)
           val documentMap = parameter._2.document
           if (parameter._2.filter.isEmpty && !documentMap.contains("_id")) {
             throw MongoRestException("no field _id for replace request found", StatusCode.BadRequest, ErrorCodes.idMissingForReplace)
@@ -91,7 +89,6 @@ object UpdateRoutes extends BaseRoute with SystemEnvironment {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          database.closeClient()
           insertedResult
         }
       )
@@ -111,13 +108,13 @@ object UpdateRoutes extends BaseRoute with SystemEnvironment {
     .serverLogic(connection => parameter => updateManyInCollection(connection, parameter))
 
   def updateManyInCollection(
-      database: DatabaseProvider,
+      user: UserInformation,
       parameter: (String, ReplaceOrUpdateRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UpdateResponse]] = {
     Future.successful(
       Right(
         {
-          val dao         = database.dao(parameter._1)
+          val dao         = MongoDatabase.databaseProvider.dao(parameter._1)
           val documentMap = parameter._2.document
           if (parameter._2.filter.isEmpty && !documentMap.contains("_id")) {
             throw MongoRestException("no field _id for replace request found", StatusCode.BadRequest, ErrorCodes.idMissingForReplace)
@@ -130,7 +127,6 @@ object UpdateRoutes extends BaseRoute with SystemEnvironment {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          database.closeClient()
           insertedResult
         }
       )
