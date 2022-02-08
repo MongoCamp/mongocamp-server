@@ -14,7 +14,7 @@ Feel free to report your issues to Github's issue tracker. Please use one of the
 Todo
 
 ## Licence
-[Apache 2 License.](https://github.com/QuadStingray/speedtest/blob/master/LICENSE)
+[Apache 2 License.](https://github.com/QuadStingray/mongorest/blob/master/LICENSE)
 
 ## Todos:
 * Documentation
