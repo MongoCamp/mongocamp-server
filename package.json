@@ -1,0 +1,26 @@
+{
+  "name": "mongorest-docs",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QuadStingray/mongorest.git"
+  },
+  "author": "tom@sfxcode.com",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/QuadStingray/mongorest"
+  },
+  "homepage": "https://github.com/QuadStingray/mongorest#readme",
+  "devDependencies": {
+    "vitepress": "^0.21.6"
+  }
+}

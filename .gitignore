@@ -20,3 +20,8 @@ sbt-cache/*
 
 openapitools.json
 gatling-generated
+
+
+/.pnpm-debug.log
+/node_modules/
+/docs/.vitepress/dist/
