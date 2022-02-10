@@ -2,7 +2,7 @@ package com.quadstingray.mongo.rest.routes
 
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.UserInformation
+import com.quadstingray.mongo.rest.model.auth.UserInformation
 import com.quadstingray.mongo.rest.model.index.{ IndexCreateRequest, IndexCreateResponse, IndexDropResponse, IndexOptionsRequest }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.database.MongoIndex

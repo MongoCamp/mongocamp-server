@@ -2,7 +2,8 @@ package com.quadstingray.mongo.rest.routes
 
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.{ InsertResponse, UserInformation }
+import com.quadstingray.mongo.rest.model.InsertResponse
+import com.quadstingray.mongo.rest.model.auth.UserInformation
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets

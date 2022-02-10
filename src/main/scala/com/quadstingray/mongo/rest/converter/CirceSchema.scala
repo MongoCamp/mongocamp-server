@@ -17,6 +17,12 @@ trait CirceSchema {
     override def apply(c: HCursor): Result[Date] = Decoder.decodeString.map(s => new DateTime(s).toDate).apply(c)
   }
 
+  implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
+    override def apply(a: DateTime): Json = Encoder.encodeString.apply(a.toInstant.toString)
+
+    override def apply(c: HCursor): Result[DateTime] = Decoder.decodeString.map(s => new DateTime(s)).apply(c)
+  }
+
   implicit val ObjectIdFormat: Encoder[ObjectId] with Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
     override def apply(a: ObjectId): Json = Encoder.encodeString.apply(a.toHexString)
 

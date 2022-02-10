@@ -17,7 +17,7 @@ import sttp.tapir.swagger.SwaggerUI
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
-object DocsRoutes extends BaseRoute with Config {
+object ApiDocsRoutes extends BaseRoute with Config {
   val nameAsyncApiDocsYamlName = "asyncapidocs.yaml"
   val nameOpenApiDocsYamlName  = "docs.yaml"
 
