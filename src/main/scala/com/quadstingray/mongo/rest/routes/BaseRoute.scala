@@ -1,10 +1,11 @@
 package com.quadstingray.mongo.rest.routes
 
+import com.quadstingray.mongo.rest.auth.AuthHolder
 import com.quadstingray.mongo.rest.config.Config
 import com.quadstingray.mongo.rest.converter.CirceSchema
 import com.quadstingray.mongo.rest.exception.ErrorDefinition.errorEndpointDefinition
 import com.quadstingray.mongo.rest.exception.{ ErrorDescription, MongoRestException }
-import com.quadstingray.mongo.rest.model.UserInformation
+import com.quadstingray.mongo.rest.model.auth._
 import sttp.model.StatusCode
 import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir._
@@ -39,7 +40,7 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
       bearer.and(token).mapTo[AuthInputWithToken]
     }
     else if (isAuthBasicEnabled && isAuthTokenEnabled) {
-      basicAuth.and(basicAuth).and(token).mapTo[AuthInputAllMethods]
+      bearer.and(basicAuth).and(token).mapTo[AuthInputAllMethods]
     }
     else {
       throw MongoRestException("not expected setting", StatusCode.InternalServerError)
@@ -47,15 +48,9 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
     baseEndpoint.securityIn(authInput).serverSecurityLogic(connection => login(connection))
   }
 
-  abstract class AuthInput
-  case class AuthInputAllMethods(bearerToken: Option[String], basic: Option[UsernamePassword], apiToken: Option[String]) extends AuthInput
-  case class AuthInputWithToken(bearerToken: Option[String], apiToken: Option[String])                                   extends AuthInput
-  case class AuthInputWithBasic(bearerToken: Option[String], basic: Option[UsernamePassword])                            extends AuthInput
-  case class AuthInputBearer(bearerToken: Option[String])                                                                extends AuthInput
-
   def login(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] =
     Future.successful {
-      Right(UserInformation("test"))
+      Right(AuthHolder.handler.findUser("test", AuthHolder.handler.encryptPassword("test1234")))
     }
 
   lazy val collectionEndpoint = mongoConnectionEndpoint.in("collections").in(path[String]("collectionName").description("The name of your MongoDb Collection"))

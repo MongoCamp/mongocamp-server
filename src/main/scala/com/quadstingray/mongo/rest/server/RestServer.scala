@@ -11,7 +11,7 @@ import akka.http.scaladsl.server.{ Route, RouteConcatenation }
 import com.quadstingray.mongo.rest.config.{ Config, GlobalConstants }
 import com.quadstingray.mongo.rest.interceptor.cors.Cors
 import com.quadstingray.mongo.rest.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
-import com.quadstingray.mongo.rest.routes.docs.DocsRoutes
+import com.quadstingray.mongo.rest.routes.docs.ApiDocsRoutes
 import com.typesafe.scalalogging.LazyLogging
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
@@ -31,7 +31,7 @@ trait RestServer extends LazyLogging with RouteConcatenation with Config {
   val serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]
 
   def routes(implicit ex: ExecutionContext): Route = {
-    val internalEndPoints = serverEndpoints ++ DocsRoutes.addDocsRoutes(serverEndpoints)
+    val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
     val allEndpoints      = internalEndPoints.map(ep => AkkaHttpServer.akkaHttpServerInterpreter.toRoute(ep))
     concat(allEndpoints: _*)
   }
@@ -68,7 +68,7 @@ trait RestServer extends LazyLogging with RouteConcatenation with Config {
       .map(serverBinding => {
         logger.warn("init server with interface: %s at port: %s".format(interface, port))
 
-        if (DocsRoutes.isSwaggerEnabled) {
+        if (ApiDocsRoutes.isSwaggerEnabled) {
           println("For Swagger go to: http://%s:%s/docs".format(interface, port))
         }
 

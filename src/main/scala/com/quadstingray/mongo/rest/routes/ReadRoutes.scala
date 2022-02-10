@@ -3,7 +3,8 @@ package com.quadstingray.mongo.rest.routes
 import com.quadstingray.mongo.rest.converter.MongoRestBsonConverter
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.{ MongoAggregateRequest, MongoFindRequest, UserInformation }
+import com.quadstingray.mongo.rest.model.auth.UserInformation
+import com.quadstingray.mongo.rest.model.{ MongoAggregateRequest, MongoFindRequest }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import io.circe.generic.auto._

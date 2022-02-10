@@ -3,7 +3,8 @@ package com.quadstingray.mongo.rest.routes
 import com.quadstingray.mongo.rest.BuildInfo
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.{ UserInformation, Version }
+import com.quadstingray.mongo.rest.model.Version
+import com.quadstingray.mongo.rest.model.auth.UserInformation
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.database.{ CollectionStatus, DatabaseInfo }
 import io.circe.generic.auto._

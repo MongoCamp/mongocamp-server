@@ -10,8 +10,8 @@ object Server extends App with RestServer {
 
   implicit val ex: ExecutionContext = ExecutionContext.global
 
-  override val serverEndpoints =
-    informationRoutes ++ CreateRoutes.createEndpoints ++ ReadRoutes.readEndpoints ++ UpdateRoutes.updateEndpoints ++ DeleteRoutes.deleteEndpoints ++ IndexRoutes.indexEndpoints
+  override val serverEndpoints = AuthRoutes.authEndpoints ++ informationRoutes ++ CreateRoutes.createEndpoints ++ ReadRoutes.readEndpoints ++
+    UpdateRoutes.updateEndpoints ++ DeleteRoutes.deleteEndpoints ++ IndexRoutes.indexEndpoints
 
   startServer()
 
