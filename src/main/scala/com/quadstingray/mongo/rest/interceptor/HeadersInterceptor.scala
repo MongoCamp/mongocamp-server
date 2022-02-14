@@ -15,7 +15,7 @@ class HeadersInterceptor extends EndpointInterceptor[Future] with Config {
 
   private def addHeaders(): List[Header] = {
     List(
-      Header("server", "%s/%s".format(BuildInfo.name, BuildInfo.version))
+      Header("server", s"${BuildInfo.name}/${BuildInfo.version}")
     )
   }
 

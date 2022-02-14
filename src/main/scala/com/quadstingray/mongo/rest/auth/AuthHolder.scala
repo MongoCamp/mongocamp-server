@@ -36,7 +36,7 @@ trait AuthHolder {
     val claim = JwtClaim(
       expiration = Some(expirationDate.toDate.toInstant.getEpochSecond),
       issuedAt = Some(Instant.now.getEpochSecond),
-      issuer = Some("%s/%s".format(BuildInfo.name, BuildInfo.version)),
+      issuer = Some(s"${BuildInfo.name}/${BuildInfo.version}"),
       content = userProfile.asJson.toString()
     )
     val algo  = JwtAlgorithm.HS256
@@ -57,9 +57,14 @@ trait AuthHolder {
 object AuthHolder extends Config {
   lazy val handler: AuthHolder = {
     globalConfigString("mongorest.auth.handler") match {
-      case s: String if s.equalsIgnoreCase("static") => new StaticAuthHolder()
-      case s: String if s.equalsIgnoreCase("mongo")  => new StaticAuthHolder()
-      case _                                         => throw MongoRestException("Unknown Auth Handler defined", StatusCode.InternalServerError)
+      case s: String if s.equalsIgnoreCase("static") =>
+        new StaticAuthHolder()
+      case s: String if s.equalsIgnoreCase("mongo") =>
+        val mongoHolder = new MongoAuthHolder()
+        mongoHolder.createIndicesAndInitData()
+        mongoHolder
+      case _ =>
+        throw MongoRestException("Unknown Auth Handler defined", StatusCode.InternalServerError)
     }
   }
 

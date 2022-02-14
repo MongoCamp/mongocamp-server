@@ -8,6 +8,7 @@ import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
 import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
 import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
 import akka.http.scaladsl.server.{ Route, RouteConcatenation }
+import com.quadstingray.mongo.rest.auth.AuthHolder
 import com.quadstingray.mongo.rest.config.{ Config, GlobalConstants }
 import com.quadstingray.mongo.rest.interceptor.cors.Cors
 import com.quadstingray.mongo.rest.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
@@ -71,6 +72,8 @@ trait RestServer extends LazyLogging with RouteConcatenation with Config {
         if (ApiDocsRoutes.isSwaggerEnabled) {
           println("For Swagger go to: http://%s:%s/docs".format(interface, port))
         }
+
+        AuthHolder.handler
 
         serverBinding
       })
