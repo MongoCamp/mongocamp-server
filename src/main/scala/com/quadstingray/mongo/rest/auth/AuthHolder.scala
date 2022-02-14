@@ -1,9 +1,10 @@
 package com.quadstingray.mongo.rest.auth
 import com.github.blemale.scaffeine.Scaffeine
 import com.quadstingray.mongo.rest.BuildInfo
+import com.quadstingray.mongo.rest.auth.AuthHolder.expiringDuration
 import com.quadstingray.mongo.rest.config.Config
 import com.quadstingray.mongo.rest.exception.MongoRestException
-import com.quadstingray.mongo.rest.model.auth.{ UserInformation, UserProfile, UserRole, UserRoleGrant }
+import com.quadstingray.mongo.rest.model.auth._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
@@ -18,6 +19,7 @@ import scala.concurrent.duration.FiniteDuration
 trait AuthHolder {
 
   def findUser(username: String, password: String): UserInformation
+  def findUserByApiKey(apiKey: String): UserInformation
 
   def findUserRoleGrants(userRoleName: String): List[UserRoleGrant]
   def findUserRoleGrants(userRole: UserRole): List[UserRoleGrant] = findUserRoleGrants(userRole.name)
@@ -25,6 +27,8 @@ trait AuthHolder {
   def findUserRoles(userRoles: List[String]): List[UserRole]
   def findUserRole(userRole: String): Option[UserRole]                = findUserRoles(List(userRole)).headOption
   def findUserRoles(userInformation: UserInformation): List[UserRole] = findUserRoles(userInformation.userRoles)
+
+  def updatePasswordForUser(username: String, newPassword: String): Boolean
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
 
@@ -38,6 +42,15 @@ trait AuthHolder {
     val algo  = JwtAlgorithm.HS256
     val token = JwtCirce.encode(claim, AuthHolder.secret, algo)
     token
+  }
+
+  def generateLoginResult(user: UserInformation) = {
+    val resultUser     = user.toResultUser
+    val expirationDate = new DateTime().plusSeconds(expiringDuration.toSeconds.toInt)
+    val token          = encodeToken(resultUser, expirationDate)
+    AuthHolder.tokenCache.put(token, user)
+    val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
+    loginResult
   }
 }
 
