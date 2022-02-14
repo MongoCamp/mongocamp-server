@@ -1,6 +1,7 @@
 package com.quadstingray.mongo.rest.auth
 import com.quadstingray.mongo.rest.config.Config
 import com.quadstingray.mongo.rest.exception.MongoRestException
+import com.quadstingray.mongo.rest.exception.MongoRestException.userOrPasswordException
 import com.quadstingray.mongo.rest.model.auth.{ UserInformation, UserRole, UserRoleGrant }
 import io.circe.generic.auto._
 import io.circe.parser._
@@ -25,7 +26,7 @@ class StaticAuthHolder extends AuthHolder with Config {
 
   override def findUser(username: String, password: String): UserInformation = users
     .find(user => user.username.equalsIgnoreCase(username) && user.password.equals(password))
-    .getOrElse(throw MongoRestException("user or password does not exists", StatusCode.Unauthorized))
+    .getOrElse(throw userOrPasswordException)
 
   override def findUserByApiKey(apiKey: String): UserInformation =
     users.find(user => user.apiKey.equals(Option(apiKey))).getOrElse(throw MongoRestException("apikey does not exists", StatusCode.Unauthorized))
