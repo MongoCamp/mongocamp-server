@@ -21,7 +21,7 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
 
   protected val baseEndpoint = endpoint.errorOut(errorEndpointDefinition)
 
-  protected val mongoConnectionEndpoint = {
+  protected val securedEndpoint = {
     val token = auth.apiKey(
       header[Option[String]]("X-AUTH-APIKEY").example(Some("secret1234")).description("Static API Key of the User")
     )
@@ -37,7 +37,7 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
       bearer.and(basicAuth).mapTo[AuthInputWithBasic]
     }
     else if (!isAuthBasicEnabled && isAuthTokenEnabled) {
-      bearer.and(token).mapTo[AuthInputWithToken]
+      bearer.and(token).mapTo[AuthInputWithApiKey]
     }
     else if (isAuthBasicEnabled && isAuthTokenEnabled) {
       bearer.and(basicAuth).and(token).mapTo[AuthInputAllMethods]
@@ -62,13 +62,13 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
           }
 
         case a: AuthInputWithBasic => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
-        case a: AuthInputWithToken =>
+        case a: AuthInputWithApiKey =>
           if (a.bearerToken.isDefined) {
             val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
             Right(userInfo)
           }
-          else if (a.apiToken.isDefined) {
-            val apiKey = a.apiToken.get
+          else if (a.apiKey.isDefined) {
+            val apiKey = a.apiKey.get
             if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
               throw MongoRestException.unauthorizedException()
             }
@@ -84,6 +84,6 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
       }
     }
 
-  lazy val collectionEndpoint = mongoConnectionEndpoint.in("collections").in(path[String]("collectionName").description("The name of your MongoDb Collection"))
+  lazy val collectionEndpoint = securedEndpoint.in("collections").in(path[String]("collectionName").description("The name of your MongoDb Collection"))
 
 }

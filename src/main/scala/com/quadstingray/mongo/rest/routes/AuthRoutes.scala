@@ -14,7 +14,7 @@ import sttp.tapir.server.ServerEndpoint
 import scala.concurrent.Future
 
 object AuthRoutes extends BaseRoute {
-  private val authBase = mongoConnectionEndpoint.in("auth").tag("Auth")
+  private val authBase = securedEndpoint.in("auth").tag("Auth")
 
   val loginEndpoint = baseEndpoint
     .in("auth")
