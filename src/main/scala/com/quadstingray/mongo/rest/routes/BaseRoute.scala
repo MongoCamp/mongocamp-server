@@ -50,7 +50,38 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
 
   def login(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] =
     Future.successful {
-      Right(AuthHolder.handler.findUser("test", AuthHolder.handler.encryptPassword("test1234")))
+      loginInformation match {
+        case a: AuthInputAllMethods => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
+        case a: AuthInputBearer =>
+          if (a.bearerToken.isEmpty) {
+            throw MongoRestException.unauthorizedException()
+          }
+          else {
+            val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
+            Right(userInfo)
+          }
+
+        case a: AuthInputWithBasic => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
+        case a: AuthInputWithToken =>
+          if (a.bearerToken.isDefined) {
+            val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
+            Right(userInfo)
+          }
+          else if (a.apiToken.isDefined) {
+            val apiKey = a.apiToken.get
+            if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
+              throw MongoRestException.unauthorizedException()
+            }
+            else {
+              Right(AuthHolder.handler.findUserByApiKey(apiKey))
+            }
+          }
+          else {
+            throw MongoRestException.unauthorizedException()
+          }
+
+        case _ => throw MongoRestException.badAuthConfiguration()
+      }
     }
 
   lazy val collectionEndpoint = mongoConnectionEndpoint.in("collections").in(path[String]("collectionName").description("The name of your MongoDb Collection"))

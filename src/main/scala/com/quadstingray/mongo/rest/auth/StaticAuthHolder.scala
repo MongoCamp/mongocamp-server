@@ -27,10 +27,15 @@ class StaticAuthHolder extends AuthHolder with Config {
     .find(user => user.username.equalsIgnoreCase(username) && user.password.equals(password))
     .getOrElse(throw MongoRestException("user or password does not exists", StatusCode.Unauthorized))
 
+  override def findUserByApiKey(apiKey: String): UserInformation =
+    users.find(user => user.apiKey.equals(Option(apiKey))).getOrElse(throw MongoRestException("apikey does not exists", StatusCode.Unauthorized))
+
   override def findUserRoles(userRoles: List[String]): List[UserRole] = {
     userRoles.flatMap(string => this.userRoles.find(_.name.equalsIgnoreCase(string)))
   }
   override def findUserRoleGrants(userRoleName: String): List[UserRoleGrant] = {
     this.userRoleGrants.filter(role => role.userRoleKey.equalsIgnoreCase(userRoleName))
   }
+
+  override def updatePasswordForUser(username: String, newPassword: String): Boolean = ???
 }

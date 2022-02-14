@@ -1,23 +1,23 @@
 package com.quadstingray.mongo.rest.routes
 import com.quadstingray.mongo.rest.auth.AuthHolder
-import com.quadstingray.mongo.rest.auth.AuthHolder.expiringDuration
-import com.quadstingray.mongo.rest.exception.ErrorDescription
+import com.quadstingray.mongo.rest.exception.{ ErrorCodes, ErrorDescription, MongoRestException }
 import com.quadstingray.mongo.rest.model.JsonResult
-import com.quadstingray.mongo.rest.model.auth.{ Login, LoginResult }
+import com.quadstingray.mongo.rest.model.auth.{ Login, LoginResult, UserInformation, UserProfile }
 import io.circe.generic.auto._
-import org.joda.time.DateTime
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
+import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{ auth, Endpoint }
 
 import scala.concurrent.Future
 
 object AuthRoutes extends BaseRoute {
+  private val authBase = mongoConnectionEndpoint.in("auth").tag("Auth")
 
   val loginEndpoint = baseEndpoint
+    .in("auth")
     .in("login")
     .in(jsonBody[Login].description("Login Information for your Users").example(Login("myUser", "privatePassword")))
     .out(jsonBody[LoginResult])
@@ -30,26 +30,22 @@ object AuthRoutes extends BaseRoute {
 
   def generateAuthToken(loginInformation: Login): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
     Future.successful {
-      val expirationDate = new DateTime().plusSeconds(expiringDuration.toSeconds.toInt)
-      val user           = AuthHolder.handler.findUser(loginInformation.username, AuthHolder.handler.encryptPassword(loginInformation.password))
-      val resultUser     = user.toResultUser
-      val token          = AuthHolder.handler.encodeToken(resultUser, expirationDate)
-      AuthHolder.tokenCache.put(token, user)
-      Right(LoginResult(token, resultUser, expirationDate.toDate))
+      val user                     = AuthHolder.handler.findUser(loginInformation.username, AuthHolder.handler.encryptPassword(loginInformation.password))
+      val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(user)
+      Right(loginResult)
     }
   }
 
-  private val baseLogoutEndpoint: Endpoint[Unit, Option[String], (StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean], Any] = baseEndpoint
+  private val baseLogoutEndpoint = authBase
     .in("logout")
     .in(auth.bearer[Option[String]]())
     .out(jsonBody[JsonResult[Boolean]])
     .summary("Logout User")
     .description("Logout an bearer Token")
-    .tag("Auth")
 
-  val logoutEndpoint = baseLogoutEndpoint.method(Method.POST).name("logout").serverLogic(token => logout(token))
+  val logoutEndpoint = baseLogoutEndpoint.method(Method.POST).name("logout").serverLogic(_ => token => logout(token))
 
-  val logoutDeleteEndpoint = baseLogoutEndpoint.method(Method.DELETE).name("logoutByDelete").serverLogic(token => logout(token))
+  val logoutDeleteEndpoint = baseLogoutEndpoint.method(Method.DELETE).name("logoutByDelete").serverLogic(_ => token => logout(token))
 
   def logout(token: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
@@ -61,6 +57,72 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint)
+  val refreshTokenEndpoint = authBase
+    .in("token")
+    .in("refresh")
+    .out(jsonBody[LoginResult])
+    .summary("Refresh User")
+    .description("Refresh Token and return Login Information")
+    .method(Method.GET)
+    .name("refreshToken")
+    .serverLogic(loginInformation => _ => refreshAuthToken(loginInformation))
+
+  def refreshAuthToken(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
+    Future.successful {
+      val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(loginInformation)
+      Right(loginResult)
+    }
+  }
+
+  val profileEndpoint = authBase
+    .in("profile")
+    .out(jsonBody[UserProfile])
+    .summary("User Profile")
+    .description("Return the User Profile")
+    .method(Method.GET)
+    .name("userProfile")
+    .serverLogic(loginInformation => _ => userProfile(loginInformation))
+
+  def userProfile(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
+    Future.successful {
+      Right(loginInformation.toResultUser)
+    }
+  }
+
+  val updateUserEndpoint = authBase
+    .in("profile")
+    .in(jsonBody[Login])
+    .out(jsonBody[JsonResult[Boolean]])
+    .summary("Update Password")
+    .description("Change Password of User")
+    .method(Method.POST)
+    .name("updatePassword")
+    .serverLogic(loggedInUser => loginToUpdate => updatePassword(loggedInUser, loginToUpdate))
+
+  def updatePassword(
+      loggedInUser: UserInformation,
+      loginToUpdate: Login
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+    Future.successful {
+      if (loggedInUser.username == loginToUpdate.username || loggedInUser.isAdmin) {
+        Right(JsonResult(AuthHolder.handler.updatePasswordForUser(loginToUpdate.username, loginToUpdate.password)))
+      }
+      else {
+        throw MongoRestException.unauthorizedException("user not authorized to update password for other user", ErrorCodes.unauthorizedUserForOtherUser)
+      }
+    }
+  }
+
+  lazy val onlyMongoEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+    if (globalConfigString("mongorest.auth.handler").equalsIgnoreCase("mongo")) {
+      List(updateUserEndpoint)
+    }
+    else {
+      List()
+    }
+  }
+
+  lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] =
+    List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint, profileEndpoint)
 
 }

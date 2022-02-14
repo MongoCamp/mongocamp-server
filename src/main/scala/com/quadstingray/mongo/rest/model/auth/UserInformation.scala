@@ -13,9 +13,12 @@ case class UserInformation(username: String, password: String, apiKey: Option[St
       .toList
   }
 
+  def isAdmin: Boolean = {
+    getUserRoles.exists(_.isAdmin)
+  }
+
   def toResultUser: UserProfile = {
-    val internalUserRoles = getUserRoles
-    UserProfile(username, internalUserRoles.exists(_.isAdmin), userRoles, getCollectionGrants.map(_.toCollectionGrant))
+    UserProfile(username, isAdmin, userRoles, getCollectionGrants.map(_.toCollectionGrant))
   }
 
 }
