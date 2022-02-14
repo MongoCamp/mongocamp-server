@@ -3,7 +3,7 @@ package com.quadstingray.mongo.rest.routes
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
 import com.quadstingray.mongo.rest.model.DeleteResponse
-import com.quadstingray.mongo.rest.model.auth.UserInformation
+import com.quadstingray.mongo.rest.model.auth.AuthorizedCollectionRequest
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
@@ -17,7 +17,7 @@ import scala.concurrent.Future
 
 object DeleteRoutes extends BaseRoute {
 
-  val deleteEndpoint = collectionEndpoint
+  val deleteEndpoint = writeCollectionEndpoint
     .in("delete")
     .in(jsonBody[Map[String, Any]])
     .out(jsonBody[DeleteResponse])
@@ -26,17 +26,17 @@ object DeleteRoutes extends BaseRoute {
     .tag("Delete")
     .method(Method.DELETE)
     .name("delete")
-    .serverLogic(connection => search => deleteInCollection(connection, search))
+    .serverLogic(collectionRequest => search => deleteInCollection(collectionRequest, search))
 
   def deleteInCollection(
-      user: UserInformation,
-      parameter: (String, Map[String, Any])
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: Map[String, Any]
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(
       Right(
         {
-          val dao            = MongoDatabase.databaseProvider.dao(parameter._1)
-          val result         = dao.deleteOne(parameter._2).result()
+          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val result         = dao.deleteOne(parameter).result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
           deleteResponse
         }
@@ -44,7 +44,7 @@ object DeleteRoutes extends BaseRoute {
     )
   }
 
-  val deleteManyEndpoint = collectionEndpoint
+  val deleteManyEndpoint = writeCollectionEndpoint
     .in("delete")
     .in("many")
     .in(jsonBody[Map[String, Any]])
@@ -54,17 +54,17 @@ object DeleteRoutes extends BaseRoute {
     .tag("Delete")
     .method(Method.DELETE)
     .name("deleteMany")
-    .serverLogic(connection => search => deleteManyInCollection(connection, search))
+    .serverLogic(collectionRequest => search => deleteManyInCollection(collectionRequest, search))
 
   def deleteManyInCollection(
-      user: UserInformation,
-      parameter: (String, Map[String, Any])
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: Map[String, Any]
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(
       Right(
         {
-          val dao            = MongoDatabase.databaseProvider.dao(parameter._1)
-          val result         = dao.deleteMany(parameter._2).result()
+          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val result         = dao.deleteMany(parameter).result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
           deleteResponse
         }
@@ -72,7 +72,7 @@ object DeleteRoutes extends BaseRoute {
     )
   }
 
-  val deleteAllEndpoint = collectionEndpoint
+  val deleteAllEndpoint = writeCollectionEndpoint
     .in("delete")
     .in("all")
     .out(jsonBody[DeleteResponse])
@@ -81,16 +81,15 @@ object DeleteRoutes extends BaseRoute {
     .tag("Delete")
     .method(Method.DELETE)
     .name("deleteAll")
-    .serverLogic(connection => search => deleteManyInCollection(connection, search))
+    .serverLogic(collectionRequest => _ => deleteManyInCollection(collectionRequest))
 
   def deleteManyInCollection(
-      user: UserInformation,
-      parameter: String
+      authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(
       Right(
         {
-          val dao            = MongoDatabase.databaseProvider.dao(parameter)
+          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result         = dao.deleteAll().result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
           deleteResponse

@@ -21,7 +21,7 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
 
   protected val baseEndpoint = endpoint.errorOut(errorEndpointDefinition)
 
-  protected val securedEndpoint = {
+  protected val securedEndpointDefinition = {
     val token = auth.apiKey(
       header[Option[String]]("X-AUTH-APIKEY").example(Some("secret1234")).description("Static API Key of the User")
     )
@@ -45,45 +45,96 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
     else {
       throw MongoRestException("not expected setting", StatusCode.InternalServerError)
     }
-    baseEndpoint.securityIn(authInput).serverSecurityLogic(connection => login(connection))
+    baseEndpoint.securityIn(authInput)
   }
 
-  def login(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] =
+  protected val securedEndpoint = securedEndpointDefinition.serverSecurityLogic(connection => login(connection))
+  protected val adminEndpoint   = securedEndpointDefinition.serverSecurityLogic(connection => loginAdmin(connection))
+
+  lazy val collectionEndpoint = securedEndpointDefinition
+    .in("collections")
+    .securityIn(path[String]("collectionName").description("The name of your MongoDb Collection"))
+
+  lazy val readCollectionEndpoint         = collectionEndpoint.serverSecurityLogic(connection => loginRead(connection))
+  lazy val writeCollectionEndpoint        = collectionEndpoint.serverSecurityLogic(connection => loginWrite(connection))
+  lazy val administrateCollectionEndpoint = collectionEndpoint.serverSecurityLogic(connection => loginAdministrate(connection))
+
+  def login(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] = {
     Future.successful {
-      loginInformation match {
-        case a: AuthInputAllMethods => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
-        case a: AuthInputBearer =>
-          if (a.bearerToken.isEmpty) {
-            throw MongoRestException.unauthorizedException()
-          }
-          else {
-            val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
-            Right(userInfo)
-          }
+      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation)
+      Right(userInformation)
+    }
+  }
 
-        case a: AuthInputWithBasic => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
-        case a: AuthInputWithApiKey =>
-          if (a.bearerToken.isDefined) {
-            val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
-            Right(userInfo)
-          }
-          else if (a.apiKey.isDefined) {
-            val apiKey = a.apiKey.get
-            if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
-              throw MongoRestException.unauthorizedException()
-            }
-            else {
-              Right(AuthHolder.handler.findUserByApiKey(apiKey))
-            }
-          }
-          else {
-            throw MongoRestException.unauthorizedException()
-          }
-
-        case _ => throw MongoRestException.badAuthConfiguration()
+  def loginAdmin(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] = {
+    Future.successful {
+      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation)
+      if (userInformation.isAdmin) {
+        Right(userInformation)
+      }
+      else {
+        throw MongoRestException.unauthorizedException("user not authorized for request")
       }
     }
+  }
 
-  lazy val collectionEndpoint = securedEndpoint.in("collections").in(path[String]("collectionName").description("The name of your MongoDb Collection"))
+  def loginRead(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
+    Future.successful {
+      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
+      if (userInformation.isAdmin) {
+        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      }
+      else {
+        userInformation.toResultUser.collectionGrant
+          .find(collectionGrant => {
+            val collection = collectionGrant.collection
+            (collection.equalsIgnoreCase(loginInformation._2) || collection
+              .equalsIgnoreCase(AuthorizedCollectionRequest.allCollections)) && collectionGrant.read
+          })
+          .getOrElse(throw MongoRestException.unauthorizedException("user not authorized for collection"))
+        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      }
+    }
+  }
+
+  def loginWrite(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
+    Future.successful {
+      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
+      if (userInformation.isAdmin) {
+        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      }
+      else {
+        userInformation.toResultUser.collectionGrant
+          .find(collectionGrant => {
+            val collection = collectionGrant.collection
+            (collection.equalsIgnoreCase(loginInformation._2) || collection
+              .equalsIgnoreCase(AuthorizedCollectionRequest.allCollections)) && collectionGrant.write
+          })
+          .getOrElse(throw MongoRestException.unauthorizedException("user not authorized for collection"))
+        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      }
+    }
+  }
+
+  def loginAdministrate(
+      loginInformation: (AuthInput, String)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
+    Future.successful {
+      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
+      if (userInformation.isAdmin) {
+        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      }
+      else {
+        userInformation.toResultUser.collectionGrant
+          .find(collectionGrant => {
+            val collection = collectionGrant.collection
+            (collection.equalsIgnoreCase(loginInformation._2) || collection
+              .equalsIgnoreCase(AuthorizedCollectionRequest.allCollections)) && collectionGrant.administrate
+          })
+          .getOrElse(throw MongoRestException.unauthorizedException("user not authorized for collection"))
+        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      }
+    }
+  }
 
 }
