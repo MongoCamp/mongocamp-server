@@ -3,7 +3,7 @@ package com.quadstingray.mongo.rest.routes
 import com.quadstingray.mongo.rest.converter.MongoRestBsonConverter
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
-import com.quadstingray.mongo.rest.model.auth.UserInformation
+import com.quadstingray.mongo.rest.model.auth.AuthorizedCollectionRequest
 import com.quadstingray.mongo.rest.model.{ MongoAggregateRequest, MongoFindRequest }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
@@ -20,7 +20,7 @@ import scala.concurrent.Future
 
 object ReadRoutes extends BaseRoute {
 
-  val findEndpoint = collectionEndpoint
+  val findEndpoint = readCollectionEndpoint
     .in("find")
     .in(
       jsonBody[MongoFindRequest].example(
@@ -37,17 +37,17 @@ object ReadRoutes extends BaseRoute {
     .tag("Read")
     .method(Method.POST)
     .name("find")
-    .serverLogic(connection => parameter => findInCollection(connection, parameter))
+    .serverLogic(collectionRequest => parameter => findInCollection(collectionRequest, parameter))
 
   def findInCollection(
-      user: UserInformation,
-      parameter: (String, MongoFindRequest)
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: MongoFindRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Map[String, Any]]]] = {
     Future.successful(
       Right(
         {
-          val dao       = MongoDatabase.databaseProvider.dao(parameter._1)
-          val documents = dao.find(parameter._2.filter, parameter._2.sort, parameter._2.projection).resultList()
+          val dao       = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val documents = dao.find(parameter.filter, parameter.sort, parameter.projection).resultList()
           documents.map(MongoRestBsonConverter.documentToMap)
         }
       )
@@ -70,7 +70,7 @@ object ReadRoutes extends BaseRoute {
   "allowDiskUse": true
 }
    */
-  val aggregateEndpoint = collectionEndpoint
+  val aggregateEndpoint = readCollectionEndpoint
     .in("aggregate")
     .in(
       jsonBody[MongoAggregateRequest]
@@ -84,28 +84,28 @@ object ReadRoutes extends BaseRoute {
     .tag("Read")
     .method(Method.POST)
     .name("aggregate")
-    .serverLogic(connection => parameter => aggregateInCollection(connection, parameter))
+    .serverLogic(collectionRequest => parameter => aggregateInCollection(collectionRequest, parameter))
 
   def aggregateInCollection(
-      user: UserInformation,
-      parameter: (String, MongoAggregateRequest)
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: MongoAggregateRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Map[String, Any]]]] = {
     Future.successful(
       Right(
         {
-          val dao = MongoDatabase.databaseProvider.dao(parameter._1)
-          val pipeline: Seq[Bson] = parameter._2.pipeline.map(element => {
+          val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val pipeline: Seq[Bson] = parameter.pipeline.map(element => {
             val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
             mapToBson(Map(stage -> element.value))
           })
-          val documents = dao.findAggregated(pipeline, allowDiskUse = parameter._2.allowDiskUse).resultList()
+          val documents = dao.findAggregated(pipeline, allowDiskUse = parameter.allowDiskUse).resultList()
           documents.map(MongoRestBsonConverter.documentToMap)
         }
       )
     )
   }
 
-  val distinctEndpoint = collectionEndpoint
+  val distinctEndpoint = readCollectionEndpoint
     .in("distinct")
     .in(path[String]("field").description("The field for your distinct Request."))
     .out(jsonBody[List[Any]])
@@ -114,17 +114,17 @@ object ReadRoutes extends BaseRoute {
     .tag("Read")
     .method(Method.POST)
     .name("distinct")
-    .serverLogic(connection => parameter => distinctInCollection(connection, parameter))
+    .serverLogic(collectionRequest => parameter => distinctInCollection(collectionRequest, parameter))
 
   def distinctInCollection(
-      user: UserInformation,
-      parameter: (String, String)
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Any]]] = {
     Future.successful(
       Right(
         {
-          val dao       = MongoDatabase.databaseProvider.dao(parameter._1)
-          val documents = dao.distinct(parameter._2).resultList()
+          val dao       = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val documents = dao.distinct(parameter).resultList()
           documents.map(BsonConverter.fromBson)
         }
       )

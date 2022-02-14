@@ -4,7 +4,7 @@ import com.quadstingray.mongo.rest.BuildInfo
 import com.quadstingray.mongo.rest.database.MongoDatabase
 import com.quadstingray.mongo.rest.exception.ErrorDescription
 import com.quadstingray.mongo.rest.model.Version
-import com.quadstingray.mongo.rest.model.auth.UserInformation
+import com.quadstingray.mongo.rest.model.auth.{ AuthorizedCollectionRequest, UserInformation }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.database.{ CollectionStatus, DatabaseInfo }
 import io.circe.generic.auto._
@@ -33,7 +33,7 @@ object InformationRoutes extends BaseRoute {
     )
   }
 
-  val databaseEndpoint = securedEndpoint
+  val databaseEndpoint = adminEndpoint
     .in("databases")
     .out(jsonBody[List[String]])
     .summary("List of Databases")
@@ -41,9 +41,9 @@ object InformationRoutes extends BaseRoute {
     .tag("Information")
     .method(Method.GET)
     .name("databaseList")
-    .serverLogic(connection => _ => databaseList(connection))
+    .serverLogic(_ => _ => databaseList())
 
-  def databaseList(user: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
+  def databaseList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(
       Right(
         {
@@ -62,20 +62,24 @@ object InformationRoutes extends BaseRoute {
     .tag("Information")
     .method(Method.GET)
     .name("collectionList")
-    .serverLogic(connection => _ => collectionList(connection))
+    .serverLogic(user => _ => collectionList(user))
 
-  def collectionList(user: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
+  def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(
       Right(
         {
-          val result = MongoDatabase.databaseProvider.collectionNames()
-          result
+          val result           = MongoDatabase.databaseProvider.collectionNames()
+          val collectionGrants = userInformation.toResultUser.collectionGrant
+          result.filter(collection => {
+            val readCollections = collectionGrants.filter(_.read).map(_.collection)
+            userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.allCollections) || readCollections.contains(collection)
+          })
         }
       )
     )
   }
 
-  val collectionStatusEndpoint = collectionEndpoint
+  val collectionStatusEndpoint = readCollectionEndpoint
     .in("status")
     .in(query[Boolean]("includeDetails").description("Include all details for the Collection").default(false))
     .out(jsonBody[CollectionStatus])
@@ -84,18 +88,18 @@ object InformationRoutes extends BaseRoute {
     .tag("Information")
     .method(Method.GET)
     .name("collectionStatus")
-    .serverLogic(connection => collection => collectionStatus(connection, collection))
+    .serverLogic(collectionRequest => filter => collectionStatus(collectionRequest, filter))
 
   def collectionStatus(
-      user: UserInformation,
-      parameter: (String, Boolean)
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
     Future.successful(
       Right(
         {
-          val dao    = MongoDatabase.databaseProvider.dao(parameter._1)
+          val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result = dao.collectionStatus.result()
-          if (parameter._2) {
+          if (parameter) {
             result
           }
           else {
@@ -106,7 +110,7 @@ object InformationRoutes extends BaseRoute {
     )
   }
 
-  val databaseStatusEndpoint = securedEndpoint
+  val databaseStatusEndpoint = adminEndpoint
     .in("databases")
     .in("infos")
     .out(jsonBody[List[DatabaseInfo]])
@@ -115,9 +119,9 @@ object InformationRoutes extends BaseRoute {
     .tag("Information")
     .method(Method.GET)
     .name("databaseInfos")
-    .serverLogic(connection => _ => databaseInfos(connection))
+    .serverLogic(_ => _ => databaseInfos())
 
-  def databaseInfos(user: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
+  def databaseInfos(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
     Future.successful(
       Right(
         {

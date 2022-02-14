@@ -70,4 +70,39 @@ object AuthHolder extends Config {
   lazy val tokenCache =
     Scaffeine().recordStats().expireAfterWrite(FiniteDuration(expiringDuration.getSeconds, TimeUnit.SECONDS)).build[String, UserInformation]()
 
+  def findUserInformationByLoginRequest(loginInformation: Any): UserInformation = {
+    val userInformation = loginInformation match {
+      case a: AuthInputAllMethods => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
+      case a: AuthInputBearer =>
+        if (a.bearerToken.isEmpty) {
+          throw MongoRestException.unauthorizedException()
+        }
+        else {
+          val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
+          userInfo
+        }
+
+      case a: AuthInputWithBasic => throw MongoRestException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
+      case a: AuthInputWithApiKey =>
+        if (a.bearerToken.isDefined) {
+          val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoRestException.unauthorizedException())
+          userInfo
+        }
+        else if (a.apiKey.isDefined) {
+          val apiKey = a.apiKey.get
+          if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
+            throw MongoRestException.unauthorizedException()
+          }
+          else {
+            AuthHolder.handler.findUserByApiKey(apiKey)
+          }
+        }
+        else {
+          throw MongoRestException.unauthorizedException()
+        }
+
+      case _ => throw MongoRestException.badAuthConfiguration()
+    }
+    userInformation
+  }
 }
