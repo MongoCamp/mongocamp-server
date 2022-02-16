@@ -8,10 +8,10 @@ actionText: Start
 actionLink: /guide/
 features:
   - title: Simplicity First
-    details: Minimal setup with markdown-centered project structure helps you focus on writing.
-  - title: Vue-Powered
-    details: Enjoy the dev experience of Vue + webpack, use Vue components in markdown, and develop custom themes with Vue.
-  - title: Performant
-    details: VitePress generates pre-rendered static HTML for each page, and runs as an SPA once a page is loaded.
-footer: Apache 2.0 Licensed | Copyright © 2021-present MongoRest
+    details: Minimal setup. Fast start. Easy usage.
+  - title: MongoDB REST Handling
+    details: Support CRUD, Indexes, Aggregation and more.
+  - title: Auth and User control
+    details: User, Roles, Collection Grants are fully supported..
+footer: Apache 2.0 Licensed | Copyright © 2022 - present MongoRest
 ---
