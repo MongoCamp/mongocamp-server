@@ -1,7 +1,8 @@
 package com.quadstingray.mongo.rest.model.auth
 import com.quadstingray.mongo.rest.auth.AuthHolder
 
-case class UserInformation(username: String, password: String, apiKey: Option[String], userRoles: List[String]) {
+case class UserInformation(userId: String, password: String, apiKey: Option[String], userRoles: List[String]) {
+
   def getUserRoles: List[UserRole] = AuthHolder.handler.findUserRoles(this)
 
   def getCollectionGrants: List[UserRoleGrant] = {
@@ -18,7 +19,7 @@ case class UserInformation(username: String, password: String, apiKey: Option[St
   }
 
   def toResultUser: UserProfile = {
-    UserProfile(username, isAdmin, userRoles, getCollectionGrants.map(_.toCollectionGrant))
+    UserProfile(userId, isAdmin, userRoles, getCollectionGrants.map(_.toCollectionGrant))
   }
 
 }

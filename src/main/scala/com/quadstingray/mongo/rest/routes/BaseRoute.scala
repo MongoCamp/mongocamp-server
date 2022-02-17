@@ -51,8 +51,11 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
   protected val securedEndpoint = securedEndpointDefinition.serverSecurityLogic(connection => login(connection))
   protected val adminEndpoint   = securedEndpointDefinition.serverSecurityLogic(connection => loginAdmin(connection))
 
+  lazy val mongoDbPath = "mongodb"
+
   lazy val collectionEndpoint = securedEndpointDefinition
-    .in("collections")
+    .securityIn(mongoDbPath)
+    .securityIn("collections")
     .securityIn(path[String]("collectionName").description("The name of your MongoDb Collection"))
 
   lazy val readCollectionEndpoint         = collectionEndpoint.serverSecurityLogic(connection => loginRead(connection))

@@ -1,3 +1,3 @@
 package com.quadstingray.mongo.rest.model.auth
 
-case class Login(username: String, password: String)
+case class Login(userId: String, password: String)

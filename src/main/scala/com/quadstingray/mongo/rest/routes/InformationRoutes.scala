@@ -34,6 +34,7 @@ object InformationRoutes extends BaseRoute {
   }
 
   val databaseEndpoint = adminEndpoint
+    .in(mongoDbPath)
     .in("databases")
     .out(jsonBody[List[String]])
     .summary("List of Databases")
@@ -55,6 +56,7 @@ object InformationRoutes extends BaseRoute {
   }
 
   val collectionsEndpoint = securedEndpoint
+    .in(mongoDbPath)
     .in("collections")
     .out(jsonBody[List[String]])
     .summary("List of Collections")
@@ -111,6 +113,7 @@ object InformationRoutes extends BaseRoute {
   }
 
   val databaseStatusEndpoint = adminEndpoint
+    .in(mongoDbPath)
     .in("databases")
     .in("infos")
     .out(jsonBody[List[DatabaseInfo]])
