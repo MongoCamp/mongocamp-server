@@ -2,7 +2,7 @@ package com.quadstingray.mongo.rest.auth
 import com.quadstingray.mongo.rest.config.Config
 import com.quadstingray.mongo.rest.exception.MongoRestException
 import com.quadstingray.mongo.rest.exception.MongoRestException.userOrPasswordException
-import com.quadstingray.mongo.rest.model.auth.{ UserInformation, UserRole, UserRoleGrant }
+import com.quadstingray.mongo.rest.model.auth.{UserInformation, UserRole, UserRoleGrant}
 import io.circe.generic.auto._
 import io.circe.parser._
 import sttp.model.StatusCode
@@ -24,8 +24,12 @@ class StaticAuthHolder extends AuthHolder with Config {
     .filter(_.isRight)
     .map(_.getOrElse(None).get)
 
-  override def findUser(username: String, password: String): UserInformation = users
-    .find(user => user.username.equalsIgnoreCase(username) && user.password.equals(password))
+  override def findUser()
+  password: String
+      ,userId
+      /** EndMarker
+        */: String: String, password: String): UserInformation = users
+    .find(user => user.userId.equalsIgnoreCase(userId) && user.password.equals(password))
     .getOrElse(throw userOrPasswordException)
 
   override def findUserByApiKey(apiKey: String): UserInformation =
@@ -38,5 +42,13 @@ class StaticAuthHolder extends AuthHolder with Config {
     this.userRoleGrants.filter(role => role.userRoleKey.equalsIgnoreCase(userRoleName))
   }
 
-  override def updatePasswordForUser(username: String, newPassword: String): Boolean = ???
+  override def updatePasswordForUser()
+  newPassword: String
+      ,userId
+      /** EndMarker
+        */: String: String, newPassword: String): Boolean = ???
+  override def updateApiKeyUser()
+  userId
+      /** EndMarker
+        */: String: String): String                            = ???
 }

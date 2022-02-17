@@ -7,8 +7,8 @@ import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
-import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.{ auth, query }
 import sttp.tapir.server.ServerEndpoint
 
 import scala.concurrent.Future
@@ -30,7 +30,7 @@ object AuthRoutes extends BaseRoute {
 
   def generateAuthToken(loginInformation: Login): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
     Future.successful {
-      val user                     = AuthHolder.handler.findUser(loginInformation.username, AuthHolder.handler.encryptPassword(loginInformation.password))
+      val user                     = AuthHolder.handler.findUser(loginInformation.userId, AuthHolder.handler.encryptPassword(loginInformation.password))
       val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(user)
       Right(loginResult)
     }
@@ -89,8 +89,9 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  val updateUserEndpoint = authBase
+  val updatePasswordEndpoint = authBase
     .in("profile")
+    .in("password")
     .in(jsonBody[Login])
     .out(jsonBody[JsonResult[Boolean]])
     .summary("Update Password")
@@ -104,8 +105,34 @@ object AuthRoutes extends BaseRoute {
       loginToUpdate: Login
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
-      if (loggedInUser.username == loginToUpdate.username || loggedInUser.isAdmin) {
-        Right(JsonResult(AuthHolder.handler.updatePasswordForUser(loginToUpdate.username, loginToUpdate.password)))
+      if (loggedInUser.userId == loginToUpdate.userId || loggedInUser.isAdmin) {
+        Right(JsonResult(AuthHolder.handler.updatePasswordForUser(loginToUpdate.userId, loginToUpdate.password)))
+      }
+      else {
+        throw MongoRestException.unauthorizedException("user not authorized to update password for other user", ErrorCodes.unauthorizedUserForOtherUser)
+      }
+    }
+  }
+
+  val updateApiKeyEndpoint = authBase
+    .in("profile")
+    .in("apikey")
+    .in(query[Option[String]]("userid").description("UserId to update or create the ApiKey"))
+    .out(jsonBody[JsonResult[String]])
+    .summary("Update ApiKey")
+    .description("Change ApiKey of User")
+    .method(Method.POST)
+    .name("updateApiKey")
+    .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate))
+
+  def updateApiKey(
+      loggedInUser: UserInformation,
+      loginToUpdate: Option[String]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[String]]] = {
+    Future.successful {
+      val userId = loginToUpdate.getOrElse(loggedInUser.userId)
+      if (loggedInUser.userId == userId || loggedInUser.isAdmin) {
+        Right(JsonResult(AuthHolder.handler.updateApiKeyUser(userId)))
       }
       else {
         throw MongoRestException.unauthorizedException("user not authorized to update password for other user", ErrorCodes.unauthorizedUserForOtherUser)
@@ -115,7 +142,7 @@ object AuthRoutes extends BaseRoute {
 
   lazy val onlyMongoEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
     if (globalConfigString("mongorest.auth.handler").equalsIgnoreCase("mongo")) {
-      List(updateUserEndpoint)
+      List(updatePasswordEndpoint, updateApiKeyEndpoint)
     }
     else {
       List()
@@ -123,6 +150,6 @@ object AuthRoutes extends BaseRoute {
   }
 
   lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] =
-    List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint, profileEndpoint)
+    List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint, profileEndpoint) ++ onlyMongoEndpoints
 
 }

@@ -18,7 +18,7 @@ import scala.concurrent.duration.FiniteDuration
 
 trait AuthHolder {
 
-  def findUser(username: String, password: String): UserInformation
+  def findUser(userId: String, password: String): UserInformation
   def findUserByApiKey(apiKey: String): UserInformation
 
   def findUserRoleGrants(userRoleName: String): List[UserRoleGrant]
@@ -28,7 +28,8 @@ trait AuthHolder {
   def findUserRole(userRole: String): Option[UserRole]                = findUserRoles(List(userRole)).headOption
   def findUserRoles(userInformation: UserInformation): List[UserRole] = findUserRoles(userInformation.userRoles)
 
-  def updatePasswordForUser(username: String, newPassword: String): Boolean
+  def updatePasswordForUser(userId: String, newPassword: String): Boolean
+  def updateApiKeyUser(userId: String): String
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
 
@@ -70,7 +71,8 @@ object AuthHolder extends Config {
 
   lazy val secret: String = globalConfigString("mongorest.auth.secret")
 
-  lazy val expiringDuration: Duration = configDuration("mongorest.auth.expiringDuration")
+  lazy val expiringDuration: Duration = globalConfigDuration("mongorest.auth.expiringDuration")
+  lazy val apiKeyLength: Int          = globalConfigInt("mongorest.auth.apikeylength")
 
   lazy val tokenCache =
     Scaffeine().recordStats().expireAfterWrite(FiniteDuration(expiringDuration.getSeconds, TimeUnit.SECONDS)).build[String, UserInformation]()

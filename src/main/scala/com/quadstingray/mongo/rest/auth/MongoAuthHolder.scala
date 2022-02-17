@@ -1,15 +1,18 @@
 package com.quadstingray.mongo.rest.auth
-import com.quadstingray.mongo.rest.database.MongoDatabase.{ roleGrantsDao, userDao, userRolesDao }
-import com.quadstingray.mongo.rest.exception.MongoRestException.{ apiKeyException, userOrPasswordException }
+import com.quadstingray.mongo.rest.auth.AuthHolder.apiKeyLength
+import com.quadstingray.mongo.rest.database.MongoDatabase.{roleGrantsDao, userDao, userRolesDao}
+import com.quadstingray.mongo.rest.exception.MongoRestException
+import com.quadstingray.mongo.rest.exception.MongoRestException.{apiKeyException, userOrPasswordException}
 import com.quadstingray.mongo.rest.model.auth.AuthorizedCollectionRequest.allCollections
-import com.quadstingray.mongo.rest.model.auth.{ UserInformation, UserRole, UserRoleGrant }
+import com.quadstingray.mongo.rest.model.auth.{UserInformation, UserRole, UserRoleGrant}
 import com.sfxcode.nosql.mongo._
+import sttp.model.StatusCode
 
 import scala.util.Random
 
 class MongoAuthHolder extends AuthHolder {
 
-  private val KeyUsername = "username"
+  private val KeyUserId = "userId"
   private val KeyApiKey   = "apiKey"
   private val KeyPassword = "password"
 
@@ -22,10 +25,10 @@ class MongoAuthHolder extends AuthHolder {
       val newPassword = Random.alphanumeric.take(10).mkString
 
       if (userDao.count().result() == 0) {
-        val userName     = "admin"
+        val generatedUserId     = "admin"
         val userRoleName = "adminRole"
-        userDao.insertOne(UserInformation(username = userName, password = encryptPassword(newPassword), apiKey = None, userRoles = List(userRoleName))).result()
-        userDao.createUniqueIndexForField(KeyUsername).result()
+        userDao.insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, userRoles = List(userRoleName))).result()
+        userDao.createUniqueIndexForField(KeyUserId).result()
 
         userRolesDao.insertOne(UserRole(userRoleName, isAdmin = true)).result()
         userRolesDao.createUniqueIndexForField(KeyName).result()
@@ -34,7 +37,7 @@ class MongoAuthHolder extends AuthHolder {
         roleGrantsDao.createIndexForField(KeyUserRoleKey).result()
 
         println("****************************************")
-        println(s"* user: $userName")
+        println(s"* user: $generatedUserId")
         println(s"* Password: $newPassword")
         println("****************************************")
       }
@@ -45,8 +48,12 @@ class MongoAuthHolder extends AuthHolder {
     }
   }
 
-  override def findUser(username: String, password: String): UserInformation = {
-    val searchMap = Map(KeyUsername -> username, KeyPassword -> password)
+  override def findUser()
+  password: String
+      ,userId
+      /** EndMarker
+        */: String: String, password: String): UserInformation = {
+    val searchMap = Map(KeyUserId -> userId, KeyPassword -> password)
     userDao.find(searchMap).resultOption().getOrElse(throw userOrPasswordException)
   }
 
@@ -60,9 +67,27 @@ class MongoAuthHolder extends AuthHolder {
     roleGrantsDao.find(searchMap).resultList()
   }
 
-  override def updatePasswordForUser(username: String, newPassword: String): Boolean = {
-    val updateResult = userDao.updateOne(Map(KeyUsername -> username), Map(KeyPassword -> encryptPassword(newPassword))).result()
+  override def updatePasswordForUser()
+  newPassword: String
+      ,userId
+      /** EndMarker
+        */: String: String, newPassword: String): Boolean = {
+    val updateResult = userDao.updateOne(Map(KeyUserId -> userId), Map(KeyPassword -> encryptPassword(newPassword))).result()
     updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1
+  }
+
+  override def updateApiKeyUser()
+  userId
+      /** EndMarker
+        */: String: String): String = {
+    val apiKey       = Random.alphanumeric.take(apiKeyLength).mkString
+    val updateResult = userDao.updateOne(Map(KeyUserId -> userId), Map(KeyApiKey -> apiKey)).result()
+    if (updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1) {
+      apiKey
+    }
+    else {
+      throw MongoRestException("could not update apikey for user", StatusCode.BadRequest)
+    }
   }
 
   override def findUserByApiKey(apiKey: String): UserInformation = {
@@ -74,5 +99,4 @@ class MongoAuthHolder extends AuthHolder {
       userDao.find(searchMap).resultOption().getOrElse(throw apiKeyException)
     }
   }
-
 }
