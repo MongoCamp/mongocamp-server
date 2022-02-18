@@ -14,6 +14,7 @@ object MongoRestException {
   def badAuthConfiguration(): MongoRestException =
     MongoRestException("Authentication method not configured correctly", StatusCode.NotImplemented, ErrorCodes.authMethodNotImplemented)
 
+  def userNotFoundException   = MongoRestException("user  does not exists", StatusCode.NotFound)
   def userOrPasswordException = MongoRestException("user or password does not exists", StatusCode.Unauthorized)
   def apiKeyException         = MongoRestException("apiKey not valid", StatusCode.Unauthorized)
 }

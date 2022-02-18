@@ -19,7 +19,7 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
   }
 
   def toResultUser: UserProfile = {
-    UserProfile(userId, isAdmin, userRoles, getCollectionGrants.map(_.toCollectionGrant))
+    UserProfile(userId, isAdmin, apiKey, userRoles, getCollectionGrants.map(_.toCollectionGrant))
   }
 
 }
