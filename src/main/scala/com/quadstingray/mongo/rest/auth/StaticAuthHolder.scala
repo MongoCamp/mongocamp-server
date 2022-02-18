@@ -1,8 +1,8 @@
 package com.quadstingray.mongo.rest.auth
 import com.quadstingray.mongo.rest.config.Config
 import com.quadstingray.mongo.rest.exception.MongoRestException
-import com.quadstingray.mongo.rest.exception.MongoRestException.userOrPasswordException
-import com.quadstingray.mongo.rest.model.auth.{UserInformation, UserRole, UserRoleGrant}
+import com.quadstingray.mongo.rest.exception.MongoRestException.{ userNotFoundException, userOrPasswordException }
+import com.quadstingray.mongo.rest.model.auth.{ UserInformation, UserRole, UserRoleGrant }
 import io.circe.generic.auto._
 import io.circe.parser._
 import sttp.model.StatusCode
@@ -24,13 +24,13 @@ class StaticAuthHolder extends AuthHolder with Config {
     .filter(_.isRight)
     .map(_.getOrElse(None).get)
 
-  override def findUser()
-  password: String
-      ,userId
-      /** EndMarker
-        */: String: String, password: String): UserInformation = users
+  override def findUser(userId: String, password: String): UserInformation = users
     .find(user => user.userId.equalsIgnoreCase(userId) && user.password.equals(password))
     .getOrElse(throw userOrPasswordException)
+
+  override def findUser(userId: String): UserInformation = {
+    users.find(user => user.userId.equalsIgnoreCase(userId)).getOrElse(throw userNotFoundException)
+  }
 
   override def findUserByApiKey(apiKey: String): UserInformation =
     users.find(user => user.apiKey.equals(Option(apiKey))).getOrElse(throw MongoRestException("apikey does not exists", StatusCode.Unauthorized))
@@ -42,13 +42,10 @@ class StaticAuthHolder extends AuthHolder with Config {
     this.userRoleGrants.filter(role => role.userRoleKey.equalsIgnoreCase(userRoleName))
   }
 
-  override def updatePasswordForUser()
-  newPassword: String
-      ,userId
-      /** EndMarker
-        */: String: String, newPassword: String): Boolean = ???
-  override def updateApiKeyUser()
-  userId
-      /** EndMarker
-        */: String: String): String                            = ???
+  override def allUsers(userToSearch: Option[String]): List[UserInformation] =
+    users.filter(user => user.userId.toLowerCase().contains(userToSearch.getOrElse(user.userId).toLowerCase()))
+
+  override def allUserRoles(userRoleToSearch: Option[String]): List[UserRole] =
+    userRoles.filter(user => user.name.toLowerCase.contains(userRoleToSearch.getOrElse(user.name).toLowerCase()))
+
 }

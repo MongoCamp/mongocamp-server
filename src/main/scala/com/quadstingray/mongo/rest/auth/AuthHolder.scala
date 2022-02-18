@@ -17,7 +17,10 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
 trait AuthHolder {
+  def allUsers(userToSearch: Option[String]): List[UserInformation]
+  def allUserRoles(userRoleToSearch: Option[String]): List[UserRole]
 
+  def findUser(userId: String): UserInformation
   def findUser(userId: String, password: String): UserInformation
   def findUserByApiKey(apiKey: String): UserInformation
 
@@ -27,9 +30,6 @@ trait AuthHolder {
   def findUserRoles(userRoles: List[String]): List[UserRole]
   def findUserRole(userRole: String): Option[UserRole]                = findUserRoles(List(userRole)).headOption
   def findUserRoles(userInformation: UserInformation): List[UserRole] = findUserRoles(userInformation.userRoles)
-
-  def updatePasswordForUser(userId: String, newPassword: String): Boolean
-  def updateApiKeyUser(userId: String): String
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
 
@@ -56,11 +56,16 @@ trait AuthHolder {
 }
 
 object AuthHolder extends Config {
+  lazy val authHolderType: String = globalConfigString("mongorest.auth.handler")
+
+  def isMongoDbAuthHolder: Boolean = authHolderType.equalsIgnoreCase("mongo")
+  def isStaticAuthHolder: Boolean  = authHolderType.equalsIgnoreCase("static")
+
   lazy val handler: AuthHolder = {
-    globalConfigString("mongorest.auth.handler") match {
-      case s: String if s.equalsIgnoreCase("static") =>
+    authHolderType match {
+      case s: String if isStaticAuthHolder =>
         new StaticAuthHolder()
-      case s: String if s.equalsIgnoreCase("mongo") =>
+      case s: String if isMongoDbAuthHolder =>
         val mongoHolder = new MongoAuthHolder()
         mongoHolder.createIndicesAndInitData()
         mongoHolder
