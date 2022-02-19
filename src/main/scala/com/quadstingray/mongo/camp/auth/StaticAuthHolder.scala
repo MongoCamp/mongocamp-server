@@ -18,45 +18,40 @@ class StaticAuthHolder extends AuthHolder with Config {
   }
 
   private lazy val userRoles: List[UserRole] = {
-    val userRoleString = globalConfigStringList("auth.userRoles")
-    userRoleString
-      .map(string => {
-        ""
-        decode[Option[UserRole]](string)
-      })
-      .filter(role => {
-        ""
-        role.isRight
-      })
-      .map(role => {
-        ""
-        role.getOrElse(None).get
-      })
+    globalConfigStringList("auth.userRoles")
+      .map(string => decode[Option[UserRole]](string))
+      .filter(_.isRight)
+      .map(_.getOrElse(None).get)
   }
 
-  override def findUser(userId: String, password: String): UserInformation = users
-    .find(user => user.userId.equalsIgnoreCase(userId) && user.password.equals(password))
-    .getOrElse(throw userOrPasswordException)
+  override def findUser(userId: String, password: String): UserInformation = {
+    users
+      .find(user => user.userId.equalsIgnoreCase(userId) && user.password.equals(password))
+      .getOrElse(throw userOrPasswordException)
+  }
 
   override def findUser(userId: String): UserInformation = {
     users.find(user => user.userId.equalsIgnoreCase(userId)).getOrElse(throw userNotFoundException)
   }
 
-  override def findUserByApiKey(apiKey: String): UserInformation =
+  override def findUserByApiKey(apiKey: String): UserInformation = {
     users
       .find(user => user.apiKey.equals(Option(apiKey)))
       .getOrElse(
         throw MongoCampException("apikey does not exists", StatusCode.Unauthorized)
       )
+  }
 
   override def findUserRoles(userRoles: List[String]): List[UserRole] = {
     userRoles.flatMap(string => this.userRoles.find(_.name.equalsIgnoreCase(string)))
   }
 
-  override def allUsers(userToSearch: Option[String]): List[UserInformation] =
+  override def allUsers(userToSearch: Option[String]): List[UserInformation] = {
     users.filter(user => user.userId.toLowerCase().contains(userToSearch.getOrElse(user.userId).toLowerCase()))
+  }
 
-  override def allUserRoles(userRoleToSearch: Option[String]): List[UserRole] =
+  override def allUserRoles(userRoleToSearch: Option[String]): List[UserRole] = {
     userRoles.filter(user => user.name.toLowerCase.contains(userRoleToSearch.getOrElse(user.name).toLowerCase()))
+  }
 
 }
