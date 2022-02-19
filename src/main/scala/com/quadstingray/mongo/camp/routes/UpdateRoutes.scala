@@ -23,7 +23,7 @@ object UpdateRoutes extends BaseRoute {
     .summary("ReplaceOne in Collection")
     .description("Replace one Document in Collection")
     .tag("Update")
-    .method(Method.PUT)
+    .method(Method.PATCH)
     .name("replace")
     .serverLogic(collectionRequest => parameter => replaceInCollection(collectionRequest, parameter))
 
@@ -66,7 +66,7 @@ object UpdateRoutes extends BaseRoute {
     .summary("Update One in Collection")
     .description("Update one Document in Collection")
     .tag("Update")
-    .method(Method.PUT)
+    .method(Method.PATCH)
     .name("update")
     .serverLogic(collectionRequest => parameter => updateInCollection(collectionRequest, parameter))
 
@@ -104,7 +104,7 @@ object UpdateRoutes extends BaseRoute {
     .summary("Update many in Collection")
     .description("Update many Document in Collection")
     .tag("Update")
-    .method(Method.PUT)
+    .method(Method.PATCH)
     .name("update")
     .serverLogic(collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter))
 
