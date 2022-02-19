@@ -4,7 +4,7 @@ import com.quadstingray.mongo.camp.database.MongoDatabase.{ userDao, userRolesDa
 import com.quadstingray.mongo.camp.exception.MongoCampException
 import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userNotFoundException, userOrPasswordException }
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest.allCollections
-import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UserInformation, UserRole }
+import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UpdateUserRoleRequest, UserInformation, UserRole }
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.model.Filters
 import sttp.model.StatusCode
@@ -51,12 +51,14 @@ class MongoAuthHolder extends AuthHolder {
   }
 
   override def findUser(userId: String): UserInformation = {
-    userDao.find(KeyUserId, userId).resultOption().getOrElse(throw userNotFoundException)
+    findUserOption(userId).getOrElse(throw userNotFoundException)
   }
 
+  private def findUserOption(userId: String) = {
+    userDao.find(KeyUserId, userId).resultOption()
+  }
   override def findUser(userId: String, password: String): UserInformation = {
-    val searchMap = Map(KeyUserId -> userId, KeyPassword -> password)
-    userDao.find(searchMap).resultOption().getOrElse(throw userOrPasswordException)
+    userDao.find(Map(KeyUserId -> userId, KeyPassword -> password)).resultOption().getOrElse(throw userOrPasswordException)
   }
 
   override def findUserRoles(userRoles: List[String]): List[UserRole] = {
@@ -65,15 +67,18 @@ class MongoAuthHolder extends AuthHolder {
   }
 
   def addUser(userInformation: UserInformation): UserInformation = {
+    if (findUserOption(userInformation.userId).isDefined) {
+      throw MongoCampException("User already exists.", StatusCode.BadRequest)
+    }
     val userToAdd = userInformation.copy(password = encryptPassword(userInformation.password))
     userDao.insertOne(userToAdd).result()
     findUser(userToAdd.userId, userToAdd.password)
   }
 
-  def updateUserRoles(userId: String, userRoles: List[String]): UserInformation = {
+  def updateUsersUserRoles(userId: String, userRoles: List[String]): UserInformation = {
     val userInformation = findUser(userId)
     userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(userRoles = userRoles)).result()
-    userDao.find(KeyUserId, userId).resultOption().getOrElse(throw userNotFoundException)
+    findUser(userId)
   }
 
   def deleteUser(userId: String): Boolean = {
@@ -127,5 +132,30 @@ class MongoAuthHolder extends AuthHolder {
       val filter = Filters.regex(KeyName, s"(.*?)${userRoleToSearch.get}(.*?)", "i")
       userRolesDao.find(filter).resultList()
     }
+  }
+
+  def addUserRole(userRole: UserRole): UserRole = {
+    if (findUserRole(userRole.name).isDefined) {
+      throw MongoCampException("UserRole already exists.", StatusCode.BadRequest)
+    }
+    userRolesDao.insertOne(userRole).result()
+    findUserRole(userRole.name).getOrElse(throw MongoCampException("could not create UserRole", StatusCode.BadRequest))
+  }
+
+  def updateUserRole(userRoleKey: String, userRoleUpdate: UpdateUserRoleRequest): UserRole = {
+    val userRole = findUserRole(userRoleKey)
+    if (userRole.isEmpty) {
+      throw MongoCampException("UserRole not exists.", StatusCode.NotFound)
+    }
+    else {
+      val updated = userRole.get.copy(isAdmin = userRoleUpdate.isAdmin, collectionGrants = userRoleUpdate.collectionGrants)
+      userRolesDao.replaceOne(Map(KeyName -> userRoleKey), updated).result()
+      findUserRole(userRoleKey).getOrElse(throw MongoCampException("could not create UserRole", StatusCode.BadRequest))
+    }
+  }
+
+  def deleteUserRole(userRole: String): Boolean = {
+    val deleteResult = userRolesDao.deleteOne(Map(KeyName -> userRole)).result()
+    deleteResult.wasAcknowledged() && deleteResult.getDeletedCount == 1
   }
 }
