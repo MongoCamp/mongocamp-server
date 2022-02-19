@@ -1,5 +1,5 @@
 {
-  "name": "mongorest-docs",
+  "name": "mongocamp-docs",
   "version": "1.0.0",
   "description": "",
   "directories": {
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/QuadStingray/mongorest.git"
+    "url": "git+https://github.com/QuadStingray/mongocamp.git"
   },
   "author": "tom@sfxcode.com",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/QuadStingray/mongorest"
+    "url": "https://github.com/QuadStingray/mongocamp"
   },
-  "homepage": "https://github.com/QuadStingray/mongorest#readme",
+  "homepage": "https://github.com/QuadStingray/mongocamp#readme",
   "devDependencies": {
     "vitepress": "^0.21.6"
   }
