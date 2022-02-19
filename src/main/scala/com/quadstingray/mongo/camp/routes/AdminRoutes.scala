@@ -97,7 +97,7 @@ object AdminRoutes extends BaseRoute {
     .summary("Update ApiKey")
     .description("Change Password of User")
     .method(Method.POST)
-    .name("updatePasswordForUser")
+    .name("updateApiKeyForUser")
     .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, Some(loginToUpdate)))
 
   val deleteUserEndpoint = adminBase

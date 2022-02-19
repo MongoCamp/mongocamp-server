@@ -6,7 +6,7 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
   def getUserRoles: List[UserRole] = AuthHolder.handler.findUserRoles(this)
 
   def getCollectionGrants: List[CollectionGrant] = {
-    val roleGrants = getUserRoles.flatMap(_.roleGrant).groupBy[String](_.collection)
+    val roleGrants = getUserRoles.flatMap(_.collectionGrants).groupBy[String](_.collection)
     roleGrants
       .map(roleGroup => CollectionGrant(roleGroup._1, roleGroup._2.exists(_.read), roleGroup._2.exists(_.write), roleGroup._2.exists(_.administrate)))
       .toList

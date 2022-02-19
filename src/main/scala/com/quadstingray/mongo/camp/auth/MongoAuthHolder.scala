@@ -18,8 +18,7 @@ class MongoAuthHolder extends AuthHolder {
   private val KeyPassword  = "password"
   private val KeyUserRoles = "userRoles"
 
-  private val KeyName        = "name"
-  private val KeyUserRoleKey = "userRoleKey"
+  private val KeyName = "name"
 
   def createIndicesAndInitData(): Boolean = {
     try {
@@ -72,7 +71,8 @@ class MongoAuthHolder extends AuthHolder {
   }
 
   def updateUserRoles(userId: String, userRoles: List[String]): UserInformation = {
-    val updateResult = userDao.updateOne(Map(KeyUserId -> userId), Map(KeyUserRoles -> userRoles)).result()
+    val userInformation = findUser(userId)
+    userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(userRoles = userRoles)).result()
     userDao.find(KeyUserId, userId).resultOption().getOrElse(throw userNotFoundException)
   }
 
@@ -82,13 +82,15 @@ class MongoAuthHolder extends AuthHolder {
   }
 
   def updatePasswordForUser(userId: String, newPassword: String): Boolean = {
-    val updateResult = userDao.updateOne(Map(KeyUserId -> userId), Map(KeyPassword -> encryptPassword(newPassword))).result()
+    val userInformation = findUser(userId)
+    val updateResult    = userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(password = encryptPassword(newPassword))).result()
     updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1
   }
 
   def updateApiKeyUser(userId: String): String = {
-    val apiKey       = Random.alphanumeric.take(apiKeyLength).mkString
-    val updateResult = userDao.updateOne(Map(KeyUserId -> userId), Map(KeyApiKey -> apiKey)).result()
+    val userInformation = findUser(userId)
+    val apiKey          = Random.alphanumeric.take(apiKeyLength).mkString
+    val updateResult    = userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(apiKey = Some(apiKey))).result()
     if (updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1) {
       apiKey
     }
