@@ -97,7 +97,7 @@ object AuthRoutes extends BaseRoute {
     .out(jsonBody[JsonResult[Boolean]])
     .summary("Update Password")
     .description("Change Password of User")
-    .method(Method.POST)
+    .method(Method.PATCH)
     .name("updatePassword")
     .serverLogic(loggedInUser => loginToUpdate => updatePassword(loggedInUser, loginToUpdate))
 
@@ -117,7 +117,7 @@ object AuthRoutes extends BaseRoute {
     .out(jsonBody[JsonResult[String]])
     .summary("Update ApiKey")
     .description("Change ApiKey of User")
-    .method(Method.POST)
+    .method(Method.PATCH)
     .name("updateApiKey")
     .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate))
 
