@@ -105,7 +105,7 @@ object UpdateRoutes extends BaseRoute {
     .description("Update many Document in Collection")
     .tag("Update")
     .method(Method.PATCH)
-    .name("updateMany")
+    .name("update")
     .serverLogic(collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter))
 
   def updateManyInCollection(
