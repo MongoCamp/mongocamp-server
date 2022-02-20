@@ -1,5 +1,6 @@
 module.exports = {
     title: "MongoCamp",
+    base: "/mongocamp/",
     themeConfig: {
         repo: 'QuadStingray/mongocamp',
         docsDir: 'docs',
