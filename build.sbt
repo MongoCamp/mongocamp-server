@@ -2,8 +2,6 @@ name := "mongocamp"
 
 organization := "com.quadstingray"
 
-version := "0.1.0"
-
 scalaVersion := "2.13.8"
 
 libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "2.3.0"
