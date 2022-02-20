@@ -8,7 +8,8 @@
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:serve": "vitepress serve docs --port 5555"
+    "docs:serve": "vitepress serve docs --port 5555",
+    "api-codegen": "openapi-generator-cli generate -i http://localhost:8082/docs/docs.yaml -g markdown -o ./docs/rest"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/QuadStingray/mongocamp#readme",
   "devDependencies": {
-    "vitepress": "^0.21.6"
+    "vitepress": "^0.21.6",
+    "@openapitools/openapi-generator-cli": "^2.4.26"
   }
 }

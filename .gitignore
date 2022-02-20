@@ -27,3 +27,5 @@ gatling-generated
 /.pnpm-debug.log
 /node_modules/
 /docs/.vitepress/dist/
+/docs/rest/.openapi-generator-ignore
+/docs/rest/.openapi-generator/
