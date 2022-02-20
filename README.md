@@ -39,6 +39,12 @@ Run development server:
 pnpm docs:dev
 ```
 
+Deploy
+
+```
+./deploy.sh
+```
+
 
 ## Todos:
 * Documentation
