@@ -17,6 +17,8 @@ target
 .DS_Store
 sbt-cache
 sbt-cache/*
+.gitconfig
+
 
 openapitools.json
 gatling-generated
