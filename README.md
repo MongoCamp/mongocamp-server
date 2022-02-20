@@ -15,10 +15,31 @@ If you find this library helpfull, so you can see here how you can help:
 Feel free to report your issues to Github's issue tracker. Please use one of the templates for reporting issues. [report your issue](https://github.com/QuadStingray/mongocamp/issues/new/choose)
 
 ## Docu and Samples
-Todo
+In progress ...
 
 ## Licence
 [Apache 2 License.](https://github.com/QuadStingray/mongocamp/blob/master/LICENSE)
 
+## Usage
+
+### Documentation
+
+Install pnpm:
+[https://pnpm.io/installation](https://pnpm.io/installation)
+
+Install dependencies:
+
+```
+pnpm install
+```
+
+Run development server:
+
+```
+pnpm docs:dev
+```
+
+
 ## Todos:
 * Documentation
+* Tests
