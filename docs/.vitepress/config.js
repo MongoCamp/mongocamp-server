@@ -1,3 +1,3 @@
 module.exports = {
-    title: "MongoRest", // appended to all page titles
+    title: "MongoCamp", // appended to all page titles
 };
