@@ -16,6 +16,11 @@ module.exports = {
                 activeMatch: '^/config/'
             },
             {
+                text: 'REST API',
+                link: '/rest/Readme',
+                activeMatch: '^/rest/'
+            },
+            {
                 text: 'simple-mongo',
                 link: 'https://sfxcode.github.io/simple-mongo'
             }
