@@ -13,5 +13,5 @@ features:
   details: Support CRUD, Indexes, Aggregation and more.
 - title: Auth and User control
   details: User, Roles, Collection Grants are fully supported..
-footer: Apache 2.0 Licensed | Copyright © 2021-present MongoCamp
+footer: Apache 2.0 Licensed | Copyright © MongoCamp 2022
 ---
