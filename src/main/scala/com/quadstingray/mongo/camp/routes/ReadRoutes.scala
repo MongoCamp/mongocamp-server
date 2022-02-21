@@ -2,13 +2,16 @@ package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
 import com.quadstingray.mongo.camp.database.MongoDatabase
+import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedAggregation, MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
 import com.quadstingray.mongo.camp.model.{ MongoAggregateRequest, MongoFindRequest }
+import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import io.circe.generic.auto._
 import org.bson.conversions.Bson
+import org.mongodb.scala.bson.Document
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
@@ -31,7 +34,9 @@ object ReadRoutes extends BaseRoute {
         )
       )
     )
+    .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
+    .out(PagingFunctions.pagingHeaderOutput)
     .summary("Search in Collection")
     .description("Search in your MongoDatabase Collection")
     .tag("Read")
@@ -41,14 +46,25 @@ object ReadRoutes extends BaseRoute {
 
   def findInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: MongoFindRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Map[String, Any]]]] = {
+      parameter: (MongoFindRequest, Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(
       Right(
         {
-          val dao       = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val documents = dao.find(parameter.filter, parameter.sort, parameter.projection).resultList()
-          documents.map(MongoCampBsonConverter.documentToMap)
+          val searchRequest = parameter._1
+          val pagingInfo    = parameter._2
+          val rowsPerPage   = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+          val page          = pagingInfo.page.getOrElse(1L)
+
+          val mongoPaginatedFilter = MongoPaginatedFilter(
+            MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
+            searchRequest.filter,
+            searchRequest.sort,
+            searchRequest.projection
+          )
+
+          val findResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
+          (findResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), findResult.paginationInfo)
         }
       )
     )
@@ -78,7 +94,9 @@ object ReadRoutes extends BaseRoute {
 //          MongoAggregateRequest(List(PipelineStage("match", Map("additionalProp2" -> "string")), PipelineStage("count", "additionalProp1")))
 //        )
     )
+    .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
+    .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
     .description("Aggregate in your MongoDatabase Collection")
     .tag("Read")
@@ -88,18 +106,31 @@ object ReadRoutes extends BaseRoute {
 
   def aggregateInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: MongoAggregateRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Map[String, Any]]]] = {
+      parameter: (MongoAggregateRequest, Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(
       Right(
         {
-          val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val pipeline: Seq[Bson] = parameter.pipeline.map(element => {
+          val mongoAggregateRequest = parameter._1
+          val pagingInfo            = parameter._2
+          val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+          val page                  = pagingInfo.page.getOrElse(1L)
+
+          val pipeline: Seq[Bson] = mongoAggregateRequest.pipeline.map(element => {
             val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
             mapToBson(Map(stage -> element.value))
           })
-          val documents = dao.findAggregated(pipeline, allowDiskUse = parameter.allowDiskUse).resultList()
-          documents.map(MongoCampBsonConverter.documentToMap)
+
+          val mongoPaginatedFilter = MongoPaginatedAggregation(
+            MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
+            mongoAggregateRequest.allowDiskUse,
+            pipeline.toList,
+            (document: Document) => document
+          )
+
+          val aggregateResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
+          (aggregateResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), aggregateResult.paginationInfo)
+
         }
       )
     )
