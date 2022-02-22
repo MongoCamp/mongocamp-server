@@ -13,15 +13,14 @@ import scala.jdk.CollectionConverters._
 case class MongoPaginatedAggregation[A <: Any](
     dao: MongoDAO[A],
     allowDiskUse: Boolean = false,
-    aggregationPipeline: List[Bson] = List(),
-    castDocumentToValue: Document => A
-) extends DatabasePaging[A] {
+    aggregationPipeline: List[Bson] = List()
+) {
 
   private val AggregationKeyMetaData      = "metadata"
   private val AggregationKeyData          = "data"
   private val AggregationKeyMetaDataTotal = "total"
 
-  override def paginate(rows: Long, page: Long): DatabasePaginationResult[A] = {
+  def paginate(rows: Long, page: Long): DatabasePaginationResult[org.bson.BsonDocument] = {
     if (rows <= 0) {
       throw MongoCampException("rows per page must be greater then 0.", StatusCode.BadRequest)
     }
@@ -43,11 +42,11 @@ case class MongoPaginatedAggregation[A <: Any](
 
     val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
     val allPages    = Math.ceil(count.toDouble / rows).toInt
-    val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument()).map(document => castDocumentToValue(document))
+    val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument())
     DatabasePaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
   }
 
-  override def countResult: Long = {
+  def countResult: Long = {
     val listOfMetaData: List[Bson] = List(Map("$count" -> AggregationKeyMetaDataTotal))
     val listOfPaging: List[Bson]   = List(Map("$skip" -> 0), Map("$limit" -> 1))
 

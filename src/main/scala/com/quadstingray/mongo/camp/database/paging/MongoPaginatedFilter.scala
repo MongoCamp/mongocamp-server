@@ -4,9 +4,9 @@ import com.sfxcode.nosql.mongo.{ MongoDAO, _ }
 import org.mongodb.scala.bson.conversions.Bson
 import sttp.model.StatusCode
 
-case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map()) extends DatabasePaging[A] {
+case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map()) {
 
-  override def paginate(rows: Long, page: Long): DatabasePaginationResult[A] = {
+  def paginate(rows: Long, page: Long): DatabasePaginationResult[A] = {
     val count = countResult
     if (rows <= 0) {
       throw MongoCampException("rows per page must be greater then 0.", StatusCode.BadRequest)
@@ -20,6 +20,6 @@ case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map()
     DatabasePaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
   }
 
-  override def countResult: Long = dao.count(filter).result()
+  def countResult: Long = dao.count(filter).result()
 
 }

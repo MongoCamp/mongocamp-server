@@ -15,4 +15,15 @@ object MongoCampBsonConverter {
     })
   }
 
+  def documentToMap(document: org.bson.BsonDocument): Map[String, Any] = {
+    val map = com.sfxcode.nosql.mongo.bson.BsonConverter.asMap(document)
+    map.map(element => {
+      element._2 match {
+        case objectId: ObjectId =>
+          (element._1, objectId.toHexString)
+        case _ =>
+          (element._1, element._2)
+      }
+    })
+  }
 }
