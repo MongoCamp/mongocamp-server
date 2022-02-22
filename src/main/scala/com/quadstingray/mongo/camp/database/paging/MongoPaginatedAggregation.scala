@@ -20,7 +20,7 @@ case class MongoPaginatedAggregation[A <: Any](
   private val AggregationKeyData          = "data"
   private val AggregationKeyMetaDataTotal = "total"
 
-  def paginate(rows: Long, page: Long): DatabasePaginationResult[org.bson.BsonDocument] = {
+  def paginate(rows: Long, page: Long): PaginationResult[org.bson.BsonDocument] = {
     if (rows <= 0) {
       throw MongoCampException("rows per page must be greater then 0.", StatusCode.BadRequest)
     }
@@ -43,7 +43,7 @@ case class MongoPaginatedAggregation[A <: Any](
     val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
     val allPages    = Math.ceil(count.toDouble / rows).toInt
     val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument())
-    DatabasePaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
+    PaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
   }
 
   def countResult: Long = {

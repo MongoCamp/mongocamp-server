@@ -23,5 +23,5 @@ object PagingFunctions {
   final lazy val HeaderPaginationPage       = "x-pagination-current-page"
   final lazy val HeaderPaginationCountRows  = "x-pagination-count-rows"
   final lazy val HeaderPaginationPagesCount = "x-pagination-count-pages"
-  final lazy val DefaultRowsPerPage: Long   = 10
+  final lazy val DefaultRowsPerPage: Long   = 100
 }
