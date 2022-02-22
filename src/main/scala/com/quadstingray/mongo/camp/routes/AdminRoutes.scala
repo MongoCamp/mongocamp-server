@@ -111,9 +111,7 @@ object AdminRoutes extends BaseRoute {
     .serverLogic(_ => loginToUpdate => deleteUser(loginToUpdate))
 
   def deleteUser(loginToUpdate: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
-    Future.successful {
-      Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate)))
-    }
+    Future.successful(Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate))))
   }
 
   val updateUserUserRolesEndpoint = adminBase
@@ -129,11 +127,7 @@ object AdminRoutes extends BaseRoute {
     .serverLogic(_ => loginToUpdate => updateUserRolesForUser(loginToUpdate))
 
   def updateUserRolesForUser(loginToUpdate: (String, List[String])): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
-    Future.successful {
-      Right(
-        AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersUserRoles(loginToUpdate._1, loginToUpdate._2).toResultUser
-      )
-    }
+    Future.successful(Right(AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersUserRoles(loginToUpdate._1, loginToUpdate._2).toResultUser))
   }
 
   val listUserRolesEndpoint = adminBase

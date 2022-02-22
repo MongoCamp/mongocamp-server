@@ -11,7 +11,6 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import io.circe.generic.auto._
 import org.bson.conversions.Bson
-import org.mongodb.scala.bson.Document
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
@@ -124,8 +123,7 @@ object ReadRoutes extends BaseRoute {
           val mongoPaginatedFilter = MongoPaginatedAggregation(
             MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
             mongoAggregateRequest.allowDiskUse,
-            pipeline.toList,
-            (document: Document) => document
+            pipeline.toList
           )
 
           val aggregateResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
@@ -139,7 +137,9 @@ object ReadRoutes extends BaseRoute {
   val distinctEndpoint = readCollectionEndpoint
     .in("distinct")
     .in(path[String]("field").description("The field for your distinct Request."))
+    .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Any]])
+    .out(PagingFunctions.pagingHeaderOutput)
     .summary("Distinct in Collection")
     .description("Distinct for Field in your MongoDatabase Collection")
     .tag("Read")
@@ -149,14 +149,23 @@ object ReadRoutes extends BaseRoute {
 
   def distinctInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Any]]] = {
+      parameter: (String, Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Any], PaginationInfo)]] = {
     Future.successful(
       Right(
         {
-          val dao       = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val documents = dao.distinct(parameter).resultList()
-          documents.map(BsonConverter.fromBson)
+          val fieldName   = "$" + parameter._1
+          val pagingInfo  = parameter._2
+          val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+          val page        = pagingInfo.page.getOrElse(1L)
+          val mongoDao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val response = MongoPaginatedAggregation(
+            dao = mongoDao,
+            allowDiskUse = true,
+            aggregationPipeline = List(Map("$group" -> Map("_id" -> fieldName, "field" -> Map("$first" -> fieldName))))
+          ).paginate(rowsPerPage, page)
+
+          (response.databaseObjects.map(document => BsonConverter.fromBson(document.get("field"))), response.paginationInfo)
         }
       )
     )

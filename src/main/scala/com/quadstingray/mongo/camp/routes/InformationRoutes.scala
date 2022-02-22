@@ -28,9 +28,7 @@ object InformationRoutes extends BaseRoute {
     .serverLogic(_ => createVersion())
 
   def createVersion(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Version]] = {
-    Future.successful(
-      Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate))
-    )
+    Future.successful(Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate)))
   }
 
   val databaseEndpoint = adminEndpoint
@@ -45,14 +43,10 @@ object InformationRoutes extends BaseRoute {
     .serverLogic(_ => _ => databaseList())
 
   def databaseList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(
-      Right(
-        {
-          val result = MongoDatabase.databaseProvider.databaseNames
-          result
-        }
-      )
-    )
+    Future.successful(Right({
+      val result = MongoDatabase.databaseProvider.databaseNames
+      result
+    }))
   }
 
   val collectionsEndpoint = securedEndpoint
@@ -67,18 +61,14 @@ object InformationRoutes extends BaseRoute {
     .serverLogic(user => _ => collectionList(user))
 
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(
-      Right(
-        {
-          val result           = MongoDatabase.databaseProvider.collectionNames()
-          val collectionGrants = userInformation.toResultUser.collectionGrant
-          result.filter(collection => {
-            val readCollections = collectionGrants.filter(_.read).map(_.collection)
-            userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.allCollections) || readCollections.contains(collection)
-          })
-        }
-      )
-    )
+    Future.successful(Right({
+      val result           = MongoDatabase.databaseProvider.collectionNames()
+      val collectionGrants = userInformation.toResultUser.collectionGrant
+      result.filter(collection => {
+        val readCollections = collectionGrants.filter(_.read).map(_.collection)
+        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.allCollections) || readCollections.contains(collection)
+      })
+    }))
   }
 
   val collectionStatusEndpoint = readCollectionEndpoint
@@ -96,20 +86,16 @@ object InformationRoutes extends BaseRoute {
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
-    Future.successful(
-      Right(
-        {
-          val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result = dao.collectionStatus.result()
-          if (parameter) {
-            result
-          }
-          else {
-            result.copy(map = Map())
-          }
-        }
-      )
-    )
+    Future.successful(Right({
+      val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val result = dao.collectionStatus.result()
+      if (parameter) {
+        result
+      }
+      else {
+        result.copy(map = Map())
+      }
+    }))
   }
 
   val databaseStatusEndpoint = adminEndpoint
@@ -125,14 +111,10 @@ object InformationRoutes extends BaseRoute {
     .serverLogic(_ => _ => databaseInfos())
 
   def databaseInfos(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
-    Future.successful(
-      Right(
-        {
-          val result = MongoDatabase.databaseProvider.databaseInfos
-          result
-        }
-      )
-    )
+    Future.successful(Right({
+      val result = MongoDatabase.databaseProvider.databaseInfos
+      result
+    }))
   }
 
   val informationRoutes = List(
