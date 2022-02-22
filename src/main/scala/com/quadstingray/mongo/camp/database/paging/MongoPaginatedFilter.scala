@@ -6,7 +6,7 @@ import sttp.model.StatusCode
 
 case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map()) {
 
-  def paginate(rows: Long, page: Long): DatabasePaginationResult[A] = {
+  def paginate(rows: Long, page: Long): PaginationResult[A] = {
     val count = countResult
     if (rows <= 0) {
       throw MongoCampException("rows per page must be greater then 0.", StatusCode.BadRequest)
@@ -17,7 +17,7 @@ case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map()
     val allPages     = Math.ceil(count.toDouble / rows).toInt
     val skip         = (page - 1) * rows
     val responseList = dao.find(filter, sort, projection, rows.toInt).skip(skip.toInt).resultList()
-    DatabasePaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
+    PaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
   }
 
   def countResult: Long = dao.count(filter).result()

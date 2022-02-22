@@ -1,10 +1,12 @@
 package com.quadstingray.mongo.camp.auth
 import com.quadstingray.mongo.camp.auth.AuthHolder.apiKeyLength
 import com.quadstingray.mongo.camp.database.MongoDatabase.{ userDao, userRolesDao }
+import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.MongoCampException
 import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userNotFoundException, userOrPasswordException }
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest.allCollections
 import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UpdateUserRoleRequest, UserInformation, UserRole }
+import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.model.Filters
 import sttp.model.StatusCode
@@ -114,23 +116,31 @@ class MongoAuthHolder extends AuthHolder {
     }
   }
 
-  override def allUsers(userToSearch: Option[String]): List[UserInformation] = {
+  override def allUsers(userToSearch: Option[String], pagingInfo: Paging): (List[UserInformation], PaginationInfo) = {
+    val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+    val page        = pagingInfo.page.getOrElse(1L)
     if (userToSearch.isEmpty) {
-      userDao.find().resultList()
+      val databasePage = MongoPaginatedFilter(userDao).paginate(rowsPerPage, page)
+      (databasePage.databaseObjects, databasePage.paginationInfo)
     }
     else {
-      val filter = Filters.regex(KeyUserId, s"(.*?)${userToSearch.get}(.*?)", "i")
-      userDao.find(filter).resultList()
+      val filter       = Filters.regex(KeyUserId, s"(.*?)${userToSearch.get}(.*?)", "i")
+      val databasePage = MongoPaginatedFilter(userDao, filter).paginate(rowsPerPage, page)
+      (databasePage.databaseObjects, databasePage.paginationInfo)
     }
   }
 
-  override def allUserRoles(userRoleToSearch: Option[String]): List[UserRole] = {
+  override def allUserRoles(userRoleToSearch: Option[String], pagingInfo: Paging): (List[UserRole], PaginationInfo) = {
+    val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+    val page        = pagingInfo.page.getOrElse(1L)
     if (userRoleToSearch.isEmpty) {
-      userRolesDao.find().resultList()
+      val databasePage = MongoPaginatedFilter(userRolesDao).paginate(rowsPerPage, page)
+      (databasePage.databaseObjects, databasePage.paginationInfo)
     }
     else {
-      val filter = Filters.regex(KeyName, s"(.*?)${userRoleToSearch.get}(.*?)", "i")
-      userRolesDao.find(filter).resultList()
+      val filter       = Filters.regex(KeyName, s"(.*?)${userRoleToSearch.get}(.*?)", "i")
+      val databasePage = MongoPaginatedFilter(userRolesDao, filter).paginate(rowsPerPage, page)
+      (databasePage.databaseObjects, databasePage.paginationInfo)
     }
   }
 

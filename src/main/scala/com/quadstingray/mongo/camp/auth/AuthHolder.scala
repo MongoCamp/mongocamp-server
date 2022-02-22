@@ -3,8 +3,10 @@ import com.github.blemale.scaffeine.Scaffeine
 import com.quadstingray.mongo.camp.BuildInfo
 import com.quadstingray.mongo.camp.auth.AuthHolder.expiringDuration
 import com.quadstingray.mongo.camp.config.Config
+import com.quadstingray.mongo.camp.database.paging.PaginationInfo
 import com.quadstingray.mongo.camp.exception.MongoCampException
 import com.quadstingray.mongo.camp.model.auth._
+import com.quadstingray.mongo.camp.routes.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
@@ -17,8 +19,8 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
 trait AuthHolder {
-  def allUsers(userToSearch: Option[String]): List[UserInformation]
-  def allUserRoles(userRoleToSearch: Option[String]): List[UserRole]
+  def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)
+  def allUserRoles(userRoleToSearch: Option[String], paging: Paging): (List[UserRole], PaginationInfo)
 
   def findUser(userId: String): UserInformation
   def findUser(userId: String, password: String): UserInformation

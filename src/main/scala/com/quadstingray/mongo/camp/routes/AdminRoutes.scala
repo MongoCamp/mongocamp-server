@@ -2,10 +2,12 @@ package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.auth.AuthHolder.isMongoDbAuthHolder
 import com.quadstingray.mongo.camp.auth.{ AuthHolder, MongoAuthHolder }
+import com.quadstingray.mongo.camp.database.paging.PaginationInfo
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
 import com.quadstingray.mongo.camp.model.JsonResult
 import com.quadstingray.mongo.camp.model.auth._
 import com.quadstingray.mongo.camp.routes.AuthRoutes.updateApiKey
+import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
@@ -22,17 +24,19 @@ object AdminRoutes extends BaseRoute {
   val listUsersEndpoint = adminBase
     .in("users")
     .in(query[Option[String]]("filter").description("filter after userId by contains"))
+    .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[UserProfile]])
+    .out(PagingFunctions.pagingHeaderOutput)
     .summary("List Users")
     .description("List all Users or filtered")
     .method(Method.GET)
     .name("listUsers")
-    .serverLogic(_ => filter => listUsers(filter))
+    .serverLogic(_ => parameter => listUsers(parameter))
 
-  def listUsers(filter: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[UserProfile]]] = {
+  def listUsers(parameter: (Option[String], Paging)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[UserProfile], PaginationInfo)]] = {
     Future.successful {
-      val users = AuthHolder.handler.allUsers(filter)
-      Right(users.map(_.toResultUser))
+      val users = AuthHolder.handler.allUsers(parameter._1, parameter._2)
+      Right(users._1.map(_.toResultUser), users._2)
     }
   }
 
@@ -133,16 +137,18 @@ object AdminRoutes extends BaseRoute {
   val listUserRolesEndpoint = adminBase
     .in("userroles")
     .in(query[Option[String]]("filter").description("filter after userId by contains"))
+    .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[UserRole]])
+    .out(PagingFunctions.pagingHeaderOutput)
     .summary("List UserRoles")
     .description("List all UserRolss or filtered")
     .method(Method.GET)
     .name("listUserRoles")
-    .serverLogic(_ => filter => listUserRoles(filter))
+    .serverLogic(_ => parameter => listUserRoles(parameter))
 
-  def listUserRoles(filter: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[UserRole]]] = {
+  def listUserRoles(parameter: (Option[String], Paging)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[UserRole], PaginationInfo)]] = {
     Future.successful {
-      val users = AuthHolder.handler.allUserRoles(filter)
+      val users = AuthHolder.handler.allUserRoles(parameter._1, parameter._2)
       Right(users)
     }
   }
