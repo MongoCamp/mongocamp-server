@@ -1,13 +1,11 @@
 package com.quadstingray.mongo.camp.auth
 import com.quadstingray.mongo.camp.config.Config
 import com.quadstingray.mongo.camp.database.paging.{ PaginationInfo, PaginationResult }
-import com.quadstingray.mongo.camp.exception.MongoCampException
-import com.quadstingray.mongo.camp.exception.MongoCampException.{ userNotFoundException, userOrPasswordException }
+import com.quadstingray.mongo.camp.exception.MongoCampException.userOrPasswordException
 import com.quadstingray.mongo.camp.model.auth.{ UserInformation, UserRole }
 import com.quadstingray.mongo.camp.routes.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.parser._
-import sttp.model.StatusCode
 
 class StaticAuthHolder extends AuthHolder with Config {
 
@@ -32,16 +30,12 @@ class StaticAuthHolder extends AuthHolder with Config {
       .getOrElse(throw userOrPasswordException)
   }
 
-  override def findUser(userId: String): UserInformation = {
-    users.find(user => user.userId.equalsIgnoreCase(userId)).getOrElse(throw userNotFoundException)
+  override def findUserOption(userId: String): Option[UserInformation] = {
+    users.find(user => user.userId.equalsIgnoreCase(userId))
   }
 
-  override def findUserByApiKey(apiKey: String): UserInformation = {
-    users
-      .find(user => user.apiKey.equals(Option(apiKey)))
-      .getOrElse(
-        throw MongoCampException("apikey does not exists", StatusCode.Unauthorized)
-      )
+  override def findUserByApiKeyOption(apiKey: String): Option[UserInformation] = {
+    users.find(user => user.apiKey.equals(Option(apiKey)))
   }
 
   override def findUserRoles(userRoles: List[String]): List[UserRole] = {

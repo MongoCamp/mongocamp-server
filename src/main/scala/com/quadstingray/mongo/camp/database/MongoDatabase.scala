@@ -1,6 +1,7 @@
 package com.quadstingray.mongo.camp.database
 import com.quadstingray.mongo.camp.BuildInfo
 import com.quadstingray.mongo.camp.config.Config
+import com.quadstingray.mongo.camp.interceptor.RequestLogging
 import com.quadstingray.mongo.camp.model.auth._
 import com.sfxcode.nosql.mongo.bson.codecs.CustomCodecProvider
 import com.sfxcode.nosql.mongo.database.{ DatabaseProvider, MongoConfig }
@@ -13,10 +14,11 @@ object MongoDatabase extends Config {
   lazy val collectionPrefix: String                   = globalConfigString("auth.prefix")
   private[database] lazy val CollectionNameUsers      = s"${MongoDatabase.collectionPrefix}users"
   private[database] lazy val CollectionNameUserRoles  = s"${MongoDatabase.collectionPrefix}user_roles"
-  private[database] lazy val CollectionNameRoleGrants = s"${MongoDatabase.collectionPrefix}role_grants"
+  private[database] lazy val CollectionNameRequestLog = s"${MongoDatabase.collectionPrefix}request_logging"
 
-  lazy val userDao: UserDao           = UserDao()
-  lazy val userRolesDao: UserRolesDao = UserRolesDao()
+  lazy val userDao: UserDao                     = UserDao()
+  lazy val userRolesDao: UserRolesDao           = UserRolesDao()
+  lazy val requestLoggingDao: RequestLoggingDao = RequestLoggingDao()
 
   lazy val databaseProvider: DatabaseProvider = {
     val host       = globalConfigString("connection.host")
@@ -34,6 +36,7 @@ object MongoDatabase extends Config {
     classOf[UserInformation],
     classOf[UserRole],
     classOf[CollectionGrant],
+    classOf[RequestLogging],
     CustomCodecProvider()
   )
 

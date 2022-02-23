@@ -3,7 +3,7 @@ import com.quadstingray.mongo.camp.auth.AuthHolder.apiKeyLength
 import com.quadstingray.mongo.camp.database.MongoDatabase.{ userDao, userRolesDao }
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.MongoCampException
-import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userNotFoundException, userOrPasswordException }
+import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userOrPasswordException }
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest.allCollections
 import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UpdateUserRoleRequest, UserInformation, UserRole }
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
@@ -52,11 +52,7 @@ class MongoAuthHolder extends AuthHolder {
     }
   }
 
-  override def findUser(userId: String): UserInformation = {
-    findUserOption(userId).getOrElse(throw userNotFoundException)
-  }
-
-  private def findUserOption(userId: String) = {
+  override def findUserOption(userId: String) = {
     userDao.find(KeyUserId, userId).resultOption()
   }
   override def findUser(userId: String, password: String): UserInformation = {
@@ -106,13 +102,13 @@ class MongoAuthHolder extends AuthHolder {
     }
   }
 
-  override def findUserByApiKey(apiKey: String): UserInformation = {
+  override def findUserByApiKeyOption(apiKey: String): Option[UserInformation] = {
     if (apiKey == null) {
       throw apiKeyException
     }
     else {
       val searchMap = Map(KeyApiKey -> apiKey)
-      userDao.find(searchMap).resultOption().getOrElse(throw apiKeyException)
+      userDao.find(searchMap).resultOption()
     }
   }
 
