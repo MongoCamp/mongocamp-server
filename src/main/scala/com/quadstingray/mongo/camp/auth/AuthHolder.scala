@@ -5,6 +5,7 @@ import com.quadstingray.mongo.camp.auth.AuthHolder.expiringDuration
 import com.quadstingray.mongo.camp.config.Config
 import com.quadstingray.mongo.camp.database.paging.PaginationInfo
 import com.quadstingray.mongo.camp.exception.MongoCampException
+import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userNotFoundException }
 import com.quadstingray.mongo.camp.model.auth._
 import com.quadstingray.mongo.camp.routes.parameter.paging.Paging
 import io.circe.generic.auto._
@@ -22,9 +23,12 @@ trait AuthHolder {
   def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)
   def allUserRoles(userRoleToSearch: Option[String], paging: Paging): (List[UserRole], PaginationInfo)
 
-  def findUser(userId: String): UserInformation
+  def findUserOption(userId: String): Option[UserInformation]
   def findUser(userId: String, password: String): UserInformation
-  def findUserByApiKey(apiKey: String): UserInformation
+  def findUserByApiKeyOption(apiKey: String): Option[UserInformation]
+
+  def findUserByApiKey(apiKey: String): UserInformation = findUserByApiKeyOption(apiKey).getOrElse(throw apiKeyException)
+  def findUser(userId: String): UserInformation         = findUserOption(userId).getOrElse(throw userNotFoundException)
 
   def findUserRoles(userRoles: List[String]): List[UserRole]
   def findUserRole(userRole: String): Option[UserRole]                = findUserRoles(List(userRole)).headOption
