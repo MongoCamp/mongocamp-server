@@ -14,8 +14,6 @@ object TestServer extends LazyLogging {
   private var mongoServerStarted = false
 
   System.setProperty("CONNECTION_HOST", "localhost")
-//  System.setProperty("CONNECTION_USERNAME", root)
-//  System.setProperty("CONNECTION_PASSWORD", foi0CIaZR78vdXSz9Ac)
   System.setProperty("CONNECTION_DATABASE", "test")
 
   while (!serverRunning) {
