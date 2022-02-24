@@ -8,7 +8,7 @@ package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model._
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object IndexApi {
@@ -43,7 +43,7 @@ class IndexApi(baseUrl: String) {
       duration: String,
       sortAscending: Option[Boolean] = None,
       name: Option[String] = None
-  ): Request[Either[ResponseError[Exception], IndexCreateResponse], Nothing] =
+  ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index/field/$fieldName/$duration/expiring?sortAscending=$sortAscending&name=$name")
       .contentType("application/json")
@@ -66,7 +66,7 @@ class IndexApi(baseUrl: String) {
   def createIndex(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, indexCreateRequest: IndexCreateRequest): Request[Either[ResponseError[Exception], IndexCreateResponse], Nothing] =
+  )(collectionName: String, indexCreateRequest: IndexCreateRequest) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index")
       .contentType("application/json")
@@ -96,7 +96,7 @@ class IndexApi(baseUrl: String) {
       fieldName: String,
       indexOptionsRequest: IndexOptionsRequest,
       sortAscending: Option[Boolean] = None
-  ): Request[Either[ResponseError[Exception], IndexCreateResponse], Nothing] =
+  ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index/field/$fieldName?sortAscending=$sortAscending")
       .contentType("application/json")
@@ -123,7 +123,7 @@ class IndexApi(baseUrl: String) {
       collectionName: String,
       fieldName: String,
       indexOptionsRequest: IndexOptionsRequest
-  ): Request[Either[ResponseError[Exception], IndexCreateResponse], Nothing] =
+  ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index/field/$fieldName/text")
       .contentType("application/json")
@@ -155,7 +155,7 @@ class IndexApi(baseUrl: String) {
       fieldName: String,
       sortAscending: Option[Boolean] = None,
       name: Option[String] = None
-  ): Request[Either[ResponseError[Exception], IndexCreateResponse], Nothing] =
+  ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index/field/$fieldName/unique?sortAscending=$sortAscending&name=$name")
       .contentType("application/json")
@@ -179,7 +179,7 @@ class IndexApi(baseUrl: String) {
   def deleteIndex(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, indexName: String): Request[Either[ResponseError[Exception], IndexDropResponse], Nothing] =
+  )(collectionName: String, indexName: String) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/mongodb/collections/$collectionName/index/$indexName")
       .contentType("application/json")
@@ -200,7 +200,7 @@ class IndexApi(baseUrl: String) {
     * @param indexName
     *   The name of your Index
     */
-  def index(apiKey: String, bearerToken: String)(collectionName: String, indexName: String): Request[Either[ResponseError[Exception], MongoIndex], Nothing] =
+  def index(apiKey: String, bearerToken: String)(collectionName: String, indexName: String) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/collections/$collectionName/index/$indexName")
       .contentType("application/json")
@@ -219,7 +219,7 @@ class IndexApi(baseUrl: String) {
     * @param collectionName
     *   The name of your MongoDb Collection
     */
-  def indexList(apiKey: String, bearerToken: String)(collectionName: String): Request[Either[ResponseError[Exception], Seq[MongoIndex]], Nothing] =
+  def indexList(apiKey: String, bearerToken: String)(collectionName: String) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/collections/$collectionName/index")
       .contentType("application/json")

@@ -9,7 +9,7 @@ package com.quadstingray.mongo.camp.client.api
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model.InsertResponse
 import com.quadstingray.mongo.camp.converter.CirceSchema
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object CreateApi {
@@ -34,7 +34,7 @@ class CreateApi(baseUrl: String) extends CirceSchema {
   def insert(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, requestBody: Map[String, String]): Request[Either[ResponseError[Exception], InsertResponse], Nothing] =
+  )(collectionName: String, requestBody: Map[String, String]) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/insert")
       .contentType("application/json")
@@ -58,7 +58,7 @@ class CreateApi(baseUrl: String) extends CirceSchema {
   def insertMany(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, requestBody: Seq[Map[String, Any]]): Request[Either[ResponseError[Exception], InsertResponse], Nothing] =
+  )(collectionName: String, requestBody: Seq[Map[String, Any]]) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/insert/many")
       .contentType("application/json")

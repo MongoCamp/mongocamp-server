@@ -8,7 +8,7 @@ package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model._
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object AuthApi {
@@ -26,7 +26,7 @@ class AuthApi(baseUrl: String) {
     * @param login
     *   Login Information for your Users
     */
-  def login(login: Login): Request[Either[ResponseError[Exception], LoginResult], Nothing] =
+  def login(login: Login) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/auth/login")
       .contentType("application/json")
@@ -41,7 +41,7 @@ class AuthApi(baseUrl: String) {
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
   def logout(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+  ) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/auth/logout")
       .contentType("application/json")
@@ -58,7 +58,7 @@ class AuthApi(baseUrl: String) {
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
   def logoutByDelete(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+  ) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/auth/logout")
       .contentType("application/json")
@@ -75,7 +75,7 @@ class AuthApi(baseUrl: String) {
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
   def refreshToken(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], LoginResult], Nothing] =
+  ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/auth/token/refresh")
       .contentType("application/json")
@@ -94,7 +94,7 @@ class AuthApi(baseUrl: String) {
     * @param userid
     *   UserId to update or create the ApiKey
     */
-  def updateApiKey(apiKey: String, bearerToken: String)(userid: Option[String] = None): Request[Either[ResponseError[Exception], JsonResultString], Nothing] =
+  def updateApiKey(apiKey: String, bearerToken: String)(userid: Option[String] = None) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/auth/profile/apikey?userid=$userid")
       .contentType("application/json")
@@ -114,7 +114,7 @@ class AuthApi(baseUrl: String) {
     */
   def updatePassword(apiKey: String, bearerToken: String)(
       passwordUpdateRequest: PasswordUpdateRequest
-  ): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+  ) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/auth/profile/password")
       .contentType("application/json")
@@ -132,7 +132,7 @@ class AuthApi(baseUrl: String) {
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
   def userProfile(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], UserProfile], Nothing] =
+  ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/auth/profile")
       .contentType("application/json")

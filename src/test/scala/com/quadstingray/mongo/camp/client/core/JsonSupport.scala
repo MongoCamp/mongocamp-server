@@ -7,6 +7,6 @@
 package com.quadstingray.mongo.camp.client.core
 
 import io.circe.generic.AutoDerivation
-import sttp.client.circe.SttpCirceApi
+import sttp.client3.circe.SttpCirceApi
 
 object JsonSupport extends SttpCirceApi with AutoDerivation with DateSerializers {}
