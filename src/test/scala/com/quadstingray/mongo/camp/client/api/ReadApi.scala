@@ -21,10 +21,10 @@ class ReadApi(baseUrl: String) extends CirceSchema {
 
   /** Aggregate in your MongoDatabase Collection
     *
-    * Expected answers: code 200 : Seq[Map] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per page
-    * x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: body, Invalid value for: query
-    * parameter rowsPerPage, Invalid value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle
-    * Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Seq[Map[String, Any]] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per
+    * page x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: body, Invalid value for: query
+    * parameter rowsPerPage, Invalid value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of
+    * the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -54,8 +54,8 @@ class ReadApi(baseUrl: String) extends CirceSchema {
     *
     * Expected answers: code 200 : Seq[String] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per page
     * x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: query parameter rowsPerPage, Invalid
-    * value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -84,10 +84,10 @@ class ReadApi(baseUrl: String) extends CirceSchema {
 
   /** Search in your MongoDatabase Collection
     *
-    * Expected answers: code 200 : Seq[Map] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per page
-    * x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: body, Invalid value for: query
-    * parameter rowsPerPage, Invalid value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle
-    * Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Seq[Map[String, Any]] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per
+    * page x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: body, Invalid value for: query
+    * parameter rowsPerPage, Invalid value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of
+    * the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *

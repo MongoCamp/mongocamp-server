@@ -7,7 +7,7 @@
 package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
-import com.quadstingray.mongo.camp.client.model.{ JsonResultBoolean, Login, LoginResult, UserProfile }
+import com.quadstingray.mongo.camp.client.model._
 import sttp.client._
 import sttp.model.Method
 
@@ -21,7 +21,7 @@ class AuthApi(baseUrl: String) {
   /** Login for one user and return Login Information
     *
     * Expected answers: code 200 : LoginResult code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * @param login
     *   Login Information for your Users
@@ -35,8 +35,8 @@ class AuthApi(baseUrl: String) {
 
   /** Logout an bearer Token
     *
-    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
@@ -52,8 +52,8 @@ class AuthApi(baseUrl: String) {
 
   /** Logout an bearer Token
     *
-    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
@@ -69,8 +69,8 @@ class AuthApi(baseUrl: String) {
 
   /** Refresh Token and return Login Information
     *
-    * Expected answers: code 200 : LoginResult code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : LoginResult code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
@@ -84,10 +84,50 @@ class AuthApi(baseUrl: String) {
       .bearer(bearerToken)
       .response(asJson[LoginResult])
 
+  /** Change ApiKey of User
+    *
+    * Expected answers: code 200 : JsonResultString code 400 : String (Invalid value for: query parameter userid) code 0 : ErrorDescription Headers :
+    * x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userid
+    *   UserId to update or create the ApiKey
+    */
+  def updateApiKey(apiKey: String, bearerToken: String)(userid: Option[String] = None): Request[Either[ResponseError[Exception], JsonResultString], Nothing] =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/auth/profile/apikey?userid=$userid")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[JsonResultString])
+
+  /** Change Password of User
+    *
+    * Expected answers: code 200 : JsonResultBoolean code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param passwordUpdateRequest
+    */
+  def updatePassword(apiKey: String, bearerToken: String)(
+      passwordUpdateRequest: PasswordUpdateRequest
+  ): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/auth/profile/password")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(passwordUpdateRequest)
+      .response(asJson[JsonResultBoolean])
+
   /** Return the User Profile
     *
-    * Expected answers: code 200 : UserProfile code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : UserProfile code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */

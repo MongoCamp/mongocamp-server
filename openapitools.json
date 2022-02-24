@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "5.3.1",
+    "generators":{
+      "mongo-camp-generator": {
+        "generatorName": "scala-sttp",
+        "output": "./src/test/scala/com/quadstingray/mongo/camp/client-project",
+        "inputSpec": "http://0.0.0.0:8082/docs/docs.yaml",
+        "additionalProperties": {
+          "mainPackage": "com.quadstingray.mongo.camp.client",
+          "artifactId": "client",
+          "groupId": "com.quadstingray.mongo.camp.rest.api",
+          "jsonLibrary": "circe",
+          "dateLibrary": "joda"
+        }
+      }
+    }
+  }
+}
