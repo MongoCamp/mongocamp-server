@@ -21,8 +21,8 @@ class IndexApi(baseUrl: String) {
   /** Create Index by Field for Collection
     *
     * Expected answers: code 200 : IndexCreateResponse code 400 : String (Invalid value for: query parameter sortAscending, Invalid value for: query parameter
-    * name) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende
-    * Informationen zum Fehler
+    * name) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info -
+    * Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -55,7 +55,7 @@ class IndexApi(baseUrl: String) {
   /** Create Index for Collection
     *
     * Expected answers: code 200 : IndexCreateResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -79,8 +79,8 @@ class IndexApi(baseUrl: String) {
   /** Create Index by Field for Collection
     *
     * Expected answers: code 200 : IndexCreateResponse code 400 : String (Invalid value for: query parameter sortAscending, Invalid value for: body) code 0 :
-    * ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum
-    * Fehler
+    * ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info - Additional information
+    * for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -109,7 +109,7 @@ class IndexApi(baseUrl: String) {
   /** Create Index by Field for Collection
     *
     * Expected answers: code 200 : IndexCreateResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -136,8 +136,8 @@ class IndexApi(baseUrl: String) {
   /** Create Index by Field for Collection
     *
     * Expected answers: code 200 : IndexCreateResponse code 400 : String (Invalid value for: query parameter sortAscending, Invalid value for: query parameter
-    * name) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende
-    * Informationen zum Fehler
+    * name) code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info -
+    * Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -166,8 +166,8 @@ class IndexApi(baseUrl: String) {
 
   /** Delete Index by Name for Collection
     *
-    * Expected answers: code 200 : IndexDropResponse code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : IndexDropResponse code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -190,8 +190,8 @@ class IndexApi(baseUrl: String) {
 
   /** Index by Name for Collection
     *
-    * Expected answers: code 200 : MongoIndex code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : MongoIndex code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -211,8 +211,8 @@ class IndexApi(baseUrl: String) {
 
   /** List all Indices for Collection
     *
-    * Expected answers: code 200 : Seq[MongoIndex] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Seq[MongoIndex] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *

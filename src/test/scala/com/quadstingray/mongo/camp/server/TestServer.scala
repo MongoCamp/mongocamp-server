@@ -13,6 +13,11 @@ object TestServer extends LazyLogging {
   private var serverRunning      = false
   private var mongoServerStarted = false
 
+  System.setProperty("CONNECTION_HOST", "localhost")
+//  System.setProperty("CONNECTION_USERNAME", root)
+//  System.setProperty("CONNECTION_PASSWORD", foi0CIaZR78vdXSz9Ac)
+  System.setProperty("CONNECTION_DATABASE", "test")
+
   while (!serverRunning) {
     try {
       if (!mongoServerStarted) {
@@ -25,7 +30,8 @@ object TestServer extends LazyLogging {
         }
         mongoServerStarted = true
       }
-      val versionFuture   = TestAdditions.backend.send(InformationApi().version())
+      val versionRequest  = InformationApi().version()
+      val versionFuture   = TestAdditions.backend.send(versionRequest)
       val versionResponse = Await.result(versionFuture, 1.seconds)
       val version         = versionResponse.body.getOrElse(throw new Exception("error"))
       version

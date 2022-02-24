@@ -21,7 +21,7 @@ class DeleteApi(baseUrl: String) {
   /** Delete one Document in Collection
     *
     * Expected answers: code 200 : DeleteResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -44,8 +44,8 @@ class DeleteApi(baseUrl: String) {
 
   /** Delete all Document in Collection
     *
-    * Expected answers: code 200 : DeleteResponse code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : DeleteResponse code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -64,7 +64,7 @@ class DeleteApi(baseUrl: String) {
   /** Delete many Document in Collection
     *
     * Expected answers: code 200 : DeleteResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *

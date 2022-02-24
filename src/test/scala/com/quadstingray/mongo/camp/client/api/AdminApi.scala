@@ -7,7 +7,7 @@
 package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
-import com.quadstingray.mongo.camp.client.model.{ UserProfile, UserRole }
+import com.quadstingray.mongo.camp.client.model._
 import sttp.client._
 import sttp.model.Method
 
@@ -18,10 +18,86 @@ object AdminApi {
 
 class AdminApi(baseUrl: String) {
 
+  /** Add a new User
+    *
+    * Expected answers: code 200 : UserProfile code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userInformation
+    */
+  def addUser(apiKey: String, bearerToken: String)(userInformation: UserInformation): Request[Either[ResponseError[Exception], UserProfile], Nothing] =
+    basicRequest
+      .method(Method.PUT, uri"$baseUrl/admin/users")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(userInformation)
+      .response(asJson[UserProfile])
+
+  /** Add a new UserRole
+    *
+    * Expected answers: code 200 : UserRole code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userRole
+    */
+  def addUserRoles(apiKey: String, bearerToken: String)(userRole: UserRole): Request[Either[ResponseError[Exception], UserRole], Nothing] =
+    basicRequest
+      .method(Method.PUT, uri"$baseUrl/admin/userroles")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(userRole)
+      .response(asJson[UserRole])
+
+  /** Delete User
+    *
+    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userId
+    *   UserId to Delete
+    */
+  def deleteUser(apiKey: String, bearerToken: String)(userId: String): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+    basicRequest
+      .method(Method.DELETE, uri"$baseUrl/admin/users/$userId")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[JsonResultBoolean])
+
+  /** Delete UserRole
+    *
+    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userRoleName
+    *   UserRoleKey
+    */
+  def deleteUserRoles(apiKey: String, bearerToken: String)(userRoleName: String): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+    basicRequest
+      .method(Method.DELETE, uri"$baseUrl/admin/userroles/$userRoleName")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[JsonResultBoolean])
+
   /** Get UserProfile for user
     *
-    * Expected answers: code 200 : UserProfile code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : UserProfile code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -39,8 +115,8 @@ class AdminApi(baseUrl: String) {
 
   /** Get UserRole
     *
-    * Expected answers: code 200 : UserRole code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : UserRole code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -61,7 +137,7 @@ class AdminApi(baseUrl: String) {
     * Expected answers: code 200 : Seq[UserRole] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per page
     * x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: query parameter filter, Invalid
     * value for: query parameter rowsPerPage, Invalid value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -90,7 +166,7 @@ class AdminApi(baseUrl: String) {
     * Expected answers: code 200 : Seq[UserProfile] Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count elements per page
     * x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: query parameter filter, Invalid
     * value for: query parameter rowsPerPage, Invalid value for: query parameter page) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -113,5 +189,96 @@ class AdminApi(baseUrl: String) {
       .auth
       .bearer(bearerToken)
       .response(asJson[Seq[UserProfile]])
+
+  /** Change Password of User
+    *
+    * Expected answers: code 200 : JsonResultString code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userId
+    *   UserId to Update
+    */
+  def updateApiKeyForUser(apiKey: String, bearerToken: String)(userId: String): Request[Either[ResponseError[Exception], JsonResultString], Nothing] =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/admin/users/$userId/apikey")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[JsonResultString])
+
+  /** Change Password of User
+    *
+    * Expected answers: code 200 : JsonResultBoolean code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userId
+    *   UserId to Update
+    * @param passwordUpdateRequest
+    */
+  def updatePasswordForUser(
+      apiKey: String,
+      bearerToken: String
+  )(userId: String, passwordUpdateRequest: PasswordUpdateRequest): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/admin/users/$userId/password")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(passwordUpdateRequest)
+      .response(asJson[JsonResultBoolean])
+
+  /** Update UserRole
+    *
+    * Expected answers: code 200 : UserRole code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userRoleName
+    *   UserRoleKey
+    * @param updateUserRoleRequest
+    */
+  def updateUserRole(
+      apiKey: String,
+      bearerToken: String
+  )(userRoleName: String, updateUserRoleRequest: UpdateUserRoleRequest): Request[Either[ResponseError[Exception], UserRole], Nothing] =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/admin/userroles/$userRoleName")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(updateUserRoleRequest)
+      .response(asJson[UserRole])
+
+  /** Update UserRoles of User
+    *
+    * Expected answers: code 200 : UserProfile code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param userId
+    *   UserId to Update
+    * @param requestBody
+    */
+  def updateUserRolesForUser(
+      apiKey: String,
+      bearerToken: String
+  )(userId: String, requestBody: Seq[String]): Request[Either[ResponseError[Exception], UserProfile], Nothing] =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/admin/users/$userId/userroles")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(requestBody)
+      .response(asJson[UserProfile])
 
 }

@@ -21,7 +21,7 @@ class UpdateApi(baseUrl: String) {
   /** Replace one Document in Collection
     *
     * Expected answers: code 200 : ReplaceResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -45,7 +45,7 @@ class UpdateApi(baseUrl: String) {
   /** Update one Document in Collection
     *
     * Expected answers: code 200 : UpdateResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -69,7 +69,7 @@ class UpdateApi(baseUrl: String) {
   /** Update many Document in Collection
     *
     * Expected answers: code 200 : UpdateResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
-    * x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *

@@ -21,8 +21,8 @@ class InformationApi(baseUrl: String) {
 
   /** List of all Collections
     *
-    * Expected answers: code 200 : Seq[String] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Seq[String] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
@@ -39,7 +39,7 @@ class InformationApi(baseUrl: String) {
   /** Collection Status
     *
     * Expected answers: code 200 : CollectionStatus code 400 : String (Invalid value for: query parameter includeDetails) code 0 : ErrorDescription Headers :
-    * x-error-code - Error Code x-error-message - Textuelle Fehlermeldung x-error-additional-info - Weitergehende Informationen zum Fehler
+    * x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     *
@@ -62,8 +62,8 @@ class InformationApi(baseUrl: String) {
 
   /** List of all Databases Infos
     *
-    * Expected answers: code 200 : Seq[DatabaseInfo] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Seq[DatabaseInfo] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
@@ -79,8 +79,8 @@ class InformationApi(baseUrl: String) {
 
   /** List of all Databases
     *
-    * Expected answers: code 200 : Seq[String] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Seq[String] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
@@ -96,8 +96,8 @@ class InformationApi(baseUrl: String) {
 
   /** Version Info of the mongocamp API
     *
-    * Expected answers: code 200 : Version code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Textuelle Fehlermeldung
-    * x-error-additional-info - Weitergehende Informationen zum Fehler
+    * Expected answers: code 200 : Version code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
     */
   def version(
   ): Request[Either[ResponseError[Exception], Version], Nothing] =
