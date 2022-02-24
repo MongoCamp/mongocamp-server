@@ -8,7 +8,7 @@ package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model.{ ReplaceOrUpdateRequest, ReplaceResponse, UpdateResponse }
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object UpdateApi {
@@ -32,7 +32,7 @@ class UpdateApi(baseUrl: String) {
   def replace(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, replaceOrUpdateRequest: ReplaceOrUpdateRequest): Request[Either[ResponseError[Exception], ReplaceResponse], Nothing] =
+  )(collectionName: String, replaceOrUpdateRequest: ReplaceOrUpdateRequest) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/mongodb/collections/$collectionName/replace")
       .contentType("application/json")
@@ -56,7 +56,7 @@ class UpdateApi(baseUrl: String) {
   def update(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, replaceOrUpdateRequest: ReplaceOrUpdateRequest): Request[Either[ResponseError[Exception], UpdateResponse], Nothing] =
+  )(collectionName: String, replaceOrUpdateRequest: ReplaceOrUpdateRequest) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/mongodb/collections/$collectionName/update")
       .contentType("application/json")
@@ -80,7 +80,7 @@ class UpdateApi(baseUrl: String) {
   def updateMany(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, replaceOrUpdateRequest: ReplaceOrUpdateRequest): Request[Either[ResponseError[Exception], UpdateResponse], Nothing] =
+  )(collectionName: String, replaceOrUpdateRequest: ReplaceOrUpdateRequest) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/mongodb/collections/$collectionName/update/many")
       .contentType("application/json")

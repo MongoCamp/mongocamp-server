@@ -8,7 +8,7 @@ package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model.DeleteResponse
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object DeleteApi {
@@ -32,7 +32,7 @@ class DeleteApi(baseUrl: String) {
   def delete(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, requestBody: Map[String, String]): Request[Either[ResponseError[Exception], DeleteResponse], Nothing] =
+  )(collectionName: String, requestBody: Map[String, String]) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/mongodb/collections/$collectionName/delete")
       .contentType("application/json")
@@ -52,7 +52,7 @@ class DeleteApi(baseUrl: String) {
     * @param collectionName
     *   The name of your MongoDb Collection
     */
-  def deleteAll(apiKey: String, bearerToken: String)(collectionName: String): Request[Either[ResponseError[Exception], DeleteResponse], Nothing] =
+  def deleteAll(apiKey: String, bearerToken: String)(collectionName: String) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/mongodb/collections/$collectionName/delete/all")
       .contentType("application/json")
@@ -75,7 +75,7 @@ class DeleteApi(baseUrl: String) {
   def deleteMany(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, requestBody: Map[String, String]): Request[Either[ResponseError[Exception], DeleteResponse], Nothing] =
+  )(collectionName: String, requestBody: Map[String, String]) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/mongodb/collections/$collectionName/delete/many")
       .contentType("application/json")

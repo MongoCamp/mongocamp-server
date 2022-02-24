@@ -9,7 +9,7 @@ package com.quadstingray.mongo.camp.client.api
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model.{ MongoAggregateRequest, MongoFindRequest }
 import com.quadstingray.mongo.camp.converter.CirceSchema
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object ReadApi {
@@ -40,7 +40,7 @@ class ReadApi(baseUrl: String) extends CirceSchema {
       mongoAggregateRequest: MongoAggregateRequest,
       rowsPerPage: Option[Long] = None,
       page: Option[Long] = None
-  ): Request[Either[ResponseError[Exception], Seq[Map[String, Any]]], Nothing] =
+  ) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/$collectionName/aggregate?rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")
@@ -73,7 +73,7 @@ class ReadApi(baseUrl: String) extends CirceSchema {
       field: String,
       rowsPerPage: Option[Long] = None,
       page: Option[Long] = None
-  ): Request[Either[ResponseError[Exception], Seq[String]], Nothing] =
+  ) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/$collectionName/distinct/$field?rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")
@@ -103,7 +103,7 @@ class ReadApi(baseUrl: String) extends CirceSchema {
       mongoFindRequest: MongoFindRequest,
       rowsPerPage: Option[Long] = None,
       page: Option[Long] = None
-  ): Request[Either[ResponseError[Exception], Seq[Map[String, Any]]], Nothing] =
+  ) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/$collectionName/find?rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")

@@ -8,7 +8,7 @@ package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model._
-import sttp.client._
+import sttp.client3._
 import sttp.model.Method
 
 object AdminApi {
@@ -27,7 +27,7 @@ class AdminApi(baseUrl: String) {
     *
     * @param userInformation
     */
-  def addUser(apiKey: String, bearerToken: String)(userInformation: UserInformation): Request[Either[ResponseError[Exception], UserProfile], Nothing] =
+  def addUser(apiKey: String, bearerToken: String)(userInformation: UserInformation) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/admin/users")
       .contentType("application/json")
@@ -46,7 +46,7 @@ class AdminApi(baseUrl: String) {
     *
     * @param userRole
     */
-  def addUserRoles(apiKey: String, bearerToken: String)(userRole: UserRole): Request[Either[ResponseError[Exception], UserRole], Nothing] =
+  def addUserRoles(apiKey: String, bearerToken: String)(userRole: UserRole) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/admin/userroles")
       .contentType("application/json")
@@ -66,7 +66,7 @@ class AdminApi(baseUrl: String) {
     * @param userId
     *   UserId to Delete
     */
-  def deleteUser(apiKey: String, bearerToken: String)(userId: String): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+  def deleteUser(apiKey: String, bearerToken: String)(userId: String) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/admin/users/$userId")
       .contentType("application/json")
@@ -85,7 +85,7 @@ class AdminApi(baseUrl: String) {
     * @param userRoleName
     *   UserRoleKey
     */
-  def deleteUserRoles(apiKey: String, bearerToken: String)(userRoleName: String): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+  def deleteUserRoles(apiKey: String, bearerToken: String)(userRoleName: String) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/admin/userroles/$userRoleName")
       .contentType("application/json")
@@ -104,7 +104,7 @@ class AdminApi(baseUrl: String) {
     * @param userId
     *   UserId to Update
     */
-  def getUser(apiKey: String, bearerToken: String)(userId: String): Request[Either[ResponseError[Exception], UserProfile], Nothing] =
+  def getUser(apiKey: String, bearerToken: String)(userId: String) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/admin/users/$userId")
       .contentType("application/json")
@@ -123,7 +123,7 @@ class AdminApi(baseUrl: String) {
     * @param userRoleName
     *   UserRoleKey
     */
-  def getUserRoles(apiKey: String, bearerToken: String)(userRoleName: String): Request[Either[ResponseError[Exception], UserRole], Nothing] =
+  def getUserRoles(apiKey: String, bearerToken: String)(userRoleName: String) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/admin/userroles/$userRoleName")
       .contentType("application/json")
@@ -152,7 +152,7 @@ class AdminApi(baseUrl: String) {
       filter: Option[String] = None,
       rowsPerPage: Option[Long] = None,
       page: Option[Long] = None
-  ): Request[Either[ResponseError[Exception], Seq[UserRole]], Nothing] =
+  ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/admin/userroles?filter=$filter&rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")
@@ -181,7 +181,7 @@ class AdminApi(baseUrl: String) {
       filter: Option[String] = None,
       rowsPerPage: Option[Long] = None,
       page: Option[Long] = None
-  ): Request[Either[ResponseError[Exception], Seq[UserProfile]], Nothing] =
+  ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/admin/users?filter=$filter&rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")
@@ -200,7 +200,7 @@ class AdminApi(baseUrl: String) {
     * @param userId
     *   UserId to Update
     */
-  def updateApiKeyForUser(apiKey: String, bearerToken: String)(userId: String): Request[Either[ResponseError[Exception], JsonResultString], Nothing] =
+  def updateApiKeyForUser(apiKey: String, bearerToken: String)(userId: String) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/admin/users/$userId/apikey")
       .contentType("application/json")
@@ -223,7 +223,7 @@ class AdminApi(baseUrl: String) {
   def updatePasswordForUser(
       apiKey: String,
       bearerToken: String
-  )(userId: String, passwordUpdateRequest: PasswordUpdateRequest): Request[Either[ResponseError[Exception], JsonResultBoolean], Nothing] =
+  )(userId: String, passwordUpdateRequest: PasswordUpdateRequest) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/admin/users/$userId/password")
       .contentType("application/json")
@@ -247,7 +247,7 @@ class AdminApi(baseUrl: String) {
   def updateUserRole(
       apiKey: String,
       bearerToken: String
-  )(userRoleName: String, updateUserRoleRequest: UpdateUserRoleRequest): Request[Either[ResponseError[Exception], UserRole], Nothing] =
+  )(userRoleName: String, updateUserRoleRequest: UpdateUserRoleRequest) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/admin/userroles/$userRoleName")
       .contentType("application/json")
@@ -271,7 +271,7 @@ class AdminApi(baseUrl: String) {
   def updateUserRolesForUser(
       apiKey: String,
       bearerToken: String
-  )(userId: String, requestBody: Seq[String]): Request[Either[ResponseError[Exception], UserProfile], Nothing] =
+  )(userId: String, requestBody: Seq[String]) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/admin/users/$userId/userroles")
       .contentType("application/json")

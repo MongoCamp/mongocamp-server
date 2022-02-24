@@ -8,7 +8,8 @@ package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model.{ CollectionStatus, DatabaseInfo, Version }
-import sttp.client._
+import com.quadstingray.mongo.camp.converter.CirceSchema
+import sttp.client3._
 import sttp.model.Method
 
 object InformationApi {
@@ -17,7 +18,7 @@ object InformationApi {
 
 }
 
-class InformationApi(baseUrl: String) {
+class InformationApi(baseUrl: String) extends CirceSchema {
 
   /** List of all Collections
     *
@@ -26,8 +27,7 @@ class InformationApi(baseUrl: String) {
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
-  def collectionList(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], Seq[String]], Nothing] =
+  def collectionList(apiKey: String, bearerToken: String)() =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/collections")
       .contentType("application/json")
@@ -51,7 +51,7 @@ class InformationApi(baseUrl: String) {
   def collectionStatus(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, includeDetails: Option[Boolean] = None): Request[Either[ResponseError[Exception], CollectionStatus], Nothing] =
+  )(collectionName: String, includeDetails: Option[Boolean] = None) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/collections/$collectionName/status?includeDetails=$includeDetails")
       .contentType("application/json")
@@ -67,8 +67,7 @@ class InformationApi(baseUrl: String) {
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
-  def databaseInfos(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], Seq[DatabaseInfo]], Nothing] =
+  def databaseInfos(apiKey: String, bearerToken: String)() =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/databases/infos")
       .contentType("application/json")
@@ -84,8 +83,7 @@ class InformationApi(baseUrl: String) {
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
-  def databaseList(apiKey: String, bearerToken: String)(
-  ): Request[Either[ResponseError[Exception], Seq[String]], Nothing] =
+  def databaseList(apiKey: String, bearerToken: String)() =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/databases")
       .contentType("application/json")
@@ -100,7 +98,7 @@ class InformationApi(baseUrl: String) {
     * x-error-additional-info - Additional information for the MongoCampException
     */
   def version(
-  ): Request[Either[ResponseError[Exception], Version], Nothing] =
+  ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/version")
       .contentType("application/json")
