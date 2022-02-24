@@ -21,4 +21,39 @@ class InformationSuite extends BaseSuite {
     assertEquals(version.builtAt, new DateTime(BuildInfo.builtAtMillis))
   }
 
+  test("list all databases") {
+    val resultFuture   = TestAdditions.backend.send(InformationApi().databaseList("", bearerToken)())
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    assertEquals(response.size, 5)
+    assertEquals(response, List("admin", "config", "geodata", "local", "test"))
+  }
+
+  test("database infos") {
+    val resultFuture   = TestAdditions.backend.send(InformationApi().databaseInfos("", bearerToken)())
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    assertEquals(response.size, 5)
+    val databaseInfoGeoDataOption = response.find(_.name.equals("geodata"))
+    assertEquals(databaseInfoGeoDataOption.isDefined, true)
+    assertEquals(databaseInfoGeoDataOption.get.empty, false)
+    assert(databaseInfoGeoDataOption.get.sizeOnDisk > 36000)
+  }
+
+  test("list all collections") {
+    val resultFuture   = TestAdditions.backend.send(InformationApi().collectionList("", bearerToken)())
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    assertEquals(response.size, 5)
+    assertEquals(response, List("accounts", "mc_request_logging", "mc_user_roles", "mc_users", "users"))
+  }
+
+  test("collection status accounts") {
+    val resultFuture   = TestAdditions.backend.send(InformationApi().collectionStatus("", bearerToken)("accounts"))
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    assertEquals(response.size, 10105.0)
+    assertEquals(response.count, 100)
+  }
+
 }
