@@ -1,0 +1,26 @@
+version: '2'
+services:
+  mongo-db:
+    image: quadstingray/mongodb:5.0.6
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - /srv/docker/mongodb:/var/lib/mongodb
+    environment:
+      MONGO_ROOT_PWD: mySavePassword
+      MONGO_WIREDTIGER_CACHE_SIZE_GB: '4.21'
+      MONGO_EXTRA_ARGS: '--ipv6 --quiet'
+    restart: always
+  mongo-camp:
+    image: ghcr.io/quadstingray/mongocamp:0.3.2
+    ports:
+      - "8080:8080"
+    environment:
+      CONNECTION_HOST: mongo-db
+      CONNECTION_USERNAME: root
+      CONNECTION_PASSWORD: mySavePassword
+      CONNECTION_DATABASE: mongocamp
+      AUTH_HANDLER: static
+      AUTH_USERS: '["{\"userId\":\"test\", \"password\":\"test1234\", \"apiKey\":\"apiKey\", \"userRoles\" : [\"admin\",  \"test\"]}", "{\"userId\":\"admin\", \"password\":\"test1234\", \"apiKey\":\"apiKey\", \"userRoles\" : [\"admin\",  \"test\"]}"]'
+      AUTH_USERROLES: '["{\"name\": \"admin\", \"isAdmin\": true,  \"collectionGrants\": []}", "{\"name\": \"test\", \"isAdmin\": false, \"collectionGrants\" : [{\"collection\": \"test\", \"read\": true, \"write\": false, \"administrate\": false}, {\"collection\": \"test\", \"read\": false, \"write\": true, \"administrate\": true}]}"]'
+    restart: always
