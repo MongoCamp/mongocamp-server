@@ -34,7 +34,7 @@ class CreateApi(baseUrl: String) extends CirceSchema {
   def insert(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, requestBody: Map[String, String]) =
+  )(collectionName: String, requestBody: Map[String, Any]) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/insert")
       .contentType("application/json")

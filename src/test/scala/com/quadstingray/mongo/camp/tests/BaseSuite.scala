@@ -9,8 +9,11 @@ import scala.concurrent.duration.DurationInt
 
 class BaseSuite extends munit.FunSuite {
 
-  lazy val bearerToken: String = {
-    val request       = AuthApi().login(Login("admin", TestAdditions.adminPassword))
+  lazy val adminBearerToken: String    = generateBearerToken(TestAdditions.adminUser, TestAdditions.adminPassword)
+  lazy val testUserBearerToken: String = generateBearerToken(TestAdditions.testUser, TestAdditions.testPassword)
+
+  private def generateBearerToken(user: String, password: String) = {
+    val request       = AuthApi().login(Login(user, password))
     val loginResult   = TestAdditions.backend.send(request)
     val loginResponse = Await.result(loginResult, 1.seconds)
     val login         = loginResponse.body.getOrElse(throw new Exception("error"))
