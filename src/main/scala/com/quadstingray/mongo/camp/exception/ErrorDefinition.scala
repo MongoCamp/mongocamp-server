@@ -15,8 +15,8 @@ object ErrorDefinition extends CirceSchema {
   final lazy val errorHeaderParameter = header[Int](HeaderErrorCode)
     .example(100)
     .description("Error Code")
-    .and(header[String](HeaderErrorMessage).example("Error Message").description("Textuelle Fehlermeldung"))
-    .and(header[String](HeaderErrorAdditionalInfo).example("Additional Error Info").description("Weitergehende Informationen zum Fehler"))
+    .and(header[String](HeaderErrorMessage).example("Error Message").description("Message of the MongoCampException"))
+    .and(header[String](HeaderErrorAdditionalInfo).example("Additional Error Info").description("Additional information for the MongoCampException"))
     .mapTo[ErrorDescription]
 
   final lazy val errorEndpointDefinition = statusCode.and(jsonBody[ErrorDescription]).and(errorHeaderParameter)
