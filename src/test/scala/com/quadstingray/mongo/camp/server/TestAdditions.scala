@@ -3,6 +3,7 @@ import better.files.File
 import com.quadstingray.mongo.camp.auth.{ AuthHolder, MongoAuthHolder }
 import com.quadstingray.mongo.camp.converter.CirceSchema
 import com.quadstingray.mongo.camp.database.MongoDatabase
+import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UserInformation, UserRole }
 import com.sfxcode.nosql.mongo._
 import io.circe.parser.decode
 import org.joda.time.DateTime
@@ -15,19 +16,45 @@ object TestAdditions extends CirceSchema {
 
   lazy val backend = AkkaHttpBackend()
 
+  lazy val adminUser: String     = "admin"
   lazy val adminPassword: String = Random.alphanumeric.take(10).mkString
+
+  lazy val testUser: String     = "mongocamp_test"
+  lazy val testPassword: String = Random.alphanumeric.take(10).mkString
+
+  private var dataImported: Boolean = false
 
   case class MapCollectionDao(collectionName: String) extends MongoDAO[Map[String, Any]](MongoDatabase.databaseProvider, collectionName)
 
   def importData(): Boolean = {
-    MapCollectionDao("accounts").insertMany(readJson("/accounts.json")).result()
-    MapCollectionDao("users").insertMany(readJson("/users.json")).result()
-    val geoDataDao = MapCollectionDao("geodata:locations")
-    val geoJson    = readGeoDataJson()
-    geoDataDao.insertMany(geoJson).result()
-    geoDataDao.createIndex(Map("geodata" -> "2dsphere")).result()
-    MapCollectionDao("geodata:companies").insertMany(geoJson).result()
-    AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser("admin", adminPassword)
+    if (!dataImported) {
+      MapCollectionDao("accounts").insertMany(readJson("/accounts.json")).result()
+      MapCollectionDao("users").insertMany(readJson("/users.json")).result()
+      val geoDataDao = MapCollectionDao("geodata:locations")
+      val geoJson    = readGeoDataJson()
+      geoDataDao.insertMany(geoJson).result()
+      geoDataDao.createIndex(Map("geodata" -> "2dsphere")).result()
+      MapCollectionDao("geodata:companies").insertMany(geoJson).result()
+      MapCollectionDao("test").createIndexForField("index").result()
+      MapCollectionDao("admin-test").createIndexForField("index").result()
+
+      val authHolder = AuthHolder.handler.asInstanceOf[MongoAuthHolder]
+      authHolder.addUser(UserInformation(testUser, testPassword, None, List("test")))
+      authHolder.addUserRole(
+        UserRole(
+          "test",
+          isAdmin = false,
+          List(
+            CollectionGrant("geodata:locations", read = true, write = false, administrate = false),
+            CollectionGrant("accounts", read = true, write = true, administrate = false),
+            CollectionGrant("test", read = true, write = true, administrate = true)
+          )
+        )
+      )
+      authHolder.updatePasswordForUser(adminUser, adminPassword)
+      dataImported = true
+    }
+    dataImported
   }
 
   def readJson(fileName: String): List[Map[String, Any]] = {

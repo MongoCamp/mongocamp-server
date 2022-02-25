@@ -10,10 +10,10 @@ import scala.concurrent.duration.DurationInt
 
 class InformationSuite extends BaseSuite {
 
-  val informationApi = InformationApi()
+  val informationApi: InformationApi = InformationApi()
 
   test("check version by api request") {
-    val versionFuture   = TestAdditions.backend.send(InformationApi().version())
+    val versionFuture   = TestAdditions.backend.send(informationApi.version())
     val versionResponse = Await.result(versionFuture, 1.seconds)
     val version         = versionResponse.body.getOrElse(throw new Exception("error"))
     assertEquals(version.name, BuildInfo.name)
@@ -21,16 +21,16 @@ class InformationSuite extends BaseSuite {
     assertEquals(version.builtAt, new DateTime(BuildInfo.builtAtMillis))
   }
 
-  test("list all databases") {
-    val resultFuture   = TestAdditions.backend.send(InformationApi().databaseList("", bearerToken)())
+  test("list all databases as admin") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.databaseList("", adminBearerToken)())
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
     assertEquals(response.size, 5)
     assertEquals(response, List("admin", "config", "geodata", "local", "test"))
   }
 
-  test("database infos") {
-    val resultFuture   = TestAdditions.backend.send(InformationApi().databaseInfos("", bearerToken)())
+  test("database infos as admin") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.databaseInfos("", adminBearerToken)())
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
     assertEquals(response.size, 5)
@@ -40,20 +40,59 @@ class InformationSuite extends BaseSuite {
     assert(databaseInfoGeoDataOption.get.sizeOnDisk > 36000)
   }
 
-  test("list all collections") {
-    val resultFuture   = TestAdditions.backend.send(InformationApi().collectionList("", bearerToken)())
+  test("list all collections as admin") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.collectionList("", adminBearerToken)())
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
-    assertEquals(response.size, 5)
-    assertEquals(response, List("accounts", "mc_request_logging", "mc_user_roles", "mc_users", "users"))
+    assertEquals(response.size, 7)
+    assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_user_roles", "mc_users", "test", "users"))
   }
 
-  test("collection status accounts") {
-    val resultFuture   = TestAdditions.backend.send(InformationApi().collectionStatus("", bearerToken)("accounts"))
+  test("collection status accounts as admin") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.collectionStatus("", adminBearerToken)("accounts"))
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
     assertEquals(response.size, 10105.0)
     assertEquals(response.count, 100)
   }
 
+  test("list all databases as user") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.databaseList("", testUserBearerToken)())
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    assertEquals(responseResult.code.code, 401)
+    assertEquals(responseResult.header("x-error-message").isDefined, true)
+    assertEquals(responseResult.header("x-error-message").get, "user not authorized for request")
+  }
+
+  test("database infos as user") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.databaseInfos("", testUserBearerToken)())
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    assertEquals(responseResult.code.code, 401)
+    assertEquals(responseResult.header("x-error-message").isDefined, true)
+    assertEquals(responseResult.header("x-error-message").get, "user not authorized for request")
+  }
+
+  test("list all collections as user") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.collectionList("", testUserBearerToken)())
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    assertEquals(response.size, 2)
+    assertEquals(response, List("accounts", "test"))
+  }
+
+  test("collection status accounts as user") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.collectionStatus("", testUserBearerToken)("accounts"))
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    assertEquals(response.size, 10105.0)
+    assertEquals(response.count, 100)
+  }
+
+  test("collection status users as user") {
+    val resultFuture   = TestAdditions.backend.send(informationApi.collectionStatus("", testUserBearerToken)("users"))
+    val responseResult = Await.result(resultFuture, 1.seconds)
+    assertEquals(responseResult.code.code, 401)
+    assertEquals(responseResult.header("x-error-message").isDefined, true)
+    assertEquals(responseResult.header("x-error-message").get, "user not authorized for collection")
+  }
 }
