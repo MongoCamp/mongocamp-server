@@ -22,6 +22,24 @@ import scala.concurrent.Future
 
 object ReadRoutes extends BaseRoute {
 
+  val findAllEndpoint = readCollectionEndpoint
+    .in(PagingFunctions.pagingParameter)
+    .out(jsonBody[List[Map[String, Any]]])
+    .out(PagingFunctions.pagingHeaderOutput)
+    .summary("Data in Collection")
+    .description("Search in your MongoDatabase Collection")
+    .tag("Read")
+    .method(Method.GET)
+    .name("findAll")
+    .serverLogic(collectionRequest => parameter => findAllInCollection(collectionRequest, parameter))
+
+  def findAllInCollection(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
+    findInCollection(authorizedCollectionRequest, (MongoFindRequest(Map(), Map(), Map()), parameter))
+  }
+
   val findEndpoint = readCollectionEndpoint
     .in("find")
     .in(
@@ -171,6 +189,6 @@ object ReadRoutes extends BaseRoute {
     )
   }
 
-  lazy val readEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(findEndpoint, aggregateEndpoint, distinctEndpoint)
+  lazy val readEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(findAllEndpoint, findEndpoint, aggregateEndpoint, distinctEndpoint)
 
 }
