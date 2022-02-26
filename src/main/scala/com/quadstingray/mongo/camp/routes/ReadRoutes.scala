@@ -23,11 +23,12 @@ import scala.concurrent.Future
 object ReadRoutes extends BaseRoute {
 
   val findAllEndpoint = readCollectionEndpoint
+    .in("all")
     .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Data in Collection")
-    .description("Search in your MongoDatabase Collection")
+    .description("Get Data paginated from MongoDatabase Collection")
     .tag("Read")
     .method(Method.GET)
     .name("findAll")
