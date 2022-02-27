@@ -27,5 +27,5 @@ object InformationRoutes extends BaseRoute {
     Future.successful(Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate)))
   }
 
-  val informationRoutes = List(version)
+  val routes = List(version)
 }

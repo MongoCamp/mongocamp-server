@@ -81,7 +81,7 @@ object DatabaseRoutes extends RoutesPlugin {
     }))
   }
 
-  override def routes: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
     List(databaseEndpoint, databaseStatusEndpoint, databaseInfoEndpoint, deleteDatabaseEndpoint)
 
 }

@@ -261,7 +261,7 @@ object IndexRoutes extends BaseRoute {
     indexOptions
   }
 
-  lazy val indexEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(
     listIndexEndpoint,
     indexByNameEndpoint,
     createIndexEndpoint,

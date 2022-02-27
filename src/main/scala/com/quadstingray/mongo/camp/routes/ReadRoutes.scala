@@ -190,6 +190,6 @@ object ReadRoutes extends BaseRoute {
     )
   }
 
-  lazy val readEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(findAllEndpoint, findEndpoint, aggregateEndpoint, distinctEndpoint)
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(findAllEndpoint, findEndpoint, aggregateEndpoint, distinctEndpoint)
 
 }

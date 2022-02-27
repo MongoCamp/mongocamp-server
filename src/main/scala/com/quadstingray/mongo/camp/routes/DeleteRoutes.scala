@@ -98,6 +98,6 @@ object DeleteRoutes extends BaseRoute {
     )
   }
 
-  lazy val deleteEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(deleteEndpoint, deleteManyEndpoint, deleteAllEndpoint)
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(deleteEndpoint, deleteManyEndpoint, deleteAllEndpoint)
 
 }

@@ -134,6 +134,6 @@ object UpdateRoutes extends BaseRoute {
     )
   }
 
-  lazy val updateEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(replaceEndpoint, updateEndpoint, updateManyEndpoint)
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(replaceEndpoint, updateEndpoint, updateManyEndpoint)
 
 }

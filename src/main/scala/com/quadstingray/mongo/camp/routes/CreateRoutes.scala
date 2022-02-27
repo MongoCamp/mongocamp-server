@@ -80,6 +80,6 @@ object CreateRoutes extends BaseRoute {
     )
   }
 
-  lazy val createEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(insertEndpoint, insertManyEndpoint)
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(insertEndpoint, insertManyEndpoint)
 
 }

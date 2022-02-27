@@ -222,7 +222,7 @@ object AdminRoutes extends BaseRoute {
     }
   }
 
-  lazy val adminEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
     val routesByHolder: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
       if (isMongoDbAuthHolder) {
         List(

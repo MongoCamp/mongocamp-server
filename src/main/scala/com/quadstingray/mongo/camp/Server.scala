@@ -11,11 +11,11 @@ object Server extends App with RestServer {
 
   def listOfRoutePlugins: List[RoutesPlugin] = List(DatabaseRoutes, CollectionRoutes)
 
-  override lazy val serverEndpoints = InformationRoutes.informationRoutes ++
-    AuthRoutes.authEndpoints ++ AdminRoutes.adminEndpoints ++ listOfRoutePlugins.flatMap(
-      _.routes
-    ) ++ CreateRoutes.createEndpoints ++ ReadRoutes.readEndpoints ++
-    UpdateRoutes.updateEndpoints ++ DeleteRoutes.deleteEndpoints ++ IndexRoutes.indexEndpoints
+  override lazy val serverEndpoints = InformationRoutes.routes ++
+    AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ listOfRoutePlugins.flatMap(
+      _.endpoints
+    ) ++ CreateRoutes.endpoints ++ ReadRoutes.endpoints ++
+    UpdateRoutes.endpoints ++ DeleteRoutes.endpoints ++ IndexRoutes.endpoints
 
   startServer()
 

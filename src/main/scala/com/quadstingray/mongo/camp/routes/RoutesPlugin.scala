@@ -7,6 +7,6 @@ import scala.concurrent.Future
 
 trait RoutesPlugin extends BaseRoute {
 
-  def routes: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]
+  def endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]
 
 }
