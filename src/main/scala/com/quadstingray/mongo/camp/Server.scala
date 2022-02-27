@@ -1,6 +1,5 @@
 package com.quadstingray.mongo.camp
 
-import com.quadstingray.mongo.camp.routes.InformationRoutes.informationRoutes
 import com.quadstingray.mongo.camp.routes._
 import com.quadstingray.mongo.camp.server.RestServer
 
@@ -10,13 +9,13 @@ object Server extends App with RestServer {
 
   implicit val ex: ExecutionContext = ExecutionContext.global
 
-  def listOfRoutePlugins: List[RoutesPlugin] = List(DatabaseRoutes)
+  def listOfRoutePlugins: List[RoutesPlugin] = List(DatabaseRoutes, CollectionRoutes)
 
-  override lazy val serverEndpoints =
+  override lazy val serverEndpoints = InformationRoutes.informationRoutes ++
     AuthRoutes.authEndpoints ++ AdminRoutes.adminEndpoints ++ listOfRoutePlugins.flatMap(
       _.routes
-    ) ++ informationRoutes ++ CreateRoutes.createEndpoints ++ ReadRoutes.readEndpoints ++
-      UpdateRoutes.updateEndpoints ++ DeleteRoutes.deleteEndpoints ++ IndexRoutes.indexEndpoints
+    ) ++ CreateRoutes.createEndpoints ++ ReadRoutes.readEndpoints ++
+    UpdateRoutes.updateEndpoints ++ DeleteRoutes.deleteEndpoints ++ IndexRoutes.indexEndpoints
 
   startServer()
 

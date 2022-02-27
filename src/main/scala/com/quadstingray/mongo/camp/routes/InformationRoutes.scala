@@ -1,12 +1,8 @@
 package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.BuildInfo
-import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.Version
-import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.CollectionStatus
 import io.circe.generic.auto._
 import org.joda.time.DateTime
 import sttp.model.{ Method, StatusCode }
@@ -31,58 +27,5 @@ object InformationRoutes extends BaseRoute {
     Future.successful(Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate)))
   }
 
-  val collectionsEndpoint = securedEndpoint
-    .in(mongoDbPath)
-    .in("collections")
-    .out(jsonBody[List[String]])
-    .summary("List of Collections")
-    .description("List of all Collections")
-    .tag("Information")
-    .method(Method.GET)
-    .name("collectionList")
-    .serverLogic(user => _ => collectionList(user))
-
-  def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
-      val result           = MongoDatabase.databaseProvider.collectionNames()
-      val collectionGrants = userInformation.toResultUser.collectionGrant
-      result.filter(collection => {
-        val readCollections = collectionGrants.filter(_.read).map(_.collection)
-        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.allCollections) || readCollections.contains(collection)
-      })
-    }))
-  }
-
-  val collectionStatusEndpoint = readCollectionEndpoint
-    .in("status")
-    .in(query[Boolean]("includeDetails").description("Include all details for the Collection").default(false))
-    .out(jsonBody[CollectionStatus])
-    .summary("Status of Collection")
-    .description("Collection Status")
-    .tag("Information")
-    .method(Method.GET)
-    .name("collectionStatus")
-    .serverLogic(collectionRequest => filter => collectionStatus(collectionRequest, filter))
-
-  def collectionStatus(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: Boolean
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
-    Future.successful(Right({
-      val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-      val result = dao.collectionStatus.result()
-      if (parameter) {
-        result
-      }
-      else {
-        result.copy(map = Map())
-      }
-    }))
-  }
-
-  val informationRoutes = List(
-    version,
-    collectionsEndpoint,
-    collectionStatusEndpoint
-  )
+  val informationRoutes = List(version)
 }
