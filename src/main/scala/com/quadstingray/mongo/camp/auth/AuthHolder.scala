@@ -53,6 +53,7 @@ trait AuthHolder {
     val expirationDate = new DateTime().plusSeconds(expiringDuration.toSeconds.toInt)
     val token          = encodeToken(resultUser, expirationDate)
     AuthHolder.tokenCache.put(token, user)
+    // todo: persist token to database
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
     loginResult
   }
