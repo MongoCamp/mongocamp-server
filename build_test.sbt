@@ -9,7 +9,7 @@ Test / scalacOptions ++= Seq("-Yrangepos")
 // Test
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
 
-libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "3.4.2" % Test
+libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "3.4.3" % Test
 
 val sttClientVersion = "3.5.0"
 val circeVersion     = "0.14.1"
