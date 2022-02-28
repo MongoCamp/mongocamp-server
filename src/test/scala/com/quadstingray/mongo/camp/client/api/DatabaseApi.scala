@@ -26,8 +26,7 @@ class DatabaseApi(baseUrl: String) extends CirceSchema {
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
-  def databaseInfos(apiKey: String, bearerToken: String)(
-  ) =
+  def databaseInfos(apiKey: String, bearerToken: String)() =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/databases/infos")
       .contentType("application/json")
