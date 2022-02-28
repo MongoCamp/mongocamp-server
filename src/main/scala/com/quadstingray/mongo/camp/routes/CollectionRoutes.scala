@@ -110,6 +110,35 @@ object CollectionRoutes extends RoutesPlugin {
     )
   }
 
+  val deleteManyEndpoint = writeCollectionEndpoint
+    .in("documents")
+    .in("many")
+    .in("delete")
+    .in(jsonBody[Map[String, Any]])
+    .out(jsonBody[DeleteResponse])
+    .summary("Delete Many in Collection")
+    .description("Delete many Document in Collection")
+    .tag("Documents")
+    .method(Method.DELETE)
+    .name("deleteMany")
+    .serverLogic(collectionRequest => search => deleteManyInCollection(collectionRequest, search))
+
+  def deleteManyInCollection(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: Map[String, Any]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
+    Future.successful(
+      Right(
+        {
+          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val result         = dao.deleteMany(parameter).result()
+          val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
+          deleteResponse
+        }
+      )
+    )
+  }
+
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
     List(collectionsEndpoint, getCollectionStatusEndpoint, deleteCollectionStatusEndpoint, deleteAllEndpoint)
 

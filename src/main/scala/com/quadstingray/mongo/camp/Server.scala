@@ -14,7 +14,7 @@ object Server extends App with RestServer {
   override lazy val serverEndpoints = InformationRoutes.routes ++
     AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ listOfRoutePlugins.flatMap(
       _.endpoints
-    ) ++ UpdateRoutes.endpoints ++ DeleteRoutes.endpoints ++ IndexRoutes.endpoints
+    ) ++ IndexRoutes.endpoints
 
   startServer()
 
