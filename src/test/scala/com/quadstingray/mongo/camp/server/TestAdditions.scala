@@ -3,7 +3,7 @@ import better.files.File
 import com.quadstingray.mongo.camp.auth.{ AuthHolder, MongoAuthHolder }
 import com.quadstingray.mongo.camp.converter.CirceSchema
 import com.quadstingray.mongo.camp.database.MongoDatabase
-import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UserInformation, UserRole }
+import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, Role, UserInformation }
 import com.sfxcode.nosql.mongo._
 import io.circe.parser.decode
 import org.joda.time.DateTime
@@ -41,8 +41,8 @@ object TestAdditions extends CirceSchema {
 
       val authHolder = AuthHolder.handler.asInstanceOf[MongoAuthHolder]
       authHolder.addUser(UserInformation(testUser, testPassword, None, List("test")))
-      authHolder.addUserRole(
-        UserRole(
+      authHolder.addRole(
+        Role(
           "test",
           isAdmin = false,
           List(

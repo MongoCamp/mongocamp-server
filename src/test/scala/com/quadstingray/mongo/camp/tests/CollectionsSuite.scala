@@ -17,7 +17,7 @@ class CollectionsSuite extends BaseSuite {
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
     assertEquals(response.size, 7)
-    assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_user_roles", "mc_users", "test", "users"))
+    assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_roles", "mc_users", "test", "users"))
   }
 
   test("collection status accounts as admin") {

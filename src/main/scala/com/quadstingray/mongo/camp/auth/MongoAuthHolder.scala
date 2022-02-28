@@ -1,11 +1,11 @@
 package com.quadstingray.mongo.camp.auth
 import com.quadstingray.mongo.camp.auth.AuthHolder.apiKeyLength
-import com.quadstingray.mongo.camp.database.MongoDatabase.{ userDao, userRolesDao }
+import com.quadstingray.mongo.camp.database.MongoDatabase.{ rolesDao, userDao }
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.MongoCampException
 import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userOrPasswordException }
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest.allCollections
-import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, UpdateUserRoleRequest, UserInformation, UserRole }
+import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, Role, UpdateRoleRequest, UserInformation }
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.model.Filters
@@ -15,10 +15,10 @@ import scala.util.Random
 
 class MongoAuthHolder extends AuthHolder {
 
-  private val KeyUserId    = "userId"
-  private val KeyApiKey    = "apiKey"
-  private val KeyPassword  = "password"
-  private val KeyUserRoles = "userRoles"
+  private val KeyUserId   = "userId"
+  private val KeyApiKey   = "apiKey"
+  private val KeyPassword = "password"
+  private val KeyRoles    = "roles"
 
   private val KeyName = "name"
 
@@ -31,14 +31,14 @@ class MongoAuthHolder extends AuthHolder {
         val generatedUserId = "admin"
         val userRoleName    = "adminRole"
         userDao
-          .insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, userRoles = List(userRoleName)))
+          .insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, roles = List(userRoleName)))
           .result()
         userDao.createUniqueIndexForField(KeyUserId).result()
 
-        userRolesDao
-          .insertOne(UserRole(userRoleName, isAdmin = true, List(CollectionGrant(allCollections, read = true, write = true, administrate = true))))
+        rolesDao
+          .insertOne(Role(userRoleName, isAdmin = true, List(CollectionGrant(allCollections, read = true, write = true, administrate = true))))
           .result()
-        userRolesDao.createUniqueIndexForField(KeyName).result()
+        rolesDao.createUniqueIndexForField(KeyName).result()
 
         println("****************************************")
         println(s"* user: $generatedUserId")
@@ -59,9 +59,9 @@ class MongoAuthHolder extends AuthHolder {
     userDao.find(Map(KeyUserId -> userId, KeyPassword -> password)).resultOption().getOrElse(throw userOrPasswordException)
   }
 
-  override def findUserRoles(userRoles: List[String]): List[UserRole] = {
-    val searchMap = Map(KeyName -> Map("$in" -> userRoles))
-    userRolesDao.find(searchMap).resultList()
+  override def findRoles(roles: List[String]): List[Role] = {
+    val searchMap = Map(KeyName -> Map("$in" -> roles))
+    rolesDao.find(searchMap).resultList()
   }
 
   def addUser(userInformation: UserInformation): UserInformation = {
@@ -73,9 +73,9 @@ class MongoAuthHolder extends AuthHolder {
     findUser(userToAdd.userId, userToAdd.password)
   }
 
-  def updateUsersUserRoles(userId: String, userRoles: List[String]): UserInformation = {
+  def updateUsersRoles(userId: String, roles: List[String]): UserInformation = {
     val userInformation = findUser(userId)
-    userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(userRoles = userRoles)).result()
+    userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(roles = roles)).result()
     findUser(userId)
   }
 
@@ -126,42 +126,42 @@ class MongoAuthHolder extends AuthHolder {
     }
   }
 
-  override def allUserRoles(userRoleToSearch: Option[String], pagingInfo: Paging): (List[UserRole], PaginationInfo) = {
+  override def allRoles(roleToSearch: Option[String], pagingInfo: Paging): (List[Role], PaginationInfo) = {
     val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
     val page        = pagingInfo.page.getOrElse(1L)
-    if (userRoleToSearch.isEmpty) {
-      val databasePage = MongoPaginatedFilter(userRolesDao).paginate(rowsPerPage, page)
+    if (roleToSearch.isEmpty) {
+      val databasePage = MongoPaginatedFilter(rolesDao).paginate(rowsPerPage, page)
       (databasePage.databaseObjects, databasePage.paginationInfo)
     }
     else {
-      val filter       = Filters.regex(KeyName, s"(.*?)${userRoleToSearch.get}(.*?)", "i")
-      val databasePage = MongoPaginatedFilter(userRolesDao, filter).paginate(rowsPerPage, page)
+      val filter       = Filters.regex(KeyName, s"(.*?)${roleToSearch.get}(.*?)", "i")
+      val databasePage = MongoPaginatedFilter(rolesDao, filter).paginate(rowsPerPage, page)
       (databasePage.databaseObjects, databasePage.paginationInfo)
     }
   }
 
-  def addUserRole(userRole: UserRole): UserRole = {
-    if (findUserRole(userRole.name).isDefined) {
+  def addRole(role: Role): Role = {
+    if (findRole(role.name).isDefined) {
       throw MongoCampException("UserRole already exists.", StatusCode.BadRequest)
     }
-    userRolesDao.insertOne(userRole).result()
-    findUserRole(userRole.name).getOrElse(throw MongoCampException("could not create UserRole", StatusCode.BadRequest))
+    rolesDao.insertOne(role).result()
+    findRole(role.name).getOrElse(throw MongoCampException("could not create UserRole", StatusCode.BadRequest))
   }
 
-  def updateUserRole(userRoleKey: String, userRoleUpdate: UpdateUserRoleRequest): UserRole = {
-    val userRole = findUserRole(userRoleKey)
-    if (userRole.isEmpty) {
+  def updateRole(roleKey: String, roleUpdate: UpdateRoleRequest): Role = {
+    val role = findRole(roleKey)
+    if (role.isEmpty) {
       throw MongoCampException("UserRole not exists.", StatusCode.NotFound)
     }
     else {
-      val updated = userRole.get.copy(isAdmin = userRoleUpdate.isAdmin, collectionGrants = userRoleUpdate.collectionGrants)
-      userRolesDao.replaceOne(Map(KeyName -> userRoleKey), updated).result()
-      findUserRole(userRoleKey).getOrElse(throw MongoCampException("could not create UserRole", StatusCode.BadRequest))
+      val updated = role.get.copy(isAdmin = roleUpdate.isAdmin, collectionGrants = roleUpdate.collectionGrants)
+      rolesDao.replaceOne(Map(KeyName -> roleKey), updated).result()
+      findRole(roleKey).getOrElse(throw MongoCampException("could not create UserRole", StatusCode.BadRequest))
     }
   }
 
-  def deleteUserRole(userRole: String): Boolean = {
-    val deleteResult = userRolesDao.deleteOne(Map(KeyName -> userRole)).result()
+  def deleteRole(role: String): Boolean = {
+    val deleteResult = rolesDao.deleteOne(Map(KeyName -> role)).result()
     deleteResult.wasAcknowledged() && deleteResult.getDeletedCount == 1
   }
 }

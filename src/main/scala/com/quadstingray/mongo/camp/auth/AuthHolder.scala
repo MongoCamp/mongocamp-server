@@ -21,7 +21,7 @@ import scala.concurrent.duration.FiniteDuration
 
 trait AuthHolder {
   def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)
-  def allUserRoles(userRoleToSearch: Option[String], paging: Paging): (List[UserRole], PaginationInfo)
+  def allRoles(userRoleToSearch: Option[String], paging: Paging): (List[Role], PaginationInfo)
 
   def findUserOption(userId: String): Option[UserInformation]
   def findUser(userId: String, password: String): UserInformation
@@ -30,9 +30,9 @@ trait AuthHolder {
   def findUserByApiKey(apiKey: String): UserInformation = findUserByApiKeyOption(apiKey).getOrElse(throw apiKeyException)
   def findUser(userId: String): UserInformation         = findUserOption(userId).getOrElse(throw userNotFoundException)
 
-  def findUserRoles(userRoles: List[String]): List[UserRole]
-  def findUserRole(userRole: String): Option[UserRole]                = findUserRoles(List(userRole)).headOption
-  def findUserRoles(userInformation: UserInformation): List[UserRole] = findUserRoles(userInformation.userRoles)
+  def findRoles(userRoles: List[String]): List[Role]
+  def findRole(userRole: String): Option[Role]                = findRoles(List(userRole)).headOption
+  def findRoles(userInformation: UserInformation): List[Role] = findRoles(userInformation.roles)
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
 

@@ -13,11 +13,11 @@ object MongoDatabase extends Config {
 
   lazy val collectionPrefix: String                   = globalConfigString("auth.prefix")
   private[database] lazy val CollectionNameUsers      = s"${MongoDatabase.collectionPrefix}users"
-  private[database] lazy val CollectionNameUserRoles  = s"${MongoDatabase.collectionPrefix}user_roles"
+  private[database] lazy val CollectionNameRoles      = s"${MongoDatabase.collectionPrefix}roles"
   private[database] lazy val CollectionNameRequestLog = s"${MongoDatabase.collectionPrefix}request_logging"
 
   lazy val userDao: UserDao                     = UserDao()
-  lazy val userRolesDao: UserRolesDao           = UserRolesDao()
+  lazy val rolesDao: RolesDao                   = RolesDao()
   lazy val requestLoggingDao: RequestLoggingDao = RequestLoggingDao()
 
   lazy val databaseProvider: DatabaseProvider = {
@@ -34,7 +34,7 @@ object MongoDatabase extends Config {
 
   private val providerRegistry = fromProviders(
     classOf[UserInformation],
-    classOf[UserRole],
+    classOf[Role],
     classOf[CollectionGrant],
     classOf[RequestLogging],
     CustomCodecProvider()

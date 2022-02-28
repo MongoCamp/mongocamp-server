@@ -2,7 +2,7 @@ package com.quadstingray.mongo.camp.auth
 import com.quadstingray.mongo.camp.config.Config
 import com.quadstingray.mongo.camp.database.paging.{ PaginationInfo, PaginationResult }
 import com.quadstingray.mongo.camp.exception.MongoCampException.userOrPasswordException
-import com.quadstingray.mongo.camp.model.auth.{ UserInformation, UserRole }
+import com.quadstingray.mongo.camp.model.auth.{ Role, UserInformation }
 import com.quadstingray.mongo.camp.routes.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.parser._
@@ -17,9 +17,9 @@ class StaticAuthHolder extends AuthHolder with Config {
       .map(userInfo => userInfo.copy(password = encryptPassword(userInfo.password)))
   }
 
-  private lazy val userRoles: List[UserRole] = {
-    globalConfigStringList("auth.userRoles")
-      .map(string => decode[Option[UserRole]](string))
+  private lazy val roles: List[Role] = {
+    globalConfigStringList("auth.roles")
+      .map(string => decode[Option[Role]](string))
       .filter(_.isRight)
       .map(_.getOrElse(None).get)
   }
@@ -38,8 +38,8 @@ class StaticAuthHolder extends AuthHolder with Config {
     users.find(user => user.apiKey.equals(Option(apiKey)))
   }
 
-  override def findUserRoles(userRoles: List[String]): List[UserRole] = {
-    userRoles.flatMap(string => this.userRoles.find(_.name.equalsIgnoreCase(string)))
+  override def findRoles(roles: List[String]): List[Role] = {
+    roles.flatMap(string => this.roles.find(_.name.equalsIgnoreCase(string)))
   }
 
   override def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo) = {
@@ -47,9 +47,9 @@ class StaticAuthHolder extends AuthHolder with Config {
     PaginationResult.listToPaginationResult(filteredUsers, paging)
   }
 
-  override def allUserRoles(userRoleToSearch: Option[String], paging: Paging): (List[UserRole], PaginationInfo) = {
-    val filteredUserRoles = userRoles.filter(user => user.name.toLowerCase.contains(userRoleToSearch.getOrElse(user.name).toLowerCase()))
-    PaginationResult.listToPaginationResult(filteredUserRoles, paging)
+  override def allRoles(roleToSearch: Option[String], paging: Paging): (List[Role], PaginationInfo) = {
+    val filteredRoles = roles.filter(user => user.name.toLowerCase.contains(roleToSearch.getOrElse(user.name).toLowerCase()))
+    PaginationResult.listToPaginationResult(filteredRoles, paging)
   }
 
 }
