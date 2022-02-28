@@ -6,12 +6,9 @@ import com.quadstingray.mongo.camp.model.InsertResponse
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
-import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
-import sttp.tapir.server.ServerEndpoint
 
 import java.util.Date
 import scala.concurrent.Future
@@ -20,16 +17,16 @@ import scala.jdk.CollectionConverters.CollectionHasAsScala
 object CreateRoutes extends BaseRoute {
 
   val insertEndpoint = writeCollectionEndpoint
-    .in("insert")
+    .in("documents")
     .in(
       jsonBody[Map[String, Any]]
         .description("JSON Representation for your Document.")
         .example(Map("key1" -> "value", "key2" -> 0, "key2" -> true, "key3" -> Map("creationDate" -> new Date())))
     )
     .out(jsonBody[InsertResponse])
-    .summary("Collection Insert")
+    .summary("Insert Document")
     .description("Insert one Document in Collection")
-    .tag("Create")
+    .tag("Documents")
     .method(Method.PUT)
     .name("insert")
     .serverLogic(login => insert => insertInCollection(login, insert))
@@ -51,13 +48,14 @@ object CreateRoutes extends BaseRoute {
   }
 
   val insertManyEndpoint = writeCollectionEndpoint
+    .in("documents")
     .in("insert")
     .in("many")
     .in(jsonBody[List[Map[String, Any]]])
     .out(jsonBody[InsertResponse])
-    .summary("Collection Insert many")
+    .summary("Insert many Documents")
     .description("Insert many documents in Collection")
-    .tag("Create")
+    .tag("Documents")
     .method(Method.PUT)
     .name("insertMany")
     .serverLogic(connection => insertList => insertManyInCollection(connection, insertList))
@@ -79,7 +77,5 @@ object CreateRoutes extends BaseRoute {
       )
     )
   }
-
-  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(insertEndpoint, insertManyEndpoint)
 
 }

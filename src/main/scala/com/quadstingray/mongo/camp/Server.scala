@@ -9,13 +9,12 @@ object Server extends App with RestServer {
 
   implicit val ex: ExecutionContext = ExecutionContext.global
 
-  def listOfRoutePlugins: List[RoutesPlugin] = List(DatabaseRoutes, CollectionRoutes)
+  def listOfRoutePlugins: List[RoutesPlugin] = List(DatabaseRoutes, CollectionRoutes, DocumentRoutes, ReadRoutes)
 
   override lazy val serverEndpoints = InformationRoutes.routes ++
     AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ listOfRoutePlugins.flatMap(
       _.endpoints
-    ) ++ CreateRoutes.endpoints ++ ReadRoutes.endpoints ++
-    UpdateRoutes.endpoints ++ DeleteRoutes.endpoints ++ IndexRoutes.endpoints
+    ) ++ UpdateRoutes.endpoints ++ DeleteRoutes.endpoints ++ IndexRoutes.endpoints
 
   startServer()
 

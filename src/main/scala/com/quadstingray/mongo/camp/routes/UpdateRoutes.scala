@@ -97,13 +97,14 @@ object UpdateRoutes extends BaseRoute {
   }
 
   val updateManyEndpoint = writeCollectionEndpoint
+    .in("documents")
     .in("update")
     .in("many")
     .in(jsonBody[ReplaceOrUpdateRequest])
     .out(jsonBody[UpdateResponse])
     .summary("Update many in Collection")
     .description("Update many Document in Collection")
-    .tag("Update")
+    .tag("Documents")
     .method(Method.PATCH)
     .name("updateMany")
     .serverLogic(collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter))
@@ -117,11 +118,7 @@ object UpdateRoutes extends BaseRoute {
         {
           val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val documentMap = parameter.document
-          if (parameter.filter.isEmpty && !documentMap.contains("_id")) {
-            throw MongoCampException("no field _id for replace request found", StatusCode.BadRequest, ErrorCodes.idMissingForReplace)
-          }
-          val result =
-            dao.updateOne(parameter.filter, documentFromScalaMap(documentMap)).result()
+          val result      = dao.updateMany(parameter.filter, documentFromScalaMap(documentMap)).result()
           val insertedResult = UpdateResponse(
             result.wasAcknowledged(),
             Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,
@@ -134,6 +131,6 @@ object UpdateRoutes extends BaseRoute {
     )
   }
 
-  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(replaceEndpoint, updateEndpoint, updateManyEndpoint)
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(replaceEndpoint, updateEndpoint)
 
 }

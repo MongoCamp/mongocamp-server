@@ -2,8 +2,8 @@ package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.exception.ErrorDescription
-import com.quadstingray.mongo.camp.model.JsonResult
 import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, UserInformation }
+import com.quadstingray.mongo.camp.model.{ DeleteResponse, JsonResult }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.database.CollectionStatus
 import io.circe.generic.auto._
@@ -85,7 +85,32 @@ object CollectionRoutes extends RoutesPlugin {
     }))
   }
 
+  val deleteAllEndpoint = writeCollectionEndpoint
+    .in("clear")
+    .out(jsonBody[DeleteResponse])
+    .summary("Clear Collection")
+    .description("Delete all Document in Collection")
+    .tag("Collection")
+    .method(Method.DELETE)
+    .name("clearCollection")
+    .serverLogic(collectionRequest => _ => deleteAllInCollection(collectionRequest))
+
+  def deleteAllInCollection(
+      authorizedCollectionRequest: AuthorizedCollectionRequest
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
+    Future.successful(
+      Right(
+        {
+          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val result         = dao.deleteAll().result()
+          val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
+          deleteResponse
+        }
+      )
+    )
+  }
+
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
-    List(collectionsEndpoint, getCollectionStatusEndpoint, deleteCollectionStatusEndpoint)
+    List(collectionsEndpoint, getCollectionStatusEndpoint, deleteCollectionStatusEndpoint, deleteAllEndpoint)
 
 }

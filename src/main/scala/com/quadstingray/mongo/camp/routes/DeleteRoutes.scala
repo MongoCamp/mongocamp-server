@@ -45,13 +45,14 @@ object DeleteRoutes extends BaseRoute {
   }
 
   val deleteManyEndpoint = writeCollectionEndpoint
+    .in("documents")
     .in("delete")
     .in("many")
     .in(jsonBody[Map[String, Any]])
     .out(jsonBody[DeleteResponse])
     .summary("Delete Many in Collection")
     .description("Delete many Document in Collection")
-    .tag("Delete")
+    .tag("Documents")
     .method(Method.DELETE)
     .name("deleteMany")
     .serverLogic(collectionRequest => search => deleteManyInCollection(collectionRequest, search))
@@ -72,32 +73,6 @@ object DeleteRoutes extends BaseRoute {
     )
   }
 
-  val deleteAllEndpoint = writeCollectionEndpoint
-    .in("delete")
-    .in("all")
-    .out(jsonBody[DeleteResponse])
-    .summary("Delete all in Collection")
-    .description("Delete all Document in Collection")
-    .tag("Delete")
-    .method(Method.DELETE)
-    .name("deleteAll")
-    .serverLogic(collectionRequest => _ => deleteManyInCollection(collectionRequest))
-
-  def deleteManyInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result         = dao.deleteAll().result()
-          val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-          deleteResponse
-        }
-      )
-    )
-  }
-
-  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(deleteEndpoint, deleteManyEndpoint, deleteAllEndpoint)
+  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(deleteEndpoint)
 
 }
