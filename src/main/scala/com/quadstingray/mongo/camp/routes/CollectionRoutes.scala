@@ -47,7 +47,7 @@ object CollectionRoutes extends RoutesPlugin {
     .description("All Informations about a single Collection")
     .tag("Collection")
     .method(Method.GET)
-    .name("collectionInformation")
+    .name("getCollectionInformation")
     .serverLogic(collectionRequest => filter => collectionStatus(collectionRequest, filter))
 
   def collectionStatus(
@@ -103,35 +103,6 @@ object CollectionRoutes extends RoutesPlugin {
         {
           val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result         = dao.deleteAll().result()
-          val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-          deleteResponse
-        }
-      )
-    )
-  }
-
-  val deleteManyEndpoint = writeCollectionEndpoint
-    .in("documents")
-    .in("many")
-    .in("delete")
-    .in(jsonBody[Map[String, Any]])
-    .out(jsonBody[DeleteResponse])
-    .summary("Delete Many in Collection")
-    .description("Delete many Document in Collection")
-    .tag("Documents")
-    .method(Method.DELETE)
-    .name("deleteMany")
-    .serverLogic(collectionRequest => search => deleteManyInCollection(collectionRequest, search))
-
-  def deleteManyInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: Map[String, Any]
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result         = dao.deleteMany(parameter).result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
           deleteResponse
         }

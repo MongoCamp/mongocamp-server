@@ -14,7 +14,6 @@ import sttp.client3.circe.asJson
 import sttp.model.Method
 
 object IndexApi {
-
   def apply(baseUrl: String = com.quadstingray.mongo.camp.server.TestServer.serverBaseUrl) = new IndexApi(baseUrl)
 }
 

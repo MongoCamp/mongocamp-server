@@ -50,7 +50,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
     * @param includeDetails
     *   Include all details for the Collection
     */
-  def collectionInformation(
+  def getCollectionInformation(
       apiKey: String,
       bearerToken: String
   )(collectionName: String, includeDetails: Option[Boolean] = None) =

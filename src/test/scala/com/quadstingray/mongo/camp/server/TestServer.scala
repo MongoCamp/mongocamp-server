@@ -16,6 +16,8 @@ object TestServer extends LazyLogging {
   System.setProperty("CONNECTION_HOST", "localhost")
   System.setProperty("CONNECTION_DATABASE", "test")
 
+  var retries = 0
+
   while (!serverRunning) {
     try {
       if (!mongoServerStarted) {
@@ -31,8 +33,11 @@ object TestServer extends LazyLogging {
       val versionRequest  = InformationApi().version()
       val versionFuture   = TestAdditions.backend.send(versionRequest)
       val versionResponse = Await.result(versionFuture, 1.seconds)
-      val version         = versionResponse.body.getOrElse(throw new Exception("error"))
-      version
+      versionResponse.body.getOrElse(throw new Exception("error"))
+      if (retries > 60) {
+        throw new Exception(s"could not start server in $retries seconds")
+      }
+      retries += 1
       serverRunning = true
     }
     catch {

@@ -14,8 +14,7 @@ import sttp.client3.circe.asJson
 import sttp.model.Method
 
 object InformationApi {
-
-  def apply(baseUrl: String = "http://localhost") = new InformationApi(baseUrl)
+  def apply(baseUrl: String = com.quadstingray.mongo.camp.server.TestServer.serverBaseUrl) = new InformationApi(baseUrl)
 }
 
 class InformationApi(baseUrl: String) extends CirceSchema {

@@ -30,6 +30,7 @@ object TestAdditions extends CirceSchema {
     if (!dataImported) {
       MapCollectionDao("accounts").insertMany(readJson("/accounts.json")).result()
       MapCollectionDao("users").insertMany(readJson("/users.json")).result()
+      MapCollectionDao("users").insertMany(readJson("/users.json")).result()
       val geoDataDao = MapCollectionDao("geodata:locations")
       val geoJson    = readGeoDataJson()
       geoDataDao.insertMany(geoJson).result()
@@ -47,7 +48,8 @@ object TestAdditions extends CirceSchema {
           List(
             CollectionGrant("geodata:locations", read = true, write = false, administrate = false),
             CollectionGrant("accounts", read = true, write = true, administrate = false),
-            CollectionGrant("test", read = true, write = true, administrate = true)
+            CollectionGrant("test", read = true, write = true, administrate = true),
+            CollectionGrant("deleteTest", read = true, write = false, administrate = false)
           )
         )
       )
