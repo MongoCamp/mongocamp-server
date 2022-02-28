@@ -29,14 +29,14 @@ class MongoAuthHolder extends AuthHolder {
 
       if (userDao.count().result() == 0) {
         val generatedUserId = "admin"
-        val userRoleName    = "adminRole"
+        val roleName        = "adminRole"
         userDao
-          .insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, roles = List(userRoleName)))
+          .insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, roles = List(roleName)))
           .result()
         userDao.createUniqueIndexForField(KeyUserId).result()
 
         rolesDao
-          .insertOne(Role(userRoleName, isAdmin = true, List(CollectionGrant(allCollections, read = true, write = true, administrate = true))))
+          .insertOne(Role(roleName, isAdmin = true, List(CollectionGrant(allCollections, read = true, write = true, administrate = true))))
           .result()
         rolesDao.createUniqueIndexForField(KeyName).result()
 

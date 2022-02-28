@@ -118,7 +118,7 @@ object AdminRoutes extends BaseRoute {
     Future.successful(Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate))))
   }
 
-  val updateUserUserRolesEndpoint = adminBase
+  val updateUserRolesEndpoint = adminBase
     .in("users")
     .in(path[String]("userId").description("UserId to Update"))
     .in("roles")
@@ -128,94 +128,94 @@ object AdminRoutes extends BaseRoute {
     .description("Update Roles of User")
     .method(Method.PATCH)
     .name("updateRolesForUser")
-    .serverLogic(_ => loginToUpdate => updateUserRolesForUser(loginToUpdate))
+    .serverLogic(_ => loginToUpdate => updateRolesForUser(loginToUpdate))
 
-  def updateUserRolesForUser(loginToUpdate: (String, List[String])): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
+  def updateRolesForUser(loginToUpdate: (String, List[String])): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful(Right(AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersRoles(loginToUpdate._1, loginToUpdate._2).toResultUser))
   }
 
-  val listUserRolesEndpoint = adminBase
+  val listRolesEndpoint = adminBase
     .in("roles")
     .in(query[Option[String]]("filter").description("filter after userId by contains"))
     .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Role]])
     .out(PagingFunctions.pagingHeaderOutput)
-    .summary("List UserRoles")
-    .description("List all UserRolss or filtered")
+    .summary("List Roles")
+    .description("List all Roles or filtered")
     .method(Method.GET)
-    .name("listUserRoles")
-    .serverLogic(_ => parameter => listUserRoles(parameter))
+    .name("listRoles")
+    .serverLogic(_ => parameter => listRoles(parameter))
 
-  def listUserRoles(parameter: (Option[String], Paging)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Role], PaginationInfo)]] = {
+  def listRoles(parameter: (Option[String], Paging)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Role], PaginationInfo)]] = {
     Future.successful {
       val users = AuthHolder.handler.allRoles(parameter._1, parameter._2)
       Right(users)
     }
   }
 
-  val getUserRolesEndpoint = adminBase
+  val getRolesEndpoint = adminBase
     .in("roles")
-    .in(path[String]("userRoleName").description("UserRoleKey"))
+    .in(path[String]("roleName").description("UserRoleKey"))
     .out(jsonBody[Role])
-    .summary("Get UserRole")
-    .description("Get UserRole")
+    .summary("Get Role")
+    .description("Get Role")
     .method(Method.GET)
-    .name("getUserRoles")
-    .serverLogic(_ => userRole => getUserRole(userRole))
+    .name("getRoles")
+    .serverLogic(_ => role => getRole(role))
 
-  def addUserRole(userRole: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
+  def addRole(role: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
-      val role = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addRole(userRole)
-      Right(role)
+      val addResult = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addRole(role)
+      Right(addResult)
     }
   }
 
-  val addUserRolesEndpoint = adminBase
+  val addRolesEndpoint = adminBase
     .in("roles")
     .in(jsonBody[Role])
     .out(jsonBody[Role])
-    .summary("Add UserRole")
-    .description("Add a new UserRole")
+    .summary("Add Role")
+    .description("Add a new Role")
     .method(Method.PUT)
-    .name("addUserRoles")
-    .serverLogic(_ => userRole => addUserRole(userRole))
+    .name("addRoles")
+    .serverLogic(_ => role => addRole(role))
 
-  def getUserRole(userRole: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
+  def getRole(roleKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
-      val role = AuthHolder.handler.findRole(userRole).getOrElse(throw MongoCampException("Could not find UserRole", StatusCode.NotFound))
+      val role = AuthHolder.handler.findRole(roleKey).getOrElse(throw MongoCampException("Could not find UserRole", StatusCode.NotFound))
       Right(role)
     }
   }
 
-  val deleteUserRolesEndpoint = adminBase
+  val deleteRolesEndpoint = adminBase
     .in("roles")
-    .in(path[String]("userRoleName").description("UserRoleKey"))
+    .in(path[String]("roleName").description("RoleKey"))
     .out(jsonBody[JsonResult[Boolean]])
-    .summary("Delete UserRole")
-    .description("Delete UserRole")
+    .summary("Delete Role")
+    .description("Delete Role")
     .method(Method.DELETE)
-    .name("deleteUserRoles")
-    .serverLogic(_ => userRole => deleteUserRole(userRole))
+    .name("deleteRoles")
+    .serverLogic(_ => role => deleteRole(role))
 
-  def deleteUserRole(userRole: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def deleteRole(role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
-      val role = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteRole(userRole)
-      Right(JsonResult(role))
+      val deleted = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteRole(role)
+      Right(JsonResult(deleted))
     }
   }
 
-  val updateUserRolesEndpoint = adminBase
+  val updateRolesEndpoint = adminBase
     .in("roles")
-    .in(path[String]("userRoleName").description("UserRoleKey"))
+    .in(path[String]("roleName").description("RoleKey"))
     .in(jsonBody[UpdateRoleRequest])
     .out(jsonBody[Role])
-    .summary("Update UserRole")
-    .description("Update UserRole")
+    .summary("Update Role")
+    .description("Update Role")
     .method(Method.PATCH)
-    .name("updateUserRole")
-    .serverLogic(_ => parameter => updateUserRole(parameter))
+    .name("updateRole")
+    .serverLogic(_ => parameter => updateRole(parameter))
 
-  def updateUserRole(parameter: (String, UpdateRoleRequest)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
+  def updateRole(parameter: (String, UpdateRoleRequest)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
       val role = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateRole(parameter._1, parameter._2)
       Right(role)
@@ -229,18 +229,18 @@ object AdminRoutes extends BaseRoute {
           addUsersEndpoint,
           updateApiKeyEndpoint,
           updatePasswordEndpoint,
-          updateUserUserRolesEndpoint,
-          deleteUserEndpoint,
-          addUserRolesEndpoint,
           updateUserRolesEndpoint,
-          deleteUserRolesEndpoint
+          deleteUserEndpoint,
+          addRolesEndpoint,
+          updateRolesEndpoint,
+          deleteRolesEndpoint
         )
       }
       else {
         List()
       }
     }
-    routesByHolder ++ List(listUsersEndpoint, userEndpoint, listUserRolesEndpoint, getUserRolesEndpoint)
+    routesByHolder ++ List(listUsersEndpoint, userEndpoint, listRolesEndpoint, getRolesEndpoint)
   }
 
 }
