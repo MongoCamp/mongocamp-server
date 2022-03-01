@@ -1,6 +1,6 @@
 package com.quadstingray.mongo.camp.interceptor
 import com.quadstingray.mongo.camp.BuildInfo
-import com.quadstingray.mongo.camp.auth.AuthHolder
+import com.quadstingray.mongo.camp.auth.{ AuthHolder, TokenCache }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.exception.MongoCampException
 import com.sfxcode.nosql.mongo._
@@ -47,7 +47,7 @@ object RequestLogging {
             .map(auth => {
               if (auth.startsWith("Bearer ")) {
                 val token = auth.split(" ").last
-                AuthHolder.tokenCache.getIfPresent(token).map(_.userId).getOrElse("INVALID_TOKEN")
+                TokenCache.validateToken(token).map(_.userId).getOrElse("INVALID_TOKEN")
               }
               else {
                 "INVALID_AUTH"

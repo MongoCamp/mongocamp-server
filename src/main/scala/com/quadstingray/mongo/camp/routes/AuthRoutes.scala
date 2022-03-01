@@ -1,6 +1,6 @@
 package com.quadstingray.mongo.camp.routes
 import com.quadstingray.mongo.camp.auth.AuthHolder.isMongoDbAuthHolder
-import com.quadstingray.mongo.camp.auth.{ AuthHolder, MongoAuthHolder }
+import com.quadstingray.mongo.camp.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
 import com.quadstingray.mongo.camp.exception.{ ErrorCodes, ErrorDescription, MongoCampException }
 import com.quadstingray.mongo.camp.model.JsonResult
 import com.quadstingray.mongo.camp.model.auth._
@@ -51,7 +51,7 @@ object AuthRoutes extends BaseRoute {
   def logout(token: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
       val result = token.forall(tokenValue => {
-        AuthHolder.tokenCache.invalidate(tokenValue)
+        TokenCache.invalidateToken(tokenValue)
         true
       })
       Right(JsonResult(result))

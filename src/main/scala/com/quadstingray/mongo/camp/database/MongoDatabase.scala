@@ -15,10 +15,12 @@ object MongoDatabase extends Config {
   private[database] lazy val CollectionNameUsers      = s"${MongoDatabase.collectionPrefix}users"
   private[database] lazy val CollectionNameRoles      = s"${MongoDatabase.collectionPrefix}roles"
   private[database] lazy val CollectionNameRequestLog = s"${MongoDatabase.collectionPrefix}request_logging"
+  private[database] lazy val CollectionNameTokenCache = s"${MongoDatabase.collectionPrefix}token_cache"
 
   lazy val userDao: UserDao                     = UserDao()
   lazy val rolesDao: RolesDao                   = RolesDao()
   lazy val requestLoggingDao: RequestLoggingDao = RequestLoggingDao()
+  lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
 
   lazy val databaseProvider: DatabaseProvider = {
     val host       = globalConfigString("connection.host")
@@ -37,6 +39,7 @@ object MongoDatabase extends Config {
     classOf[Role],
     classOf[CollectionGrant],
     classOf[RequestLogging],
+    classOf[TokenCacheElement],
     CustomCodecProvider()
   )
 

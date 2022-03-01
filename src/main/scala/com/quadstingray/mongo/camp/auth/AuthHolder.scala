@@ -1,7 +1,5 @@
 package com.quadstingray.mongo.camp.auth
-import com.github.blemale.scaffeine.Scaffeine
 import com.quadstingray.mongo.camp.BuildInfo
-import com.quadstingray.mongo.camp.auth.AuthHolder.expiringDuration
 import com.quadstingray.mongo.camp.config.Config
 import com.quadstingray.mongo.camp.database.paging.PaginationInfo
 import com.quadstingray.mongo.camp.exception.MongoCampException
@@ -15,9 +13,7 @@ import pdi.jwt.{ JwtAlgorithm, JwtCirce, JwtClaim }
 import sttp.model.StatusCode
 
 import java.security.MessageDigest
-import java.time.{ Duration, Instant }
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.FiniteDuration
+import java.time.Instant
 
 trait AuthHolder {
   def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)
@@ -50,10 +46,9 @@ trait AuthHolder {
 
   def generateLoginResult(user: UserInformation) = {
     val resultUser     = user.toResultUser
-    val expirationDate = new DateTime().plusSeconds(expiringDuration.toSeconds.toInt)
+    val expirationDate = new DateTime().plusSeconds(TokenCache.expiringDuration.toSeconds.toInt)
     val token          = encodeToken(resultUser, expirationDate)
-    AuthHolder.tokenCache.put(token, user)
-    // todo: persist token to database
+    TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
     loginResult
   }
@@ -80,11 +75,7 @@ object AuthHolder extends Config {
 
   lazy val secret: String = globalConfigString("auth.secret")
 
-  lazy val expiringDuration: Duration = globalConfigDuration("auth.expiringDuration")
-  lazy val apiKeyLength: Int          = globalConfigInt("auth.apikeylength")
-
-  lazy val tokenCache =
-    Scaffeine().recordStats().expireAfterWrite(FiniteDuration(expiringDuration.getSeconds, TimeUnit.SECONDS)).build[String, UserInformation]()
+  lazy val apiKeyLength: Int = globalConfigInt("auth.apikeylength")
 
   def findUserInformationByLoginRequest(loginInformation: Any): UserInformation = {
     val userInformation = loginInformation match {
@@ -94,14 +85,14 @@ object AuthHolder extends Config {
           throw MongoCampException.unauthorizedException()
         }
         else {
-          val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
+          val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
           userInfo
         }
 
       case a: AuthInputWithBasic => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
       case a: AuthInputWithApiKey =>
         if (a.bearerToken.isDefined) {
-          val userInfo = AuthHolder.tokenCache.getIfPresent(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
+          val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
           userInfo
         }
         else if (a.apiKey.isDefined) {
