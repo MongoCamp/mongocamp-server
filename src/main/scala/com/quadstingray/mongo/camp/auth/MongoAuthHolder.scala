@@ -4,8 +4,8 @@ import com.quadstingray.mongo.camp.database.MongoDatabase.{ rolesDao, userDao }
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.MongoCampException
 import com.quadstingray.mongo.camp.exception.MongoCampException.{ apiKeyException, userOrPasswordException }
-import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest.allCollections
-import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, Role, UpdateRoleRequest, UserInformation }
+import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest.all
+import com.quadstingray.mongo.camp.model.auth.{ Grant, Role, UpdateRoleRequest, UserInformation }
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.model.Filters
@@ -36,7 +36,16 @@ class MongoAuthHolder extends AuthHolder {
         userDao.createUniqueIndexForField(KeyUserId).result()
 
         rolesDao
-          .insertOne(Role(roleName, isAdmin = true, List(CollectionGrant(allCollections, read = true, write = true, administrate = true))))
+          .insertOne(
+            Role(
+              roleName,
+              isAdmin = true,
+              List(
+                Grant(all, read = true, write = true, administrate = true, Grant.grantTypeCollection),
+                Grant(all, read = true, write = true, administrate = true, Grant.grantTypeBucket)
+              )
+            )
+          )
           .result()
         rolesDao.createUniqueIndexForField(KeyName).result()
 

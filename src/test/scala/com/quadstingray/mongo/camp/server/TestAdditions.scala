@@ -3,7 +3,7 @@ import better.files.File
 import com.quadstingray.mongo.camp.auth.{ AuthHolder, MongoAuthHolder }
 import com.quadstingray.mongo.camp.converter.CirceSchema
 import com.quadstingray.mongo.camp.database.MongoDatabase
-import com.quadstingray.mongo.camp.model.auth.{ CollectionGrant, Role, UserInformation }
+import com.quadstingray.mongo.camp.model.auth.{ Grant, Role, UserInformation }
 import com.sfxcode.nosql.mongo._
 import io.circe.parser.decode
 import org.joda.time.DateTime
@@ -46,10 +46,10 @@ object TestAdditions extends CirceSchema {
           "test",
           isAdmin = false,
           List(
-            CollectionGrant("geodata:locations", read = true, write = false, administrate = false),
-            CollectionGrant("accounts", read = true, write = true, administrate = false),
-            CollectionGrant("test", read = true, write = true, administrate = true),
-            CollectionGrant("deleteTest", read = true, write = false, administrate = false)
+            Grant("geodata:locations", read = true, write = false, administrate = false, Grant.grantTypeCollection),
+            Grant("accounts", read = true, write = true, administrate = false, Grant.grantTypeCollection),
+            Grant("test", read = true, write = true, administrate = true, Grant.grantTypeCollection),
+            Grant("deleteTest", read = true, write = false, administrate = false, Grant.grantTypeCollection)
           )
         )
       )

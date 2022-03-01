@@ -32,10 +32,10 @@ object CollectionRoutes extends RoutesPlugin {
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
       val result           = MongoDatabase.databaseProvider.collectionNames()
-      val collectionGrants = userInformation.toResultUser.collectionGrant
+      val collectionGrants = userInformation.toResultUser.grants
       result.filter(collection => {
-        val readCollections = collectionGrants.filter(_.read).map(_.collection)
-        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.allCollections) || readCollections.contains(collection)
+        val readCollections = collectionGrants.filter(_.read).map(_.name)
+        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection)
       })
     }))
   }

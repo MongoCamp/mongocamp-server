@@ -88,11 +88,11 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
       else {
-        userInformation.toResultUser.collectionGrant
+        userInformation.getCollectionGrants
           .find(collectionGrant => {
-            val collection = collectionGrant.collection
+            val collection = collectionGrant.name
             (collection.equalsIgnoreCase(loginInformation._2) || collection
-              .equalsIgnoreCase(AuthorizedCollectionRequest.allCollections)) && collectionGrant.read
+              .equalsIgnoreCase(AuthorizedCollectionRequest.all)) && collectionGrant.read
           })
           .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
@@ -107,11 +107,11 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
       else {
-        userInformation.toResultUser.collectionGrant
+        userInformation.getCollectionGrants
           .find(collectionGrant => {
-            val collection = collectionGrant.collection
+            val collection = collectionGrant.name
             (collection.equalsIgnoreCase(loginInformation._2) || collection
-              .equalsIgnoreCase(AuthorizedCollectionRequest.allCollections)) && collectionGrant.write
+              .equalsIgnoreCase(AuthorizedCollectionRequest.all)) && collectionGrant.write
           })
           .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
@@ -128,11 +128,11 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
       else {
-        userInformation.toResultUser.collectionGrant
+        userInformation.getCollectionGrants
           .find(collectionGrant => {
-            val collection = collectionGrant.collection
+            val collection = collectionGrant.name
             (collection.equalsIgnoreCase(loginInformation._2) || collection
-              .equalsIgnoreCase(AuthorizedCollectionRequest.allCollections)) && collectionGrant.administrate
+              .equalsIgnoreCase(AuthorizedCollectionRequest.all)) && collectionGrant.administrate
           })
           .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))

@@ -37,7 +37,7 @@ object MongoDatabase extends Config {
   private val providerRegistry = fromProviders(
     classOf[UserInformation],
     classOf[Role],
-    classOf[CollectionGrant],
+    classOf[Grant],
     classOf[RequestLogging],
     classOf[TokenCacheElement],
     CustomCodecProvider()
