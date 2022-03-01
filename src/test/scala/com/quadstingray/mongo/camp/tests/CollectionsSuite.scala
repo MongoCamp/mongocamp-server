@@ -16,8 +16,8 @@ class CollectionsSuite extends BaseSuite {
     val resultFuture   = TestAdditions.backend.send(databaseApi.collectionList("", adminBearerToken)())
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
-    assertEquals(response.size, 7)
-    assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_roles", "mc_users", "test", "users"))
+    assertEquals(response.size, 8)
+    assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_roles", "mc_token_cache", "mc_users", "test", "users"))
   }
 
   test("collection status accounts as admin") {

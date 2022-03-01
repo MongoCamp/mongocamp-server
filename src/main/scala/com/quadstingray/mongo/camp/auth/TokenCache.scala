@@ -16,7 +16,7 @@ object TokenCache {
 
   if (configBoolean("auth.cache.db")) {
     tokenCacheDao.createUniqueIndexForField(keyToken).result()
-    tokenCacheDao.createExpiringIndexForField(keyValidTo, 0.seconds).result()
+    tokenCacheDao.createExpiringIndexForField(keyValidTo, 1.seconds).result()
   }
 
   private lazy val cacheDuration: FiniteDuration = {
