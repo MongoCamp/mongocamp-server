@@ -58,12 +58,20 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: install pnpm
+        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
+      - name: install conventional-changelog-cli
+        run: pnpm install -g conventional-changelog-cli
+      - name: install conventional-github-release
+        run: pnpm install -g conventional-github-release
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: olafurpg/setup-scala@v10
         with:
           java-version: openjdk@1.17.0
       - name: Release
+        env:
+          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
         run: |
           if grep -q "SNAPSHOT" version.sbt
           then
