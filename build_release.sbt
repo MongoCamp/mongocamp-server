@@ -27,7 +27,8 @@ val setToMyNextVersion = ReleaseStep(action = st => {
   val orgContent         = source.mkString
   val newVersionString   = "\"version\": \"%s\",".format(st.get(versions).get._2)
   val packageJsonContent = orgContent.replaceAll("\"version\": \"(.*?)\",", newVersionString)
-  st.log.error(packageJsonContent)
+  packageJsonFile.delete()
+  packageJsonFile.writeAll(packageJsonContent)
   st
 })
 
@@ -36,13 +37,13 @@ releaseNextCommitMessage := s"ci: bump next version to ${runtimeVersion.value}"
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
-//  setReleaseVersion,
-//  releaseStepCommand("scalafmt"),
-//  gitAddAllTask,
-//  commitReleaseVersion,
-//  tagRelease,
-//  addGithubRelease,
-  setToMyNextVersion
-//  gitAddAllTask,
-//  pushChanges
+  setReleaseVersion,
+  releaseStepCommand("scalafmt"),
+  gitAddAllTask,
+  commitReleaseVersion,
+  tagRelease,
+  addGithubRelease,
+  setToMyNextVersion,
+  gitAddAllTask,
+  pushChanges
 )
