@@ -9,6 +9,7 @@ import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
+import io.circe.parser.decode
 import org.bson.types.ObjectId
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
@@ -25,6 +26,9 @@ object DocumentRoutes extends RoutesPlugin {
 
   val findAllEndpoint = readCollectionEndpoint
     .in("documents")
+    .in(query[String]("filter").description("MongoDB Filter Query by Default all filter").default("{}"))
+    .in(query[String]("sort").description("MongoDB sorting").default("{}"))
+    .in(query[String]("projection").description("MongoDB projection").default("{}"))
     .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
@@ -37,9 +41,12 @@ object DocumentRoutes extends RoutesPlugin {
 
   def findAllInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (Paging)
+      parameter: (String, String, String, Paging)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
-    findInCollection(authorizedCollectionRequest, (MongoFindRequest(Map(), Map(), Map()), parameter))
+    val filter     = decode[Map[String, Any]](parameter._1).getOrElse(Map())
+    val sort       = decode[Map[String, Any]](parameter._2).getOrElse(Map())
+    val projection = decode[Map[String, Any]](parameter._3).getOrElse(Map())
+    findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), parameter._4))
   }
 
   val findPostEndpoint = readCollectionEndpoint
@@ -56,9 +63,9 @@ object DocumentRoutes extends RoutesPlugin {
     .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
-    .summary("Search in Collection")
-    .description("Search in your MongoDatabase Collection")
-    .tag("Read")
+    .summary("Documents in Collection")
+    .description("Alternative to GET Route for more complex queries and URL max. Length")
+    .tag("Documents")
     .method(Method.POST)
     .name("find")
     .serverLogic(collectionRequest => parameter => findInCollection(collectionRequest, parameter))
