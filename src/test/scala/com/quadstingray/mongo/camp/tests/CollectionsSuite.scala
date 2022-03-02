@@ -1,6 +1,7 @@
 package com.quadstingray.mongo.camp.tests
 
 import com.quadstingray.mongo.camp.client.api.{ CollectionApi, DatabaseApi }
+import com.quadstingray.mongo.camp.client.model.{ MongoAggregateRequest, PipelineStage }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.sfxcode.nosql.mongo._
 
@@ -47,6 +48,28 @@ class CollectionsSuite extends BaseSuite {
     assertEquals(distinct.sortBy(f => f.toString.toLong), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
   }
 
+  test("aggregation on collection as admin") {
+    val geoNearMap: Map[String, Any] = Map(
+      "near"          -> Map("type" -> "Point", "coordinates" -> List(-113.4483806208, 44.0010717100)),
+      "distanceField" -> "dist.calculated",
+      "maxDistance"   -> 200,
+      "query"         -> Map("type" -> "company"),
+      "includeLocs"   -> "dist.location",
+      "spherical"     -> true
+    )
+    val aggregateRequest = MongoAggregateRequest(
+      List(
+        PipelineStage("geoNear", geoNearMap)
+      ),
+      allowDiskUse = true
+    )
+    val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", adminBearerToken)("geodata:locations", aggregateRequest))
+    assertEquals(aggreationResult.size, 1)
+    val headResponse = aggreationResult.head
+    assertEquals(headResponse("name").toString, "Mollis Dui Associates")
+    assertEquals(headResponse("type").toString, "company")
+  }
+
   test("list all collections as user") {
     val response = executeRequestToResponse(collectionApi.collectionList("", testUserBearerToken)())
     assertEquals(response.size, 3)
@@ -80,6 +103,28 @@ class CollectionsSuite extends BaseSuite {
     assertEquals(deleteResponseResult.code.code, 401)
     assertEquals(deleteResponseResult.header("x-error-message").isDefined, true)
     assertEquals(deleteResponseResult.header("x-error-message").get, "user not authorized for collection")
+  }
+
+  test("aggregation on collection as admin") {
+    val geoNearMap: Map[String, Any] = Map(
+      "near"          -> Map("type" -> "Point", "coordinates" -> List(-113.4483806208, 44.0010717100)),
+      "distanceField" -> "dist.calculated",
+      "maxDistance"   -> 200,
+      "query"         -> Map("type" -> "company"),
+      "includeLocs"   -> "dist.location",
+      "spherical"     -> true
+    )
+    val aggregateRequest = MongoAggregateRequest(
+      List(
+        PipelineStage("geoNear", geoNearMap)
+      ),
+      allowDiskUse = true
+    )
+    val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", testUserBearerToken)("geodata:locations", aggregateRequest))
+    assertEquals(aggreationResult.size, 1)
+    val headResponse = aggreationResult.head
+    assertEquals(headResponse("name").toString, "Mollis Dui Associates")
+    assertEquals(headResponse("type").toString, "company")
   }
 
 }

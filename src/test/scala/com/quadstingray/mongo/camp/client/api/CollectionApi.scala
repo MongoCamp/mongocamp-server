@@ -39,15 +39,17 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
   def aggregate(
       apiKey: String,
       bearerToken: String
-  )(collectionName: String, mongoAggregateRequest: MongoAggregateRequest, rowsPerPage: Option[Long] = None, page: Option[Long] = None) =
+  )(collectionName: String, mongoAggregateRequest: MongoAggregateRequest, rowsPerPage: Option[Long] = None, page: Option[Long] = None) = {
+    val requestBodyString = encodeAnyToJson(mongoAggregateRequest).toString() //todo: Validate on code gneration
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/$collectionName/aggregate?rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .body(mongoAggregateRequest)
+      .body(requestBodyString)
       .response(asJson[Seq[Map[String, Any]]])
+  }
 
   /** Delete all Document in Collection
     *

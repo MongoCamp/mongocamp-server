@@ -100,9 +100,18 @@ trait CirceSchema {
       case m: Map[String, _] => encodeMapStringAny(m)
       case seq: Seq[_]       => Json.arr(seq.map(e => encodeAnyToJson(e, deepth)): _*)
       case set: Set[_]       => Json.arr(set.map(e => encodeAnyToJson(e, deepth)).toList: _*)
-      case r: Document       => encodeAnyToJson(r.toMap)
+      case product: Product =>
+        val productElementNames = product.productElementNames.toList
+        val fieldMap = productElementNames
+          .map(key => {
+            val index = productElementNames.indexOf(key)
+            (key, product.productElement(index))
+          })
+          .toMap
+        encodeAnyToJson(fieldMap)
+      case r: Document => encodeAnyToJson(r.toMap)
       case any: Any =>
-        if (deepth < 5) {
+        if (deepth < 256) {
           encodeAnyToJson(any, deepth + 1)
         }
         else {

@@ -7,6 +7,6 @@
 package com.quadstingray.mongo.camp.client.model
 
 case class MongoAggregateRequest(
-    pipeline: Option[Seq[PipelineStage]] = None,
+    pipeline: Seq[PipelineStage],
     allowDiskUse: Boolean
 )

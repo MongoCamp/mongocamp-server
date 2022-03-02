@@ -8,5 +8,5 @@ package com.quadstingray.mongo.camp.client.model
 
 case class PipelineStage(
     stage: String,
-    value: String
+    value: Any
 )
