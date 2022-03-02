@@ -1,12 +1,17 @@
 package com.quadstingray.mongo.camp.routes
 
+import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
 import com.quadstingray.mongo.camp.database.MongoDatabase
+import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import com.quadstingray.mongo.camp.model.{ DeleteResponse, JsonResult }
+import com.quadstingray.mongo.camp.model.{ DeleteResponse, JsonResult, MongoAggregateRequest }
+import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.bson.BsonConverter
 import com.sfxcode.nosql.mongo.database.CollectionStatus
 import io.circe.generic.auto._
+import org.bson.conversions.Bson
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
@@ -110,7 +115,109 @@ object CollectionRoutes extends RoutesPlugin {
     )
   }
 
+  // todo: OpenAPI Generation could not build Sample
+  /*
+  {
+  "pipeline": [
+    {
+      "stage": "match",
+      "value": { "additionalProp2": "string" }
+    },
+    {
+      "stage": "count",
+      "value": "additionalProp1"
+    }
+  ],
+  "allowDiskUse": true
+}
+   */
+  val aggregateEndpoint = readCollectionEndpoint
+    .in("aggregate")
+    .in(
+      jsonBody[MongoAggregateRequest]
+      //        .example(
+      //          MongoAggregateRequest(List(PipelineStage("match", Map("additionalProp2" -> "string")), PipelineStage("count", "additionalProp1")))
+      //        )
+    )
+    .in(PagingFunctions.pagingParameter)
+    .out(jsonBody[List[Map[String, Any]]])
+    .out(PagingFunctions.pagingHeaderOutput)
+    .summary("Aggregate in Collection")
+    .description("Aggregate in your MongoDatabase Collection")
+    .tag("Collection")
+    .method(Method.POST)
+    .name("aggregate")
+    .serverLogic(collectionRequest => parameter => aggregateInCollection(collectionRequest, parameter))
+
+  def aggregateInCollection(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (MongoAggregateRequest, Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
+    Future.successful(
+      Right(
+        {
+          val mongoAggregateRequest = parameter._1
+          val pagingInfo            = parameter._2
+          val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+          val page                  = pagingInfo.page.getOrElse(1L)
+
+          val pipeline: Seq[Bson] = mongoAggregateRequest.pipeline.map(element => {
+            val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
+            mapToBson(Map(stage -> element.value))
+          })
+
+          val mongoPaginatedFilter = MongoPaginatedAggregation(
+            MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
+            mongoAggregateRequest.allowDiskUse,
+            pipeline.toList
+          )
+
+          val aggregateResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
+          (aggregateResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), aggregateResult.paginationInfo)
+
+        }
+      )
+    )
+  }
+
+  val distinctEndpoint = readCollectionEndpoint
+    .in("distinct")
+    .in(path[String]("field").description("The field for your distinct Request."))
+    .in(PagingFunctions.pagingParameter)
+    .out(jsonBody[List[Any]])
+    .out(PagingFunctions.pagingHeaderOutput)
+    .summary("Distinct in Collection")
+    .description("Distinct for Field in your MongoDatabase Collection")
+    .tag("Collection")
+    .method(Method.POST)
+    .name("distinct")
+    .serverLogic(collectionRequest => parameter => distinctInCollection(collectionRequest, parameter))
+
+  def distinctInCollection(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (String, Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Any], PaginationInfo)]] = {
+    Future.successful(
+      Right(
+        {
+          val fieldName   = "$" + parameter._1
+          val pagingInfo  = parameter._2
+          val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+          val page        = pagingInfo.page.getOrElse(1L)
+          val mongoDao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val response = MongoPaginatedAggregation(
+            dao = mongoDao,
+            allowDiskUse = true,
+            aggregationPipeline = List(Map("$group" -> Map("_id" -> fieldName, "field" -> Map("$first" -> fieldName))))
+          ).paginate(rowsPerPage, page)
+
+          (response.databaseObjects.map(document => BsonConverter.fromBson(document.get("field"))), response.paginationInfo)
+        }
+      )
+    )
+  }
+
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
-    List(collectionsEndpoint, getCollectionStatusEndpoint, deleteCollectionStatusEndpoint, deleteAllEndpoint)
+    List(collectionsEndpoint, getCollectionStatusEndpoint, deleteCollectionStatusEndpoint, deleteAllEndpoint, aggregateEndpoint, distinctEndpoint)
 
 }

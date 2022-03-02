@@ -1,11 +1,11 @@
 package com.quadstingray.mongo.camp.routes
 
+import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
 import com.quadstingray.mongo.camp.database.MongoDatabase
-import com.quadstingray.mongo.camp.database.paging.PaginationInfo
+import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
 import com.quadstingray.mongo.camp.model._
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
-import com.quadstingray.mongo.camp.routes.ReadRoutes.findInCollection
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
@@ -40,6 +40,53 @@ object DocumentRoutes extends RoutesPlugin {
       parameter: (Paging)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     findInCollection(authorizedCollectionRequest, (MongoFindRequest(Map(), Map(), Map()), parameter))
+  }
+
+  val findPostEndpoint = readCollectionEndpoint
+    .in("documents")
+    .in(
+      jsonBody[MongoFindRequest].example(
+        MongoFindRequest(
+          Map("additionalProp1" -> "string", "additionalProp2" -> 123),
+          Map("additionalProp2" -> -1),
+          Map("additionalProp1" -> 1, "additionalProp2"        -> 1)
+        )
+      )
+    )
+    .in(PagingFunctions.pagingParameter)
+    .out(jsonBody[List[Map[String, Any]]])
+    .out(PagingFunctions.pagingHeaderOutput)
+    .summary("Search in Collection")
+    .description("Search in your MongoDatabase Collection")
+    .tag("Read")
+    .method(Method.POST)
+    .name("find")
+    .serverLogic(collectionRequest => parameter => findInCollection(collectionRequest, parameter))
+
+  def findInCollection(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (MongoFindRequest, Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
+    Future.successful(
+      Right(
+        {
+          val searchRequest = parameter._1
+          val pagingInfo    = parameter._2
+          val rowsPerPage   = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+          val page          = pagingInfo.page.getOrElse(1L)
+
+          val mongoPaginatedFilter = MongoPaginatedFilter(
+            MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
+            searchRequest.filter,
+            searchRequest.sort,
+            searchRequest.projection
+          )
+
+          val findResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
+          (findResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), findResult.paginationInfo)
+        }
+      )
+    )
   }
 
   val insertEndpoint = writeCollectionEndpoint
@@ -225,7 +272,7 @@ object DocumentRoutes extends RoutesPlugin {
     map.put(element._1, element._2)
   }
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
-    List(findAllEndpoint) ++
+    List(findAllEndpoint, findPostEndpoint) ++
       DocumentManyRoutes.listOfManyEndpoints() ++
       List(insertEndpoint, getDocumentEndpoint, updateSingleDocumentEndpoint, updateDocumentFieldsEndpoint, deleteDocumentEndpoint)
 

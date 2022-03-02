@@ -27,6 +27,7 @@ object TokenCache {
       FiniteDuration(expiringDuration.getSeconds, TimeUnit.SECONDS)
     }
   }
+
   private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
   lazy val expiringDuration: Duration = globalConfigDuration("auth.expiringDuration")
 
@@ -36,6 +37,13 @@ object TokenCache {
       val userOption = tokenCacheDao
         .find(Map(keyToken -> token))
         .resultOption()
+        .filter(tokenCache => {
+          val result = new DateTime().isBefore(new DateTime(tokenCache.validTo))
+          if (!result) {
+            tokenCacheDao.deleteOne(Map(keyToken -> tokenCache.token)).asFuture()
+          }
+          result
+        })
         .map(tokenCache => handler.findUser(tokenCache.userId))
       if (userOption.isDefined) {
         internalTokenCache.put(token, userOption.get)
@@ -56,7 +64,7 @@ object TokenCache {
     internalTokenCache.put(token, userInformation)
     val element = TokenCacheElement(token, userInformation.userId, new DateTime().plusSeconds(expiringDuration.getSeconds.toInt).toDate)
     if (configBoolean("auth.cache.db")) {
-      tokenCacheDao.insertOne(element).resultOption()
+      tokenCacheDao.insertOne(element).asFuture()
     }
   }
 }
