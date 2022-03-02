@@ -9,6 +9,7 @@ package com.quadstingray.mongo.camp.client.api
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
 import com.quadstingray.mongo.camp.client.model.{ CollectionStatus, DeleteResponse, JsonResultBoolean, MongoAggregateRequest }
 import com.quadstingray.mongo.camp.converter.CirceSchema
+import io.circe
 import sttp.client3._
 import sttp.client3.circe.asJson
 import sttp.model.Method
@@ -75,7 +76,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
   def collectionList(apiKey: String, bearerToken: String)(
-  ) =
+  ): RequestT[Identity, Either[ResponseException[String, circe.Error], Seq[String]], Any] =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/collections")
       .contentType("application/json")
@@ -128,7 +129,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[Seq[String]])
+      .response(asJson[Seq[Any]])
 
   /** All Informations about a single Collection
     *

@@ -49,6 +49,7 @@ object TestAdditions extends CirceSchema {
             Grant("geodata:locations", read = true, write = false, administrate = false, Grant.grantTypeCollection),
             Grant("accounts", read = true, write = true, administrate = false, Grant.grantTypeCollection),
             Grant("test", read = true, write = true, administrate = true, Grant.grantTypeCollection),
+            Grant("users", read = true, write = true, administrate = true, Grant.grantTypeCollection),
             Grant("deleteTest", read = true, write = false, administrate = false, Grant.grantTypeCollection)
           )
         )
