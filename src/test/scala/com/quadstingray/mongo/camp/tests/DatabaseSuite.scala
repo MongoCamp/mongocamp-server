@@ -16,15 +16,15 @@ class DatabaseSuite extends BaseSuite {
     val resultFuture   = TestAdditions.backend.send(databaseApi.databaseList("", adminBearerToken)())
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
-    assertEquals(response.size, 6)
-    assertEquals(response, List("admin", "config", "geodata", "local", "otherDB", "test"))
+    assertEquals(response.size, 5)
+    assertEquals(response, List("admin", "config", "geodata", "local", "test"))
   }
 
   test("database infos as admin") {
     val resultFuture   = TestAdditions.backend.send(databaseApi.databaseInfos("", adminBearerToken)())
     val responseResult = Await.result(resultFuture, 1.seconds)
     val response       = responseResult.body.getOrElse(throw new Exception("error"))
-    assertEquals(response.size, 6)
+    assertEquals(response.size, 5)
     val databaseInfoGeoDataOption = response.find(_.name.equals("geodata"))
     assertEquals(databaseInfoGeoDataOption.isDefined, true)
     assertEquals(databaseInfoGeoDataOption.get.empty, false)

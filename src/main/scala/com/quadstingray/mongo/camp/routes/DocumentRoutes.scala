@@ -26,9 +26,9 @@ object DocumentRoutes extends RoutesPlugin {
 
   val findAllEndpoint = readCollectionEndpoint
     .in("documents")
-    .in(query[String]("filter").description("MongoDB Filter Query by Default all filter").default("{}"))
-    .in(query[String]("sort").description("MongoDB sorting").default("{}"))
-    .in(query[String]("projection").description("MongoDB projection").default("{}"))
+    .in(query[Option[String]]("filter").description("MongoDB Filter Query by Default all filter").example(Some("{}")))
+    .in(query[Option[String]]("sort").description("MongoDB sorting").example(Some("{}")))
+    .in(query[Option[String]]("projection").description("MongoDB projection").example(Some("{}")))
     .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
@@ -41,11 +41,11 @@ object DocumentRoutes extends RoutesPlugin {
 
   def findAllInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, String, String, Paging)
+      parameter: (Option[String], Option[String], Option[String], Paging)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
-    val filter     = decode[Map[String, Any]](parameter._1).getOrElse(Map())
-    val sort       = decode[Map[String, Any]](parameter._2).getOrElse(Map())
-    val projection = decode[Map[String, Any]](parameter._3).getOrElse(Map())
+    val filter: Map[String, Any]     = parameter._1.map(value => decode[Map[String, Any]](value).getOrElse(Map[String, Any]())).getOrElse(Map[String, Any]())
+    val sort: Map[String, Any]       = parameter._2.map(value => decode[Map[String, Any]](value).getOrElse(Map[String, Any]())).getOrElse(Map[String, Any]())
+    val projection: Map[String, Any] = parameter._3.map(value => decode[Map[String, Any]](value).getOrElse(Map[String, Any]())).getOrElse(Map[String, Any]())
     findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), parameter._4))
   }
 
