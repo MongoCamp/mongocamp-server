@@ -61,7 +61,7 @@ jobs:
       - name: Build Docu and deploy to GitHub
         env:
           GITHUB_USER: ${{ secrets.DOCKER_USERNAME }}
-          GITHUB_PASSWORD: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
         run: |
           git config --global user.email "ci@quadstingray.com"
           git config --global user.name "QuadStingray CI"
