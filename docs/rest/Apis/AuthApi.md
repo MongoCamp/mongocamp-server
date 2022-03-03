@@ -8,6 +8,8 @@ Method | HTTP request | Description
 [**logout**](AuthApi.md#logout) | **POST** /auth/logout | Logout User
 [**logoutByDelete**](AuthApi.md#logoutByDelete) | **DELETE** /auth/logout | Logout User
 [**refreshToken**](AuthApi.md#refreshToken) | **GET** /auth/token/refresh | Refresh User
+[**updateApiKey**](AuthApi.md#updateApiKey) | **PATCH** /auth/profile/apikey | Update ApiKey
+[**updatePassword**](AuthApi.md#updatePassword) | **PATCH** /auth/profile/password | Update Password
 [**userProfile**](AuthApi.md#userProfile) | **GET** /auth/profile | User Profile
 
 
@@ -109,6 +111,60 @@ This endpoint does not need any parameter.
 
 - **Content-Type**: Not defined
 - **Accept**: application/json
+
+<a name="updateApiKey"></a>
+# **updateApiKey**
+> JsonResult_String updateApiKey(userid)
+
+Update ApiKey
+
+    Change ApiKey of User
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userid** | **String**| UserId to update or create the ApiKey | [optional] [default to null]
+
+### Return type
+
+[**JsonResult_String**](../Models/JsonResult_String.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, text/plain
+
+<a name="updatePassword"></a>
+# **updatePassword**
+> JsonResult_Boolean updatePassword(PasswordUpdateRequest)
+
+Update Password
+
+    Change Password of User
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  |
+
+### Return type
+
+[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json, text/plain
 
 <a name="userProfile"></a>
 # **userProfile**
