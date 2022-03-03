@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Build and Release Process
 
 on:
   push:
