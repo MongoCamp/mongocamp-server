@@ -35,7 +35,8 @@ def setMyVersion(version: String) = {
   val packageJsonFile    = File("package.json")
   val source             = Source.fromFile(packageJsonFile.toURI)
   val orgContent         = source.mkString
-  val newVersionString   = "\"version\": \"%s\",".format(version)
+  val newVersion         = version.replace("-SNAPSHOT", ".snapshot")
+  val newVersionString   = "\"version\": \"%s\",".format(newVersion)
   val packageJsonContent = orgContent.replaceAll("\"version\": \"(.*?)\",", newVersionString)
   packageJsonFile.delete()
   packageJsonFile.writeAll(packageJsonContent)

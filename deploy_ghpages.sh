@@ -14,7 +14,7 @@ cd docs/.vitepress/dist
 
 git init
 git add -A
-git commit -m 'deploy'
+git commit -m 'docs: deploy documentation'
 
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>

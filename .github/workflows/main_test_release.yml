@@ -45,12 +45,19 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-        run: ci-docker
+        run: sbt ci-docker
+  build-docu:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.1.0
+      - name: Build Docu and deploy to GitHub
+        run: ci-deploy-docu
   release:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: install pnpm
       - uses: pnpm/action-setup@v2.1.0
       - name: install conventional-changelog-cli
         run: pnpm install -g conventional-changelog-cli
