@@ -68,9 +68,9 @@ releaseProcess := {
     gitAddAllTask,
     commitReleaseVersion,
     tagRelease,
-    addGithubRelease,
     setToMyNextVersion,
     gitAddAllTask,
-    pushChanges
+    pushChanges,
+    addGithubRelease
   )
 }
