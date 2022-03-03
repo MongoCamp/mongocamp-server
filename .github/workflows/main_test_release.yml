@@ -64,7 +64,7 @@ jobs:
           node-version: 16
           cache: 'pnpm'  
       - name: Build Docu and deploy to GitHub
-        run: ci-deploy-docu
+        run: sbt ci-deploy-docu
   release:
     needs: test
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
       - name: install conventional-changelog-cli
         run: pnpm install -g conventional-changelog-cli
       - name: install conventional-github-release
-        run: pnpm install -g conventional-github-release
+        run: pnpm install -g conventional-github-releaser
       - uses: actions/checkout@v2
       - name: Set up JDK
         uses: olafurpg/setup-scala@v10
