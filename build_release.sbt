@@ -22,19 +22,28 @@ val addGithubRelease = ReleaseStep(action = st => {
 })
 
 val setToMyNextVersion = ReleaseStep(action = st => {
-  val packageJsonFile    = File("package.json")
-  val source             = Source.fromFile(packageJsonFile.toURI)
-  val orgContent         = source.mkString
-  val newVersionString   = "\"version\": \"%s\",".format(st.get(versions).get._2)
-  val packageJsonContent = orgContent.replaceAll("\"version\": \"(.*?)\",", newVersionString)
-  packageJsonFile.delete()
-  packageJsonFile.writeAll(packageJsonContent)
+  setMyVersion(st.get(versions).get._2)
   st
 })
 
+val setToMyReleaseVersion = ReleaseStep(action = st => {
+  setMyVersion(st.get(versions).get._1)
+  st
+})
+
+def setMyVersion(version: String) = {
+  val packageJsonFile    = File("package.json")
+  val source             = Source.fromFile(packageJsonFile.toURI)
+  val orgContent         = source.mkString
+  val newVersionString   = "\"version\": \"%s\",".format(version)
+  val packageJsonContent = orgContent.replaceAll("\"version\": \"(.*?)\",", newVersionString)
+  packageJsonFile.delete()
+  packageJsonFile.writeAll(packageJsonContent)
+}
+
 releaseNextCommitMessage := s"ci: bump next version to ${runtimeVersion.value}"
 
-releaseProcess := {
+commands += Command.command("ci-release")((state: State) => {
   val lowerCaseVersion = version.value.toLowerCase
   if (
     (lowerCaseVersion.contains("snapshot") ||
@@ -42,22 +51,25 @@ releaseProcess := {
     lowerCaseVersion.contains("rc") ||
     lowerCaseVersion.contains("m"))
   ) {
-    Seq[ReleaseStep](
-    )
+    state
   }
   else {
-    Seq[ReleaseStep](
-      checkSnapshotDependencies,
-      inquireVersions,
-      setReleaseVersion,
-      releaseStepCommand("scalafmt"),
-      gitAddAllTask,
-      commitReleaseVersion,
-      tagRelease,
-      addGithubRelease,
-      setToMyNextVersion,
-      gitAddAllTask,
-      pushChanges
-    )
+    Command.process("release with-defaults", state)
   }
+})
+
+releaseProcess := {
+  Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    setToMyReleaseVersion,
+    releaseStepCommand("scalafmt"),
+    gitAddAllTask,
+    commitReleaseVersion,
+    tagRelease,
+    addGithubRelease,
+    setToMyNextVersion,
+    gitAddAllTask,
+    pushChanges
+  )
 }

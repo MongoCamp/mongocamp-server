@@ -19,3 +19,13 @@ dockerCommands += Cmd("RUN", "apk add --update --no-cache snappy-dev zlib-dev ba
 dockerCommands += Cmd("USER", mongoCampUser)
 
 dockerExposedPorts := List(8080)
+
+commands += Command.command("ci-docker")((state: State) => {
+  val lowerCaseVersion = version.value.toLowerCase
+  if (lowerCaseVersion.contains("snapshot")) {
+    state
+  }
+  else {
+    Command.process("docker:publish", state)
+  }
+})

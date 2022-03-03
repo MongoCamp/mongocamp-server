@@ -45,15 +45,7 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-        run: |
-          if grep -q "SNAPSHOT" version.sbt
-          then
-              echo 'Nothing to do';
-          else
-              docker login docker.pkg.github.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-              docker login ghcr.io -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-              sbt docker:publish
-          fi
+        run: ci-docker
   release:
     needs: test
     runs-on: ubuntu-latest
@@ -72,4 +64,4 @@ jobs:
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-        run: sbt "release with-defaults"
+        run: sbt ci-release
