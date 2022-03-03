@@ -64,7 +64,10 @@ jobs:
           node-version: 16
           cache: 'pnpm'  
       - name: Build Docu and deploy to GitHub
-        run: sbt ci-deploy-docu
+        run: |
+          git config --global user.email "ci@quadstingray.com"
+          git config --global user.name "QuadStingray CI"
+          sbt ci-deploy-docu
   release:
     needs: test
     runs-on: ubuntu-latest
@@ -85,4 +88,7 @@ jobs:
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-        run: sbt ci-release
+        run: |
+          git config --global user.email "ci@quadstingray.com"
+          git config --global user.name "QuadStingray CI"
+          sbt ci-release
