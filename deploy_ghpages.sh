@@ -21,6 +21,6 @@ git commit -m 'docs: deploy documentation'
 
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:quadstingray/mongocamp.git master:gh-pages
+git push -f https://$GITHUB_USER:$GITHUB_TOKEN@github.com/quadstingray/mongocamp.git  master:gh-pages
 
 cd -
