@@ -17,7 +17,7 @@ module.exports = {
             },
             {
                 text: 'REST API',
-                link: '/rest/Readme',
+                link: '/rest/README',
                 activeMatch: '^/rest/'
             },
             {
