@@ -4,6 +4,9 @@
 set -e
 
 # build
+pnpm install
+
+# build
 pnpm docs:build
 
 # navigate into the build output directory
