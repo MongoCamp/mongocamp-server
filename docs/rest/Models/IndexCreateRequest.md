@@ -3,8 +3,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keys** | **Map** |  | [default to null]
-**indexOptionsRequest** | [**IndexOptionsRequest**](IndexOptionsRequest.md) |  | [default to null]
+**keys** | **Map** |  | 
+**indexOptionsRequest** | [**IndexOptionsRequest**](IndexOptionsRequest.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

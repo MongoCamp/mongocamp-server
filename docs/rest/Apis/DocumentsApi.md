@@ -28,8 +28,8 @@ Delete Document from Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to delete | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **documentId** | **String**| DocumentId to delete | 
 
 ### Return type
 
@@ -56,7 +56,7 @@ Delete Many in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **request\_body** | [**Map**](../Models/string.md)|  |
 
 ### Return type
@@ -84,12 +84,12 @@ Documents in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **filter** | **String**| MongoDB Filter Query by Default all filter | [optional] [default to null]
- **sort** | **String**| MongoDB sorting | [optional] [default to null]
- **projection** | **String**| MongoDB projection | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **filter** | **String**| MongoDB Filter Query by Default all filter | [optional] 
+ **sort** | **String**| MongoDB sorting | [optional] 
+ **projection** | **String**| MongoDB projection | [optional] 
+ **rowsPerPage** | **Long**| Count elements per page | [optional] 
+ **page** | **Long**| Requested page of the ResultSets | [optional] 
 
 ### Return type
 
@@ -116,10 +116,10 @@ Documents in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **MongoFindRequest** | [**MongoFindRequest**](../Models/MongoFindRequest.md)|  |
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+ **rowsPerPage** | **Long**| Count elements per page | [optional] 
+ **page** | **Long**| Requested page of the ResultSets | [optional] 
 
 ### Return type
 
@@ -146,8 +146,8 @@ Document from Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to read | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **documentId** | **String**| DocumentId to read | 
 
 ### Return type
 
@@ -174,7 +174,7 @@ Insert Document
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **request\_body** | [**Map**](../Models/string.md)| JSON Representation for your Document. |
 
 ### Return type
@@ -202,7 +202,7 @@ Insert many Documents
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **request\_body** | [**List**](../Models/map.md)|  | [optional]
 
 ### Return type
@@ -230,8 +230,8 @@ Update Document in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to update | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **documentId** | **String**| DocumentId to update | 
  **request\_body** | [**Map**](../Models/string.md)|  |
 
 ### Return type
@@ -259,8 +259,8 @@ Update Document Parts in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to update | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **documentId** | **String**| DocumentId to update | 
  **request\_body** | [**Map**](../Models/string.md)|  |
 
 ### Return type
@@ -288,7 +288,7 @@ Update many in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **UpdateRequest** | [**UpdateRequest**](../Models/UpdateRequest.md)|  |
 
 ### Return type
