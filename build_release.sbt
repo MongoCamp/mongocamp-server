@@ -11,6 +11,12 @@ val gitAddAllTask = ReleaseStep(action = st => {
   st
 })
 
+val gitCommitTask = ReleaseStep(action = st => {
+  "git add .".!
+  st
+})
+
+
 val generateChangeLog = ReleaseStep(action = st => {
   "conventional-changelog -p angular -i CHANGELOG.md -s -r 0".!
   st
@@ -42,7 +48,8 @@ def setMyVersion(version: String) = {
   packageJsonFile.writeAll(packageJsonContent)
 }
 
-releaseNextCommitMessage := s"ci: bump next version to ${runtimeVersion.value}"
+releaseCommitMessage := s"ci: set version to ${runtimeVersion.value}"
+releaseNextCommitMessage := s"ci: bump to next version ${runtimeVersion.value}"
 
 commands += Command.command("ci-release")((state: State) => {
   val lowerCaseVersion = version.value.toLowerCase
@@ -64,12 +71,13 @@ releaseProcess := {
     checkSnapshotDependencies,
     inquireVersions,
     setToMyReleaseVersion,
-    releaseStepCommand("scalafmt"),
-    gitAddAllTask,
     commitReleaseVersion,
     tagRelease,
+    releaseStepCommand("scalafmt"),
+    gitAddAllTask,
     setToMyNextVersion,
     gitAddAllTask,
+    commitNextVersion,
     pushChanges,
     addGithubRelease
   )
