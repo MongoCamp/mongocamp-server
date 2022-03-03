@@ -18,7 +18,7 @@ val gitCommitTask = ReleaseStep(action = st => {
 
 
 val generateChangeLog = ReleaseStep(action = st => {
-  "conventional-changelog -p angular -i CHANGELOG.md -s -r 0".!
+  "conventional-changelog -p angular -i CHANGELOG.md -r 10".!
   st
 })
 
