@@ -74,7 +74,6 @@ releaseProcess := {
     commitReleaseVersion,
     tagRelease,
     releaseStepCommand("scalafmt"),
-    gitAddAllTask,
     setToMyNextVersion,
     gitAddAllTask,
     commitNextVersion,
