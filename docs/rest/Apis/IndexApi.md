@@ -26,11 +26,11 @@ Create Index by Field for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **fieldName** | **String**| The field Name for your index | 
  **duration** | **String**| Expiring Duration in format 15d (https://www.scala-lang.org/api/2.13.7/scala/concurrent/duration/Duration.html) | [default to 15d]
  **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **name** | **String**| Name for your index | [optional] [default to null]
+ **name** | **String**| Name for your index | [optional] 
 
 ### Return type
 
@@ -57,7 +57,7 @@ Create Index for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **IndexCreateRequest** | [**IndexCreateRequest**](../Models/IndexCreateRequest.md)|  |
 
 ### Return type
@@ -85,8 +85,8 @@ Create Index by Field for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **fieldName** | **String**| The field Name for your index | 
  **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  |
  **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
 
@@ -115,8 +115,8 @@ Create Index by Field for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **fieldName** | **String**| The field Name for your index | 
  **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  |
 
 ### Return type
@@ -144,10 +144,10 @@ Create Index by Field for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **fieldName** | **String**| The field Name for your index | 
  **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **name** | **String**| Name for your index | [optional] [default to null]
+ **name** | **String**| Name for your index | [optional] 
 
 ### Return type
 
@@ -174,8 +174,8 @@ Delete Index
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **indexName** | **String**| The name of your Index | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **indexName** | **String**| The name of your Index | 
 
 ### Return type
 
@@ -202,8 +202,8 @@ Index for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **indexName** | **String**| The name of your Index | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **indexName** | **String**| The name of your Index | 
 
 ### Return type
 
@@ -230,7 +230,7 @@ List Indices for Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
 
 ### Return type
 

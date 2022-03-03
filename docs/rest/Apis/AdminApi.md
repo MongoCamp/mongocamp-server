@@ -84,7 +84,7 @@ Delete Role
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey | [default to null]
+ **roleName** | **String**| RoleKey | 
 
 ### Return type
 
@@ -111,7 +111,7 @@ Delete User
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Delete | [default to null]
+ **userId** | **String**| UserId to Delete | 
 
 ### Return type
 
@@ -138,7 +138,7 @@ Get Role
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **roleName** | **String**| UserRoleKey | [default to null]
+ **roleName** | **String**| UserRoleKey | 
 
 ### Return type
 
@@ -165,7 +165,7 @@ UserProfile for userId
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
+ **userId** | **String**| UserId to Update | 
 
 ### Return type
 
@@ -192,9 +192,9 @@ List Roles
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **filter** | **String**| filter after userId by contains | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+ **filter** | **String**| filter after userId by contains | [optional] 
+ **rowsPerPage** | **Long**| Count elements per page | [optional] 
+ **page** | **Long**| Requested page of the ResultSets | [optional] 
 
 ### Return type
 
@@ -221,9 +221,9 @@ List Users
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **filter** | **String**| filter after userId by contains | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+ **filter** | **String**| filter after userId by contains | [optional] 
+ **rowsPerPage** | **Long**| Count elements per page | [optional] 
+ **page** | **Long**| Requested page of the ResultSets | [optional] 
 
 ### Return type
 
@@ -250,7 +250,7 @@ Update ApiKey
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
+ **userId** | **String**| UserId to Update | 
 
 ### Return type
 
@@ -277,7 +277,7 @@ Update Password
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
+ **userId** | **String**| UserId to Update | 
  **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  |
 
 ### Return type
@@ -305,7 +305,7 @@ Update Role
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey | [default to null]
+ **roleName** | **String**| RoleKey | 
  **UpdateRoleRequest** | [**UpdateRoleRequest**](../Models/UpdateRoleRequest.md)|  |
 
 ### Return type
@@ -333,7 +333,7 @@ Update User Roles
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
+ **userId** | **String**| UserId to Update | 
  **request\_body** | [**List**](../Models/string.md)|  | [optional]
 
 ### Return type

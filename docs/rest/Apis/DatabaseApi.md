@@ -70,7 +70,7 @@ Database Infos of selected Database
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **databaseName** | **String**| Name of your Database | [default to null]
+ **databaseName** | **String**| Name of your Database | 
 
 ### Return type
 
@@ -97,7 +97,7 @@ Database Infos of selected Database
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **databaseName** | **String**| Name of your Database | [default to null]
+ **databaseName** | **String**| Name of your Database | 
 
 ### Return type
 

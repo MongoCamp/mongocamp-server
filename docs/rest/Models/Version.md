@@ -3,9 +3,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **String** |  | [default to null]
-**version** | **String** |  | [default to null]
-**builtAt** | **Date** |  | [default to null]
+**name** | **String** |  | 
+**version** | **String** |  | 
+**builtAt** | **Date** |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

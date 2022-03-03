@@ -24,10 +24,10 @@ Aggregate in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **MongoAggregateRequest** | [**MongoAggregateRequest**](../Models/MongoAggregateRequest.md)|  |
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+ **rowsPerPage** | **Long**| Count elements per page | [optional] 
+ **page** | **Long**| Requested page of the ResultSets | [optional] 
 
 ### Return type
 
@@ -54,7 +54,7 @@ Clear Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
 
 ### Return type
 
@@ -105,7 +105,7 @@ Delete Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
 
 ### Return type
 
@@ -132,10 +132,10 @@ Distinct in Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **field** | **String**| The field for your distinct Request. | [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
+ **field** | **String**| The field for your distinct Request. | 
+ **rowsPerPage** | **Long**| Count elements per page | [optional] 
+ **page** | **Long**| Requested page of the ResultSets | [optional] 
 
 ### Return type
 
@@ -162,7 +162,7 @@ Collection Information
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **collectionName** | **String**| The name of your MongoDb Collection | 
  **includeDetails** | **Boolean**| Include all details for the Collection | [optional] [default to false]
 
 ### Return type

@@ -124,7 +124,7 @@ Update ApiKey
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userid** | **String**| UserId to update or create the ApiKey | [optional] [default to null]
+ **userid** | **String**| UserId to update or create the ApiKey | [optional] 
 
 ### Return type
 
