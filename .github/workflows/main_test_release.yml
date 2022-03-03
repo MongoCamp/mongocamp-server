@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install pnpm
-        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
+      - uses: pnpm/action-setup@v2.1.0
       - name: install conventional-changelog-cli
         run: pnpm install -g conventional-changelog-cli
       - name: install conventional-github-release
@@ -72,12 +72,4 @@ jobs:
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-        run: |
-          if grep -q "SNAPSHOT" version.sbt
-          then
-              echo 'Nothing to do';
-          else
-            git config --global user.email "ci@quadstingray.com"
-            git config --global user.name "QuadStingray CI"
-            sbt "release with-defaults"
-          fi
+        run: sbt "release with-defaults"

@@ -34,16 +34,30 @@ val setToMyNextVersion = ReleaseStep(action = st => {
 
 releaseNextCommitMessage := s"ci: bump next version to ${runtimeVersion.value}"
 
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  setReleaseVersion,
-  releaseStepCommand("scalafmt"),
-  gitAddAllTask,
-  commitReleaseVersion,
-  tagRelease,
-  addGithubRelease,
-  setToMyNextVersion,
-  gitAddAllTask,
-  pushChanges
-)
+releaseProcess := {
+  val lowerCaseVersion = version.value.toLowerCase
+  if (
+    (lowerCaseVersion.contains("snapshot") ||
+    lowerCaseVersion.contains("beta") ||
+    lowerCaseVersion.contains("rc") ||
+    lowerCaseVersion.contains("m"))
+  ) {
+    Seq[ReleaseStep](
+    )
+  }
+  else {
+    Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      setReleaseVersion,
+      releaseStepCommand("scalafmt"),
+      gitAddAllTask,
+      commitReleaseVersion,
+      tagRelease,
+      addGithubRelease,
+      setToMyNextVersion,
+      gitAddAllTask,
+      pushChanges
+    )
+  }
+}
