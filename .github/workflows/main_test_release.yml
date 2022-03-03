@@ -79,6 +79,8 @@ jobs:
       - name: install conventional-github-release
         run: pnpm install -g conventional-github-releaser
       - uses: actions/checkout@v2
+      - name: Git Fetch Tags
+        run: git fetch --tags
       - name: Set up JDK
         uses: olafurpg/setup-scala@v10
         with:
