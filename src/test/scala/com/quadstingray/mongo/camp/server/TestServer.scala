@@ -34,15 +34,15 @@ object TestServer extends LazyLogging {
       val versionFuture   = TestAdditions.backend.send(versionRequest)
       val versionResponse = Await.result(versionFuture, 1.seconds)
       versionResponse.body.getOrElse(throw new Exception("error"))
-      if (retries > 60) {
-        throw new Exception(s"could not start server in $retries seconds")
-      }
-      retries += 1
       serverRunning = true
     }
     catch {
       case e: Exception =>
         serverRunning = false
+        if (retries > 60) {
+          throw new Exception(s"could not start server in $retries seconds")
+        }
+        retries += 1
     }
   }
 
