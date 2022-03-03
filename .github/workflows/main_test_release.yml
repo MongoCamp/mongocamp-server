@@ -58,11 +58,6 @@ jobs:
         uses: pnpm/action-setup@v2.2.1
         with:
           version: 6.0.2
-      - name: Set node version to 16
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          cache: 'pnpm'  
       - name: Build Docu and deploy to GitHub
         run: |
           git config --global user.email "ci@quadstingray.com"
