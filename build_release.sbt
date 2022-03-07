@@ -14,14 +14,14 @@ val gitAddAllTask = ReleaseStep(action = st => {
 val generateChangeLog = ReleaseStep(action = st => {
   st.log.warn("start generating changelog")
   val response = "conventional-changelog -p angular -i CHANGELOG.md -s -r 0".!!
-  st.log.debug(response)
+  st.log.info("Output  of  conventional-changelog" + response)
   st
 })
 
 val addGithubRelease = ReleaseStep(action = st => {
   st.log.warn("start github release process")
   val response = "conventional-github-releaser -p angular -r 0".!!
-  st.log.debug(response)
+  st.log.info("Output  of  conventional-github-releaser" + response)
   st
 })
 
