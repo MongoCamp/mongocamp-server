@@ -11,33 +11,32 @@ val gitAddAllTask = ReleaseStep(action = st => {
   st
 })
 
-val gitCommitTask = ReleaseStep(action = st => {
-  "git add .".!
-  st
-})
-
-
 val generateChangeLog = ReleaseStep(action = st => {
-  "conventional-changelog -p angular -i CHANGELOG.md -r 10".!
+  st.log.warn("start generating changelog")
+  val response = "conventional-changelog -p angular -i CHANGELOG.md -s -r 0".!!
+  st.log.debug(response)
   st
 })
 
 val addGithubRelease = ReleaseStep(action = st => {
-  "conventional-github-releaser -p angular".!
+  st.log.warn("start github release process")
+  val response = "conventional-github-releaser -p angular -r 0".!!
+  st.log.debug(response)
   st
 })
 
 val setToMyNextVersion = ReleaseStep(action = st => {
-  setMyVersion(st.get(versions).get._2)
+  setMyVersion(st.get(versions).get._2, st)
   st
 })
 
 val setToMyReleaseVersion = ReleaseStep(action = st => {
-  setMyVersion(st.get(versions).get._1)
+  setMyVersion(st.get(versions).get._1, st)
   st
 })
 
-def setMyVersion(version: String) = {
+def setMyVersion(version: String, state: State): Unit = {
+  state.log.warn(s"Set Version in package.json  to $version")
   val packageJsonFile    = File("package.json")
   val source             = Source.fromFile(packageJsonFile.toURI)
   val orgContent         = source.mkString
@@ -46,10 +45,11 @@ def setMyVersion(version: String) = {
   val packageJsonContent = orgContent.replaceAll("\"version\": \"(.*?)\",", newVersionString)
   packageJsonFile.delete()
   packageJsonFile.writeAll(packageJsonContent)
+  state.log.debug(packageJsonContent)
 }
 
 releaseCommitMessage := s"ci: set version to ${runtimeVersion.value}"
-releaseNextCommitMessage := s"ci: bump to next version ${runtimeVersion.value}"
+releaseNextCommitMessage := s"ci: prepare release of version ${runtimeVersion.value}"
 
 commands += Command.command("ci-release")((state: State) => {
   val lowerCaseVersion = version.value.toLowerCase
