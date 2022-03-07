@@ -81,6 +81,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Git Fetch Tags
         run: git fetch --tags
+      - name: Git Pull
+        run: git pull
+      - name: Current Git Log
+        run: git log --graph --pretty='format:%C(auto)%h %d %s %C(green)%an%C(bold blue) %ad' --all --date=relative -n10
       - name: Set up JDK
         uses: olafurpg/setup-scala@v10
         with:
