@@ -12,7 +12,7 @@ import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.openapi.OpenAPI
 import sttp.tapir.openapi.circe.yaml.RichOpenAPI
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.swagger.SwaggerUI
+import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
@@ -57,7 +57,7 @@ object ApiDocsRoutes extends BaseRoute with Config {
       val openApiYml: String = openApiDocs.toYaml
 
       if (isSwaggerEnabled) {
-        val swaggerUIRoute = SwaggerUI[Future](openApiYml, List("docs"), nameOpenApiDocsYamlName)
+        val swaggerUIRoute = SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List()))
         docs ++= swaggerUIRoute
       }
 

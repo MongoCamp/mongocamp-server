@@ -4,7 +4,7 @@ import com.quadstingray.mongo.camp.config.Config
 import com.quadstingray.mongo.camp.interceptor.cors.Cors.KeyCorsHeaderOrigin
 import sttp.model.Header
 import sttp.monad.MonadError
-import sttp.tapir.model.{ ServerRequest, ServerResponse }
+import sttp.tapir.model.ServerRequest
 import sttp.tapir.server.interceptor._
 import sttp.tapir.server.interpreter.BodyListener
 
@@ -24,7 +24,7 @@ class CorsInterceptor extends EndpointInterceptor[Future] with Config {
 
       override def onDecodeSuccess[U, I](
           ctx: DecodeSuccessContext[Future, U, I]
-      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
+      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponseFromOutput[B]] = {
         endpointHandler
           .onDecodeSuccess(ctx)
           .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ corsHeaderFromRequest(ctx.request)))
@@ -32,7 +32,7 @@ class CorsInterceptor extends EndpointInterceptor[Future] with Config {
 
       override def onSecurityFailure[A](
           ctx: SecurityFailureContext[Future, A]
-      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
+      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponseFromOutput[B]] = {
         endpointHandler
           .onSecurityFailure(ctx)
           .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ corsHeaderFromRequest(ctx.request)))
@@ -40,12 +40,13 @@ class CorsInterceptor extends EndpointInterceptor[Future] with Config {
 
       override def onDecodeFailure(
           ctx: DecodeFailureContext
-      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponse[B]]] = {
+      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponseFromOutput[B]]] = {
         endpointHandler
           .onDecodeFailure(ctx)
           .map(serverResponse => serverResponse.map(response => response.copy(headers = response.headers ++ corsHeaderFromRequest(ctx.request))))
       }
-    }
-  }
 
+    }
+
+  }
 }

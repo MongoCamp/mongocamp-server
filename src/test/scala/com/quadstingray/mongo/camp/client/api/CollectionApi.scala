@@ -40,7 +40,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       apiKey: String,
       bearerToken: String
   )(collectionName: String, mongoAggregateRequest: MongoAggregateRequest, rowsPerPage: Option[Long] = None, page: Option[Long] = None) = {
-    val requestBodyString = encodeAnyToJson(mongoAggregateRequest).toString() //todo: Validate on code gneration
+    val requestBodyString = encodeAnyToJson(mongoAggregateRequest).toString() //todo: Validate on code generation
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/$collectionName/aggregate?rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")
