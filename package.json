@@ -1,6 +1,6 @@
 {
   "name": "mongocamp-docs",
-  "version": "0.6.1.snapshot",
+  "version": "0.6.1",
   "description": "",
   "directories": {
     "doc": "docs"
