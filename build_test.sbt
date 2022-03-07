@@ -11,7 +11,7 @@ libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
 
 libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "3.4.3" % Test
 
-val sttClientVersion = "3.5.0"
+val sttClientVersion = "3.5.0" // Update to 3.5.1 kill application tests
 val circeVersion     = "0.14.1"
 
 libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion % Test

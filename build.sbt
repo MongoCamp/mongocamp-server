@@ -6,7 +6,7 @@ scalaVersion := "2.13.8"
 
 libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "2.3.0"
 
-val TapirVersion = "0.19.4"
+val TapirVersion = "0.20.1"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml" % TapirVersion
@@ -19,7 +19,7 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 
 libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.1.2"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.10"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10.13"
 
