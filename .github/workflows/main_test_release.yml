@@ -15,7 +15,8 @@ jobs:
         os: [ubuntu-latest]
         jdk: [openjdk@1.17.0]
     steps:
-      - uses: actions/checkout@v2
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
       - name: Cache SBT ivy cache
         uses: actions/cache@v2
         with:
@@ -36,7 +37,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
       - name: Set up JDK
         uses: olafurpg/setup-scala@v10
         with:
@@ -53,7 +55,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.1
         with:
@@ -70,6 +73,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
+        with:
+          fetch-depth: 0
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.1
         with:
@@ -78,13 +85,6 @@ jobs:
         run: pnpm install -g conventional-changelog-cli
       - name: install conventional-github-release
         run: pnpm install -g conventional-github-releaser
-      - uses: actions/checkout@v2
-      - name: Git Fetch Tags
-        run: git fetch --tags
-      - name: Git Pull
-        run: git pull
-      - name: Current Git Log
-        run: git log --graph --pretty='format:%C(auto)%h %d %s %C(green)%an%C(bold blue) %ad' --all --date=relative -n10
       - name: Set up JDK
         uses: olafurpg/setup-scala@v10
         with:
