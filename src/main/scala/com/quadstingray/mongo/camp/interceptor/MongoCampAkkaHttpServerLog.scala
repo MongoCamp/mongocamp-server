@@ -2,6 +2,7 @@ package com.quadstingray.mongo.camp.interceptor
 
 import akka.event.{ LoggingAdapter, NoLogging }
 import akka.http.scaladsl.server.RequestContext
+import com.quadstingray.mongo.camp.exception.MongoCampException
 import sttp.monad.{ FutureMonad, MonadError }
 import sttp.tapir.AnyEndpoint
 import sttp.tapir.model.ServerRequest
@@ -38,27 +39,29 @@ class MongoCampAkkaHttpServerLog extends ServerLog[Future] {
   }
 
   private def errorLog(log: LoggingAdapter)(msg: String, ex: Throwable): Future[Unit] = Future.successful {
-    log.error(ex, msg)
+    if (!ex.isInstanceOf[MongoCampException]) {
+      log.error(ex, msg)
+    }
   }
 
-  override def decodeFailureNotHandled(ctx: DecodeFailureContext): Future[Unit] =
+  override def decodeFailureNotHandled(ctx: DecodeFailureContext): Future[Unit] = {
     defaultServerLog(loggerFrom(ctx)).decodeFailureNotHandled(ctx)
+  }
 
-  override def decodeFailureHandled(
-      ctx: DecodeFailureContext,
-      response: ServerResponseFromOutput[_]
-  ): Future[Unit] = defaultServerLog(loggerFrom(ctx)).decodeFailureHandled(ctx, response)
+  override def decodeFailureHandled(ctx: DecodeFailureContext, response: ServerResponseFromOutput[_]): Future[Unit] = {
+    defaultServerLog(loggerFrom(ctx)).decodeFailureHandled(ctx, response)
+  }
 
-  override def securityFailureHandled(
-      ctx: SecurityFailureContext[Future, _],
-      response: ServerResponseFromOutput[_]
-  ): Future[Unit] = defaultServerLog(loggerFrom(ctx.request)).securityFailureHandled(ctx, response)
+  override def securityFailureHandled(ctx: SecurityFailureContext[Future, _], response: ServerResponseFromOutput[_]): Future[Unit] = {
+    defaultServerLog(loggerFrom(ctx.request)).securityFailureHandled(ctx, response)
+  }
 
-  override def requestHandled(
-      ctx: DecodeSuccessContext[Future, _, _],
-      response: ServerResponseFromOutput[_]
-  ): Future[Unit] = defaultServerLog(loggerFrom(ctx.request)).requestHandled(ctx, response)
+  override def requestHandled(ctx: DecodeSuccessContext[Future, _, _], response: ServerResponseFromOutput[_]): Future[Unit] = {
+    defaultServerLog(loggerFrom(ctx.request)).requestHandled(ctx, response)
+  }
 
-  override def exception(e: AnyEndpoint, request: ServerRequest, ex: Throwable): Future[Unit] =
+  override def exception(e: AnyEndpoint, request: ServerRequest, ex: Throwable): Future[Unit] = {
     defaultServerLog(loggerFrom(request)).exception(e, request, ex)
+  }
+
 }
