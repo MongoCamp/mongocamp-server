@@ -1,3 +1,15 @@
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/QuadStingray/mongocamp/compare/v0.6.3...v0.7.0) (2022-03-09)
+
+
+### Features
+
+* **Endpoint:** Collection Fields ([213c92e](https://github.com/QuadStingray/mongocamp/commit/213c92e))
+* **Endpoint:** Collection Fields ([c269ae2](https://github.com/QuadStingray/mongocamp/commit/c269ae2))
+* Reload UserInfos for Refresh or Profile Route ([074b81f](https://github.com/QuadStingray/mongocamp/commit/074b81f))
+
+
+
 <a name="0.6.3"></a>
 ## [0.6.3](https://github.com/QuadStingray/mongocamp/compare/v0.6.2...v0.6.3) (2022-03-08)
 
