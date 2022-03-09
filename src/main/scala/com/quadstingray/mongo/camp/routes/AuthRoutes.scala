@@ -70,7 +70,7 @@ object AuthRoutes extends BaseRoute {
 
   def refreshAuthToken(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
     Future.successful {
-      val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(loginInformation)
+      val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(AuthHolder.handler.findUser(loginInformation.userId))
       Right(loginResult)
     }
   }
@@ -86,7 +86,7 @@ object AuthRoutes extends BaseRoute {
 
   def userProfile(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful {
-      Right(loginInformation.toResultUser)
+      Right(AuthHolder.handler.findUser(loginInformation.userId).toResultUser)
     }
   }
 
