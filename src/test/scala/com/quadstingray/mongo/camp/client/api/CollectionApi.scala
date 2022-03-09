@@ -154,4 +154,25 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       .bearer(bearerToken)
       .response(asJson[CollectionStatus])
 
+  /** List the Fields in a given collection
+    *
+    * Expected answers: code 200 : Seq[String] code 400 : String (Invalid value for: query parameter sample size) code 0 : ErrorDescription Headers :
+    * x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param collectionName
+    *   The name of your MongoDb Collection
+    * @param sampleSize
+    *   Use sample size greater 0 (e.g. 1000) for better performance on big collections
+    */
+  def getCollectionFields(apiKey: String, bearerToken: String)(collectionName: String, sampleSize: Option[Int] = None) =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/mongodb/collections/$collectionName/fields?sample size=$sampleSize")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[Seq[String]])
+
 }
