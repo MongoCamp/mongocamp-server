@@ -71,6 +71,27 @@ object CollectionRoutes extends RoutesPlugin {
     }))
   }
 
+  val getCollectionFieldsEndpoint = readCollectionEndpoint
+    .in("fields")
+    .in(query[Option[Int]]("sample size").example(Some(1000)).description("Use sample size greater 0 (e.g. 1000) for better performance on big collections"))
+    .out(jsonBody[List[String]])
+    .summary("Collection Fields")
+    .description("List the Fields in a given collection")
+    .tag("Collection")
+    .method(Method.GET)
+    .name("getCollectionFields")
+    .serverLogic(collectionRequest => parameter => collectionFields(collectionRequest, parameter))
+
+  def collectionFields(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      sampleSizeParameter: Option[Int]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
+    Future.successful(Right({
+      val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      dao.columnNames(sampleSizeParameter.getOrElse(0))
+    }))
+  }
+
   val deleteCollectionStatusEndpoint = administrateCollectionEndpoint
     .out(jsonBody[JsonResult[Boolean]])
     .summary("Delete Collection")
@@ -218,6 +239,14 @@ object CollectionRoutes extends RoutesPlugin {
   }
 
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
-    List(collectionsEndpoint, getCollectionStatusEndpoint, deleteCollectionStatusEndpoint, deleteAllEndpoint, aggregateEndpoint, distinctEndpoint)
+    List(
+      collectionsEndpoint,
+      getCollectionStatusEndpoint,
+      getCollectionFieldsEndpoint,
+      deleteCollectionStatusEndpoint,
+      deleteAllEndpoint,
+      aggregateEndpoint,
+      distinctEndpoint
+    )
 
 }

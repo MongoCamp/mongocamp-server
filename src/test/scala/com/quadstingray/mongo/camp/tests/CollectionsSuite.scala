@@ -70,6 +70,12 @@ class CollectionsSuite extends BaseSuite {
     assertEquals(headResponse("type").toString, "company")
   }
 
+  test("fields on collection as admin") {
+    val distinct = executeRequestToResponse(collectionApi.getCollectionFields("", adminBearerToken)("geodata:locations"))
+    assertEquals(distinct.size, 5)
+    assertEquals(distinct.sorted, List("_id", "checkedAt", "geodata", "name", "type"))
+  }
+
   test("list all collections as user") {
     val response = executeRequestToResponse(collectionApi.collectionList("", testUserBearerToken)())
     assertEquals(response.size, 3)
