@@ -1,3 +1,13 @@
+<a name="0.7.1"></a>
+## [0.7.1](https://github.com/QuadStingray/mongocamp/compare/v0.7.0...v0.7.1) (2022-03-10)
+
+
+### Features
+
+* IndexOptions now optional in requests ([39a594e](https://github.com/QuadStingray/mongocamp/commit/39a594e))
+
+
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/QuadStingray/mongocamp/compare/v0.6.3...v0.7.0) (2022-03-09)
 
