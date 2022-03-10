@@ -23,7 +23,7 @@ object DatabaseRoutes extends RoutesPlugin {
     .summary("List of Databases")
     .description("List of all Databases")
     .method(Method.GET)
-    .name("databaseList")
+    .name("ListDatabases")
     .serverLogic(_ => _ => databaseList())
 
   def databaseList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
@@ -53,7 +53,7 @@ object DatabaseRoutes extends RoutesPlugin {
     .in(path[String]("databaseName").description("Name of your Database"))
     .out(jsonBody[DatabaseInfo])
     .summary("Database Infos of selected Database")
-    .description("All Informations about one Database")
+    .description("All Information about given Database")
     .method(Method.GET)
     .name("getDatabaseInfo")
     .serverLogic(_ => databaseName => getDatabaseInfo(databaseName))
@@ -68,8 +68,8 @@ object DatabaseRoutes extends RoutesPlugin {
   val deleteDatabaseEndpoint = databaseBaseEndpoint
     .in(path[String]("databaseName").description("Name of your Database"))
     .out(jsonBody[JsonResult[Boolean]])
-    .summary("Database Infos of selected Database")
-    .description("All Informations about one Database")
+    .summary("Delete Database")
+    .description("Delete given Database")
     .method(Method.DELETE)
     .name("deleteDatabase")
     .serverLogic(_ => databaseName => deleteDatabaseInfo(databaseName))

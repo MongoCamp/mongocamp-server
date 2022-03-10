@@ -9,7 +9,7 @@ class DatabaseSuite extends BaseSuite {
   val databaseApi: DatabaseApi = DatabaseApi()
 
   test("list all databases as admin") {
-    val response = executeRequestToResponse(databaseApi.databaseList("", adminBearerToken)())
+    val response = executeRequestToResponse(databaseApi.listDatabases("", adminBearerToken)())
     assertEquals(response.size, 5)
     assertEquals(response, List("admin", "config", "geodata", "local", "test"))
   }
@@ -34,7 +34,7 @@ class DatabaseSuite extends BaseSuite {
   }
 
   test("list all databases as user") {
-    val responseResult = executeRequest(databaseApi.databaseList("", testUserBearerToken)())
+    val responseResult = executeRequest(databaseApi.listDatabases("", testUserBearerToken)())
     assertEquals(responseResult.code.code, 401)
     assertEquals(responseResult.header("x-error-message").isDefined, true)
     assertEquals(responseResult.header("x-error-message").get, "user not authorized for request")
