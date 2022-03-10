@@ -96,8 +96,8 @@ class IndexApi(baseUrl: String) extends CirceSchema {
   def createIndexForField(apiKey: String, bearerToken: String)(
       collectionName: String,
       fieldName: String,
-      indexOptionsRequest: IndexOptionsRequest,
-      sortAscending: Option[Boolean] = None
+      sortAscending: Option[Boolean] = None,
+      indexOptionsRequest: Option[IndexOptionsRequest] = None
   ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index/field/$fieldName?sortAscending=$sortAscending")
@@ -124,7 +124,7 @@ class IndexApi(baseUrl: String) extends CirceSchema {
   def createTextIndex(apiKey: String, bearerToken: String)(
       collectionName: String,
       fieldName: String,
-      indexOptionsRequest: IndexOptionsRequest
+      indexOptionsRequest: Option[IndexOptionsRequest] = None
   ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/$collectionName/index/field/$fieldName/text")

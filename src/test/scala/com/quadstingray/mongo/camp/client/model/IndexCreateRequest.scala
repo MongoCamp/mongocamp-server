@@ -7,6 +7,6 @@
 package com.quadstingray.mongo.camp.client.model
 
 case class IndexCreateRequest(
-    keys: Map[String, Any],
+    keys: Map[String, Int],
     indexOptionsRequest: IndexOptionsRequest
 )

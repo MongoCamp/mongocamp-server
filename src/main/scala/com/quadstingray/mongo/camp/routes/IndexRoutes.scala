@@ -101,7 +101,7 @@ object IndexRoutes extends BaseRoute {
     .in("field")
     .in(path[String]("fieldName").description("The field Name for your index"))
     .in(query[Boolean]("sortAscending").description("Sort your index ascending").default(true))
-    .in(jsonBody[IndexOptionsRequest])
+    .in(jsonBody[Option[IndexOptionsRequest]])
     .out(jsonBody[IndexCreateResponse])
     .summary("Create Index by Field for Collection")
     .description("Create Index by Field for given Collection")
@@ -112,7 +112,7 @@ object IndexRoutes extends BaseRoute {
 
   def createIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, Boolean, IndexOptionsRequest)
+      parameter: (String, Boolean, Option[IndexOptionsRequest])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
@@ -195,7 +195,7 @@ object IndexRoutes extends BaseRoute {
     .in("field")
     .in(path[String]("fieldName").description("The field Name for your index"))
     .in("text")
-    .in(jsonBody[IndexOptionsRequest])
+    .in(jsonBody[Option[IndexOptionsRequest]])
     .out(jsonBody[IndexCreateResponse])
     .summary("Create text index by field for collection")
     .description("Create text index by field for given collection")
@@ -206,7 +206,7 @@ object IndexRoutes extends BaseRoute {
 
   def createTextIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, IndexOptionsRequest)
+      parameter: (String, Option[IndexOptionsRequest])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(
       Right(
@@ -245,18 +245,20 @@ object IndexRoutes extends BaseRoute {
     )
   }
 
-  def requestToDBIndexOptions(indexOptionsRequest: IndexOptionsRequest): IndexOptions = {
+  def requestToDBIndexOptions(indexOptionsRequestOption: Option[IndexOptionsRequest]): IndexOptions = {
     var indexOptions = IndexOptions()
-    indexOptionsRequest.name.foreach(name => indexOptions = indexOptions.name(name))
-    indexOptionsRequest.background.foreach(background => indexOptions = indexOptions.background(background))
-    indexOptionsRequest.defaultLanguage.foreach(defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage))
-    indexOptionsRequest.unique.foreach(unique => indexOptions = indexOptions.unique(unique))
-    indexOptionsRequest.textVersion.foreach(textVersion => indexOptions = indexOptions.textVersion(textVersion))
-    indexOptionsRequest.max.foreach(max => indexOptions = indexOptions.max(max))
-    indexOptionsRequest.min.foreach(min => indexOptions = indexOptions.min(min))
-    indexOptionsRequest.expireAfter.foreach(expireAfter => {
-      val expire = scala.concurrent.duration.Duration(expireAfter)
-      indexOptions = indexOptions.expireAfter(expire._1, expire._2)
+    indexOptionsRequestOption.foreach(indexOptionsRequest => {
+      indexOptionsRequest.name.foreach(name => indexOptions = indexOptions.name(name))
+      indexOptionsRequest.background.foreach(background => indexOptions = indexOptions.background(background))
+      indexOptionsRequest.defaultLanguage.foreach(defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage))
+      indexOptionsRequest.unique.foreach(unique => indexOptions = indexOptions.unique(unique))
+      indexOptionsRequest.textVersion.foreach(textVersion => indexOptions = indexOptions.textVersion(textVersion))
+      indexOptionsRequest.max.foreach(max => indexOptions = indexOptions.max(max))
+      indexOptionsRequest.min.foreach(min => indexOptions = indexOptions.min(min))
+      indexOptionsRequest.expireAfter.foreach(expireAfter => {
+        val expire = scala.concurrent.duration.Duration(expireAfter)
+        indexOptions = indexOptions.expireAfter(expire._1, expire._2)
+      })
     })
     indexOptions
   }
