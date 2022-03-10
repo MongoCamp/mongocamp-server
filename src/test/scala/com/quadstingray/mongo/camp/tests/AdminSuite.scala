@@ -14,16 +14,16 @@ class AdminSuite extends BaseSuite {
   }
 
   test("add user as admin") {
-    val userInformation = UserInformation("myTestUser", "password", roles = Some(Seq("test")))
+    val userInformation = UserInformation("myTestUser", "password", roles = Seq("test"))
     val user            = executeRequestToResponse(adminApi.addUser("", adminBearerToken)(userInformation))
     assertEquals(user.user, "myTestUser")
-    assertEquals(user.roles, Some(Seq("test")))
+    assertEquals(user.roles, Seq("test"))
     val login = executeRequestToResponse(AuthApi().login(Login("myTestUser", "password")))
     assertEquals(login.userProfile.user, "myTestUser")
   }
 
   test("update apikey for user as admin") {
-    val apiKey = executeRequestToResponse(adminApi.updateApiKeyForUser("", adminBearerToken)("myTestUser"))
+    val apiKey = executeRequestToResponse(adminApi.gnerateNewApiKeyForUser("", adminBearerToken)("myTestUser"))
     assertEquals(apiKey.value.isBlank, false)
 
     val user = executeRequestToResponse(adminApi.getUser("", adminBearerToken)("myTestUser"))
@@ -40,14 +40,12 @@ class AdminSuite extends BaseSuite {
 
   test("update roles for user as admin") {
     val user = executeRequestToResponse(adminApi.updateRolesForUser("", adminBearerToken)("myTestUser", List("adminRole")))
-    assertEquals(user.roles, Some(List("adminRole")))
+    assertEquals(user.roles, List("adminRole"))
     assertEquals(
       user.grants,
-      Some(
-        List(
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
-        )
+      List(
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
       )
     )
   }
@@ -73,16 +71,16 @@ class AdminSuite extends BaseSuite {
   }
 
   test("add role as admin") {
-    val role = executeRequestToResponse(adminApi.addRoles("", adminBearerToken)(Role("unitTestRole", isAdmin = false, Some(List()))))
+    val role = executeRequestToResponse(adminApi.addRole("", adminBearerToken)(Role("unitTestRole", isAdmin = false, List())))
     assertEquals(role.name, "unitTestRole")
-    assertEquals(role.collectionGrants, Some(List()))
+    assertEquals(role.collectionGrants, List())
   }
 
   test("get role as admin") {
-    val role = executeRequestToResponse(adminApi.getRoles("", adminBearerToken)("unitTestRole"))
+    val role = executeRequestToResponse(adminApi.getRole("", adminBearerToken)("unitTestRole"))
     assertEquals(role.name, "unitTestRole")
     assertEquals(role.isAdmin, false)
-    assertEquals(role.collectionGrants, Some(List()))
+    assertEquals(role.collectionGrants, List())
   }
 
   test("update role as admin") {
@@ -91,7 +89,7 @@ class AdminSuite extends BaseSuite {
         "unitTestRole",
         UpdateRoleRequest(
           isAdmin = true,
-          Some(List(Grant("random", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)))
+          List(Grant("random", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection))
         )
       )
     )
@@ -99,12 +97,12 @@ class AdminSuite extends BaseSuite {
     assertEquals(role.isAdmin, true)
     assertEquals(
       role.collectionGrants,
-      Some(List(Grant("random", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)))
+      List(Grant("random", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection))
     )
   }
 
   test("delete role as admin") {
-    val role = executeRequestToResponse(adminApi.deleteRoles("", adminBearerToken)("unitTestRole"))
+    val role = executeRequestToResponse(adminApi.deleteRole("", adminBearerToken)("unitTestRole"))
     assertEquals(role.value, true)
 
     val roles = executeRequestToResponse(adminApi.listRoles("", adminBearerToken)())
@@ -120,7 +118,7 @@ class AdminSuite extends BaseSuite {
   }
 
   test("add user as user") {
-    val userInformation = UserInformation("myTestUser", "password", roles = Some(Seq("test")))
+    val userInformation = UserInformation("myTestUser", "password", roles = Seq("test"))
     val response        = executeRequest(adminApi.addUser("", testUserBearerToken)(userInformation))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
@@ -128,7 +126,7 @@ class AdminSuite extends BaseSuite {
   }
 
   test("update apikey for user as user") {
-    val response = executeRequest(adminApi.updateApiKeyForUser("", testUserBearerToken)("myTestUser"))
+    val response = executeRequest(adminApi.gnerateNewApiKeyForUser("", testUserBearerToken)("myTestUser"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
@@ -164,14 +162,14 @@ class AdminSuite extends BaseSuite {
   }
 
   test("add role as user") {
-    val response = executeRequest(adminApi.addRoles("", testUserBearerToken)(Role("unitTestRole", isAdmin = false, Some(List()))))
+    val response = executeRequest(adminApi.addRole("", testUserBearerToken)(Role("unitTestRole", isAdmin = false, List())))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
   }
 
   test("get role as user") {
-    val response = executeRequest(adminApi.getRoles("", testUserBearerToken)("unitTestRole"))
+    val response = executeRequest(adminApi.getRole("", testUserBearerToken)("unitTestRole"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
@@ -183,7 +181,7 @@ class AdminSuite extends BaseSuite {
         "unitTestRole",
         UpdateRoleRequest(
           isAdmin = true,
-          Some(List(Grant("random", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)))
+          List(Grant("random", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection))
         )
       )
     )
@@ -193,7 +191,7 @@ class AdminSuite extends BaseSuite {
   }
 
   test("delete role as user") {
-    val response = executeRequest(adminApi.deleteRoles("", testUserBearerToken)("unitTestRole"))
+    val response = executeRequest(adminApi.deleteRole("", testUserBearerToken)("unitTestRole"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")

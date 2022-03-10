@@ -17,7 +17,7 @@ object InformationRoutes extends BaseRoute {
     .in("version")
     .out(jsonBody[Version])
     .summary("Version Information")
-    .description("Version Info of the mongocamp API")
+    .description("Version Info of the MongoCamp API")
     .tag("Information")
     .method(Method.GET)
     .name("version")

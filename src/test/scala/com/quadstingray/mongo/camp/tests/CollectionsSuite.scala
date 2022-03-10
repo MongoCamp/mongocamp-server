@@ -11,7 +11,7 @@ class CollectionsSuite extends BaseSuite {
   val databaseApi: DatabaseApi     = DatabaseApi()
 
   test("list all collections as admin") {
-    val response = executeRequestToResponse(collectionApi.collectionList("", adminBearerToken)())
+    val response = executeRequestToResponse(collectionApi.listCollections("", adminBearerToken)())
     assertEquals(response.size, 8)
     assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_roles", "mc_token_cache", "mc_users", "test", "users"))
   }
@@ -77,7 +77,7 @@ class CollectionsSuite extends BaseSuite {
   }
 
   test("list all collections as user") {
-    val response = executeRequestToResponse(collectionApi.collectionList("", testUserBearerToken)())
+    val response = executeRequestToResponse(collectionApi.listCollections("", testUserBearerToken)())
     assertEquals(response.size, 3)
     assertEquals(response, List("accounts", "test", "users"))
   }

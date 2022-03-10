@@ -42,7 +42,7 @@ object AuthRoutes extends BaseRoute {
     .in(auth.bearer[Option[String]]())
     .out(jsonBody[JsonResult[Boolean]])
     .summary("Logout User")
-    .description("Logout an bearer Token")
+    .description("Logout by bearer Token")
 
   val logoutEndpoint = baseLogoutEndpoint.method(Method.POST).name("logout").serverLogic(_ => token => logout(token))
 
@@ -79,7 +79,7 @@ object AuthRoutes extends BaseRoute {
     .in("profile")
     .out(jsonBody[UserProfile])
     .summary("User Profile")
-    .description("Return the User Profile")
+    .description("Return the User Profile of loggedin user")
     .method(Method.GET)
     .name("userProfile")
     .serverLogic(loginInformation => _ => userProfile(loginInformation))
@@ -96,7 +96,7 @@ object AuthRoutes extends BaseRoute {
     .in(jsonBody[PasswordUpdateRequest])
     .out(jsonBody[JsonResult[Boolean]])
     .summary("Update Password")
-    .description("Change Password of User")
+    .description("Change Password of logged in User")
     .method(Method.PATCH)
     .name("updatePassword")
     .serverLogic(loggedInUser => loginToUpdate => updatePassword(loggedInUser, loginToUpdate))
@@ -116,9 +116,9 @@ object AuthRoutes extends BaseRoute {
     .in(query[Option[String]]("userid").description("UserId to update or create the ApiKey"))
     .out(jsonBody[JsonResult[String]])
     .summary("Update ApiKey")
-    .description("Change ApiKey of User")
+    .description("Generate new ApiKey of logged in User")
     .method(Method.PATCH)
-    .name("updateApiKey")
+    .name("generateNewApiKey")
     .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate))
 
   def updateApiKey(

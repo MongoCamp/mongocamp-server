@@ -65,7 +65,7 @@ object AdminRoutes extends BaseRoute {
 
   val userEndpoint = adminBase
     .in("users")
-    .in(path[String]("userId").description("UserId to Update"))
+    .in(path[String]("userId").description("UserId to search"))
     .out(jsonBody[UserProfile])
     .summary("UserProfile for userId")
     .description("Get UserProfile for user")
@@ -99,9 +99,9 @@ object AdminRoutes extends BaseRoute {
     .in("apikey")
     .out(jsonBody[JsonResult[String]])
     .summary("Update ApiKey")
-    .description("Change Password of User")
+    .description("Generate an new APIkey for the user")
     .method(Method.PATCH)
-    .name("updateApiKeyForUser")
+    .name("gnerateNewApiKeyForUser")
     .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, Some(loginToUpdate)))
 
   val deleteUserEndpoint = adminBase
@@ -155,12 +155,12 @@ object AdminRoutes extends BaseRoute {
 
   val getRolesEndpoint = adminBase
     .in("roles")
-    .in(path[String]("roleName").description("UserRoleKey"))
+    .in(path[String]("roleName").description("RoleKey to search"))
     .out(jsonBody[Role])
     .summary("Get Role")
-    .description("Get Role")
+    .description("Get Role by RoleKey")
     .method(Method.GET)
-    .name("getRoles")
+    .name("getRole")
     .serverLogic(_ => role => getRole(role))
 
   def addRole(role: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
@@ -177,7 +177,7 @@ object AdminRoutes extends BaseRoute {
     .summary("Add Role")
     .description("Add a new Role")
     .method(Method.PUT)
-    .name("addRoles")
+    .name("addRole")
     .serverLogic(_ => role => addRole(role))
 
   def getRole(roleKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
@@ -194,7 +194,7 @@ object AdminRoutes extends BaseRoute {
     .summary("Delete Role")
     .description("Delete Role")
     .method(Method.DELETE)
-    .name("deleteRoles")
+    .name("deleteRole")
     .serverLogic(_ => role => deleteRole(role))
 
   def deleteRole(role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {

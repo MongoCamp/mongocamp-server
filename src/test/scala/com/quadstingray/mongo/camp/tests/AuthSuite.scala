@@ -16,11 +16,9 @@ class AuthSuite extends BaseSuite {
     assertEquals(login.userProfile.user, "admin")
     assertEquals(
       login.userProfile.grants,
-      Some(
-        List(
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
-        )
+      List(
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
       )
     )
     val logout = executeRequestToResponse(adminApi.logout("", login.authToken)())
@@ -33,11 +31,9 @@ class AuthSuite extends BaseSuite {
     assertEquals(login.userProfile.user, "admin")
     assertEquals(
       login.userProfile.grants,
-      Some(
-        List(
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
-        )
+      List(
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
       )
     )
     val logout = executeRequestToResponse(adminApi.logoutByDelete("", login.authToken)())
@@ -53,17 +49,15 @@ class AuthSuite extends BaseSuite {
     assertEquals(refresh.userProfile.user, "admin")
     assertEquals(
       refresh.userProfile.grants,
-      Some(
-        List(
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
-          Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
-        )
+      List(
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeBucket),
+        Grant("*", read = true, write = true, administrate = true, com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection)
       )
     )
   }
 
   test("update api key") {
-    val updateResponse = executeRequestToResponse(adminApi.updateApiKey("", adminBearerToken)())
+    val updateResponse = executeRequestToResponse(adminApi.generateNewApiKey("", adminBearerToken)())
     assertEquals(updateResponse.value.isBlank, false)
     val userProfile = executeRequestToResponse(adminApi.userProfile("", adminBearerToken)())
     assertEquals(updateResponse.value, userProfile.apiKey.getOrElse("not_set"))
