@@ -18,13 +18,17 @@ object TestServer extends LazyLogging {
 
   var retries = 0
 
+  def setPort(): Unit = {
+    val port = Random.nextInt(10000) + TestAdditions.minPort
+    System.setProperty("SERVER_PORT", port.toString)
+  }
+
   while (!serverRunning) {
     try {
       if (!mongoServerStarted) {
         Future.successful {
           MongoTestServer.startMongoDatabase()
-          val port = Random.nextInt(10000).toString
-          System.setProperty("SERVER_PORT", port)
+          setPort()
           val server = com.quadstingray.mongo.camp.Server.startServer()
           server
         }
@@ -39,6 +43,7 @@ object TestServer extends LazyLogging {
     catch {
       case e: Exception =>
         serverRunning = false
+        setPort()
         if (retries > 60) {
           throw new Exception(s"could not start server in $retries seconds")
         }

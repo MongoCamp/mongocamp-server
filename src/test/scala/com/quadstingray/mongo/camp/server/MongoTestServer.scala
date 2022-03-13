@@ -15,10 +15,13 @@ import scala.util.Random
 object MongoTestServer extends LazyLogging {
   private var running: Boolean = false
 
-  lazy val mongoPort: Int = {
-    val port = Random.nextInt(10000)
+  var mongoPort: Int = setPort()
+
+  def setPort(): Int = {
+    val port = Random.nextInt(10000) + TestAdditions.minPort
     System.setProperty("CONNECTION_PORT", port.toString)
-    port
+    mongoPort = port
+    mongoPort
   }
 
   private var mongodExecutable: MongodExecutable = initMonoExecutable

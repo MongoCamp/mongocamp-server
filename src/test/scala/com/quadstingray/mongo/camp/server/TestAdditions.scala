@@ -7,14 +7,20 @@ import com.quadstingray.mongo.camp.model.auth.{ Grant, Role, UserInformation }
 import com.sfxcode.nosql.mongo._
 import io.circe.parser.decode
 import org.joda.time.DateTime
+import sttp.capabilities
+import sttp.capabilities.akka.AkkaStreams
+import sttp.client3.SttpBackend
 import sttp.client3.akkahttp.AkkaHttpBackend
 
 import scala.collection.mutable
+import scala.concurrent.Future
 import scala.util.Random
 
 object TestAdditions extends CirceSchema {
 
-  lazy val backend = AkkaHttpBackend()
+  lazy val minPort: Int = 1000
+
+  lazy val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] = AkkaHttpBackend()
 
   lazy val adminUser: String     = "admin"
   lazy val adminPassword: String = Random.alphanumeric.take(10).mkString
