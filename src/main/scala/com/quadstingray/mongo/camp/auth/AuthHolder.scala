@@ -79,7 +79,6 @@ object AuthHolder extends Config {
 
   def findUserInformationByLoginRequest(loginInformation: Any): UserInformation = {
     val userInformation = loginInformation match {
-      case a: AuthInputAllMethods => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
       case a: AuthInputBearer =>
         if (a.bearerToken.isEmpty) {
           throw MongoCampException.unauthorizedException()
@@ -88,9 +87,7 @@ object AuthHolder extends Config {
           val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
           userInfo
         }
-
-      case a: AuthInputWithBasic => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
-      case a: AuthInputWithApiKey =>
+      case a: AuthInputBearerWithApiKey =>
         if (a.bearerToken.isDefined) {
           val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
           userInfo
@@ -107,8 +104,45 @@ object AuthHolder extends Config {
         else {
           throw MongoCampException.unauthorizedException()
         }
-
-      case _ => throw MongoCampException.badAuthConfiguration()
+      case a: AuthInputToken =>
+        if (a.apiKey.isDefined) {
+          val apiKey = a.apiKey.get
+          if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
+            throw MongoCampException.unauthorizedException()
+          }
+          else {
+            AuthHolder.handler.findUserByApiKey(apiKey)
+          }
+        }
+        else {
+          throw MongoCampException.unauthorizedException()
+        }
+      case a: AuthInputBasicWithApiKey =>
+        if (a.basic.isDefined) {
+          AuthHolder.handler.findUser(a.basic.get.username, AuthHolder.handler.encryptPassword(a.basic.get.password.getOrElse("not_set")))
+        }
+        else if (a.apiKey.isDefined) {
+          val apiKey = a.apiKey.get
+          if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
+            throw MongoCampException.unauthorizedException()
+          }
+          else {
+            AuthHolder.handler.findUserByApiKey(apiKey)
+          }
+        }
+        else {
+          throw MongoCampException.unauthorizedException()
+        }
+      case a: AuthInputBasic =>
+        if (a.basic.isDefined) {
+          AuthHolder.handler.findUser(a.basic.get.username, AuthHolder.handler.encryptPassword(a.basic.get.password.getOrElse("not_set")))
+        }
+        else {
+          throw MongoCampException.unauthorizedException()
+        }
+      case a: AuthInputAllMethods      => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
+      case a: AuthInputBearerWithBasic => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
+      case _                           => throw MongoCampException.badAuthConfiguration()
     }
     userInformation
   }

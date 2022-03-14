@@ -145,7 +145,18 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] =
-    List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint, profileEndpoint) ++ onlyMongoEndpoints
+  lazy val onlyBearerEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+    val isAuthBearerEnabled = globalConfigBoolean("auth.bearer")
+    if (isAuthBearerEnabled) {
+      List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint)
+    }
+    else {
+      List()
+    }
+  }
+
+  lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+    onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint)
+  }
 
 }

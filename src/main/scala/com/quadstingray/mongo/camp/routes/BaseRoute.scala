@@ -25,22 +25,32 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
     val token = auth.apiKey(
       header[Option[String]]("X-AUTH-APIKEY").example(Some("secret1234")).description("Static API Key of the User")
     )
-    val bearer             = auth.bearer[Option[String]]()
-    val basicAuth          = auth.basic[Option[UsernamePassword]](WWWAuthenticateChallenge.basic("mongocamp Login"))
-    val isAuthBasicEnabled = globalConfigBoolean("auth.basic")
-    val isAuthTokenEnabled = globalConfigBoolean("auth.token")
+    val bearer              = auth.bearer[Option[String]]()
+    val basicAuth           = auth.basic[Option[UsernamePassword]](WWWAuthenticateChallenge.basic("mongocamp Login"))
+    val isAuthBasicEnabled  = globalConfigBoolean("auth.basic")
+    val isAuthBearerEnabled = globalConfigBoolean("auth.bearer")
+    val isAuthTokenEnabled  = globalConfigBoolean("auth.token")
 
-    val authInput = if (!isAuthBasicEnabled && !isAuthTokenEnabled) {
+    val authInput = if (isAuthBearerEnabled && !isAuthBasicEnabled && !isAuthTokenEnabled) {
       bearer.mapTo[AuthInputBearer]
     }
-    else if (isAuthBasicEnabled && !isAuthTokenEnabled) {
-      bearer.and(basicAuth).mapTo[AuthInputWithBasic]
+    else if (isAuthBearerEnabled && isAuthBasicEnabled && !isAuthTokenEnabled) {
+      bearer.and(basicAuth).mapTo[AuthInputBearerWithBasic]
     }
-    else if (!isAuthBasicEnabled && isAuthTokenEnabled) {
-      bearer.and(token).mapTo[AuthInputWithApiKey]
+    else if (isAuthBearerEnabled && !isAuthBasicEnabled && isAuthTokenEnabled) {
+      bearer.and(token).mapTo[AuthInputBearerWithApiKey]
     }
-    else if (isAuthBasicEnabled && isAuthTokenEnabled) {
+    else if (isAuthBearerEnabled && isAuthBasicEnabled && isAuthTokenEnabled) {
       bearer.and(basicAuth).and(token).mapTo[AuthInputAllMethods]
+    }
+    else if (!isAuthBearerEnabled && isAuthBasicEnabled && isAuthTokenEnabled) {
+      basicAuth.and(token).mapTo[AuthInputBasicWithApiKey]
+    }
+    else if (!isAuthBearerEnabled && !isAuthBasicEnabled && isAuthTokenEnabled) {
+      token.mapTo[AuthInputToken]
+    }
+    else if (!isAuthBearerEnabled && isAuthBasicEnabled && !isAuthTokenEnabled) {
+      basicAuth.mapTo[AuthInputBasic]
     }
     else {
       throw MongoCampException("not expected setting", StatusCode.InternalServerError)
