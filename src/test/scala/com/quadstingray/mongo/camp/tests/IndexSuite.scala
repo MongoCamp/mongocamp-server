@@ -7,9 +7,7 @@ class IndexSuite extends BaseSuite {
 
   val adminApi: IndexApi = IndexApi()
 
-  val indexCollection = "indexTestCollection"
-
-  test("create complex index") {
+  test("create complex index as admin") {
     val request = IndexCreateRequest(
       Map("fullIndex" -> -1, "secondParamIndex" -> -1),
       IndexOptionsRequest(Some("complexIndex"), background = Some(false), unique = Some(true))
@@ -18,12 +16,18 @@ class IndexSuite extends BaseSuite {
     assertEquals(createResult.name, "complexIndex")
   }
 
-  test("create unique index") {
+  test("get index as admin") {
+    val index = executeRequestToResponse(adminApi.index("", adminBearerToken)(indexCollection, "complexIndex"))
+    assertEquals(index.name, "complexIndex")
+    assertEquals(index.unique, true)
+  }
+
+  test("create unique index as admin") {
     val createResult = executeRequestToResponse(adminApi.createUniqueIndex("", adminBearerToken)(indexCollection, "uniqueField"))
     assertEquals(createResult.name, "uniqueField_1")
   }
 
-  test("create text index") {
+  test("create text index as admin") {
     val createResult =
       executeRequestToResponse(
         adminApi.createTextIndex("", adminBearerToken)(indexCollection, "textField", Some(IndexOptionsRequest(defaultLanguage = Some("de"))))
@@ -31,22 +35,22 @@ class IndexSuite extends BaseSuite {
     assertEquals(createResult.name, "textField_text")
   }
 
-  test("create index for field") {
+  test("create index for field as admin") {
     val createResult = executeRequestToResponse(adminApi.createIndexForField("", adminBearerToken)(indexCollection, "fieldName", Some(false)))
     assertEquals(createResult.name, "fieldName_-1")
   }
 
-  test("create expiration index") {
+  test("create expiration index as admin") {
     val createResult = executeRequestToResponse(adminApi.createExpiringIndex("", adminBearerToken)(indexCollection, "expiration", "90s", Some(false)))
     assertEquals(createResult.name, "expiration_-1")
   }
 
-  test("list indices") {
+  test("list indices as admin") {
     val listResult = executeRequestToResponse(adminApi.listIndices("", adminBearerToken)(indexCollection))
     assertEquals(listResult.size, 6)
   }
 
-  test("create complex index") {
+  test("create complex index as user") {
     val request = IndexCreateRequest(
       Map("fullIndex" -> -1, "secondParamIndex" -> -1),
       IndexOptionsRequest(Some("complexIndex"), background = Some(false), unique = Some(true))
@@ -57,14 +61,21 @@ class IndexSuite extends BaseSuite {
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
   }
 
-  test("create unique index") {
+  test("get index as user") {
+    val response = executeRequest(adminApi.index("", testUserBearerToken)(indexCollection, "complexIndex"))
+    assertEquals(response.code.code, 401)
+    assertEquals(response.header("x-error-message").isDefined, true)
+    assertEquals(response.header("x-error-message").get, "user not authorized for collection")
+  }
+
+  test("create unique index as user") {
     val response = executeRequest(adminApi.createUniqueIndex("", testUserBearerToken)(indexCollection, "uniqueField"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
   }
 
-  test("create text index") {
+  test("create text index as user") {
     val response =
       executeRequest(
         adminApi.createTextIndex("", testUserBearerToken)(indexCollection, "textField", Some(IndexOptionsRequest(defaultLanguage = Some("de"))))
@@ -74,21 +85,21 @@ class IndexSuite extends BaseSuite {
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
   }
 
-  test("create index for field") {
+  test("create index for field as user") {
     val response = executeRequest(adminApi.createIndexForField("", testUserBearerToken)(indexCollection, "fieldName", Some(false)))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
   }
 
-  test("create expiration index") {
+  test("create expiration index as user") {
     val response = executeRequest(adminApi.createExpiringIndex("", testUserBearerToken)(indexCollection, "expiration", "90s", Some(false)))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
   }
 
-  test("list indices") {
+  test("list indices as user") {
     val response = executeRequest(adminApi.listIndices("", testUserBearerToken)(indexCollection))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)

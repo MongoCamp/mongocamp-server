@@ -111,7 +111,7 @@ class CollectionsSuite extends BaseSuite {
     assertEquals(deleteResponseResult.header("x-error-message").get, "user not authorized for collection")
   }
 
-  test("aggregation on collection as admin") {
+  test("aggregation on collection as user") {
     val geoNearMap: Map[String, Any] = Map(
       "near"          -> Map("type" -> "Point", "coordinates" -> List(-113.4483806208, 44.0010717100)),
       "distanceField" -> "dist.calculated",
