@@ -1,3 +1,20 @@
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/QuadStingray/mongocamp/compare/v0.7.1...v0.8.0) (2022-03-14)
+
+
+### Bug Fixes
+
+* convert bson ids in one method ([04f2366](https://github.com/QuadStingray/mongocamp/commit/04f2366))
+* filter routes with _id field needs to be converted ([a11e8bd](https://github.com/QuadStingray/mongocamp/commit/a11e8bd))
+* update many routs needs conversion to OperationMap ([0777e0a](https://github.com/QuadStingray/mongocamp/commit/0777e0a))
+
+
+### Features
+
+* more auth methods ([386d5c7](https://github.com/QuadStingray/mongocamp/commit/386d5c7))
+
+
+
 <a name="0.7.1"></a>
 ## [0.7.1](https://github.com/QuadStingray/mongocamp/compare/v0.7.0...v0.7.1) (2022-03-10)
 
