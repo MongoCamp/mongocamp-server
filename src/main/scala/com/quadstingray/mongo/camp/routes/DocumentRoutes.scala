@@ -84,7 +84,7 @@ object DocumentRoutes extends RoutesPlugin {
 
           val mongoPaginatedFilter = MongoPaginatedFilter(
             MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
-            searchRequest.filter,
+            convertIdFields(searchRequest.filter),
             searchRequest.sort,
             searchRequest.projection
           )
@@ -119,7 +119,7 @@ object DocumentRoutes extends RoutesPlugin {
       Right(
         {
           val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result         = dao.insertOne(documentFromScalaMap(parameter)).result()
+          val result         = dao.insertOne(documentFromScalaMap(convertIdFields(parameter))).result()
           val insertedResult = InsertResponse(result.wasAcknowledged(), List(result.getInsertedId.asObjectId().getValue.toHexString))
           insertedResult
         }
@@ -193,12 +193,19 @@ object DocumentRoutes extends RoutesPlugin {
     Future.successful(
       Right(
         {
-          val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val documentMap = parameter._2
-          val result      = dao.replaceOne(Map[String, Any]("_id" -> new ObjectId(parameter._1)), documentFromScalaMap(documentMap)).result()
+          val dao                = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val documentMap        = parameter._2
+          val originalDocumentId = new ObjectId(parameter._1)
+          val result             = dao.replaceOne(Map[String, Any]("_id" -> originalDocumentId), documentFromScalaMap(documentMap)).result()
+          val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
+            Some(originalDocumentId)
+          }
+          else {
+            Option(result.getUpsertedId).map(value => value.asObjectId().getValue)
+          }
           val insertedResult = UpdateResponse(
             result.wasAcknowledged(),
-            Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,
+            maybeValue.map(value => value.toHexString).toList,
             result.getModifiedCount,
             result.getMatchedCount
           )
@@ -232,7 +239,7 @@ object DocumentRoutes extends RoutesPlugin {
 
           val document = mutable.Map[String, Any]()
 
-          parameter._2.foreach(element => {
+          convertIdFields(parameter._2).foreach(element => {
             if (element._1.startsWith("$")) {
               document.put(element._1, element._2)
             }
@@ -247,10 +254,18 @@ object DocumentRoutes extends RoutesPlugin {
 
           })
 
-          val result = dao.updateOne(Map[String, Any]("_id" -> new ObjectId(parameter._1)), documentFromScalaMap(document.toMap)).result()
+          val originalDocumentId = new ObjectId(parameter._1)
+          val result             = dao.updateOne(Map[String, Any]("_id" -> originalDocumentId), documentFromScalaMap(document.toMap)).result()
+          val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
+            Some(originalDocumentId)
+          }
+          else {
+            Option(result.getUpsertedId).map(value => value.asObjectId().getValue)
+          }
+
           val insertedResult = UpdateResponse(
             result.wasAcknowledged(),
-            Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,
+            maybeValue.map(value => value.toHexString).toList,
             result.getModifiedCount,
             result.getMatchedCount
           )
@@ -278,6 +293,27 @@ object DocumentRoutes extends RoutesPlugin {
     }
     map.put(element._1, element._2)
   }
+
+  def convertIdFields(map: Map[String, Any]): Map[String, Any] = {
+    val mutableMap = mutable.Map[String, Any]()
+    map.foreach(element => {
+      if (element._1 == "_id") {
+        mutableMap.put(element._1, new ObjectId(element._2.toString))
+      }
+      else {
+        element._2 match {
+          case value: Map[String, Any] =>
+            mutableMap.put(element._1, convertIdFields(value))
+          case value: Iterable[Map[String, Any]] =>
+            mutableMap.put(element._1, value.map(e => convertIdFields(e)))
+          case _ =>
+            mutableMap.put(element._1, element._2)
+        }
+      }
+    })
+    mutableMap.toMap
+  }
+
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
     List(findAllEndpoint, findPostEndpoint) ++
       DocumentManyRoutes.listOfManyEndpoints() ++
