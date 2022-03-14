@@ -167,7 +167,7 @@ object DocumentRoutes extends RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(
       Right({
-        val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> new ObjectId(parameter))).result()
+        val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> convertIdField(parameter))).result()
         val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
         deleteResponse
       })
@@ -195,7 +195,7 @@ object DocumentRoutes extends RoutesPlugin {
         {
           val dao                = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val documentMap        = parameter._2
-          val originalDocumentId = new ObjectId(parameter._1)
+          val originalDocumentId = convertIdField(parameter._1)
           val result             = dao.replaceOne(Map[String, Any]("_id" -> originalDocumentId), documentFromScalaMap(documentMap)).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)
@@ -254,7 +254,7 @@ object DocumentRoutes extends RoutesPlugin {
 
           })
 
-          val originalDocumentId = new ObjectId(parameter._1)
+          val originalDocumentId = convertIdField(parameter._1)
           val result             = dao.updateOne(Map[String, Any]("_id" -> originalDocumentId), documentFromScalaMap(document.toMap)).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)
@@ -298,7 +298,7 @@ object DocumentRoutes extends RoutesPlugin {
     val mutableMap = mutable.Map[String, Any]()
     map.foreach(element => {
       if (element._1 == "_id") {
-        mutableMap.put(element._1, new ObjectId(element._2.toString))
+        mutableMap.put(element._1, convertIdField(element._2))
       }
       else {
         element._2 match {
@@ -312,6 +312,14 @@ object DocumentRoutes extends RoutesPlugin {
       }
     })
     mutableMap.toMap
+  }
+
+  def convertIdField(id: Any): ObjectId = {
+    id match {
+      case s: String   => new ObjectId(s)
+      case o: ObjectId => o
+      case _           => new ObjectId(id.toString)
+    }
   }
 
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
