@@ -1,10 +1,10 @@
 package com.quadstingray.mongo.camp.routes
 
+import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertIdFields, convertToOperationMap }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
 import com.quadstingray.mongo.camp.model.{ DeleteResponse, InsertResponse, UpdateRequest, UpdateResponse }
-import com.quadstingray.mongo.camp.routes.DocumentRoutes.convertIdFields
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
@@ -72,7 +72,7 @@ object DocumentManyRoutes extends BaseRoute {
         {
           val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val documentMap = parameter.document
-          val result      = dao.updateMany(convertIdFields(parameter.filter), documentFromScalaMap(convertIdFields(documentMap))).result()
+          val result      = dao.updateMany(convertIdFields(parameter.filter), documentFromScalaMap(convertToOperationMap(documentMap))).result()
           val insertedResult = UpdateResponse(
             result.wasAcknowledged(),
             Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,

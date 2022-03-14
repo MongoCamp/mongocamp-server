@@ -1,6 +1,7 @@
 package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
+import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertIdField, convertIdFields, convertToOperationMap }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
@@ -19,7 +20,6 @@ import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 
 import java.util.Date
-import scala.collection.mutable
 import scala.concurrent.Future
 
 object DocumentRoutes extends RoutesPlugin {
@@ -237,25 +237,10 @@ object DocumentRoutes extends RoutesPlugin {
         {
           val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
 
-          val document = mutable.Map[String, Any]()
-
-          convertIdFields(parameter._2).foreach(element => {
-            if (element._1.startsWith("$")) {
-              document.put(element._1, element._2)
-            }
-            else {
-              if (element._2 == null) {
-                addToOperationMap(document, "unset", (element._1, ""))
-              }
-              else {
-                addToOperationMap(document, "set", element)
-              }
-            }
-
-          })
+          val document = convertToOperationMap(parameter._2)
 
           val originalDocumentId = convertIdField(parameter._1)
-          val result             = dao.updateOne(Map[String, Any]("_id" -> originalDocumentId), documentFromScalaMap(document.toMap)).result()
+          val result             = dao.updateOne(Map[String, Any]("_id" -> originalDocumentId), documentFromScalaMap(document)).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)
           }
@@ -273,53 +258,6 @@ object DocumentRoutes extends RoutesPlugin {
         }
       )
     )
-  }
-
-  private def addToOperationMap(document: mutable.Map[String, Any], operationType: String, element: (String, Any)) = {
-    val setMap = document.getOrElse(
-      "$" + operationType, {
-        val map = mutable.Map[String, Any]()
-        document.put("$" + operationType, map)
-        map
-      }
-    )
-    val map: mutable.Map[String, Any] = setMap match {
-      case value: mutable.Map[String, Any] =>
-        value
-      case map: Map[String, Any] =>
-        val mutableMap = mutable.Map[String, Any]()
-        mutableMap ++ map
-        mutableMap
-    }
-    map.put(element._1, element._2)
-  }
-
-  def convertIdFields(map: Map[String, Any]): Map[String, Any] = {
-    val mutableMap = mutable.Map[String, Any]()
-    map.foreach(element => {
-      if (element._1 == "_id") {
-        mutableMap.put(element._1, convertIdField(element._2))
-      }
-      else {
-        element._2 match {
-          case value: Map[String, Any] =>
-            mutableMap.put(element._1, convertIdFields(value))
-          case value: Iterable[Map[String, Any]] =>
-            mutableMap.put(element._1, value.map(e => convertIdFields(e)))
-          case _ =>
-            mutableMap.put(element._1, element._2)
-        }
-      }
-    })
-    mutableMap.toMap
-  }
-
-  def convertIdField(id: Any): ObjectId = {
-    id match {
-      case s: String   => new ObjectId(s)
-      case o: ObjectId => o
-      case _           => new ObjectId(id.toString)
-    }
   }
 
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =

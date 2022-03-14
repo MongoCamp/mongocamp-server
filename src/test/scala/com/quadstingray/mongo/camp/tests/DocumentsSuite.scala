@@ -1,7 +1,7 @@
 package com.quadstingray.mongo.camp.tests
 
 import com.quadstingray.mongo.camp.client.api.DocumentsApi
-import com.quadstingray.mongo.camp.client.model.MongoFindRequest
+import com.quadstingray.mongo.camp.client.model.{ MongoFindRequest, UpdateRequest }
 import io.circe.syntax.EncoderOps
 
 import java.util.UUID
@@ -14,7 +14,7 @@ class DocumentsSuite extends BaseSuite {
   var idsForTest: List[String]   = List()
 
   test("list all documents as admin") {
-    val response = executeRequestToResponse(documentsApi.listDocuments("", adminBearerToken)("accounts"))
+    val response = executeRequestToResponse(documentsApi.listDocuments("", adminBearerToken)(collectionNameAccounts))
     assertEquals(response.size, 100)
     val fistDocument = response.head
     assertEquals(fistDocument.size, 4)
@@ -28,7 +28,8 @@ class DocumentsSuite extends BaseSuite {
     val filter: String  = Map("iban" -> Map("$regex" -> "PL")).asJson.toString()
     val sort: String    = Map("currency" -> -1).asJson.toString()
     val project: String = Map("name" -> 1).asJson.toString()
-    val response     = executeRequest(documentsApi.listDocuments("", adminBearerToken)("accounts", Some(filter), Some(sort), Some(project), Some(2), Some(2)))
+    val response =
+      executeRequest(documentsApi.listDocuments("", adminBearerToken)(collectionNameAccounts, Some(filter), Some(sort), Some(project), Some(2), Some(2)))
     val responseBody = response.body.getOrElse(throw new Exception("error"))
     assertEquals(responseBody.size, 1)
     val fistDocument = responseBody.head
@@ -39,7 +40,7 @@ class DocumentsSuite extends BaseSuite {
   }
 
   test("find all documents as admin") {
-    val response = executeRequestToResponse(documentsApi.find("", adminBearerToken)("accounts", MongoFindRequest(Map(), Map(), Map())))
+    val response = executeRequestToResponse(documentsApi.find("", adminBearerToken)(collectionNameAccounts, MongoFindRequest(Map(), Map(), Map())))
     assertEquals(response.size, 100)
     val fistDocument = response.head
     assertEquals(fistDocument.size, 4)
@@ -50,10 +51,10 @@ class DocumentsSuite extends BaseSuite {
   }
 
   test("find filtered documents as admin") {
-    val filter       = Map("iban" -> Map("$regex" -> "PL"))
-    val sort         = Map("currency" -> -1)
-    val project      = Map("name" -> 1)
-    val response     = executeRequest(documentsApi.find("", adminBearerToken)("accounts", MongoFindRequest(filter, sort, project), Some(2), Some(2)))
+    val filter   = Map("iban" -> Map("$regex" -> "PL"))
+    val sort     = Map("currency" -> -1)
+    val project  = Map("name" -> 1)
+    val response = executeRequest(documentsApi.find("", adminBearerToken)(collectionNameAccounts, MongoFindRequest(filter, sort, project), Some(2), Some(2)))
     val responseBody = response.body.getOrElse(throw new Exception("error"))
     assertEquals(responseBody.size, 1)
     val fistDocument = responseBody.head
@@ -70,7 +71,7 @@ class DocumentsSuite extends BaseSuite {
   test("create new document at database as admin") {
     val mapToInsert =
       Map("index" -> Random.nextInt(), "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString)
-    val response = executeRequestToResponse(documentsApi.insert("", adminBearerToken)("test", mapToInsert))
+    val response = executeRequestToResponse(documentsApi.insert("", adminBearerToken)(collectionNameTest, mapToInsert))
     assertEquals(response.insertedIds.nonEmpty, true)
     assertEquals(response.insertedIds.size, 1)
     assertEquals(response.wasAcknowledged, true)
@@ -81,15 +82,15 @@ class DocumentsSuite extends BaseSuite {
     val mapToInsert: List[Map[String, Any]] = (0 to 10)
       .map(i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString))
       .toList
-    val response = executeRequestToResponse(documentsApi.insertMany("", adminBearerToken)("test", mapToInsert))
-    idsForTest = response.insertedIds.splitAt(3)._1.toList
+    val response = executeRequestToResponse(documentsApi.insertMany("", adminBearerToken)(collectionNameTest, mapToInsert))
+    idsForTest = response.insertedIds.toList
     assertEquals(response.insertedIds.nonEmpty, true)
     assertEquals(response.insertedIds.size, 11)
     assertEquals(response.wasAcknowledged, true)
   }
 
   test("get document from database as admin") {
-    val response = executeRequestToResponse(documentsApi.getDocument("", adminBearerToken)("test", idForTest))
+    val response = executeRequestToResponse(documentsApi.getDocument("", adminBearerToken)(collectionNameTest, idForTest))
     assertEquals(response.size, 5)
     assertEquals(response("_id"), idForTest)
     assertEquals(response("hello"), "world")
@@ -100,12 +101,12 @@ class DocumentsSuite extends BaseSuite {
 
   test("partial update documents from database as admin") {
     val request: Map[String, Any] = Map("hello" -> "you", "welcome" -> "world")
-    val response                  = executeRequestToResponse(documentsApi.updateDocumentPartial("", adminBearerToken)("test", idForTest, request))
+    val response                  = executeRequestToResponse(documentsApi.updateDocumentPartial("", adminBearerToken)(collectionNameTest, idForTest, request))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.upsertedIds, List(idForTest))
     assertEquals(response.matchedCount, 1L)
     assertEquals(response.modifiedCount, 1L)
-    val validation = executeRequestToResponse(documentsApi.getDocument("", adminBearerToken)("test", idForTest))
+    val validation = executeRequestToResponse(documentsApi.getDocument("", adminBearerToken)(collectionNameTest, idForTest))
     assertEquals(validation.size, 6)
     assertEquals(validation("_id"), idForTest)
     assertEquals(validation("hello"), "you")
@@ -117,12 +118,12 @@ class DocumentsSuite extends BaseSuite {
 
   test("update document from database as admin") {
     val request: Map[String, Any] = Map("hello" -> "web", "welcome" -> "you")
-    val response                  = executeRequestToResponse(documentsApi.updateDocument("", adminBearerToken)("test", idForTest, request))
+    val response                  = executeRequestToResponse(documentsApi.updateDocument("", adminBearerToken)(collectionNameTest, idForTest, request))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.upsertedIds, List(idForTest))
     assertEquals(response.matchedCount, 1L)
     assertEquals(response.modifiedCount, 1L)
-    val validation = executeRequestToResponse(documentsApi.getDocument("", adminBearerToken)("test", idForTest))
+    val validation = executeRequestToResponse(documentsApi.getDocument("", adminBearerToken)(collectionNameTest, idForTest))
     assertEquals(validation.size, 3)
     assertEquals(validation("_id"), idForTest)
     assertEquals(validation("hello"), "web")
@@ -133,20 +134,23 @@ class DocumentsSuite extends BaseSuite {
   }
 
   test("update many documents from database as admin") {
-    val request: Map[String, Any] = Map()
-    val response                  = executeRequestToResponse(documentsApi.updateDocument("", adminBearerToken)("test", idForTest, request))
-    assertEquals(false, true)
+    val request: UpdateRequest = UpdateRequest(Map("newField" -> "value"), Map())
+    val response               = executeRequestToResponse(documentsApi.updateMany("", adminBearerToken)(collectionNameTest, request))
+    assertEquals(response.modifiedCount, 12L)
+    assertEquals(response.matchedCount, 12L)
+    val validation = executeRequestToResponse(documentsApi.find("", adminBearerToken)(collectionNameTest, MongoFindRequest(Map(), Map(), Map())))
+    validation.foreach(value => assertEquals(value.get("newField"), Some("value")))
   }
 
   test("delete document from database as admin") {
-    val response = executeRequestToResponse(documentsApi.deleteDocument("", adminBearerToken)("test", idForTest))
+    val response = executeRequestToResponse(documentsApi.deleteDocument("", adminBearerToken)(collectionNameTest, idForTest))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.deletedCount, 1L)
   }
 
   test("delete documents from database as admin") {
-    val request  = Map("$or" -> idsForTest.map(value => Map("_id" -> value)))
-    val response = executeRequestToResponse(documentsApi.deleteMany("", adminBearerToken)("test", request))
+    val request  = Map("$or" -> idsForTest.splitAt(3)._1.map(value => Map("_id" -> value)))
+    val response = executeRequestToResponse(documentsApi.deleteMany("", adminBearerToken)(collectionNameTest, request))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.deletedCount, 3L)
   }

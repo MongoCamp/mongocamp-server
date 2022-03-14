@@ -14,6 +14,9 @@ class BaseSuite extends munit.FunSuite {
   lazy val adminBearerToken: String    = generateBearerToken(TestAdditions.adminUser, TestAdditions.adminPassword)
   lazy val testUserBearerToken: String = generateBearerToken(TestAdditions.testUser, TestAdditions.testPassword)
 
+  protected val collectionNameTest     = "test"
+  protected val collectionNameAccounts = "accounts"
+
   def executeRequest[R <: Any](
       request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]
   ): Response[Either[ResponseException[String, circe.Error], R]] = {
