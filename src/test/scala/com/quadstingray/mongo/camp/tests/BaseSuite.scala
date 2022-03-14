@@ -16,6 +16,7 @@ class BaseSuite extends munit.FunSuite {
 
   protected val collectionNameTest     = "test"
   protected val collectionNameAccounts = "accounts"
+  protected val indexCollection        = "indexTestCollection"
 
   def executeRequest[R <: Any](
       request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]
