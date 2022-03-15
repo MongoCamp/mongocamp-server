@@ -6,6 +6,7 @@ import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedAggregation, 
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, UserInformation }
 import com.quadstingray.mongo.camp.model.{ DeleteResponse, JsonResult, MongoAggregateRequest }
+import com.quadstingray.mongo.camp.routes.BucketRoutes.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
@@ -21,7 +22,7 @@ import sttp.tapir.server.ServerEndpoint
 
 import scala.concurrent.Future
 
-object CollectionRoutes extends RoutesPlugin {
+object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   val collectionsEndpoint = securedEndpoint
     .in(mongoDbPath)
@@ -37,10 +38,12 @@ object CollectionRoutes extends RoutesPlugin {
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
       val result           = MongoDatabase.databaseProvider.collectionNames()
-      val collectionGrants = userInformation.toResultUser.grants
+      val collectionGrants = userInformation.getCollectionGrants
       result.filter(collection => {
         val readCollections = collectionGrants.filter(_.read).map(_.name)
-        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection)
+        val allBucketMetaFilter =
+          readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
+        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
       })
     }))
   }

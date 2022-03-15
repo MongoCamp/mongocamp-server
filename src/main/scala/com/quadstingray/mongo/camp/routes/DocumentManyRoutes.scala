@@ -17,7 +17,7 @@ import sttp.tapir.server.ServerEndpoint
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 
-object DocumentManyRoutes extends BaseRoute {
+object DocumentManyRoutes extends CollectionBaseRoute {
 
   val insertManyEndpoint = writeCollectionEndpoint
     .in("documents")
