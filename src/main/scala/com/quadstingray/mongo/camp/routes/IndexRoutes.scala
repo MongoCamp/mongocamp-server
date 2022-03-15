@@ -18,7 +18,7 @@ import sttp.tapir.server.ServerEndpoint
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 
-object IndexRoutes extends BaseRoute {
+object IndexRoutes extends CollectionBaseRoute {
 
   val listIndexEndpoint = administrateCollectionEndpoint
     .in("index")

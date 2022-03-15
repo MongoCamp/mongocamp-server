@@ -63,15 +63,6 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
 
   lazy val mongoDbPath = "mongodb"
 
-  lazy val collectionEndpoint = securedEndpointDefinition
-    .securityIn(mongoDbPath)
-    .securityIn("collections")
-    .securityIn(path[String]("collectionName").description("The name of your MongoDb Collection"))
-
-  lazy val readCollectionEndpoint         = collectionEndpoint.serverSecurityLogic(connection => loginRead(connection))
-  lazy val writeCollectionEndpoint        = collectionEndpoint.serverSecurityLogic(connection => loginWrite(connection))
-  lazy val administrateCollectionEndpoint = collectionEndpoint.serverSecurityLogic(connection => loginAdministrate(connection))
-
   def login(loginInformation: Any): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserInformation]] = {
     Future.successful {
       val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation)
@@ -87,65 +78,6 @@ abstract class BaseRoute extends Config with CirceSchema with SchemaDerivation {
       }
       else {
         throw MongoCampException.unauthorizedException("user not authorized for request")
-      }
-    }
-  }
-
-  def loginRead(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
-    Future.successful {
-      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
-      if (userInformation.isAdmin) {
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-      else {
-        userInformation.getCollectionGrants
-          .find(collectionGrant => {
-            val collection = collectionGrant.name
-            (collection.equalsIgnoreCase(loginInformation._2) || collection
-              .equalsIgnoreCase(AuthorizedCollectionRequest.all)) && collectionGrant.read
-          })
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-    }
-  }
-
-  def loginWrite(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
-    Future.successful {
-      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
-      if (userInformation.isAdmin) {
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-      else {
-        userInformation.getCollectionGrants
-          .find(collectionGrant => {
-            val collection = collectionGrant.name
-            (collection.equalsIgnoreCase(loginInformation._2) || collection
-              .equalsIgnoreCase(AuthorizedCollectionRequest.all)) && collectionGrant.write
-          })
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-    }
-  }
-
-  def loginAdministrate(
-      loginInformation: (AuthInput, String)
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
-    Future.successful {
-      val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
-      if (userInformation.isAdmin) {
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-      else {
-        userInformation.getCollectionGrants
-          .find(collectionGrant => {
-            val collection = collectionGrant.name
-            (collection.equalsIgnoreCase(loginInformation._2) || collection
-              .equalsIgnoreCase(AuthorizedCollectionRequest.all)) && collectionGrant.administrate
-          })
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
     }
   }

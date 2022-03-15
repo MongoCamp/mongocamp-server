@@ -22,7 +22,7 @@ import sttp.tapir.server.ServerEndpoint
 import java.util.Date
 import scala.concurrent.Future
 
-object DocumentRoutes extends RoutesPlugin {
+object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   val findAllEndpoint = readCollectionEndpoint
     .in("documents")
