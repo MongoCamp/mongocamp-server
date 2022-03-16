@@ -5,7 +5,7 @@ import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import com.quadstingray.mongo.camp.model.{ DeleteResponse, JsonResult, MongoAggregateRequest }
+import com.quadstingray.mongo.camp.model.{ JsonResult, MongoAggregateRequest }
 import com.quadstingray.mongo.camp.routes.BucketRoutes.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
@@ -52,7 +52,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in(query[Boolean]("includeDetails").description("Include all details for the Collection").default(false))
     .out(jsonBody[CollectionStatus])
     .summary("Collection Information")
-    .description("All Informations about a single Collection")
+    .description("All Information about a single Collection")
     .tag("Collection")
     .method(Method.GET)
     .name("getCollectionInformation")
@@ -116,7 +116,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   val deleteAllEndpoint = writeCollectionEndpoint
     .in("clear")
-    .out(jsonBody[DeleteResponse])
+    .out(jsonBody[JsonResult[Boolean]])
     .summary("Clear Collection")
     .description("Delete all Document in Collection")
     .tag("Collection")
@@ -126,14 +126,13 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def deleteAllInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful(
       Right(
         {
-          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result         = dao.deleteAll().result()
-          val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-          deleteResponse
+          val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val result = dao.deleteAll().result()
+          JsonResult(result.wasAcknowledged())
         }
       )
     )
