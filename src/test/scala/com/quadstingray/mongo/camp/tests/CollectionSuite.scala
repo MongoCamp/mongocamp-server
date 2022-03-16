@@ -12,8 +12,23 @@ class CollectionSuite extends BaseSuite {
 
   test("list all collections as admin") {
     val response = executeRequestToResponse(collectionApi.listCollections("", adminBearerToken)())
-    assertEquals(response.size, 8)
-    assertEquals(response, List("accounts", "admin-test", "mc_request_logging", "mc_roles", "mc_token_cache", "mc_users", "test", "users"))
+    assertEquals(
+      response,
+      List(
+        "accounts",
+        "admin-test",
+        "mc_request_logging",
+        "mc_roles",
+        "mc_token_cache",
+        "mc_users",
+        "sample-files.chunks",
+        "sample-files.files",
+        "test",
+        "users"
+      )
+    )
+    assertEquals(response.size, 10)
+
   }
 
   test("collection status accounts as admin") {
