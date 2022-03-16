@@ -23,6 +23,7 @@ import java.util.Date
 import scala.concurrent.Future
 
 object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
+  val apiName = "Document"
 
   val findAllEndpoint = readCollectionEndpoint
     .in("documents")
@@ -34,7 +35,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Documents in Collection")
     .description("Get Documents paginated from given Collection")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.GET)
     .name("listDocuments")
     .serverLogic(collectionRequest => parameter => findAllInCollection(collectionRequest, parameter))
@@ -65,7 +66,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Documents in Collection")
     .description("Alternative to GET Route for more complex queries and URL max. Length")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.POST)
     .name("find")
     .serverLogic(collectionRequest => parameter => findInCollection(collectionRequest, parameter))
@@ -106,7 +107,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(jsonBody[InsertResponse])
     .summary("Insert Document")
     .description("Insert one Document in given Collection")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.PUT)
     .name("insert")
     .serverLogic(login => insert => insertInCollection(login, insert))
@@ -133,7 +134,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(jsonBody[Map[String, Any]])
     .summary("Document from Collection")
     .description("Get one Document from given Collection")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.GET)
     .name("getDocument")
     .serverLogic(collectionRequest => parameter => findById(collectionRequest, parameter))
@@ -156,7 +157,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(jsonBody[DeleteResponse])
     .summary("Delete Document from Collection")
     .description("Delete one Document from given Collection")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.DELETE)
     .name("deleteDocument")
     .serverLogic(collectionRequest => parameter => deleteById(collectionRequest, parameter))
@@ -181,7 +182,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(jsonBody[UpdateResponse])
     .summary("Update Document in Collection")
     .description("'Replace' one Document with the new document from Request in Collection")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.PATCH)
     .name("updateDocument")
     .serverLogic(collectionRequest => parameter => replaceInCollection(collectionRequest, parameter))
@@ -223,7 +224,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(jsonBody[UpdateResponse])
     .summary("Update Document Parts in Collection")
     .description("Update the document Parts with the values from the Request")
-    .tag("Documents")
+    .tag(apiName)
     .method(Method.PATCH)
     .name("updateDocumentPartial")
     .serverLogic(collectionRequest => parameter => updateFieldsInCollection(collectionRequest, parameter))
