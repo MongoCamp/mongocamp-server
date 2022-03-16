@@ -1,6 +1,5 @@
 package com.quadstingray.mongo.camp.model.auth
 import com.quadstingray.mongo.camp.auth.AuthHolder
-import com.quadstingray.mongo.camp.model.auth.Grant.grantTypeCollection
 
 case class UserInformation(userId: String, password: String, apiKey: Option[String], roles: List[String]) {
 
@@ -16,8 +15,12 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
   def getCollectionGrants: List[Grant] = {
     val allGrands = getGrants
     allGrands.filter(_.grantType.equalsIgnoreCase(Grant.grantTypeCollection)) ++ allGrands
-      .filter(grant => grant.grantType.equalsIgnoreCase(Grant.grantTypeBucketMeta) && !grant.name.equalsIgnoreCase(AuthorizedCollectionRequest.all))
-      .map(grant => grant.copy(name = s"${grant.name}.files", grantType = grantTypeCollection))
+      .filter(grant => grant.grantType.equalsIgnoreCase(Grant.grantTypeBucketMeta))
+      .map(grant => grant.copy(name = s"${grant.name}.files"))
+  }
+
+  def getBucketGrants: List[Grant] = {
+    getGrants.filter(grant => grant.grantType.equalsIgnoreCase(Grant.grantTypeBucketMeta) || grant.grantType.equalsIgnoreCase(Grant.grantTypeBucket))
   }
 
   def isAdmin: Boolean = {
