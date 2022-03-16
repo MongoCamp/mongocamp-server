@@ -2,6 +2,8 @@ package com.quadstingray.mongo.camp.tests
 
 import com.quadstingray.mongo.camp.client.api.IndexApi
 import com.quadstingray.mongo.camp.client.model._
+import com.quadstingray.mongo.camp.database.MongoDatabase
+import com.sfxcode.nosql.mongo.GenericObservable
 
 class IndexSuite extends BaseSuite {
 
@@ -104,6 +106,10 @@ class IndexSuite extends BaseSuite {
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
+  }
+
+  override def afterAll(): Unit = {
+    MongoDatabase.databaseProvider.dao(indexCollection).drop().result()
   }
 
 }

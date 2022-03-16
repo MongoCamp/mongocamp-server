@@ -45,6 +45,17 @@ object TestAdditions extends CirceSchema {
       MapCollectionDao("test").createIndexForField("index").result()
       MapCollectionDao("admin-test").createIndexForField("index").result()
 
+      object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, "sample-files")
+      val accountFile    = File(getClass.getResource("/accounts.json").getPath)
+      val geoFile        = File(getClass.getResource("/geodata.json").getPath)
+      val userFile       = File(getClass.getResource("/users.json").getPath)
+      val mongoCampImage = File("docs/public/mongocamp.png")
+
+      FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
+      FilesDAO.uploadFile(geoFile.name, geoFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> geoFile.toString())).result()
+      FilesDAO.uploadFile(userFile.name, userFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> userFile.toString())).result()
+      FilesDAO.uploadFile(mongoCampImage.name, userFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> mongoCampImage.toString())).result()
+
       val authHolder = AuthHolder.handler.asInstanceOf[MongoAuthHolder]
       authHolder.addUser(UserInformation(testUser, testPassword, None, List("test")))
       authHolder.addRole(
