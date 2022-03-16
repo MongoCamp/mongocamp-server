@@ -5,7 +5,7 @@ import com.quadstingray.mongo.camp.client.model.{ MongoAggregateRequest, Pipelin
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.sfxcode.nosql.mongo._
 
-class CollectionsSuite extends BaseSuite {
+class CollectionSuite extends BaseSuite {
 
   val collectionApi: CollectionApi = CollectionApi()
   val databaseApi: DatabaseApi     = DatabaseApi()
@@ -35,8 +35,7 @@ class CollectionsSuite extends BaseSuite {
     collection.insertOne(Map("key" -> "value")).result()
     assertEquals(collection.count().result(), 1L)
     val deleteResponseResult = executeRequestToResponse(collectionApi.clearCollection("", adminBearerToken)("otherDB:collectionName"))
-    assertEquals(deleteResponseResult.deletedCount, 1L)
-    assertEquals(deleteResponseResult.wasAcknowledged, true)
+    assertEquals(deleteResponseResult.value, true)
     assertEquals(collection.count().result(), 0L)
     val databaseDelete = executeRequestToResponse(databaseApi.deleteDatabase("", adminBearerToken)("otherDB"))
     assertEquals(databaseDelete.value, true)

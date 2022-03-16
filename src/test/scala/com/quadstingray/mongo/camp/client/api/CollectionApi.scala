@@ -7,7 +7,7 @@
 package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
-import com.quadstingray.mongo.camp.client.model.{ CollectionStatus, DeleteResponse, JsonResultBoolean, MongoAggregateRequest }
+import com.quadstingray.mongo.camp.client.model.{ CollectionStatus, JsonResultBoolean, MongoAggregateRequest }
 import com.quadstingray.mongo.camp.converter.CirceSchema
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -70,7 +70,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[DeleteResponse])
+      .response(asJson[JsonResultBoolean])
 
   /** Delete a given Collection
     *
