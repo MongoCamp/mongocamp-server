@@ -1,17 +1,17 @@
 package com.quadstingray.mongo.camp.tests
 
-import com.quadstingray.mongo.camp.client.api.DocumentsApi
+import com.quadstingray.mongo.camp.client.api.DocumentApi
 import com.quadstingray.mongo.camp.client.model.{ MongoFindRequest, UpdateRequest }
 import io.circe.syntax.EncoderOps
 
 import java.util.UUID
 import scala.util.Random
 
-class DocumentsSuite extends BaseSuite {
+class DocumentSuite extends BaseSuite {
 
-  val documentsApi: DocumentsApi = DocumentsApi()
-  var idForTest: String          = ""
-  var idsForTest: List[String]   = List()
+  val documentsApi: DocumentApi = DocumentApi()
+  var idForTest: String         = ""
+  var idsForTest: List[String]  = List()
 
   test("list all documents as admin") {
     val response = executeRequestToResponse(documentsApi.listDocuments("", adminBearerToken)(collectionNameAccounts))
