@@ -9,6 +9,8 @@ import com.quadstingray.mongo.camp.file.FileAdapterHolder
 import com.quadstingray.mongo.camp.model.BucketInformation.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.model._
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
+import com.quadstingray.mongo.camp.routes.file.FileFunctions.fileResult
+import com.quadstingray.mongo.camp.routes.file.FileResult
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
@@ -137,7 +139,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     .description("Get one FileInformation from given Bucket")
     .tag(apiName)
     .method(Method.GET)
-    .name("getDocument")
+    .name("getFileInformation")
     .serverLogic(collectionRequest => parameter => findById(collectionRequest, parameter))
 
   def findById(
@@ -146,32 +148,37 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Map[String, Any]]] = {
     Future.successful(
       Right({
-        val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection + BucketCollectionSuffix).findById(parameter).resultOption()
-        result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
+        getFileInformation(authorizedCollectionRequest.collection, parameter)
       })
     )
+  }
+
+  def getFileInformation(bucketName: String, fileId: String): Map[String, Any] = {
+    val result = MongoDatabase.databaseProvider.dao(bucketName + BucketCollectionSuffix).findById(fileId).resultOption()
+    result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
   }
 
   val getFileEndpoint = readBucketEndpoint
     .in("files")
     .in(path[String]("fileId").description("FileId to read"))
     .in("file")
-    .out(jsonBody[Map[String, Any]])
-    .summary("FileInformation from Bucket")
-    .description("Get one FileInformation from given Bucket")
+    .out(fileResult)
+    .summary("File from Bucket")
+    .description("Get File from given Bucket")
     .tag(apiName)
     .method(Method.GET)
-    .name("getFileInformation")
+    .name("getFile")
     .serverLogic(collectionRequest => parameter => getFileById(collectionRequest, parameter))
 
   def getFileById(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Map[String, Any]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), FileResult]] = {
     Future.successful(
       Right({
-        val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).findById(parameter).resultOption()
-        result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
+        val fileInformation = getFileInformation(authorizedCollectionRequest.collection, parameter)
+        val file            = FileAdapterHolder.handler.getFile(authorizedCollectionRequest.collection, parameter)
+        FileResult(file, fileInformation.get("filename").map(_.toString))
       })
     )
   }
