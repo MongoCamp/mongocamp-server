@@ -8,6 +8,8 @@ object FileAdapterHolder {
 
   lazy val fileHandlerType: String = globalConfigString("file.handler")
 
+  def isGridfsHolder: Boolean = fileHandlerType.equalsIgnoreCase("gridfs")
+
   // todo: search for all possible FilePlugin`s
   lazy val listOfRoutePlugins: List[FilePlugin] = List(new GridFsFileAdapter())
 
