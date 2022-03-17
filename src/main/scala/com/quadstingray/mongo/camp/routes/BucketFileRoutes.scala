@@ -1,10 +1,9 @@
 package com.quadstingray.mongo.camp.routes
 
 import better.files.File
-import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
 import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertFields, convertIdField }
-import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
+import com.quadstingray.mongo.camp.database.{ FileInformationDao, MongoDatabase }
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
 import com.quadstingray.mongo.camp.file.FileAdapterHolder
 import com.quadstingray.mongo.camp.model.BucketInformation.BucketCollectionSuffix
@@ -34,7 +33,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     .in(query[Option[String]]("sort").description("MongoDB sorting").example(Some("{}")))
     .in(query[Option[String]]("projection").description("MongoDB projection").example(Some("{}")))
     .in(PagingFunctions.pagingParameter)
-    .out(jsonBody[List[Map[String, Any]]])
+    .out(jsonBody[List[FileInformation]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Files in Bucket")
     .description("Get Files paginated from given Bucket")
@@ -46,7 +45,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   def findAllInBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: (Option[String], Option[String], Option[String], Paging)
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[FileInformation], PaginationInfo)]] = {
     val filter: Map[String, Any]     = parameter._1.map(value => decode[Map[String, Any]](value).getOrElse(Map[String, Any]())).getOrElse(Map[String, Any]())
     val sort: Map[String, Any]       = parameter._2.map(value => decode[Map[String, Any]](value).getOrElse(Map[String, Any]())).getOrElse(Map[String, Any]())
     val projection: Map[String, Any] = parameter._3.map(value => decode[Map[String, Any]](value).getOrElse(Map[String, Any]())).getOrElse(Map[String, Any]())
@@ -65,19 +64,19 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
       )
     )
     .in(PagingFunctions.pagingParameter)
-    .out(jsonBody[List[Map[String, Any]]])
+    .out(jsonBody[List[FileInformation]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Files in Bucket")
     .description("Alternative to GET Route for more complex queries and URL max. Length")
     .tag(apiName)
     .method(Method.POST)
-    .name("find")
+    .name("findFiles")
     .serverLogic(bucketRequest => parameter => findInBucket(bucketRequest, parameter))
 
   def findInBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: (MongoFindRequest, Paging)
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[FileInformation], PaginationInfo)]] = {
     Future.successful(
       Right(
         {
@@ -87,14 +86,14 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
           val page          = pagingInfo.page.getOrElse(1L)
 
           val mongoPaginatedFilter = MongoPaginatedFilter(
-            MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection + BucketCollectionSuffix),
+            FileInformationDao(authorizedCollectionRequest.collection),
             convertFields(searchRequest.filter),
             searchRequest.sort,
             searchRequest.projection
           )
 
           val findResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
-          (findResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), findResult.paginationInfo)
+          (findResult.databaseObjects.map(dbFile => FileInformation(dbFile)), findResult.paginationInfo)
         }
       )
     )
@@ -118,7 +117,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     .description("Insert one File in given Bucket")
     .tag(apiName)
     .method(Method.PUT)
-    .name("insert")
+    .name("insertFiles")
     .serverLogic(login => insert => insertInBucket(login, insert))
 
   def insertInBucket(
@@ -148,7 +147,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   val getFileInfosEndpoint = readBucketEndpoint
     .in("files")
     .in(path[String]("fileId").description("fileId to read"))
-    .out(jsonBody[Map[String, Any]])
+    .out(jsonBody[FileInformation])
     .summary("FileInformation from Bucket")
     .description("Get one FileInformation from given Bucket")
     .tag(apiName)
@@ -159,7 +158,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   def findById(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Map[String, Any]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), FileInformation]] = {
     Future.successful(
       Right({
         getFileInformation(authorizedCollectionRequest.collection, parameter)
@@ -167,9 +166,9 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     )
   }
 
-  def getFileInformation(bucketName: String, fileId: String): Map[String, Any] = {
-    val result = MongoDatabase.databaseProvider.dao(bucketName + BucketCollectionSuffix).findById(fileId).resultOption()
-    result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
+  def getFileInformation(bucketName: String, fileId: String): FileInformation = {
+    val result = FileInformationDao(bucketName).findById(fileId).resultOption()
+    result.map(dbFile => FileInformation(dbFile)).getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
   }
 
   val getFileEndpoint = readBucketEndpoint
@@ -192,7 +191,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
       Right({
         val fileInformation = getFileInformation(authorizedCollectionRequest.collection, parameter)
         val file            = FileAdapterHolder.handler.getFile(authorizedCollectionRequest.collection, parameter)
-        FileResult(file, fileInformation.get("filename").map(_.toString))
+        FileResult(file, Some(fileInformation.filename))
       })
     )
   }

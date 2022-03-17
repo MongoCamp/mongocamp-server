@@ -2,6 +2,7 @@ package com.quadstingray.mongo.camp.database
 import com.quadstingray.mongo.camp.BuildInfo
 import com.quadstingray.mongo.camp.config.Config
 import com.quadstingray.mongo.camp.interceptor.RequestLogging
+import com.quadstingray.mongo.camp.model.DBFileInformation
 import com.quadstingray.mongo.camp.model.auth._
 import com.sfxcode.nosql.mongo.bson.codecs.CustomCodecProvider
 import com.sfxcode.nosql.mongo.database.{ DatabaseProvider, MongoConfig }
@@ -40,6 +41,7 @@ object MongoDatabase extends Config {
     classOf[Grant],
     classOf[RequestLogging],
     classOf[TokenCacheElement],
+    classOf[DBFileInformation],
     CustomCodecProvider()
   )
 
