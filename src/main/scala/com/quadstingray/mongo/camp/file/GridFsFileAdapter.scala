@@ -8,7 +8,13 @@ import com.sfxcode.nosql.mongo.{ GenericObservable, _ }
 class GridFsFileAdapter extends FilePlugin {
   override val name: String = "gridfs"
 
-  override def getFile(bucket: String, fileId: String): File                = ???
+  override def getFile(bucket: String, fileId: String): File = {
+    object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, bucket)
+    val tmpFile = File.newTemporaryFile()
+    FilesDAO.downloadFileResult(convertIdField(fileId), tmpFile)
+    tmpFile
+  }
+
   override def putFile(bucket: String, fileId: String, file: File): Boolean = ???
 
   override def size(bucket: String): Double = {
