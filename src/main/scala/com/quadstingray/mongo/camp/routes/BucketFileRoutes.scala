@@ -1,5 +1,6 @@
 package com.quadstingray.mongo.camp.routes
 
+import better.files.File
 import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
 import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertFields, convertIdField }
 import com.quadstingray.mongo.camp.database.MongoDatabase
@@ -17,12 +18,11 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{ Method, Part, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 
-import java.util.Date
 import scala.concurrent.Future
 
 object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
@@ -103,29 +103,43 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   val insertEndpoint = writeBucketEndpoint
     .in("files")
     .in(
-      jsonBody[Map[String, Any]]
-        .description("JSON Representation for your Document.")
-        .example(Map("key1" -> "value", "key2" -> 0, "key2" -> true, "key3" -> Map("creationDate" -> new Date())))
+      multipartBody[FileUploadForm]
+        .example(
+          FileUploadForm(
+            Part("testFile", File.newTemporaryFile("prefix", "suffix").toJava),
+            "{\"metakey\":\"value1\"}"
+          )
+        )
+        .description("Request um neue Einträge mittels einer Datei anzulegen")
     )
+    .in(query[Option[String]]("fileName").description("override filename of uploaded file"))
     .out(jsonBody[InsertResponse])
     .summary("Insert File")
     .description("Insert one File in given Bucket")
     .tag(apiName)
     .method(Method.PUT)
     .name("insert")
-    .serverLogic(login => insert => insertInCollection(login, insert))
+    .serverLogic(login => insert => insertInBucket(login, insert))
 
-  def insertInCollection(
+  def insertInBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: Map[String, Any]
+      parameter: (FileUploadForm, Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), InsertResponse]] = {
     Future.successful(
       Right(
         {
-          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result         = dao.insertOne(documentFromScalaMap(convertFields(parameter))).result()
-          val insertedResult = InsertResponse(result.wasAcknowledged(), List(result.getInsertedId.asObjectId().getValue.toHexString))
-          insertedResult
+          val metadata: Map[String, Any] = convertFields(decode[Map[String, Any]](parameter._1.metaData).getOrElse(Map[String, Any]()))
+          val uploadedFile               = better.files.File(parameter._1.file.body.getPath)
+          val fileName                   = parameter._2.getOrElse(parameter._1.file.otherDispositionParams.getOrElse("filename", uploadedFile.name))
+          if (FileAdapterHolder.isGridfsHolder) {
+            object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, authorizedCollectionRequest.collection)
+            val result         = FilesDAO.uploadFile(fileName, uploadedFile, documentFromScalaMap(metadata)).result()
+            val insertedResult = InsertResponse(wasAcknowledged = true, List(result.toHexString))
+            insertedResult
+          }
+          else {
+            throw MongoCampException("not implemented at this point", StatusCode.NotImplemented)
+          }
         }
       )
     )
