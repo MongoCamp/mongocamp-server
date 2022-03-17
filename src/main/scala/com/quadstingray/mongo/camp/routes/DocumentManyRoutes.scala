@@ -1,6 +1,6 @@
 package com.quadstingray.mongo.camp.routes
 
-import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertIdFields, convertToOperationMap }
+import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertFields, convertToOperationMap }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
@@ -40,7 +40,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
       Right(
         {
           val dao                            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val listOfDocuments                = parameter.map(map => documentFromScalaMap(convertIdFields(map)))
+          val listOfDocuments                = parameter.map(map => documentFromScalaMap(convertFields(map)))
           val result                         = dao.insertMany(listOfDocuments).result()
           val listOfIds                      = result.getInsertedIds.values().asScala.map(_.asObjectId().getValue.toHexString).toList
           val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
@@ -72,7 +72,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
         {
           val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val documentMap = parameter.document
-          val result      = dao.updateMany(convertIdFields(parameter.filter), documentFromScalaMap(convertToOperationMap(documentMap))).result()
+          val result      = dao.updateMany(convertFields(parameter.filter), documentFromScalaMap(convertToOperationMap(documentMap))).result()
           val insertedResult = UpdateResponse(
             result.wasAcknowledged(),
             Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,
@@ -106,7 +106,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
       Right(
         {
           val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val deleteFilter   = convertIdFields(parameter)
+          val deleteFilter   = convertFields(parameter)
           val result         = dao.deleteMany(deleteFilter).result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
           deleteResponse
