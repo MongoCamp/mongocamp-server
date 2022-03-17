@@ -4,14 +4,41 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**generateNewApiKey**](AuthApi.md#generateNewApiKey) | **PATCH** /auth/profile/apikey | Update ApiKey
 [**login**](AuthApi.md#login) | **POST** /auth/login | Login User
 [**logout**](AuthApi.md#logout) | **POST** /auth/logout | Logout User
 [**logoutByDelete**](AuthApi.md#logoutByDelete) | **DELETE** /auth/logout | Logout User
 [**refreshToken**](AuthApi.md#refreshToken) | **GET** /auth/token/refresh | Refresh User
-[**updateApiKey**](AuthApi.md#updateApiKey) | **PATCH** /auth/profile/apikey | Update ApiKey
 [**updatePassword**](AuthApi.md#updatePassword) | **PATCH** /auth/profile/password | Update Password
 [**userProfile**](AuthApi.md#userProfile) | **GET** /auth/profile | User Profile
 
+
+<a name="generateNewApiKey"></a>
+# **generateNewApiKey**
+> JsonResult_String generateNewApiKey(userid)
+
+Update ApiKey
+
+    Generate new ApiKey of logged in User
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userid** | **String**| UserId to update or create the ApiKey | [optional] [default to null]
+
+### Return type
+
+[**JsonResult_String**](../Models/JsonResult_String.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, text/plain
 
 <a name="login"></a>
 # **login**
@@ -46,7 +73,7 @@ No authorization required
 
 Logout User
 
-    Logout an bearer Token
+    Logout by bearer Token
 
 ### Parameters
 This endpoint does not need any parameter.
@@ -70,7 +97,7 @@ This endpoint does not need any parameter.
 
 Logout User
 
-    Logout an bearer Token
+    Logout by bearer Token
 
 ### Parameters
 This endpoint does not need any parameter.
@@ -112,40 +139,13 @@ This endpoint does not need any parameter.
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="updateApiKey"></a>
-# **updateApiKey**
-> JsonResult_String updateApiKey(userid)
-
-Update ApiKey
-
-    Change ApiKey of User
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userid** | **String**| UserId to update or create the ApiKey | [optional] 
-
-### Return type
-
-[**JsonResult_String**](../Models/JsonResult_String.md)
-
-### Authorization
-
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json, text/plain
-
 <a name="updatePassword"></a>
 # **updatePassword**
 > JsonResult_Boolean updatePassword(PasswordUpdateRequest)
 
 Update Password
 
-    Change Password of User
+    Change Password of logged in User
 
 ### Parameters
 
@@ -172,7 +172,7 @@ Name | Type | Description  | Notes
 
 User Profile
 
-    Return the User Profile
+    Return the User Profile of loggedin user
 
 ### Parameters
 This endpoint does not need any parameter.

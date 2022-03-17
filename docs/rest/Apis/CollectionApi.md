@@ -6,10 +6,11 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**aggregate**](CollectionApi.md#aggregate) | **POST** /mongodb/collections/{collectionName}/aggregate | Aggregate in Collection
 [**clearCollection**](CollectionApi.md#clearCollection) | **DELETE** /mongodb/collections/{collectionName}/clear | Clear Collection
-[**collectionList**](CollectionApi.md#collectionList) | **GET** /mongodb/collections | List of Collections
 [**deleteCollection**](CollectionApi.md#deleteCollection) | **DELETE** /mongodb/collections/{collectionName} | Delete Collection
 [**distinct**](CollectionApi.md#distinct) | **POST** /mongodb/collections/{collectionName}/distinct/{field} | Distinct in Collection
+[**getCollectionFields**](CollectionApi.md#getCollectionFields) | **GET** /mongodb/collections/{collectionName}/fields | Collection Fields
 [**getCollectionInformation**](CollectionApi.md#getCollectionInformation) | **GET** /mongodb/collections/{collectionName} | Collection Information
+[**listCollections**](CollectionApi.md#listCollections) | **GET** /mongodb/collections | List of Collections
 
 
 <a name="aggregate"></a>
@@ -18,16 +19,16 @@ Method | HTTP request | Description
 
 Aggregate in Collection
 
-    Aggregate in your MongoDatabase Collection
+    Aggregate in a given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
  **MongoAggregateRequest** | [**MongoAggregateRequest**](../Models/MongoAggregateRequest.md)|  |
- **rowsPerPage** | **Long**| Count elements per page | [optional] 
- **page** | **Long**| Requested page of the ResultSets | [optional] 
+ **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
+ **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
 
 ### Return type
 
@@ -44,7 +45,7 @@ Name | Type | Description  | Notes
 
 <a name="clearCollection"></a>
 # **clearCollection**
-> DeleteResponse clearCollection(collectionName)
+> JsonResult_Boolean clearCollection(collectionName)
 
 Clear Collection
 
@@ -54,35 +55,11 @@ Clear Collection
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
 
 ### Return type
 
-[**DeleteResponse**](../Models/DeleteResponse.md)
-
-### Authorization
-
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-<a name="collectionList"></a>
-# **collectionList**
-> List collectionList()
-
-List of Collections
-
-    List of all Collections
-
-### Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
-**List**
+[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
 
 ### Authorization
 
@@ -99,13 +76,13 @@ This endpoint does not need any parameter.
 
 Delete Collection
 
-    Delete Collection
+    Delete a given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
 
 ### Return type
 
@@ -126,16 +103,44 @@ Name | Type | Description  | Notes
 
 Distinct in Collection
 
-    Distinct for Field in your MongoDatabase Collection
+    Distinct for Field in a given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **field** | **String**| The field for your distinct Request. | 
- **rowsPerPage** | **Long**| Count elements per page | [optional] 
- **page** | **Long**| Requested page of the ResultSets | [optional] 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **field** | **String**| The field for your distinct Request. | [default to null]
+ **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
+ **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+
+### Return type
+
+**List**
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, text/plain
+
+<a name="getCollectionFields"></a>
+# **getCollectionFields**
+> List getCollectionFields(collectionName, sample size)
+
+Collection Fields
+
+    List the Fields in a given collection
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **sample size** | **Integer**| Use sample size greater 0 (e.g. 1000) for better performance on big collections | [optional] [default to null]
 
 ### Return type
 
@@ -156,13 +161,13 @@ Name | Type | Description  | Notes
 
 Collection Information
 
-    All Informations about a single Collection
+    All Information about a single Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
  **includeDetails** | **Boolean**| Include all details for the Collection | [optional] [default to false]
 
 ### Return type
@@ -177,4 +182,28 @@ Name | Type | Description  | Notes
 
 - **Content-Type**: Not defined
 - **Accept**: application/json, text/plain
+
+<a name="listCollections"></a>
+# **listCollections**
+> List listCollections()
+
+List of Collections
+
+    List of all Collections of the default database
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+**List**
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 

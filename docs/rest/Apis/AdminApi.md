@@ -4,23 +4,23 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**addRoles**](AdminApi.md#addRoles) | **PUT** /admin/roles | Add Role
+[**addRole**](AdminApi.md#addRole) | **PUT** /admin/roles | Add Role
 [**addUser**](AdminApi.md#addUser) | **PUT** /admin/users | Add User
-[**deleteRoles**](AdminApi.md#deleteRoles) | **DELETE** /admin/roles/{roleName} | Delete Role
+[**deleteRole**](AdminApi.md#deleteRole) | **DELETE** /admin/roles/{roleName} | Delete Role
 [**deleteUser**](AdminApi.md#deleteUser) | **DELETE** /admin/users/{userId} | Delete User
-[**getRoles**](AdminApi.md#getRoles) | **GET** /admin/roles/{roleName} | Get Role
+[**getRole**](AdminApi.md#getRole) | **GET** /admin/roles/{roleName} | Get Role
 [**getUser**](AdminApi.md#getUser) | **GET** /admin/users/{userId} | UserProfile for userId
+[**gnerateNewApiKeyForUser**](AdminApi.md#gnerateNewApiKeyForUser) | **PATCH** /admin/users/{userId}/apikey | Update ApiKey
 [**listRoles**](AdminApi.md#listRoles) | **GET** /admin/roles | List Roles
 [**listUsers**](AdminApi.md#listUsers) | **GET** /admin/users | List Users
-[**updateApiKeyForUser**](AdminApi.md#updateApiKeyForUser) | **PATCH** /admin/users/{userId}/apikey | Update ApiKey
 [**updatePasswordForUser**](AdminApi.md#updatePasswordForUser) | **PATCH** /admin/users/{userId}/password | Update Password
 [**updateRole**](AdminApi.md#updateRole) | **PATCH** /admin/roles/{roleName} | Update Role
 [**updateRolesForUser**](AdminApi.md#updateRolesForUser) | **PATCH** /admin/users/{userId}/roles | Update User Roles
 
 
-<a name="addRoles"></a>
-# **addRoles**
-> Role addRoles(Role)
+<a name="addRole"></a>
+# **addRole**
+> Role addRole(Role)
 
 Add Role
 
@@ -72,9 +72,9 @@ Name | Type | Description  | Notes
 - **Content-Type**: application/json
 - **Accept**: application/json, text/plain
 
-<a name="deleteRoles"></a>
-# **deleteRoles**
-> JsonResult_Boolean deleteRoles(roleName)
+<a name="deleteRole"></a>
+# **deleteRole**
+> JsonResult_Boolean deleteRole(roleName)
 
 Delete Role
 
@@ -84,7 +84,7 @@ Delete Role
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey | 
+ **roleName** | **String**| RoleKey | [default to null]
 
 ### Return type
 
@@ -111,7 +111,7 @@ Delete User
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Delete | 
+ **userId** | **String**| UserId to Delete | [default to null]
 
 ### Return type
 
@@ -126,19 +126,19 @@ Name | Type | Description  | Notes
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="getRoles"></a>
-# **getRoles**
-> Role getRoles(roleName)
+<a name="getRole"></a>
+# **getRole**
+> Role getRole(roleName)
 
 Get Role
 
-    Get Role
+    Get Role by RoleKey
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **roleName** | **String**| UserRoleKey | 
+ **roleName** | **String**| RoleKey to search | [default to null]
 
 ### Return type
 
@@ -165,11 +165,38 @@ UserProfile for userId
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | 
+ **userId** | **String**| UserId to search | [default to null]
 
 ### Return type
 
 [**UserProfile**](../Models/UserProfile.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="gnerateNewApiKeyForUser"></a>
+# **gnerateNewApiKeyForUser**
+> JsonResult_String gnerateNewApiKeyForUser(userId)
+
+Update ApiKey
+
+    Generate an new APIkey for the user
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userId** | **String**| UserId to Update | [default to null]
+
+### Return type
+
+[**JsonResult_String**](../Models/JsonResult_String.md)
 
 ### Authorization
 
@@ -192,9 +219,9 @@ List Roles
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **filter** | **String**| filter after userId by contains | [optional] 
- **rowsPerPage** | **Long**| Count elements per page | [optional] 
- **page** | **Long**| Requested page of the ResultSets | [optional] 
+ **filter** | **String**| filter after userId by contains | [optional] [default to null]
+ **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
+ **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
 
 ### Return type
 
@@ -221,9 +248,9 @@ List Users
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **filter** | **String**| filter after userId by contains | [optional] 
- **rowsPerPage** | **Long**| Count elements per page | [optional] 
- **page** | **Long**| Requested page of the ResultSets | [optional] 
+ **filter** | **String**| filter after userId by contains | [optional] [default to null]
+ **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
+ **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
 
 ### Return type
 
@@ -238,33 +265,6 @@ Name | Type | Description  | Notes
 - **Content-Type**: Not defined
 - **Accept**: application/json, text/plain
 
-<a name="updateApiKeyForUser"></a>
-# **updateApiKeyForUser**
-> JsonResult_String updateApiKeyForUser(userId)
-
-Update ApiKey
-
-    Change Password of User
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | 
-
-### Return type
-
-[**JsonResult_String**](../Models/JsonResult_String.md)
-
-### Authorization
-
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
 <a name="updatePasswordForUser"></a>
 # **updatePasswordForUser**
 > JsonResult_Boolean updatePasswordForUser(userId, PasswordUpdateRequest)
@@ -277,7 +277,7 @@ Update Password
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | 
+ **userId** | **String**| UserId to Update | [default to null]
  **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  |
 
 ### Return type
@@ -305,7 +305,7 @@ Update Role
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey | 
+ **roleName** | **String**| RoleKey | [default to null]
  **UpdateRoleRequest** | [**UpdateRoleRequest**](../Models/UpdateRoleRequest.md)|  |
 
 ### Return type
@@ -333,7 +333,7 @@ Update User Roles
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | 
+ **userId** | **String**| UserId to Update | [default to null]
  **request\_body** | [**List**](../Models/string.md)|  | [optional]
 
 ### Return type
