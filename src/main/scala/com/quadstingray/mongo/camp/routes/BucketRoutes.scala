@@ -3,6 +3,7 @@ package com.quadstingray.mongo.camp.routes
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.exception.ErrorDescription
 import com.quadstingray.mongo.camp.file.FileAdapterHolder
+import com.quadstingray.mongo.camp.model.BucketInformation.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, Grant, UserInformation }
 import com.quadstingray.mongo.camp.model.{ BucketInformation, JsonResult }
 import com.sfxcode.nosql.mongo._
@@ -18,8 +19,7 @@ import scala.concurrent.Future
 
 object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
 
-  val BucketCollectionSuffix = ".files"
-  private val apiName        = "Bucket"
+  private val apiName = "Bucket"
 
   val bucketListEndpoint = securedEndpoint
     .in(mongoDbPath)

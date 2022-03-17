@@ -4,9 +4,9 @@ import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.ErrorDescription
+import com.quadstingray.mongo.camp.model.BucketInformation.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.model.auth.{ AuthorizedCollectionRequest, UserInformation }
 import com.quadstingray.mongo.camp.model.{ JsonResult, MongoAggregateRequest }
-import com.quadstingray.mongo.camp.routes.BucketRoutes.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunctions }
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
