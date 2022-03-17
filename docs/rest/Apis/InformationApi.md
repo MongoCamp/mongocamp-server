@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 Version Information
 
-    Version Info of the mongocamp API
+    Version Info of the MongoCamp API
 
 ### Parameters
 This endpoint does not need any parameter.

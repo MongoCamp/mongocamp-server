@@ -4,33 +4,33 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createExpiringIndexForField**](IndexApi.md#createExpiringIndexForField) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/{duration}/expiring | Create Index by Field for Collection
+[**createExpiringIndex**](IndexApi.md#createExpiringIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/{duration}/expiring | Create expiring Index by Field for Collection
 [**createIndex**](IndexApi.md#createIndex) | **PUT** /mongodb/collections/{collectionName}/index | Create Index for Collection
 [**createIndexForField**](IndexApi.md#createIndexForField) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName} | Create Index by Field for Collection
-[**createTextIndexForField**](IndexApi.md#createTextIndexForField) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/text | Create Index by Field for Collection
-[**createUniqueIndexForField**](IndexApi.md#createUniqueIndexForField) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/unique | Create Index by Field for Collection
+[**createTextIndex**](IndexApi.md#createTextIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/text | Create text index by field for collection
+[**createUniqueIndex**](IndexApi.md#createUniqueIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/unique | Create Unique Index
 [**deleteIndex**](IndexApi.md#deleteIndex) | **DELETE** /mongodb/collections/{collectionName}/index/{indexName} | Delete Index
 [**index**](IndexApi.md#index) | **GET** /mongodb/collections/{collectionName}/index/{indexName} | Index for Collection
-[**indexList**](IndexApi.md#indexList) | **GET** /mongodb/collections/{collectionName}/index | List Indices for Collection
+[**listIndices**](IndexApi.md#listIndices) | **GET** /mongodb/collections/{collectionName}/index | List Indices for Collection
 
 
-<a name="createExpiringIndexForField"></a>
-# **createExpiringIndexForField**
-> IndexCreateResponse createExpiringIndexForField(collectionName, fieldName, duration, sortAscending, name)
+<a name="createExpiringIndex"></a>
+# **createExpiringIndex**
+> IndexCreateResponse createExpiringIndex(collectionName, fieldName, duration, sortAscending, name)
 
-Create Index by Field for Collection
+Create expiring Index by Field for Collection
 
-    Create Index by Field for Collection
+    Create expiring Index by Field for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **fieldName** | **String**| The field Name for your index | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **fieldName** | **String**| The field Name for your index | [default to null]
  **duration** | **String**| Expiring Duration in format 15d (https://www.scala-lang.org/api/2.13.7/scala/concurrent/duration/Duration.html) | [default to 15d]
  **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **name** | **String**| Name for your index | [optional] 
+ **name** | **String**| Name for your index | [optional] [default to null]
 
 ### Return type
 
@@ -51,13 +51,13 @@ Name | Type | Description  | Notes
 
 Create Index for Collection
 
-    Create Index for Collection
+    Create Index for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
  **IndexCreateRequest** | [**IndexCreateRequest**](../Models/IndexCreateRequest.md)|  |
 
 ### Return type
@@ -75,20 +75,20 @@ Name | Type | Description  | Notes
 
 <a name="createIndexForField"></a>
 # **createIndexForField**
-> IndexCreateResponse createIndexForField(collectionName, fieldName, IndexOptionsRequest, sortAscending)
+> IndexCreateResponse createIndexForField(collectionName, fieldName, sortAscending, IndexOptionsRequest)
 
 Create Index by Field for Collection
 
-    Create Index by Field for Collection
+    Create Index by Field for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **fieldName** | **String**| The field Name for your index | 
- **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  |
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **fieldName** | **String**| The field Name for your index | [default to null]
  **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
+ **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  | [optional]
 
 ### Return type
 
@@ -103,21 +103,21 @@ Name | Type | Description  | Notes
 - **Content-Type**: application/json
 - **Accept**: application/json, text/plain
 
-<a name="createTextIndexForField"></a>
-# **createTextIndexForField**
-> IndexCreateResponse createTextIndexForField(collectionName, fieldName, IndexOptionsRequest)
+<a name="createTextIndex"></a>
+# **createTextIndex**
+> IndexCreateResponse createTextIndex(collectionName, fieldName, IndexOptionsRequest)
 
-Create Index by Field for Collection
+Create text index by field for collection
 
-    Create Index by Field for Collection
+    Create text index by field for given collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **fieldName** | **String**| The field Name for your index | 
- **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  |
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **fieldName** | **String**| The field Name for your index | [default to null]
+ **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  | [optional]
 
 ### Return type
 
@@ -132,22 +132,22 @@ Name | Type | Description  | Notes
 - **Content-Type**: application/json
 - **Accept**: application/json, text/plain
 
-<a name="createUniqueIndexForField"></a>
-# **createUniqueIndexForField**
-> IndexCreateResponse createUniqueIndexForField(collectionName, fieldName, sortAscending, name)
+<a name="createUniqueIndex"></a>
+# **createUniqueIndex**
+> IndexCreateResponse createUniqueIndex(collectionName, fieldName, sortAscending, name)
 
-Create Index by Field for Collection
+Create Unique Index
 
-    Create Index by Field for Collection
+    Create Unique Index by Field for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **fieldName** | **String**| The field Name for your index | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **fieldName** | **String**| The field Name for your index | [default to null]
  **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **name** | **String**| Name for your index | [optional] 
+ **name** | **String**| Name for your index | [optional] [default to null]
 
 ### Return type
 
@@ -168,14 +168,14 @@ Name | Type | Description  | Notes
 
 Delete Index
 
-    Delete Index by Name for Collection
+    Delete Index by Name for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **indexName** | **String**| The name of your Index | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **indexName** | **String**| The name of your Index | [default to null]
 
 ### Return type
 
@@ -196,14 +196,14 @@ Name | Type | Description  | Notes
 
 Index for Collection
 
-    Index by Name for Collection
+    Index by Name for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
- **indexName** | **String**| The name of your Index | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **indexName** | **String**| The name of your Index | [default to null]
 
 ### Return type
 
@@ -218,19 +218,19 @@ Name | Type | Description  | Notes
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="indexList"></a>
-# **indexList**
-> List indexList(collectionName)
+<a name="listIndices"></a>
+# **listIndices**
+> List listIndices(collectionName)
 
 List Indices for Collection
 
-    List all Indices for Collection
+    List all Indices for given Collection
 
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | 
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
 
 ### Return type
 
