@@ -24,7 +24,7 @@ class BucketSuite extends BaseSuite {
     assertEquals(response.size > 400900, true, "size is not larger than 400900")
     assertEquals(response.size < 401100, true, "size is not smaller than 401100")
     assertEquals(response.avgObjectSize > 100230, true, "avgObjectSize is not larger than 100230")
-    assertEquals(response.avgObjectSize < 100235, true, "avgObjectSize is not smaller than 100235")
+    assertEquals(response.avgObjectSize < 100250, true, "avgObjectSize is not smaller than 100235")
   }
 
   test("clear bucket as admin") {
