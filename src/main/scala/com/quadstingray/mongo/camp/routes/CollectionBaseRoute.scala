@@ -2,8 +2,8 @@ package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.auth.AuthHolder
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
+import com.quadstingray.mongo.camp.model.BucketInformation.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.model.auth._
-import com.quadstingray.mongo.camp.routes.BucketRoutes.BucketCollectionSuffix
 import sttp.model.StatusCode
 import sttp.tapir._
 
