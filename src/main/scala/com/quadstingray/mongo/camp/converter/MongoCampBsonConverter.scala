@@ -1,5 +1,6 @@
 package com.quadstingray.mongo.camp.converter
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
 import org.mongodb.scala.bson.Document
 
 import scala.collection.mutable
@@ -34,7 +35,7 @@ object MongoCampBsonConverter {
 
     val document = mutable.Map[String, Any]()
 
-    convertIdFields(conversionMap).foreach(element => {
+    convertFields(conversionMap).foreach(element => {
       if (element._1.startsWith("$")) {
         document.put(element._1, element._2)
       }
@@ -70,7 +71,7 @@ object MongoCampBsonConverter {
     map.put(element._1, element._2)
   }
 
-  def convertIdFields(map: Map[String, Any]): Map[String, Any] = {
+  def convertFields(map: Map[String, Any]): Map[String, Any] = {
     val mutableMap = mutable.Map[String, Any]()
     map.foreach(element => {
       if (element._1 == "_id") {
@@ -79,9 +80,10 @@ object MongoCampBsonConverter {
       else {
         element._2 match {
           case value: Map[String, Any] =>
-            mutableMap.put(element._1, convertIdFields(value))
+            mutableMap.put(element._1, convertFields(value))
           case value: Iterable[Map[String, Any]] =>
-            mutableMap.put(element._1, value.map(e => convertIdFields(e)))
+            mutableMap.put(element._1, value.map(e => convertFields(e)))
+          case d: DateTime => mutableMap.put(element._1, d.toDate)
           case _ =>
             mutableMap.put(element._1, element._2)
         }

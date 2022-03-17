@@ -1,7 +1,7 @@
 package com.quadstingray.mongo.camp.routes
 
 import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter
-import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertIdField, convertIdFields, convertToOperationMap }
+import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.{ convertFields, convertIdField, convertToOperationMap }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
@@ -85,7 +85,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
 
           val mongoPaginatedFilter = MongoPaginatedFilter(
             MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
-            convertIdFields(searchRequest.filter),
+            convertFields(searchRequest.filter),
             searchRequest.sort,
             searchRequest.projection
           )
@@ -120,7 +120,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
       Right(
         {
           val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result         = dao.insertOne(documentFromScalaMap(convertIdFields(parameter))).result()
+          val result         = dao.insertOne(documentFromScalaMap(convertFields(parameter))).result()
           val insertedResult = InsertResponse(result.wasAcknowledged(), List(result.getInsertedId.asObjectId().getValue.toHexString))
           insertedResult
         }
