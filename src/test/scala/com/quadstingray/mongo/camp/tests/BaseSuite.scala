@@ -47,8 +47,9 @@ class BaseSuite extends munit.FunSuite {
   }
 
   override def afterAll(): Unit = {
+    val databasesToIgnore = List("admin", "config", "local")
     MongoDatabase.databaseProvider.databaseNames.foreach(db => {
-      if (!db.equalsIgnoreCase("admin")) {
+      if (!databasesToIgnore.contains(db)) {
         MongoDatabase.databaseProvider
           .collectionNames(db)
           .foreach(collection => {
