@@ -3,6 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**\_id** | **String** |  | [default to null]
 **filename** | **String** |  | [default to null]
 **length** | **Long** |  | [default to null]
 **chunkSize** | **Long** |  | [default to null]
