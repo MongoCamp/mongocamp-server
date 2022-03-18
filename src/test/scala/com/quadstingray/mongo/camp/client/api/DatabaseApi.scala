@@ -92,4 +92,23 @@ class DatabaseApi(baseUrl: String) extends CirceSchema {
       .bearer(bearerToken)
       .response(asJson[Seq[String]])
 
+  /** List of all Collections of the given database
+    *
+    * Expected answers: code 200 : Seq[String] code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
+    * x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param databaseName
+    *   Name of your Database
+    */
+  def listCollectionsByDatabase(apiKey: String, bearerToken: String)(databaseName: String) =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/mongodb/databases/$databaseName/collections")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[Seq[String]])
+
 }
