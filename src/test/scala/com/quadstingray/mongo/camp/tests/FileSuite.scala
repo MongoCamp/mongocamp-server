@@ -2,12 +2,13 @@ package com.quadstingray.mongo.camp.tests
 
 import better.files.File
 import com.quadstingray.mongo.camp.client.api.FileApi
-import com.quadstingray.mongo.camp.client.model.MongoFindRequest
+import com.quadstingray.mongo.camp.client.model.{ MongoFindRequest, UpdateFileInformationRequest }
 import com.quadstingray.mongo.camp.server.TestAdditions
 import io.circe.syntax.EncoderOps
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
+import scala.util.Random
 
 class FileSuite extends BaseSuite {
 
@@ -101,6 +102,57 @@ class FileSuite extends BaseSuite {
 
     assertEquals(response.size(), geoFile.size())
     assertEquals(response.sha512, geoFile.sha512)
+  }
+
+  test("update file information just filename of fileId as admin") {
+    val geoFile     = File(getClass.getResource("/geodata.json").getPath)
+    val newFileName = "myNewFileName.json"
+    val response =
+      executeRequestToResponse(api.updateFileInformation("", adminBearerToken)("sample-files", fileId, UpdateFileInformationRequest(Some(newFileName), None)))
+    assertEquals(response.matchedCount, 1L)
+    assertEquals(response.modifiedCount, 1L)
+    assertEquals(response.wasAcknowledged, true)
+    assertEquals(response.upsertedIds, List(fileId))
+    val validationResponse = executeRequestToResponse(api.getFileInformation("", adminBearerToken)("sample-files", fileId))
+    assertEquals(validationResponse._id, fileId)
+    assertEquals(validationResponse.filename, newFileName)
+    assertEquals(validationResponse.metadata, Map("originalFilePath" -> geoFile.pathAsString))
+//    assertEquals(response.metadata, Map("originalFilePath" -> geoFile.pathAsString))
+  }
+
+  test("update file information just metadata of fileId as admin") {
+    val response =
+      executeRequestToResponse(
+        api.updateFileInformation("", adminBearerToken)("sample-files", fileId, UpdateFileInformationRequest(None, Some(Map("new" -> "value"))))
+      )
+    assertEquals(response.matchedCount, 1L)
+    assertEquals(response.modifiedCount, 1L)
+    assertEquals(response.wasAcknowledged, true)
+    assertEquals(response.upsertedIds, List(fileId))
+    val validationResponse = executeRequestToResponse(api.getFileInformation("", adminBearerToken)("sample-files", fileId))
+    assertEquals(validationResponse._id, fileId)
+    assertEquals(validationResponse.filename, "myNewFileName.json")
+    assertEquals(validationResponse.metadata, Map("new" -> "value"))
+  }
+
+  test("update file information metadata and filename of fileId as admin") {
+    val newFileName = Random.alphanumeric.take(10).mkString + ".json"
+    val response =
+      executeRequestToResponse(
+        api.updateFileInformation("", adminBearerToken)(
+          "sample-files",
+          fileId,
+          UpdateFileInformationRequest(Some(newFileName), Some(Map("new" -> Map("crazy" -> "value"))))
+        )
+      )
+    assertEquals(response.matchedCount, 1L)
+    assertEquals(response.modifiedCount, 1L)
+    assertEquals(response.wasAcknowledged, true)
+    assertEquals(response.upsertedIds, List(fileId))
+    val validationResponse = executeRequestToResponse(api.getFileInformation("", adminBearerToken)("sample-files", fileId))
+    assertEquals(validationResponse._id, fileId)
+    assertEquals(validationResponse.filename, newFileName)
+    assertEquals(validationResponse.metadata, Map("new" -> Map("crazy" -> "value")))
   }
 
   test("delete file of fileId as admin") {
