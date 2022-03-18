@@ -2,7 +2,9 @@ package com.quadstingray.mongo.camp.tests
 
 import com.quadstingray.mongo.camp.client.api.AuthApi
 import com.quadstingray.mongo.camp.client.model.{ Login, LoginResult }
+import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.server.{ TestAdditions, TestServer }
+import com.sfxcode.nosql.mongo.GenericObservable
 import io.circe
 import sttp.client3.{ Identity, RequestT, Response, ResponseException }
 
@@ -40,9 +42,22 @@ class BaseSuite extends munit.FunSuite {
   override def beforeAll(): Unit = {
     if (TestServer.isServerRunning()) {
       TestAdditions.importData()
+      TestAdditions.insertUsersAndRoles()
     }
   }
 
-  override def afterAll(): Unit = {}
+  override def afterAll(): Unit = {
+    MongoDatabase.databaseProvider.databaseNames.foreach(db => {
+      if (!db.equalsIgnoreCase("admin")) {
+        MongoDatabase.databaseProvider
+          .collectionNames(db)
+          .foreach(collection => {
+            if (!collection.startsWith(MongoDatabase.collectionPrefix)) {
+              MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
+            }
+          })
+      }
+    })
+  }
 
 }
