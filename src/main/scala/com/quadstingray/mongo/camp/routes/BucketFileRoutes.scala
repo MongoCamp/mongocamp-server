@@ -223,12 +223,9 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(
       Right({
-        if (!FileAdapterHolder.isGridfsHolder) {
-          val fileCollectionDelete = FileInformationDao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> convertIdField(parameter))).result()
-          logger.info(s"File $parameter delete response $fileCollectionDelete")
-        }
-        val fileDeleted    = FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
-        val deleteResponse = DeleteResponse(fileDeleted, 1)
+        val fileCollectionDelete = FileInformationDao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> convertIdField(parameter))).result()
+        val fileDeleted          = FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
+        val deleteResponse       = DeleteResponse(fileCollectionDelete.wasAcknowledged() && fileDeleted, fileCollectionDelete.getDeletedCount)
         deleteResponse
       })
     )
