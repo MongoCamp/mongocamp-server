@@ -117,7 +117,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     .description("Insert one File in given Bucket")
     .tag(apiName)
     .method(Method.PUT)
-    .name("insertFiles")
+    .name("insertFile")
     .serverLogic(login => insert => insertInBucket(login, insert))
 
   def insertInBucket(
