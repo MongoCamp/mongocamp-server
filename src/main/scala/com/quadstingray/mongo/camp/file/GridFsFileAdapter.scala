@@ -4,6 +4,7 @@ import com.quadstingray.mongo.camp.converter.MongoCampBsonConverter.convertIdFie
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.model.BucketInformation.GridFsBucketChunksSuffix
 import com.sfxcode.nosql.mongo.{ GenericObservable, _ }
+import org.mongodb.scala.bson.ObjectId
 
 class GridFsFileAdapter extends FilePlugin {
   override val name: String = "gridfs"
@@ -30,8 +31,8 @@ class GridFsFileAdapter extends FilePlugin {
   }
 
   override def deleteFile(bucket: String, fileId: String): Boolean = {
-    val deleteResult = MongoDatabase.databaseProvider.dao(s"$bucket$GridFsBucketChunksSuffix").deleteMany(Map("files_id" -> convertIdField(fileId))).result()
-    deleteResult.wasAcknowledged()
+    val deleteResult = MongoDatabase.databaseProvider.dao(s"$bucket$GridFsBucketChunksSuffix").deleteMany(Map("files_id" -> new ObjectId(fileId))).result()
+    deleteResult.wasAcknowledged() && deleteResult.getDeletedCount == 1
   }
 
 }
