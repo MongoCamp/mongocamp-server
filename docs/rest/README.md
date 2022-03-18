@@ -55,8 +55,9 @@ Class | Method | HTTP request | Description
 *FileApi* | [**findFiles**](Apis/FileApi.md#findfiles) | **POST** /mongodb/buckets/{bucketName}/files | Files in Bucket
 *FileApi* | [**getFile**](Apis/FileApi.md#getfile) | **GET** /mongodb/buckets/{bucketName}/files/{fileId}/file | File from Bucket
 *FileApi* | [**getFileInformation**](Apis/FileApi.md#getfileinformation) | **GET** /mongodb/buckets/{bucketName}/files/{fileId} | FileInformation from Bucket
-*FileApi* | [**insertFile**](Apis/FileApi.md#insertFile) | **PUT** /mongodb/buckets/{bucketName}/files | Insert File
+*FileApi* | [**insertFile**](Apis/FileApi.md#insertfile) | **PUT** /mongodb/buckets/{bucketName}/files | Insert File
 *FileApi* | [**listFiles**](Apis/FileApi.md#listfiles) | **GET** /mongodb/buckets/{bucketName}/files | Files in Bucket
+*FileApi* | [**updateFileInformation**](Apis/FileApi.md#updatefileinformation) | **PATCH** /mongodb/buckets/{bucketName}/files/{fileId} | Update FileInformation in Bucket
 *IndexApi* | [**createExpiringIndex**](Apis/IndexApi.md#createexpiringindex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/{duration}/expiring | Create expiring Index by Field for Collection
 *IndexApi* | [**createIndex**](Apis/IndexApi.md#createindex) | **PUT** /mongodb/collections/{collectionName}/index | Create Index for Collection
 *IndexApi* | [**createIndexForField**](Apis/IndexApi.md#createindexforfield) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName} | Create Index by Field for Collection
@@ -93,6 +94,7 @@ Class | Method | HTTP request | Description
  - [PasswordUpdateRequest](./Models/PasswordUpdateRequest.md)
  - [PipelineStage](./Models/PipelineStage.md)
  - [Role](./Models/Role.md)
+ - [UpdateFileInformationRequest](./Models/UpdateFileInformationRequest.md)
  - [UpdateRequest](./Models/UpdateRequest.md)
  - [UpdateResponse](./Models/UpdateResponse.md)
  - [UpdateRoleRequest](./Models/UpdateRoleRequest.md)

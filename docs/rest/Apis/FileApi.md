@@ -10,6 +10,7 @@ Method | HTTP request | Description
 [**getFileInformation**](FileApi.md#getFileInformation) | **GET** /mongodb/buckets/{bucketName}/files/{fileId} | FileInformation from Bucket
 [**insertFile**](FileApi.md#insertFile) | **PUT** /mongodb/buckets/{bucketName}/files | Insert File
 [**listFiles**](FileApi.md#listFiles) | **GET** /mongodb/buckets/{bucketName}/files | Files in Bucket
+[**updateFileInformation**](FileApi.md#updateFileInformation) | **PATCH** /mongodb/buckets/{bucketName}/files/{fileId} | Update FileInformation in Bucket
 
 
 <a name="deleteFile"></a>
@@ -186,5 +187,34 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json, text/plain
+
+<a name="updateFileInformation"></a>
+# **updateFileInformation**
+> UpdateResponse updateFileInformation(bucketName, fileId, UpdateFileInformationRequest)
+
+Update FileInformation in Bucket
+
+    Replace MetaData and potential update FileName
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
+ **fileId** | **String**| fileId to update | [default to null]
+ **UpdateFileInformationRequest** | [**UpdateFileInformationRequest**](../Models/UpdateFileInformationRequest.md)|  |
+
+### Return type
+
+[**UpdateResponse**](../Models/UpdateResponse.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json, text/plain
 

@@ -1,6 +1,6 @@
 {
   "name": "mongocamp-docs",
-  "version": "0.9.1.snapshot",
+  "version": "0.9.1",
   "description": "",
   "directories": {
     "doc": "docs"
@@ -9,7 +9,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs --port 5555",
-    "api-docs-codegen": "openapi-generator-cli generate -i http://173.249.2.248:30088/docs/docs.yaml -g markdown -o ./docs/rest",
+    "api-docs-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
     "api-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/com/quadstingray/mongo/camp/client-project -g scala-sttp --additional-properties=mainPackage=com.quadstingray.mongo.camp.client,jsonLibrary=circe,dateLibrary=joda"
   },
   "repository": {
