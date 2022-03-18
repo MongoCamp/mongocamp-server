@@ -10,13 +10,13 @@ class DatabaseSuite extends BaseSuite {
 
   test("list all databases as admin") {
     val response = executeRequestToResponse(databaseApi.listDatabases("", adminBearerToken)())
-    assertEquals(response.size, 5)
-    assertEquals(response, List("admin", "config", "geodata", "local", "test"))
+    assertEquals(response.size, 3)
+    assertEquals(response, List("admin", "geodata", "test"))
   }
 
   test("database infos as admin") {
     val response = executeRequestToResponse(databaseApi.databaseInfos("", adminBearerToken)())
-    assertEquals(response.size, 5)
+    assertEquals(response.size, 3)
     val databaseInfoGeoDataOption = response.find(_.name.equals("geodata"))
     assertEquals(databaseInfoGeoDataOption.isDefined, true)
     assertEquals(databaseInfoGeoDataOption.get.empty, false)
