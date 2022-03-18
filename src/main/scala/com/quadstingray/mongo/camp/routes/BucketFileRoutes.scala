@@ -15,6 +15,7 @@ import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunct
 import com.sfxcode.nosql.mongo._
 import io.circe.generic.auto._
 import io.circe.parser.decode
+import org.bson.types.ObjectId
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, Part, StatusCode }
@@ -217,6 +218,11 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
           .dao(authorizedCollectionRequest.collection + BucketCollectionSuffix)
           .deleteOne(Map("_id" -> convertIdField(parameter)))
           .result()
+
+        if (!FileAdapterHolder.isGridfsHolder) {
+          throw MongoCampException("not implemented at this point", StatusCode.NotImplemented)
+        }
+
         FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
         val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
         deleteResponse
@@ -224,8 +230,54 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     )
   }
 
+  val updateFileInfosEndpoint = writeBucketEndpoint
+    .in("files")
+    .in(path[String]("fileId").description("fileId to update"))
+    .in(jsonBody[UpdateFileInformationRequest])
+    .out(jsonBody[UpdateResponse])
+    .summary("Update FileInformation in Bucket")
+    .description("Replace MetaData and potential update FileName")
+    .tag(apiName)
+    .method(Method.PATCH)
+    .name("updateFileInformation")
+    .serverLogic(collectionRequest => parameter => updateById(collectionRequest, parameter))
+
+  def updateById(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (String, UpdateFileInformationRequest)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UpdateResponse]] = {
+    Future.successful(
+      Right({
+        val fileId = parameter._1
+        var fileInformation = FileInformationDao(authorizedCollectionRequest.collection)
+          .findById(fileId)
+          .resultOption()
+          .getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
+
+        parameter._2.metadata.foreach(data => fileInformation = fileInformation.copy(metadata = Some(data)))
+        parameter._2.filename.foreach(fileName => fileInformation = fileInformation.copy(filename = fileName))
+
+        val dao    = FileInformationDao(authorizedCollectionRequest.collection)
+        val result = dao.replaceOne(fileInformation).result()
+        val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
+          Some(fileId)
+        }
+        else {
+          Option(result.getUpsertedId).map(value => value.asObjectId().getValue)
+        }
+        val insertedResult = UpdateResponse(
+          result.wasAcknowledged(),
+          maybeValue.map(value => value.toHexString).toList,
+          result.getModifiedCount,
+          result.getMatchedCount
+        )
+        insertedResult
+      })
+    )
+  }
+
   override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
     List(findAllEndpoint, findPostEndpoint) ++
-      List(insertEndpoint, getFileInfosEndpoint, getFileEndpoint, deleteFileEndpoint)
+      List(insertEndpoint, updateFileInfosEndpoint, getFileInfosEndpoint, getFileEndpoint, deleteFileEndpoint)
 
 }

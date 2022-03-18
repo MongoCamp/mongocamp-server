@@ -7,7 +7,7 @@
 package com.quadstingray.mongo.camp.client.api
 
 import com.quadstingray.mongo.camp.client.core.JsonSupport._
-import com.quadstingray.mongo.camp.client.model.{ DeleteResponse, FileInformation, InsertResponse, MongoFindRequest }
+import com.quadstingray.mongo.camp.client.model._
 import com.quadstingray.mongo.camp.converter.CirceSchema
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -189,5 +189,31 @@ class FileApi(baseUrl: String) extends CirceSchema {
       .auth
       .bearer(bearerToken)
       .response(asJson[Seq[FileInformation]])
+
+  /** Replace MetaData and potential update FileName
+    *
+    * Expected answers: code 200 : UpdateResponse code 400 : String (Invalid value for: body) code 0 : ErrorDescription Headers : x-error-code - Error Code
+    * x-error-message - Message of the MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param bucketName
+    *   The name of your MongoDb Collection
+    * @param fileId
+    *   fileId to update
+    * @param updateFileInformationRequest
+    */
+  def updateFileInformation(
+      apiKey: String,
+      bearerToken: String
+  )(bucketName: String, fileId: String, updateFileInformationRequest: UpdateFileInformationRequest) =
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/mongodb/buckets/$bucketName/files/$fileId")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .body(updateFileInformationRequest)
+      .response(asJson[UpdateResponse])
 
 }
