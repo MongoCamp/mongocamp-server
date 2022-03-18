@@ -6,7 +6,6 @@ import com.quadstingray.mongo.camp.database.paging.{ MongoPaginatedFilter, Pagin
 import com.quadstingray.mongo.camp.database.{ FileInformationDao, MongoDatabase }
 import com.quadstingray.mongo.camp.exception.{ ErrorDescription, MongoCampException }
 import com.quadstingray.mongo.camp.file.FileAdapterHolder
-import com.quadstingray.mongo.camp.model.BucketInformation.BucketCollectionSuffix
 import com.quadstingray.mongo.camp.model._
 import com.quadstingray.mongo.camp.model.auth.AuthorizedCollectionRequest
 import com.quadstingray.mongo.camp.routes.file.FileFunctions.fileResult
@@ -23,6 +22,7 @@ import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 
+import java.util.Date
 import scala.concurrent.Future
 
 object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
@@ -138,7 +138,16 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
             insertedResult
           }
           else {
-            throw MongoCampException("not implemented at this point", StatusCode.NotImplemented)
+            val fileInformationDao = FileInformationDao(authorizedCollectionRequest.collection)
+            val fileId             = new ObjectId()
+            val insertResponse = fileInformationDao
+              .insertOne(DBFileInformation(fileId, fileName, uploadedFile.size(), 0, new Date(), Some(documentFromScalaMap(metadata))))
+              .result()
+            if (insertResponse.wasAcknowledged() && insertResponse.getInsertedId.asArray().size() == 1) {
+              FileAdapterHolder.handler.putFile(authorizedCollectionRequest.collection, fileId.toHexString, uploadedFile)
+            }
+            val insertedResult = InsertResponse(wasAcknowledged = true, List(fileId.toHexString))
+            insertedResult
           }
         }
       )
@@ -214,17 +223,12 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(
       Right({
-        val result = MongoDatabase.databaseProvider
-          .dao(authorizedCollectionRequest.collection + BucketCollectionSuffix)
-          .deleteOne(Map("_id" -> convertIdField(parameter)))
-          .result()
-
         if (!FileAdapterHolder.isGridfsHolder) {
-          throw MongoCampException("not implemented at this point", StatusCode.NotImplemented)
+          val fileCollectionDelete = FileInformationDao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> convertIdField(parameter))).result()
+          logger.info(s"File $parameter delete response $fileCollectionDelete")
         }
-
-        FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
-        val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
+        val fileDeleted    = FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
+        val deleteResponse = DeleteResponse(fileDeleted, 1)
         deleteResponse
       })
     )
