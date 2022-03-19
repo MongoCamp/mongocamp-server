@@ -2,6 +2,7 @@ package com.quadstingray.mongo.camp.file
 
 import com.quadstingray.mongo.camp.auth.AuthHolder.globalConfigString
 import com.quadstingray.mongo.camp.exception.MongoCampException
+import com.quadstingray.mongo.camp.service.ReflectionService
 import sttp.model.StatusCode
 
 object FileAdapterHolder {
@@ -10,8 +11,7 @@ object FileAdapterHolder {
 
   def isGridfsHolder: Boolean = fileHandlerType.equalsIgnoreCase("gridfs")
 
-  // todo: search for all possible FilePlugin`s
-  lazy val listOfRoutePlugins: List[FilePlugin] = List(new GridFsFileAdapter())
+  lazy val listOfRoutePlugins: List[FilePlugin] = ReflectionService.instancesForType(classOf[FilePlugin])
 
   lazy val handler: FilePlugin = {
     listOfRoutePlugins
