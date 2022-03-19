@@ -28,3 +28,5 @@ libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.0.4"
 dependencyOverrides += "org.slf4j" % "slf4j-api" % "1.7.30"
 
 dependencyOverrides += "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0"
+
+libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
