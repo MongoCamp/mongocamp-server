@@ -41,24 +41,23 @@ class BaseSuite extends munit.FunSuite {
 
   override def beforeAll(): Unit = {
     if (TestServer.isServerRunning()) {
+      val databasesToIgnore = List("admin", "config", "local")
+      MongoDatabase.databaseProvider.databaseNames.foreach(db => {
+        if (!databasesToIgnore.contains(db)) {
+          MongoDatabase.databaseProvider
+            .collectionNames(db)
+            .foreach(collection => {
+              if (!collection.startsWith(MongoDatabase.collectionPrefix)) {
+                MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
+              }
+            })
+        }
+      })
       TestAdditions.importData()
       TestAdditions.insertUsersAndRoles()
     }
   }
 
-  override def afterAll(): Unit = {
-    val databasesToIgnore = List("admin", "config", "local")
-    MongoDatabase.databaseProvider.databaseNames.foreach(db => {
-      if (!databasesToIgnore.contains(db)) {
-        MongoDatabase.databaseProvider
-          .collectionNames(db)
-          .foreach(collection => {
-            if (!collection.startsWith(MongoDatabase.collectionPrefix)) {
-              MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
-            }
-          })
-      }
-    })
-  }
+  override def afterAll(): Unit = {}
 
 }
