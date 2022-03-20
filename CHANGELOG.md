@@ -1,3 +1,20 @@
+### [0.9.1](https://github.com/QuadStingray/mongocamp/compare/v0.9.0...v0.9.1) (2022-03-19)
+
+
+### Bug Fixes
+
+* Add id to FileInformation and rename method on buckets for valid openapi specification ([9a986b0](https://github.com/QuadStingray/mongocamp/commit/9a986b0d3516c6e00e5c2c5f9d886e96684d146e))
+* **file:** Fix Delete for GridFsFileAdapter ([67cedd9](https://github.com/QuadStingray/mongocamp/commit/67cedd98616bd63992df53ae40d6e2e429b1cff5))
+
+
+### Features
+
+* Collections by Database ([ce5aa8d](https://github.com/QuadStingray/mongocamp/commit/ce5aa8dcf4d4cfb6b449aa53d10ecf00ab512092))
+* **file:** FileInformation instead of Map[String, Any] as response ([d57935b](https://github.com/QuadStingray/mongocamp/commit/d57935bc3c562ef85519be0780d6e31069dafb91))
+* **file:** Use other FilePlugin ([b32705d](https://github.com/QuadStingray/mongocamp/commit/b32705d976fccf7a529cad8e01678d0a0d60ae4b)), closes [Issue#13](https://github.com/QuadStingray/Issue/issues/13)
+* Load Routes and File Adapter by Reflection ([086061e](https://github.com/QuadStingray/mongocamp/commit/086061e65fd2f1a28112d990692170a49bb95a03))
+* Update FileInformation Request ([1f49296](https://github.com/QuadStingray/mongocamp/commit/1f492960989e65faf49298777baea1f13a52ba88))
+
 ## [0.9.0](https://github.com/QuadStingray/mongocamp/compare/v0.8.0...v0.9.0) (2022-03-17)
 
 
