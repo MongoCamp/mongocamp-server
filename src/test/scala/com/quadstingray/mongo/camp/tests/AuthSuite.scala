@@ -25,6 +25,11 @@ class AuthSuite extends BaseSuite {
     assertEquals(logout.value, true)
   }
 
+  test("check admin is authenticated") {
+    val authenticatedResponse = executeRequestToResponse(adminApi.isAuthenticated("", adminBearerToken)())
+    assertEquals(authenticatedResponse.value, true)
+  }
+
   test("login an logout user by delete") {
     val login = executeRequestToResponse(adminApi.login(Login(TestAdditions.adminUser, TestAdditions.adminPassword)))
     assertEquals(login.expirationDate.isAfterNow, true)
@@ -72,4 +77,8 @@ class AuthSuite extends BaseSuite {
     executeRequestToResponse(adminApi.updatePassword("", testUserBearerToken)(PasswordUpdateRequest(TestAdditions.testPassword)))
   }
 
+  test("check user is authenticated") {
+    val authenticatedResponse = executeRequestToResponse(adminApi.isAuthenticated("", testUserBearerToken)())
+    assertEquals(authenticatedResponse.value, true)
+  }
 }

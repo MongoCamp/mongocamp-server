@@ -135,8 +135,7 @@ class AuthApi(baseUrl: String) extends CirceSchema {
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
-  def userProfile(apiKey: String, bearerToken: String)(
-  ) =
+  def userProfile(apiKey: String, bearerToken: String)() =
     basicRequest
       .method(Method.GET, uri"$baseUrl/auth/profile")
       .contentType("application/json")
@@ -144,5 +143,21 @@ class AuthApi(baseUrl: String) extends CirceSchema {
       .auth
       .bearer(bearerToken)
       .response(asJson[UserProfile])
+
+  /** Check a given Login for is authenticated
+    *
+    * Expected answers: code 200 : JsonResultBoolean code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the
+    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    */
+  def isAuthenticated(apiKey: String, bearerToken: String)() =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/auth/Authenticated")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[JsonResultBoolean])
 
 }
