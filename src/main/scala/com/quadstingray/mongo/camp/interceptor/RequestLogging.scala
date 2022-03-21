@@ -9,8 +9,10 @@ import sttp.model.HeaderNames
 import sttp.tapir.metrics.{ EndpointMetric, Metric, MetricLabels }
 
 import java.net.InetAddress
+import java.util.Date
 
 case class RequestLogging(
+    date: Date,
     applicationName: String,
     version: String,
     containerName: String,
@@ -67,6 +69,7 @@ object RequestLogging {
                 val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
                 val methodeName    = endpoint.info.name.getOrElse(headOfTags)
                 val requestLogging = RequestLogging(
+                  new Date(),
                   BuildInfo.name,
                   BuildInfo.version,
                   InetAddress.getLocalHost.toString,
@@ -100,6 +103,7 @@ object RequestLogging {
                 val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
                 val methodeName    = endpoint.info.name.getOrElse(headOfTags)
                 val requestLogging = RequestLogging(
+                  new Date(),
                   BuildInfo.name,
                   BuildInfo.version,
                   InetAddress.getLocalHost.toString,
@@ -115,7 +119,7 @@ object RequestLogging {
                   methodeName,
                   endpoint.info.description.getOrElse("NOT_SET")
                 )
-                val insertResponse = MongoDatabase.requestLoggingDao.insertOne(requestLogging).result()
+                MongoDatabase.requestLoggingDao.insertOne(requestLogging).asFuture()
                 histogram
               })
             }
