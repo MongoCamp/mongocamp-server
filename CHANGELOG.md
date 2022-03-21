@@ -1,3 +1,17 @@
+## [0.10.0](https://github.com/QuadStingray/mongocamp/compare/v0.9.1...v0.10.0) (2022-03-21)
+
+
+### Bug Fixes
+
+* Date in Request Logging ([f85f274](https://github.com/QuadStingray/mongocamp/commit/f85f2744fcbfa10d790f77daab3214c3a798fd07)), closes [Issue#19](https://github.com/QuadStingray/Issue/issues/19)
+
+
+### Features
+
+* **auth:** Added Route to check isAuthenticated ([3d44283](https://github.com/QuadStingray/mongocamp/commit/3d442835eacd27c19cd85f3aa4b24f2cfb9fbd6e))
+* **auth:** Route to check Authenticated ([0cba32e](https://github.com/QuadStingray/mongocamp/commit/0cba32e637d8bfee82675c7a4fbe67cae57381ba)), closes [Issue#20](https://github.com/QuadStingray/Issue/issues/20)
+* Dynamic Plugin Loading at StartUp ([f09a63d](https://github.com/QuadStingray/mongocamp/commit/f09a63d3b0c7dde86a819f70a76400c57a1a7138)), closes [Issue#21](https://github.com/QuadStingray/Issue/issues/21) [Issue#9](https://github.com/QuadStingray/Issue/issues/9)
+
 ### [0.9.1](https://github.com/QuadStingray/mongocamp/compare/v0.9.0...v0.9.1) (2022-03-19)
 
 
