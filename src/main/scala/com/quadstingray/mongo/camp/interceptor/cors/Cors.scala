@@ -23,7 +23,8 @@ object Cors extends Config {
     List(
       Header("Access-Control-Allow-Origin", allowedOrigin),
       Header("Access-Control-Allow-Credentials", "true"),
-      Header("Access-Control-Allow-Headers", globalConfigStringList("cors.allowed.headers").mkString(","))
+      Header("Access-Control-Allow-Headers", globalConfigStringList("cors.allowed.headers").mkString(",")),
+      Header("Access-Control-Expose-Headers", globalConfigStringList("cors.exposed.headers").mkString(","))
     )
   }
 
