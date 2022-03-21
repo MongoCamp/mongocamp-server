@@ -46,6 +46,7 @@ class AuthSuite extends BaseSuite {
   }
 
   test("refresh token") {
+    clearAdminToken
     val cacheCountBefore = tokenCacheDao.count().result()
     val refresh          = executeRequestToResponse(adminApi.refreshToken("", adminBearerToken)())
     val cacheCountAfter  = tokenCacheDao.count().result()
@@ -62,10 +63,16 @@ class AuthSuite extends BaseSuite {
   }
 
   test("update api key") {
+    clearAdminToken
     val updateResponse = executeRequestToResponse(adminApi.generateNewApiKey("", adminBearerToken)())
     assertEquals(updateResponse.value.isBlank, false)
     val userProfile = executeRequestToResponse(adminApi.userProfile("", adminBearerToken)())
     assertEquals(updateResponse.value, userProfile.apiKey.getOrElse("not_set"))
+  }
+
+  test("check user is authenticated") {
+    val authenticatedResponse = executeRequestToResponse(adminApi.isAuthenticated("", testUserBearerToken)())
+    assertEquals(authenticatedResponse.value, true)
   }
 
   test("update password") {
@@ -77,8 +84,4 @@ class AuthSuite extends BaseSuite {
     executeRequestToResponse(adminApi.updatePassword("", testUserBearerToken)(PasswordUpdateRequest(TestAdditions.testPassword)))
   }
 
-  test("check user is authenticated") {
-    val authenticatedResponse = executeRequestToResponse(adminApi.isAuthenticated("", testUserBearerToken)())
-    assertEquals(authenticatedResponse.value, true)
-  }
 }
