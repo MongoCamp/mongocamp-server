@@ -1,3 +1,10 @@
+### [0.10.1](https://github.com/QuadStingray/mongocamp/compare/v0.10.0...v0.10.1) (2022-03-21)
+
+
+### Features
+
+* **Cors:** Access Control Expose Headers ([673191c](https://github.com/QuadStingray/mongocamp/commit/673191c720189e8a8ac8213b6313a08903630023))
+
 ## [0.10.0](https://github.com/QuadStingray/mongocamp/compare/v0.9.1...v0.10.0) (2022-03-21)
 
 
