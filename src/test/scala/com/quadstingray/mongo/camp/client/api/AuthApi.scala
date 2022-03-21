@@ -153,7 +153,7 @@ class AuthApi(baseUrl: String) extends CirceSchema {
     */
   def isAuthenticated(apiKey: String, bearerToken: String)() =
     basicRequest
-      .method(Method.GET, uri"$baseUrl/auth/Authenticated")
+      .method(Method.GET, uri"$baseUrl/auth/authenticated")
       .contentType("application/json")
       .header("X-AUTH-APIKEY", apiKey)
       .auth

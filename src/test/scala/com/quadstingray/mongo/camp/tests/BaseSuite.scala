@@ -5,17 +5,31 @@ import com.quadstingray.mongo.camp.client.model.{ Login, LoginResult }
 import com.quadstingray.mongo.camp.database.MongoDatabase
 import com.quadstingray.mongo.camp.server.{ TestAdditions, TestServer }
 import com.sfxcode.nosql.mongo.GenericObservable
+import com.typesafe.scalalogging.LazyLogging
 import io.circe
 import sttp.client3.{ Identity, RequestT, Response, ResponseException }
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 
-class BaseSuite extends munit.FunSuite {
+class BaseSuite extends munit.FunSuite with LazyLogging {
 
-  lazy val adminBearerToken: String    = generateBearerToken(TestAdditions.adminUser, TestAdditions.adminPassword)
-  lazy val testUserBearerToken: String = generateBearerToken(TestAdditions.testUser, TestAdditions.testPassword)
-
+  private var _adminBearerToken: String = ""
+  def clearAdminToken                   = _adminBearerToken = ""
+  def adminBearerToken: String = {
+    if (_adminBearerToken == "") {
+      _adminBearerToken = generateBearerToken(TestAdditions.adminUser, TestAdditions.adminPassword)
+    }
+    _adminBearerToken
+  }
+  private var _testUserBearerToken: String = ""
+  def clearTestUserToken                   = _testUserBearerToken = ""
+  def testUserBearerToken: String = {
+    if (_testUserBearerToken == "") {
+      _testUserBearerToken = generateBearerToken(TestAdditions.testUser, TestAdditions.testPassword)
+    }
+    _testUserBearerToken
+  }
   protected val collectionNameTest     = "test"
   protected val collectionNameAccounts = "accounts"
   protected val indexCollection        = "indexTestCollection"
@@ -30,7 +44,9 @@ class BaseSuite extends munit.FunSuite {
 
   def executeRequestToResponse[R <: Any](request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]): R = {
     val responseResult = executeRequest(request)
-    val response       = responseResult.body.getOrElse(throw new Exception("error"))
+    val response = responseResult.body.getOrElse({
+      throw new Exception(responseResult.body.left.get.getMessage)
+    })
     response
   }
 
@@ -55,6 +71,8 @@ class BaseSuite extends munit.FunSuite {
       })
       TestAdditions.importData()
       TestAdditions.insertUsersAndRoles()
+      clearAdminToken
+      clearTestUserToken
     }
   }
 
