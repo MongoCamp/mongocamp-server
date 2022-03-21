@@ -13,6 +13,7 @@ import com.quadstingray.mongo.camp.config.{ Config, GlobalConstants }
 import com.quadstingray.mongo.camp.interceptor.cors.Cors
 import com.quadstingray.mongo.camp.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
 import com.quadstingray.mongo.camp.routes.docs.ApiDocsRoutes
+import com.quadstingray.mongo.camp.service.ReflectionService
 import com.typesafe.scalalogging.LazyLogging
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
@@ -63,6 +64,9 @@ trait RestServer extends LazyLogging with RouteConcatenation with Config {
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
+    ReflectionService.loadPlugins()
+    ReflectionService.registerClassLoaders(getClass)
+
     Http()
       .newServerAt(interface, port)
       .bindFlow(routeHandler(routes))
