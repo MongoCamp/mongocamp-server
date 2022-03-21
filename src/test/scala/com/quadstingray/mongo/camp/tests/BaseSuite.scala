@@ -56,6 +56,14 @@ class BaseSuite extends munit.FunSuite with LazyLogging {
   }
 
   override def beforeAll(): Unit = {
+    resetDatabase()
+  }
+
+  override def afterAll(): Unit = {
+    resetDatabase()
+  }
+
+  private def resetDatabase(): Unit = {
     if (TestServer.isServerRunning()) {
       val databasesToIgnore = List("admin", "config", "local")
       MongoDatabase.databaseProvider.databaseNames.foreach(db => {
@@ -75,7 +83,4 @@ class BaseSuite extends munit.FunSuite with LazyLogging {
       clearTestUserToken
     }
   }
-
-  override def afterAll(): Unit = {}
-
 }
