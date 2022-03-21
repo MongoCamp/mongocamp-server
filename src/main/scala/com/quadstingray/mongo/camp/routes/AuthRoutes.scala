@@ -37,6 +37,22 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
+  val checkAuthEndpoint = authBase
+    .in("authenticated")
+    .out(jsonBody[JsonResult[Boolean]])
+    .summary("Check Authentication")
+    .description("Check a given Login for is authenticated")
+    .method(Method.GET)
+    .name("isAuthenticated")
+    .serverLogic(loginInformation => _ => checkAuth(loginInformation))
+
+  def checkAuth(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+    Future.successful {
+      // If a request comes at this point User, Token etc. is valid
+      Right(JsonResult(true))
+    }
+  }
+
   private val baseLogoutEndpoint = authBase
     .in("logout")
     .in(auth.bearer[Option[String]]())
@@ -156,7 +172,7 @@ object AuthRoutes extends BaseRoute {
   }
 
   lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint)
+    onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint, checkAuthEndpoint)
   }
 
 }
