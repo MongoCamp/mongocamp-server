@@ -30,7 +30,7 @@ const writerOpts = {
         }
 
         if (typeof commit.subject === `string`) {
-            let url = context.repository ? `${context.host}/${context.owner}/${context.repository}` : context.repoUrl;
+            let url = issueUrl();
             if (url) {
                 url = `${url}/issues/`;
                 // Issue URLs.
@@ -63,8 +63,15 @@ const writerOpts = {
     noteGroupsSort: `title`
 };
 
-// writerOpts.commitPartial = readFile(resolve(__dirname, 'changelog-templates/commit.hbs'), 'utf-8');
+function issueUrl() {
+    if (pkgJson.repository && pkgJson.repository.url && ~pkgJson.repository.url.indexOf('github.com')) {
+        var gitUrl = gufg(pkgJson.repository.url);
 
+        if (gitUrl) {
+            return gitUrl + '/issues/';
+        }
+    }
+}
 module.exports = {
     writerOpts: writerOpts
 };
