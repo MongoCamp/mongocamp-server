@@ -2,7 +2,7 @@ module.exports = {
     title: "MongoCamp",
     base: "/mongocamp/",
     themeConfig: {
-        repo: 'QuadStingray/mongocamp',
+        repo: 'mongocamp/mongocamp-server',
         docsDir: 'docs',
         docsBranch: 'main',
         editLinks: true,
