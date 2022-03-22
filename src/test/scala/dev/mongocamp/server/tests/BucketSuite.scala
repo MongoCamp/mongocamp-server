@@ -21,10 +21,10 @@ class BucketSuite extends BaseSuite {
   test("buckets sample-files as admin") {
     val response = executeRequestToResponse(api.getBucket("", adminBearerToken)("sample-files"))
     assertEquals(response.files, 4L)
-    assertEquals(response.size > 400900, true, "size is not larger than 400900")
-    assertEquals(response.size < 401100, true, "size is not smaller than 401100")
-    assertEquals(response.avgObjectSize > 100230, true, "avgObjectSize is not larger than 100230")
-    assertEquals(response.avgObjectSize < 100250, true, "avgObjectSize is not smaller than 100235")
+    assertEquals(response.size > 400900, true, s"size (${response.size}) is not larger than 400900")
+    assertEquals(response.size < 401100, true, s"size (${response.size}) is not smaller than 401100")
+    assertEquals(response.avgObjectSize > 100230, true, s"avgObjectSize (${response.avgObjectSize}) is not larger than 100230")
+    assertEquals(response.avgObjectSize < 100250, true, s"avgObjectSize (${response.avgObjectSize}) is not smaller than 100245 ${response.avgObjectSize}")
   }
 
   test("clear bucket as admin") {
