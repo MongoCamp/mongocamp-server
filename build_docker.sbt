@@ -4,13 +4,11 @@ enablePlugins(JavaAppPackaging)
 
 enablePlugins(DockerPlugin)
 
-Compile / mainClass := Some("com.quadstingray.mongo.camp.Server")
-
 dockerBaseImage := "openjdk:17-alpine"
 
 maintainer := "QuadStingray, sfxcode"
 
-val mongoCampUser = "mongocamp"
+val mongoCampUser = "mongocamp-server"
 
 Docker / daemonUser := mongoCampUser
 

@@ -1,5 +1,5 @@
 enablePlugins(BuildInfoPlugin)
 
-buildInfoPackage := "com.quadstingray.mongo.camp"
+buildInfoPackage := "dev.mongocamp.server"
 
 buildInfoOptions += BuildInfoOption.BuildTime

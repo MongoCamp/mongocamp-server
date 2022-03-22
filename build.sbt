@@ -1,6 +1,6 @@
-name := "mongocamp"
+name := "mongocamp-server"
 
-organization := "com.quadstingray"
+organization := "dev.mongocamp"
 
 scalaVersion := "2.13.8"
 

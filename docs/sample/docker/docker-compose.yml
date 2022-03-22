@@ -12,7 +12,7 @@ services:
       MONGO_EXTRA_ARGS: '--ipv6 --quiet'
     restart: always
   mongo-camp:
-    image: ghcr.io/quadstingray/mongocamp:0.3.2
+    image: ghcr.io/mongocamp/mongocamp-server:0.10.2
     ports:
       - "8080:8080"
     environment:

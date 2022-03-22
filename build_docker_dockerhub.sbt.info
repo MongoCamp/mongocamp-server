@@ -1,1 +1,1 @@
-dockerRepository := Some("ghcr.io/quadstingray/mongocampp")
+dockerRepository := Some("mongocamp/mongocamp-server")
