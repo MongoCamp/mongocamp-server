@@ -11,6 +11,7 @@ import com.quadstingray.mongo.camp.routes.parameter.paging.{ Paging, PagingFunct
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import com.sfxcode.nosql.mongo.database.CollectionStatus
+import com.sfxcode.nosql.mongo.database.DatabaseProvider.CollectionSeparator
 import io.circe.generic.auto._
 import org.bson.conversions.Bson
 import sttp.capabilities
@@ -63,8 +64,20 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       parameter: Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
     Future.successful(Right({
-      val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-      val result = dao.collectionStatus.result()
+      val mongoDatabase = if (authorizedCollectionRequest.collection.contains(CollectionSeparator)) {
+        MongoDatabase.databaseProvider.database(authorizedCollectionRequest.collection.split(CollectionSeparator).head)
+      }
+      else {
+        MongoDatabase.databaseProvider.database()
+      }
+
+      val collection = authorizedCollectionRequest.collection.split(CollectionSeparator).last
+
+      val result = mongoDatabase
+        .runCommand(Map("collStats" -> collection))
+        .map(document => CollectionStatus(document))
+        .result()
+
       if (parameter) {
         result
       }
