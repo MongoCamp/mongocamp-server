@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mongocamp/mongocamp-server.git"
+    "url": "git+https://github.com/MongoCamp/mongocamp-server.git"
   },
   "author": "info@mongocamp.dev",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/mongocamp/mongocamp-server/issues"
+    "url": "https://github.com/MongoCamp/mongocamp-server/issues"
   },
-  "homepage": "https://github.com/mongocamp/mongocamp-server#readme",
+  "homepage": "https://github.com/MongoCamp/mongocamp-server#readme",
   "devDependencies": {
     "vitepress": "^0.22.3",
     "@openapitools/openapi-generator-cli": "^2.4.26"
