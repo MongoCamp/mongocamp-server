@@ -21,7 +21,7 @@ val generateChangeLog = ReleaseStep(action = st => {
 
 val addGithubRelease = ReleaseStep(action = st => {
   st.log.warn("start github release process")
-  val response = "DEBUG=conventional-github-releaser conventional-github-releaser -p conventionalcommits -i CHANGELOG.md -s -r 0 -n ./changelog/config.js".!!
+  val response = "conventional-github-releaser -p conventionalcommits -i CHANGELOG.md -s -r 0 -n ./changelog/config.js".!!
   st.log.warn("Output of conventional-github-releaser" + response)
   st
 })
