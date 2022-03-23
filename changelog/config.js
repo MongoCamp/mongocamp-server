@@ -30,9 +30,8 @@ const writerOpts = {
         }
 
         if (typeof commit.subject === `string`) {
-            let url = issueUrl();
+            let url = `${context.packageData.bugs.url}/`;
             if (url) {
-                url = `${url}/issues/`;
                 // Issue URLs.
                 commit.subject = commit.subject.replace(/#([0-9]+)/g, (_, issue) => {
                     issues.push(issue);
@@ -62,6 +61,7 @@ const writerOpts = {
     commitsSort: [`scope`, `subject`],
     noteGroupsSort: `title`
 };
+
 
 function issueUrl() {
     if (pkgJson.repository && pkgJson.repository.url && ~pkgJson.repository.url.indexOf('github.com')) {

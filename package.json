@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/QuadStingray/mongocamp.git"
+    "url": "git+https://github.com/mongocamp/mongocamp-server.git"
   },
-  "author": "tom@sfxcode.com",
+  "author": "info@mongocamp.dev",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/QuadStingray/mongocamp/issues"
+    "url": "https://github.com/mongocamp/mongocamp-server/issues"
   },
-  "homepage": "https://github.com/QuadStingray/mongocamp#readme",
+  "homepage": "https://github.com/mongocamp/mongocamp-server#readme",
   "devDependencies": {
     "vitepress": "^0.22.3",
     "@openapitools/openapi-generator-cli": "^2.4.26"
