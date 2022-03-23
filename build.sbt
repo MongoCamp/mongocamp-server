@@ -21,9 +21,9 @@ libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.1.2"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.13"
+libraryDependencies += "joda-time" % "joda-time" % "2.10.14"
 
-libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.0.4"
+libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.0.5"
 
 dependencyOverrides += "org.slf4j" % "slf4j-api" % "1.7.30"
 
