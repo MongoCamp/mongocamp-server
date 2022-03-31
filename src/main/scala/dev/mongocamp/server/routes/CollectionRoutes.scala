@@ -4,22 +4,21 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import com.sfxcode.nosql.mongo.database.CollectionStatus
 import com.sfxcode.nosql.mongo.database.DatabaseProvider.CollectionSeparator
-import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import dev.mongocamp.server.model.{ JsonResult, MongoAggregateRequest }
+import dev.mongocamp.server.model.{ JsonResult, MongoAggregateRequest, SchemaAnalysis }
 import dev.mongocamp.server.routes.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.service.{ AggregationService, SchemaService }
 import io.circe.generic.auto._
-import org.bson.conversions.Bson
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
-import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.{ EndpointInput, _ }
 
 import scala.concurrent.Future
 
@@ -105,6 +104,56 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right({
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       dao.columnNames(sampleSizeParameter.getOrElse(0))
+    }))
+  }
+
+  private val sampleSize: EndpointInput.Query[Option[Int]] =
+    query[Option[Int]]("sampleSize").example(Some(5000)).description("Use sample size greater 0 (e.g. 5000) for better performance on big collections")
+
+  val getSchemaEndpoint = readCollectionEndpoint
+    .in("schema")
+    .in(sampleSize)
+    .in(query[Int]("deepth").default(3).description("How deep should the objects extracted"))
+    .out(jsonBody[SchemaAnalysis])
+    .summary("Collection Fields")
+    .description("List the Fields in a given collection")
+    .tag("Collection")
+    .method(Method.GET)
+    .name("getSchema")
+    .serverLogic(collectionRequest => parameter => detectSchema(collectionRequest, parameter))
+
+  def detectSchema(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (Option[Int], Int)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SchemaAnalysis]] = {
+    Future.successful(Right({
+      val deepth = parameter._2
+      val sample = parameter._1
+      SchemaService.analyzeSchema(authorizedCollectionRequest, deepth, sample)
+    }))
+  }
+
+  val getSchemaAnalysisEndpoint = readCollectionEndpoint
+    .in("schema")
+    .in("analysis")
+    .in(sampleSize)
+    .in(query[Int]("deepth").default(3).description("How deep should the objects extracted"))
+    .out(jsonBody[SchemaAnalysis])
+    .summary("Collection Fields")
+    .description("List the Fields in a given collection")
+    .tag("Collection")
+    .method(Method.GET)
+    .name("getSchema")
+    .serverLogic(collectionRequest => parameter => detectSchemaAnalysis(collectionRequest, parameter))
+
+  def detectSchemaAnalysis(
+      authorizedCollectionRequest: AuthorizedCollectionRequest,
+      parameter: (Option[Int], Int)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SchemaAnalysis]] = {
+    Future.successful(Right({
+      val deepth = parameter._2
+      val sample = parameter._1
+      SchemaService.analyzeSchema(authorizedCollectionRequest, deepth, sample)
     }))
   }
 
@@ -197,19 +246,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
           val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
           val page                  = pagingInfo.page.getOrElse(1L)
 
-          val pipeline: Seq[Bson] = mongoAggregateRequest.pipeline.map(element => {
-            val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
-            mapToBson(Map(stage -> element.value))
-          })
-
-          val mongoPaginatedFilter = MongoPaginatedAggregation(
-            MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection),
-            mongoAggregateRequest.allowDiskUse,
-            pipeline.toList
-          )
-
-          val aggregateResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
-          (aggregateResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), aggregateResult.paginationInfo)
+          AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page)
 
         }
       )
@@ -258,6 +295,8 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       collectionsEndpoint,
       getCollectionStatusEndpoint,
       getCollectionFieldsEndpoint,
+      getSchemaEndpoint,
+      getSchemaAnalysisEndpoint,
       deleteCollectionStatusEndpoint,
       deleteAllEndpoint,
       aggregateEndpoint,
