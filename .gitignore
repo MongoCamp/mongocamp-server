@@ -25,3 +25,4 @@ sbt-cache/*
 /docs/.vitepress/dist/
 /docs/rest/.openapi-generator-ignore
 /docs/rest/.openapi-generator/
+/src/test/scala/dev/mongocamp/server/client-project/
