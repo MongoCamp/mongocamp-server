@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.{ CollectionStatus, JsonResultBoolean, MongoAggregateRequest }
+import dev.mongocamp.server.client.model.{ CollectionStatus, JsonResultBoolean, MongoAggregateRequest, SchemaAnalysis }
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
@@ -179,8 +179,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
     *
     * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
     */
-  def listCollections(apiKey: String, bearerToken: String)(
-  ) =
+  def listCollections(apiKey: String, bearerToken: String)() =
     basicRequest
       .method(Method.GET, uri"$baseUrl/mongodb/collections")
       .contentType("application/json")
@@ -188,5 +187,29 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       .auth
       .bearer(bearerToken)
       .response(asJson[Seq[String]])
+
+  /** List the Fields in a given collection
+    *
+    * Expected answers: code 200 : SchemaAnalysis code 400 : String (Invalid value for: query parameter sampleSize, Invalid value for: query parameter deepth)
+    * code 0 : ErrorDescription Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException x-error-additional-info - Additional
+    * information for the MongoCampException
+    *
+    * Available security schemes: apiKeyAuth (apiKey) httpAuth (http)
+    *
+    * @param collectionName
+    *   The name of your MongoDb Collection
+    * @param sampleSize
+    *   Use sample size greater 0 (e.g. 5000) for better performance on big collections
+    * @param deepth
+    *   How deep should the objects extracted
+    */
+  def getSchema(apiKey: String, bearerToken: String)(collectionName: String, sampleSize: Option[Int] = None, deepth: Option[Int] = None) =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/mongodb/collections/$collectionName/schema?sampleSize=$sampleSize&deepth=$deepth")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth
+      .bearer(bearerToken)
+      .response(asJson[SchemaAnalysis])
 
 }
