@@ -1,5 +1,5 @@
 module.exports = {
-    title: "MongoCamp",
+    title: "MongoCamp Server",
     base: "/mongocamp/",
     themeConfig: {
         repo: 'mongocamp/mongocamp-server',
@@ -11,9 +11,9 @@ module.exports = {
         nav: [
             {text: 'Guide', link: '/guide/', activeMatch: '^/$|^/guide/'},
             {
-                text: 'Config Reference',
-                link: '/config/#setup',
-                activeMatch: '^/config/'
+                text: 'Quick Start',
+                link: '/quickstart/#setup',
+                activeMatch: '^/quickstart/'
             },
             {
                 text: 'REST API',
@@ -21,8 +21,8 @@ module.exports = {
                 activeMatch: '^/rest/'
             },
             {
-                text: 'simple-mongo',
-                link: 'https://sfxcode.github.io/simple-mongo'
+                text: 'mongodb-driver',
+                link: 'https://mongocamp.github.io/mongodb-driver/'
             }
         ],// appended to all page titles
     }

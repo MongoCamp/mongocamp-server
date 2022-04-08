@@ -1,9 +1,9 @@
 ---
 home: true
 heroImage: /mongocamp.png
-heroAlt: MongoCamp
-heroText: MongoCamp
-tagline: MongoCamp Documentation
+heroAlt: MongoCamp Server
+heroText: MongoCamp Server
+tagline: Fastest way to connect your application with a MongoDB database
 actionText: Start
 actionLink: /guide/
 features:
