@@ -37,6 +37,7 @@ object TestAdditions extends CirceSchema {
     MapCollectionDao("accounts").insertMany(SystemFileService.readJsonList("accounts.json")).result()
     MapCollectionDao("users").insertMany(SystemFileService.readJsonList("users.json")).result()
     MapCollectionDao("users").insertMany(SystemFileService.readJsonList("users.json")).result()
+    MapCollectionDao("pokemon").insertMany(SystemFileService.readJsonList("pokedex.json")).result()
     val geoDataDao = MapCollectionDao("geodata:locations")
     val geoJson    = readGeoDataJson()
     geoDataDao.insertMany(geoJson).result()

@@ -9,7 +9,7 @@ import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, Paginat
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import dev.mongocamp.server.model.{ JsonResult, MongoAggregateRequest, SchemaAnalysis }
+import dev.mongocamp.server.model.{ JsonResult, JsonSchema, MongoAggregateRequest, SchemaAnalysis }
 import dev.mongocamp.server.routes.parameter.paging.{ Paging, PagingFunctions }
 import dev.mongocamp.server.service.{ AggregationService, SchemaService }
 import io.circe.generic.auto._
@@ -114,22 +114,22 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in("schema")
     .in(sampleSize)
     .in(query[Int]("deepth").default(3).description("How deep should the objects extracted"))
-    .out(jsonBody[SchemaAnalysis])
+    .out(jsonBody[JsonSchema])
     .summary("Collection Fields")
     .description("List the Fields in a given collection")
     .tag("Collection")
     .method(Method.GET)
-    .name("getSchema")
+    .name("getJsonSchema")
     .serverLogic(collectionRequest => parameter => detectSchema(collectionRequest, parameter))
 
   def detectSchema(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: (Option[Int], Int)
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SchemaAnalysis]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonSchema]] = {
     Future.successful(Right({
       val deepth = parameter._2
       val sample = parameter._1
-      SchemaService.analyzeSchema(authorizedCollectionRequest, deepth, sample)
+      SchemaService.detectSchema(authorizedCollectionRequest, deepth, sample)
     }))
   }
 
@@ -143,7 +143,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .description("List the Fields in a given collection")
     .tag("Collection")
     .method(Method.GET)
-    .name("getSchema")
+    .name("getSchemaAnalysis")
     .serverLogic(collectionRequest => parameter => detectSchemaAnalysis(collectionRequest, parameter))
 
   def detectSchemaAnalysis(

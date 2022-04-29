@@ -43,13 +43,14 @@ class DatabaseSuite extends BaseSuite {
         "mc_roles",
         "mc_token_cache",
         "mc_users",
+        "pokemon",
         "sample-files.chunks",
         "sample-files.files",
         "test",
         "users"
       )
     )
-    assertEquals(response.size, 10)
+    assertEquals(response.size, 11)
   }
 
   test("list all collections for database geodata as admin") {

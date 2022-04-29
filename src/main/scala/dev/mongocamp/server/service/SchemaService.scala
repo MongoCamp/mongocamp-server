@@ -5,7 +5,7 @@ import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.{FieldType, PipelineStage, SchemaAnalysis}
+import dev.mongocamp.server.model._
 import dev.mongocamp.server.service.AggregationService.convertToBsonPipeline
 import org.bson.conversions.Bson
 
@@ -20,6 +20,7 @@ object SchemaService extends CirceSchema {
   private val KeyFieldType          = "$$t"
   private val ObjectName            = "xl"
   private val ArrayName             = "xa"
+  private val ArrayElementText      = "[array element]"
 
   private def schemaAggregation(deepth: Int, sampleSize: Option[Int]): List[PipelineStage] = {
     val buffer = ArrayBuffer[PipelineStage]()
@@ -185,7 +186,7 @@ object SchemaService extends CirceSchema {
     Map("t" -> Map("$type" -> fieldValue))
   }
 
-  val emptyField = model.SchemaAnalysisField("ROOT","", List(), -1, -1, ArrayBuffer())
+  val emptyField = model.SchemaAnalysisField("ROOT", "", List(), -1, -1, ArrayBuffer())
 
   def analyzeSchema(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -228,7 +229,7 @@ object SchemaService extends CirceSchema {
       if (fullName.contains(NameSeparator)) {
         percentage = fieldCount.toDouble / parent.count.toDouble
       }
-      val types: List[FieldType] = documentMap
+      val types: List[SchemaAnalysisFieldType] = documentMap
         .get("T")
         .map(_.asInstanceOf[List[org.mongodb.scala.bson.collection.immutable.Document]])
         .getOrElse(List())
@@ -236,18 +237,160 @@ object SchemaService extends CirceSchema {
           val doc                         = documentFromDocument(typeDocument)
           val count                       = doc.getLongValue("c")
           val fieldTypePercentage: Double = count.toDouble / parent.count.toDouble
-          FieldType(doc.getStringValue("t"), count, fieldTypePercentage)
+          SchemaAnalysisFieldType(doc.getStringValue("t"), count, fieldTypePercentage)
         })
 
-      val newField = model.SchemaAnalysisField(name.replace(ArrayItemMark, "[array element]"), fullName, types, fieldCount, percentage, ArrayBuffer())
+      val newField = model.SchemaAnalysisField(name.replace(ArrayItemMark, ArrayElementText), fullName, types, fieldCount, percentage, ArrayBuffer())
 
       parent.subFields.addOne(newField)
       fieldsMap.put(s"$parentName$NameSeparator$name".replace("ROOT.", ""), newField)
     })
 
-    val fieldPercentage: Double = sampledDataCount / countResponse
+    val fieldPercentage: Double = if (countResponse != 0) sampledDataCount / countResponse else 0
     model.SchemaAnalysis(countResponse, sampledDataCount, fieldPercentage, fieldsMap.get("ROOT").map(_.subFields).getOrElse(ArrayBuffer()))
   }
 
-  def detectSchema: List[]
+  def detectSchema(authorizedCollectionRequest: AuthorizedCollectionRequest, deepth: Int, sample: Option[Int]): JsonSchema = {
+    val objectName = camelCaseObjectName(authorizedCollectionRequest.collection)
+    val analysis   = analyzeSchema(authorizedCollectionRequest, deepth, sample)
+    val map        = mutable.Map[String, JsonSchemaDefinition]()
+    fieldsToJsonSchemaDefinition(map, objectName, analysis.fields.toList)
+    JsonSchema(objectName, map.toMap)
+  }
+
+  def fieldsToJsonSchemaDefinition(map: mutable.Map[String, JsonSchemaDefinition], objectName: String, fields: List[SchemaAnalysisField]): Unit = {
+    map.put(objectName, null)
+    val requiredFields = ArrayBuffer[String]()
+    val properties     = mutable.Map[String, Map[String, Any]]()
+    fields.foreach(field => {
+      val fieldMap        = mutable.Map[String, Any]()
+      val fieldObjectName = getObjectName(camelCaseObjectName(field.name), map)
+      if (field.fieldTypes.exists(_.fieldType.equalsIgnoreCase("object"))) {
+        fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+      }
+      if (field.percentageOfParent == 1.0) {
+        requiredFields.addOne(field.name)
+      }
+      if (field.fieldTypes.size == 1) {
+        val t                  = field.fieldTypes.head
+        val convertedFieldType = convertFieldType(t.fieldType)
+        fieldMap.put("type", convertedFieldType._1)
+        convertedFieldType._2.foreach(value => fieldMap.put("pattern", value))
+        val mapping: Map[String, Any] = if (t.fieldType.equalsIgnoreCase("array")) {
+          val items = {
+            val subField = field.subFields.head
+            if (subField.fieldTypes.size == 1) {
+              if (subField.fieldTypes.head.fieldType.equalsIgnoreCase("object")) {
+                fieldsToJsonSchemaDefinition(map, fieldObjectName, subField.subFields.toList)
+                Map("$ref" -> s"#/definitions/$fieldObjectName")
+              }
+              else {
+                val convertedFieldType = convertFieldType(t.fieldType)
+                if (convertedFieldType._2.nonEmpty) {
+                  Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)
+                }
+                else {
+                  Map("type" -> convertedFieldType._1)
+                }
+              }
+            }
+            else {
+              Map("oneOf" -> getOneOfMapping(field, fieldObjectName, map))
+            }
+          }
+          Map("type" -> "array", "items" -> items)
+        }
+        else if (t.fieldType.equalsIgnoreCase("object")) {
+          fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+          Map("$ref" -> s"#/definitions/$fieldObjectName")
+        }
+        else {
+          val convertedFieldType = convertFieldType(t.fieldType)
+          if (convertedFieldType._2.nonEmpty) {
+            Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)
+          }
+          else {
+            Map("type" -> convertedFieldType._1)
+          }
+        }
+        mapping.foreach(element => fieldMap.put(element._1, element._2))
+      }
+      else {
+        fieldMap.put("oneOf", getOneOfMapping(field, fieldObjectName, map))
+      }
+      properties.put(field.name, fieldMap.toMap)
+    })
+    val jsonSchemaDefinition = JsonSchemaDefinition("object", objectName, additionalProperties = false, requiredFields.toList, properties.toMap)
+    map.put(objectName, jsonSchemaDefinition)
+  }
+
+  def convertFieldType(fieldType: String): (String, Option[String]) = {
+    val numberTypes = List("double", "long", "int")
+    if (fieldType.equalsIgnoreCase("objectId")) {
+      ("string", Some("^([a-fA-F0-9]{2})+$"))
+    }
+    else if (numberTypes.exists(_.equalsIgnoreCase(fieldType))) {
+      ("number", None)
+    }
+    else {
+      (fieldType, None)
+    }
+  }
+
+  private def getOneOfMapping(field: SchemaAnalysisField, fieldObjectName: String, map: mutable.Map[String, JsonSchemaDefinition]) = {
+    field.fieldTypes
+      .map(t => {
+        if (t.fieldType.equalsIgnoreCase("array")) {
+          if (t.fieldType.equalsIgnoreCase("object")) {
+            fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+            Map("type" -> "array", "items" -> Map("$ref" -> s"#/definitions/$fieldObjectName"))
+          }
+          else {
+            val arrayItemType      = field.subFields.find(_.name.equalsIgnoreCase(ArrayElementText)).map(_.fieldTypes.head.fieldType).getOrElse("Error")
+            val convertedFieldType = convertFieldType(arrayItemType)
+            if (convertedFieldType._2.nonEmpty) {
+              Map("type" -> "array", "items" -> Map("type" -> Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)))
+            }
+            else {
+              Map("type" -> "array", "items" -> Map("type" -> Map("type" -> convertedFieldType._1)))
+            }
+          }
+        }
+        else if (t.fieldType.equalsIgnoreCase("object")) {
+          fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+          Map("$ref" -> s"#/definitions/$fieldObjectName")
+        }
+        else {
+          val convertedFieldType = convertFieldType(t.fieldType)
+          if (convertedFieldType._2.nonEmpty) {
+            Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)
+          }
+          else {
+            Map("type" -> convertedFieldType._1)
+          }
+        }
+      })
+      .distinct
+  }
+
+  private def getObjectName(objectName: String, map: mutable.Map[String, JsonSchemaDefinition]): String = {
+    if (map.exists(_._1.equals(objectName))) {
+      val nameCounterString = objectName.split("_").last
+      val nameCounter: Long = if (nameCounterString.toLong.toString.equalsIgnoreCase(nameCounterString)) {
+        nameCounterString.toLong + 1
+      }
+      else {
+        1
+      }
+      getObjectName(s"$objectName}_$nameCounter", map)
+    }
+    else {
+      objectName
+    }
+  }
+
+  private def camelCaseObjectName(objectName: String) = {
+    objectName.split("[^a-zA-Z]").map(_.capitalize).mkString.trim
+  }
+
 }
