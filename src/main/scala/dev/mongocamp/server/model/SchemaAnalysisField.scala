@@ -4,7 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 case class SchemaAnalysisField(
     name: String,
     fullName: String,
-    fieldTypes: List[FieldType],
+    fieldTypes: List[SchemaAnalysisFieldType],
     count: Long,
     percentageOfParent: Double,
     subFields: ArrayBuffer[SchemaAnalysisField]
