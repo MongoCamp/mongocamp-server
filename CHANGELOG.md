@@ -1,3 +1,24 @@
+## [0.12.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.11.0...v0.12.0) (2022-04-29)
+
+
+### Features
+
+* Analyze Collection ([3348797](https://github.com/MongoCamp/mongocamp-server/commit/334879732b126b6cd14a6a466fd84b2401e128a8))
+* Generate JsonSchema for Collection ([1491bc8](https://github.com/MongoCamp/mongocamp-server/commit/1491bc8df6b20aa21bf7da69f40109ac3b32e599))
+
+
+### Maintenance
+
+* DependencyUpdates joda-time, jwt-scala ([e79cea1](https://github.com/MongoCamp/mongocamp-server/commit/e79cea12abf7ce5402cd96359c79bfa1cb23846b))
+* DependencyUpdates sfxcode, sttClient, embed.mongo ([3be25aa](https://github.com/MongoCamp/mongocamp-server/commit/3be25aa087b5fb736d294706a29cf267b8d66a11))
+* DependencyUpdates sfxcode, sttClient, embed.mongo ([35aa145](https://github.com/MongoCamp/mongocamp-server/commit/35aa145564ad5cf3984a988e6cddd9579c9333b8))
+
+
+### Reverts
+
+* CollectionSuite reverted ([80cb7fb](https://github.com/MongoCamp/mongocamp-server/commit/80cb7fb78f79c3ca6baf806b771ed8ba934ec206))
+* DatabaseSuite reverted ([8db9e89](https://github.com/MongoCamp/mongocamp-server/commit/8db9e891990d6c602450693437510fd497235781))
+
 ## [0.11.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.10.1...v0.11.0) (2022-03-23)
 
 
