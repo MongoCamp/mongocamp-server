@@ -1,3 +1,11 @@
+### [0.12.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.12.0...v0.12.1) (2022-05-02)
+
+
+### Bug Fixes
+
+* fixed empty role name or userId to add ([89b6ee1](https://github.com/MongoCamp/mongocamp-server/commit/89b6ee1efdb67468da6bab9a43ed8c7f9b0b5d91))
+* Type and some other small errors at schema generation ([9607387](https://github.com/MongoCamp/mongocamp-server/commit/96073870f27ad777d92d0d74cf5aa908dc5b0b0a))
+
 ## [0.12.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.11.0...v0.12.0) (2022-04-29)
 
 
