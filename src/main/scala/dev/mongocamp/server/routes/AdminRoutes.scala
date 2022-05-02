@@ -52,6 +52,9 @@ object AdminRoutes extends BaseRoute {
 
   def addUser(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful {
+      if (userInformation.userId == null || userInformation.userId.isBlank || userInformation.userId.isEmpty) {
+        throw MongoCampException("UserId could not be empty", StatusCode.PreconditionFailed)
+      }
       val users = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addUser(userInformation)
       Right(users.toResultUser)
     }
@@ -165,6 +168,9 @@ object AdminRoutes extends BaseRoute {
 
   def addRole(role: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
+      if (role.name == null || role.name.isBlank || role.name.isEmpty) {
+        throw MongoCampException("Role name could not be empty", StatusCode.PreconditionFailed)
+      }
       val addResult = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addRole(role)
       Right(addResult)
     }

@@ -2,6 +2,7 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.client.api.{ AdminApi, AuthApi }
 import dev.mongocamp.server.client.model._
+import sttp.model.StatusCode
 
 class AdminSuite extends BaseSuite {
 
@@ -20,6 +21,14 @@ class AdminSuite extends BaseSuite {
     assertEquals(user.roles, Seq("test"))
     val login = executeRequestToResponse(AuthApi().login(Login("myTestUser", "password")))
     assertEquals(login.userProfile.user, "myTestUser")
+  }
+
+  test("add user without name as admin") {
+    val userInformation = UserInformation("", "password", roles = Seq("test"))
+    val response        = executeRequest(adminApi.addUser("", adminBearerToken)(userInformation))
+    assertEquals(response.code.code, StatusCode.PreconditionFailed.code)
+    assertEquals(response.header("x-error-message").isDefined, true)
+    assertEquals(response.header("x-error-message").get, "UserId could not be empty")
   }
 
   test("update apikey for user as admin") {
@@ -74,6 +83,13 @@ class AdminSuite extends BaseSuite {
     val role = executeRequestToResponse(adminApi.addRole("", adminBearerToken)(Role("unitTestRole", isAdmin = false, List())))
     assertEquals(role.name, "unitTestRole")
     assertEquals(role.collectionGrants, List())
+  }
+
+  test("add role without name as admin") {
+    val response = executeRequest(adminApi.addRole("", adminBearerToken)(Role("", isAdmin = false, List())))
+    assertEquals(response.code.code, StatusCode.PreconditionFailed.code)
+    assertEquals(response.header("x-error-message").isDefined, true)
+    assertEquals(response.header("x-error-message").get, "Role name could not be empty")
   }
 
   test("get role as admin") {
