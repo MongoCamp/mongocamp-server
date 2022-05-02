@@ -4,8 +4,8 @@ import com.sfxcode.nosql.mongo._
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model
-import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model._
+import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.service.AggregationService.convertToBsonPipeline
 import org.bson.conversions.Bson
 
@@ -274,8 +274,9 @@ object SchemaService extends CirceSchema {
       if (field.fieldTypes.size == 1) {
         val t                  = field.fieldTypes.head
         val convertedFieldType = convertFieldType(t.fieldType)
-        fieldMap.put("type", convertedFieldType._1)
-        convertedFieldType._2.foreach(value => fieldMap.put("pattern", value))
+        fieldMap.put("type", convertedFieldType.name)
+        convertedFieldType.pattern.foreach(value => fieldMap.put("pattern", value))
+        convertedFieldType.format.foreach(value => fieldMap.put("format", value))
         val mapping: Map[String, Any] = if (t.fieldType.equalsIgnoreCase("array")) {
           val items = {
             val subField = field.subFields.head
@@ -285,13 +286,12 @@ object SchemaService extends CirceSchema {
                 Map("$ref" -> s"#/definitions/$fieldObjectName")
               }
               else {
-                val convertedFieldType = convertFieldType(t.fieldType)
-                if (convertedFieldType._2.nonEmpty) {
-                  Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)
-                }
-                else {
-                  Map("type" -> convertedFieldType._1)
-                }
+                val convertedFieldType = convertFieldType(subField.fieldTypes.head.fieldType)
+                val mutableMap         = mutable.Map[String, Any]()
+                mutableMap.put("type", convertedFieldType.name)
+                convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
+                convertedFieldType.format.foreach(value => mutableMap.put("format", value))
+                mutableMap.toMap
               }
             }
             else {
@@ -306,12 +306,11 @@ object SchemaService extends CirceSchema {
         }
         else {
           val convertedFieldType = convertFieldType(t.fieldType)
-          if (convertedFieldType._2.nonEmpty) {
-            Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)
-          }
-          else {
-            Map("type" -> convertedFieldType._1)
-          }
+          val mutableMap         = mutable.Map[String, Any]()
+          mutableMap.put("type", convertedFieldType.name)
+          convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
+          convertedFieldType.format.foreach(value => mutableMap.put("format", value))
+          mutableMap.toMap
         }
         mapping.foreach(element => fieldMap.put(element._1, element._2))
       }
@@ -324,16 +323,25 @@ object SchemaService extends CirceSchema {
     map.put(objectName, jsonSchemaDefinition)
   }
 
-  def convertFieldType(fieldType: String): (String, Option[String]) = {
-    val numberTypes = List("double", "long", "int")
+  case class JsonSchemaFieldType(name: String, pattern: Option[String] = None, format: Option[String] = None)
+
+  def convertFieldType(fieldType: String): JsonSchemaFieldType = {
+    val numberTypes     = List("double", "float")
+    val fullNumberTypes = List("int", "long")
     if (fieldType.equalsIgnoreCase("objectId")) {
-      ("string", Some("^([a-fA-F0-9]{2})+$"))
+      JsonSchemaFieldType("string", Some("^([a-fA-F0-9]{2})+$"))
+    }
+    if (fieldType.equalsIgnoreCase("date")) {
+      JsonSchemaFieldType("string", None, Some("date-time"))
+    }
+    else if (fullNumberTypes.exists(_.equalsIgnoreCase(fieldType))) {
+      JsonSchemaFieldType("integer")
     }
     else if (numberTypes.exists(_.equalsIgnoreCase(fieldType))) {
-      ("number", None)
+      JsonSchemaFieldType("number")
     }
     else {
-      (fieldType, None)
+      JsonSchemaFieldType(fieldType)
     }
   }
 
@@ -348,12 +356,11 @@ object SchemaService extends CirceSchema {
           else {
             val arrayItemType      = field.subFields.find(_.name.equalsIgnoreCase(ArrayElementText)).map(_.fieldTypes.head.fieldType).getOrElse("Error")
             val convertedFieldType = convertFieldType(arrayItemType)
-            if (convertedFieldType._2.nonEmpty) {
-              Map("type" -> "array", "items" -> Map("type" -> Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)))
-            }
-            else {
-              Map("type" -> "array", "items" -> Map("type" -> Map("type" -> convertedFieldType._1)))
-            }
+            val mutableMap         = mutable.Map[String, Any]()
+            mutableMap.put("type", convertedFieldType.name)
+            convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
+            convertedFieldType.format.foreach(value => mutableMap.put("format", value))
+            mutableMap.toMap
           }
         }
         else if (t.fieldType.equalsIgnoreCase("object")) {
@@ -362,22 +369,26 @@ object SchemaService extends CirceSchema {
         }
         else {
           val convertedFieldType = convertFieldType(t.fieldType)
-          if (convertedFieldType._2.nonEmpty) {
-            Map("type" -> convertedFieldType._1, "pattern" -> convertedFieldType._2.get)
-          }
-          else {
-            Map("type" -> convertedFieldType._1)
-          }
+          val mutableMap         = mutable.Map[String, Any]()
+          mutableMap.put("type", convertedFieldType.name)
+          convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
+          convertedFieldType.format.foreach(value => mutableMap.put("format", value))
+          mutableMap.toMap
         }
       })
       .distinct
   }
 
   private def getObjectName(objectName: String, map: mutable.Map[String, JsonSchemaDefinition]): String = {
-    if (map.exists(_._1.equals(objectName))) {
+    val name = if (map.exists(_._1.equals(objectName))) {
       val nameCounterString = objectName.split("_").last
-      val nameCounter: Long = if (nameCounterString.toLong.toString.equalsIgnoreCase(nameCounterString)) {
-        nameCounterString.toLong + 1
+      val count =
+        try nameCounterString.toLong
+        catch {
+          case nF: NumberFormatException => 0
+        }
+      val nameCounter: Long = if (count.toString.equalsIgnoreCase(nameCounterString)) {
+        count + 1
       }
       else {
         1
@@ -387,6 +398,7 @@ object SchemaService extends CirceSchema {
     else {
       objectName
     }
+    name
   }
 
   private def camelCaseObjectName(objectName: String) = {
