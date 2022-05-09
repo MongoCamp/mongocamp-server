@@ -1,5 +1,5 @@
 package dev.mongocamp.server.service
-import com.sfxcode.nosql.mongo.mapToBson
+import dev.mongocamp.driver.mongodb.mapToBson
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }

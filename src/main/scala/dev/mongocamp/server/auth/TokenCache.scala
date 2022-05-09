@@ -1,7 +1,7 @@
 package dev.mongocamp.server.auth
 
 import com.github.blemale.scaffeine.Scaffeine
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.AuthHolder.{ configBoolean, globalConfigDuration, handler }
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
 import dev.mongocamp.server.model.auth.{ TokenCacheElement, UserInformation }

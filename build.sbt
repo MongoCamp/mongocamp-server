@@ -4,7 +4,7 @@ organization := "dev.mongocamp"
 
 scalaVersion := "2.13.8"
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "2.3.1"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.4.2"
 
 val TapirVersion = "0.20.1"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion

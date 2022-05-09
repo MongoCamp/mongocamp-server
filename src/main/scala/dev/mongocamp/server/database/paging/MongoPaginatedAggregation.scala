@@ -1,7 +1,7 @@
 package dev.mongocamp.server.database.paging
 
 import com.mongodb.client.model.Facet
-import com.sfxcode.nosql.mongo.{ MongoDAO, _ }
+import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
 import dev.mongocamp.server.exception.MongoCampException
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.bson.conversions.Bson

@@ -1,6 +1,6 @@
 package dev.mongocamp.server.tests
 
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.client.api.{ CollectionApi, DatabaseApi }
 import dev.mongocamp.server.client.model.{ MongoAggregateRequest, PipelineStage }
 import dev.mongocamp.server.database.MongoDatabase

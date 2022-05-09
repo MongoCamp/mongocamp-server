@@ -1,7 +1,7 @@
 package dev.mongocamp.server.tests
 
 import better.files.File
-import com.sfxcode.nosql.mongo.GenericObservable
+import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.client.api.FileApi
 import dev.mongocamp.server.client.model.{ MongoFindRequest, UpdateFileInformationRequest }
 import dev.mongocamp.server.database.MongoDatabase

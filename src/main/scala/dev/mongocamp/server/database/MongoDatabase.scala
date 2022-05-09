@@ -1,7 +1,7 @@
 package dev.mongocamp.server.database
 
-import com.sfxcode.nosql.mongo.bson.codecs.CustomCodecProvider
-import com.sfxcode.nosql.mongo.database.{ DatabaseProvider, MongoConfig }
+import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
+import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.interceptor.RequestLogging

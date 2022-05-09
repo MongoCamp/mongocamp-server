@@ -1,7 +1,7 @@
 package dev.mongocamp.server.tests
 
 import better.files.File
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.client.api.{ BucketApi, DatabaseApi }
 import dev.mongocamp.server.database.MongoDatabase
 

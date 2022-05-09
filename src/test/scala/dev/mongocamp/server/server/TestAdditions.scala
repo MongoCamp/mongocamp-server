@@ -1,7 +1,7 @@
 package dev.mongocamp.server.server
 
 import better.files.File
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.database.MongoDatabase

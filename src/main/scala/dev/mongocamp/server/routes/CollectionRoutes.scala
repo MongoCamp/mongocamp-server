@@ -1,9 +1,9 @@
 package dev.mongocamp.server.routes
 
-import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.bson.BsonConverter
-import com.sfxcode.nosql.mongo.database.CollectionStatus
-import com.sfxcode.nosql.mongo.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
+import dev.mongocamp.driver.mongodb.database.CollectionStatus
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
 import dev.mongocamp.server.exception.ErrorDescription
