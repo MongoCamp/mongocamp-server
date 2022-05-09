@@ -1,6 +1,6 @@
 package dev.mongocamp.server.interceptor
 
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.auth.{ AuthHolder, TokenCache }
 import dev.mongocamp.server.database.MongoDatabase

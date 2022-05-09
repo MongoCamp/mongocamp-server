@@ -1,7 +1,7 @@
 package dev.mongocamp.server.routes
 
-import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.DatabaseInfo
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.database.DatabaseInfo
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.MongoDatabase.databaseProvider.DefaultDatabaseName
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }

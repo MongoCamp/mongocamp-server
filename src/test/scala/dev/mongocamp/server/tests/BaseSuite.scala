@@ -1,6 +1,6 @@
 package dev.mongocamp.server.tests
-import com.sfxcode.nosql.mongo.GenericObservable
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.client.api.AuthApi
 import dev.mongocamp.server.client.model.{ Login, LoginResult }
 import dev.mongocamp.server.database.MongoDatabase

@@ -1,6 +1,6 @@
 package dev.mongocamp.server.service
 
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model

@@ -1,5 +1,5 @@
 package dev.mongocamp.server.tests
-import com.sfxcode.nosql.mongo.GenericObservable
+import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.client.api.IndexApi
 import dev.mongocamp.server.client.model.{ IndexCreateRequest, IndexOptionsRequest }
 import dev.mongocamp.server.database.MongoDatabase

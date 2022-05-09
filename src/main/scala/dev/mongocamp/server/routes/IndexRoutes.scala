@@ -1,7 +1,7 @@
 package dev.mongocamp.server.routes
 
-import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.MongoIndex
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.database.MongoIndex
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest

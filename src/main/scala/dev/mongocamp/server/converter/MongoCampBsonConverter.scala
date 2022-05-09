@@ -9,7 +9,7 @@ import scala.collection.mutable
 object MongoCampBsonConverter {
 
   def documentToMap(document: Document): Map[String, Any] = {
-    val map = com.sfxcode.nosql.mongo.bson.BsonConverter.asMap(document)
+    val map = dev.mongocamp.driver.mongodb.bson.BsonConverter.asMap(document)
     map.map(element => {
       element._2 match {
         case objectId: ObjectId =>
@@ -21,7 +21,7 @@ object MongoCampBsonConverter {
   }
 
   def documentToMap(document: org.bson.BsonDocument): Map[String, Any] = {
-    val map = com.sfxcode.nosql.mongo.bson.BsonConverter.asMap(document)
+    val map = dev.mongocamp.driver.mongodb.bson.BsonConverter.asMap(document)
     map.map(element => {
       element._2 match {
         case objectId: ObjectId =>

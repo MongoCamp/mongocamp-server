@@ -1,6 +1,6 @@
 package dev.mongocamp.server.routes
 
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertIdField, convertToOperationMap }
 import dev.mongocamp.server.database.MongoDatabase

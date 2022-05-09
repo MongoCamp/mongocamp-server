@@ -1,6 +1,6 @@
 package dev.mongocamp.server.auth
 
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.AuthHolder.apiKeyLength
 import dev.mongocamp.server.database.MongoDatabase.{ rolesDao, userDao }
 import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
