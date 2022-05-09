@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }

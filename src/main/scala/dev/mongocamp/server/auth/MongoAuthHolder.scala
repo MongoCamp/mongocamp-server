@@ -8,7 +8,7 @@ import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userOrPasswordException }
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest.all
 import dev.mongocamp.server.model.auth.{ Grant, Role, UpdateRoleRequest, UserInformation }
-import dev.mongocamp.server.routes.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 import org.mongodb.scala.model.Filters
 import sttp.model.StatusCode
 

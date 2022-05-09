@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
@@ -10,15 +10,15 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
 import dev.mongocamp.server.model.{ JsonResult, JsonSchema, MongoAggregateRequest, SchemaAnalysis }
-import dev.mongocamp.server.routes.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 import dev.mongocamp.server.service.{ AggregationService, SchemaService }
 import io.circe.generic.auto._
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
+import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{ EndpointInput, _ }
 
 import scala.concurrent.Future
 

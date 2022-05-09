@@ -13,7 +13,7 @@ import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.{ Config, GlobalConstants }
 import dev.mongocamp.server.interceptor.cors.Cors
 import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
-import dev.mongocamp.server.routes.docs.ApiDocsRoutes
+import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.ReflectionService
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams

@@ -4,7 +4,7 @@ import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.database.paging.{ PaginationInfo, PaginationResult }
 import dev.mongocamp.server.exception.MongoCampException.userOrPasswordException
 import dev.mongocamp.server.model.auth.{ Role, UserInformation }
-import dev.mongocamp.server.routes.parameter.paging.Paging
+import dev.mongocamp.server.route.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.parser._
 

@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
 import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }

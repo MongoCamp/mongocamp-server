@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes.file
+package dev.mongocamp.server.route.file
 
 case class FileResult(file: java.io.File, contentLength: Long, contentDisposition: String, contentType: String)
 

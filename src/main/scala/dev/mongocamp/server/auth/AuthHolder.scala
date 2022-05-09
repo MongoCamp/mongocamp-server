@@ -6,7 +6,7 @@ import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
 import dev.mongocamp.server.model.auth._
-import dev.mongocamp.server.routes.parameter.paging.Paging
+import dev.mongocamp.server.route.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime

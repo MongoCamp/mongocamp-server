@@ -1,6 +1,6 @@
 package dev.mongocamp.server
 
-import dev.mongocamp.server.routes._
+import dev.mongocamp.server.route._
 import dev.mongocamp.server.service.ReflectionService
 
 import scala.concurrent.ExecutionContext

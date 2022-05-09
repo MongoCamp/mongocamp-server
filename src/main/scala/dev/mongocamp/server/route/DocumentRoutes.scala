@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.MongoCampBsonConverter
@@ -8,7 +8,7 @@ import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationIn
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.{ DeleteResponse, InsertResponse, MongoFindRequest, UpdateResponse }
-import dev.mongocamp.server.routes.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.bson.types.ObjectId
