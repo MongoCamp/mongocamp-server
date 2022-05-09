@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams

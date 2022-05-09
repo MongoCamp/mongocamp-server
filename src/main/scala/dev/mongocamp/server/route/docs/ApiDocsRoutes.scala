@@ -1,9 +1,9 @@
-package dev.mongocamp.server.routes.docs
+package dev.mongocamp.server.route.docs
 
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.exception.ErrorDescription
-import dev.mongocamp.server.routes.BaseRoute
+import dev.mongocamp.server.route.BaseRoute
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }

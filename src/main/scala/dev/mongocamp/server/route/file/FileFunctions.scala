@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes.file
+package dev.mongocamp.server.route.file
 import dev.mongocamp.server.config.Config
 import sttp.tapir.{ fileBody, header }
 

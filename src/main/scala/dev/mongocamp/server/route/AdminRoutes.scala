@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
 import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
@@ -6,8 +6,8 @@ import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
 import dev.mongocamp.server.model.JsonResult
 import dev.mongocamp.server.model.auth._
-import dev.mongocamp.server.routes.AuthRoutes.updateApiKey
-import dev.mongocamp.server.routes.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.AuthRoutes.updateApiKey
+import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams

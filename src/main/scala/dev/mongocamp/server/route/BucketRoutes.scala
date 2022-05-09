@@ -1,4 +1,4 @@
-package dev.mongocamp.server.routes
+package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
