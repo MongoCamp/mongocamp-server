@@ -11,10 +11,10 @@ object FileAdapterHolder {
 
   def isGridfsHolder: Boolean = fileHandlerType.equalsIgnoreCase("gridfs")
 
-  lazy val listOfRoutePlugins: List[FilePlugin] = ReflectionService.instancesForType(classOf[FilePlugin])
+  lazy val listOfFilePlugins: List[FilePlugin] = ReflectionService.instancesForType(classOf[FilePlugin])
 
   lazy val handler: FilePlugin = {
-    listOfRoutePlugins
+    listOfFilePlugins
       .find(_.name.equalsIgnoreCase(fileHandlerType))
       .getOrElse(throw MongoCampException("Unknown File Handler defined", StatusCode.InternalServerError))
   }
