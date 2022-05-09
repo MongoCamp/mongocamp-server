@@ -1,5 +1,4 @@
 package dev.mongocamp.server
-
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.service.ReflectionService
 
@@ -7,7 +6,7 @@ import scala.concurrent.ExecutionContext
 
 object Server extends App with RestServer {
 
-  implicit val ex: ExecutionContext = ExecutionContext.global
+  implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 
   lazy val listOfRoutePlugins: List[RoutesPlugin] = ReflectionService.instancesForType(classOf[RoutesPlugin])
 

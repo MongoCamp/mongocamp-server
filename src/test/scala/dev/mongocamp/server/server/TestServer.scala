@@ -1,14 +1,15 @@
 package dev.mongocamp.server.server
 
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.server.ActorHandler
 import dev.mongocamp.server.client.api.InformationApi
 
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ Await, ExecutionContext, ExecutionContextExecutor, Future }
+import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.util.Random
 
 object TestServer extends LazyLogging {
-  implicit val ex: ExecutionContextExecutor = ExecutionContext.global
+  implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 
   private var serverRunning      = false
   private var mongoServerStarted = false

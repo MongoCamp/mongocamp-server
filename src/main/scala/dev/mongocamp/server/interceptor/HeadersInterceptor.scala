@@ -1,16 +1,17 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.Config
+import dev.mongocamp.server.{ ActorHandler, BuildInfo }
 import sttp.model.Header
 import sttp.monad.MonadError
 import sttp.tapir.server.interceptor._
 import sttp.tapir.server.interpreter.BodyListener
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 class HeadersInterceptor extends EndpointInterceptor[Future] with Config {
+
+  implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 
   private def addHeaders(): List[Header] = {
     List(
