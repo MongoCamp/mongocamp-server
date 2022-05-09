@@ -2,6 +2,7 @@ package dev.mongocamp.server.interceptor
 
 import akka.event.{ LoggingAdapter, NoLogging }
 import akka.http.scaladsl.server.RequestContext
+import dev.mongocamp.server.ActorHandler
 import dev.mongocamp.server.exception.MongoCampException
 import sttp.monad.{ FutureMonad, MonadError }
 import sttp.tapir.AnyEndpoint
@@ -9,11 +10,11 @@ import sttp.tapir.model.ServerRequest
 import sttp.tapir.server.interceptor.log.{ DefaultServerLog, ServerLog }
 import sttp.tapir.server.interceptor.{ DecodeFailureContext, DecodeSuccessContext, SecurityFailureContext, ServerResponseFromOutput }
 
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 class MongoCampAkkaHttpServerLog extends ServerLog[Future] {
+  implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 
-  import scala.concurrent.ExecutionContext.Implicits.global
   implicit val monadError: MonadError[Future] = new FutureMonad()
 
   private val defaultServerLog: LoggingAdapter => DefaultServerLog[Future] = (log: LoggingAdapter) => {

@@ -10,7 +10,7 @@ import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, o
 import akka.http.scaladsl.server.{ Route, RouteConcatenation }
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.config.{ Config, GlobalConstants }
+import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.interceptor.cors.Cors
 import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
@@ -24,7 +24,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 trait RestServer extends LazyLogging with RouteConcatenation with Config {
 
-  implicit val actorSystem: ActorSystem = GlobalConstants.actorSystem
+  implicit val actorSystem: ActorSystem = ActorHandler.requestActorSystem
 
   // init server parameter
   val interface: String = globalConfigString("server.interface", "127.0.0.1")
