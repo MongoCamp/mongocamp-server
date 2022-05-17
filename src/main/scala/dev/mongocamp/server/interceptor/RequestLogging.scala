@@ -1,15 +1,13 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.auth.{ AuthHolder, TokenCache }
-import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
 import dev.mongocamp.server.exception.MongoCampException
 import org.joda.time.DateTime
 import sttp.model.HeaderNames
 import sttp.tapir.metrics.{ EndpointMetric, Metric, MetricLabels }
 
-import java.net.InetAddress
 import java.util.Date
 
 case class RequestLogging(
@@ -69,24 +67,20 @@ object RequestLogging {
                 val headOfTags     = endpoint.info.tags.headOption.getOrElse("NOT_SET")
                 val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
                 val methodeName    = endpoint.info.name.getOrElse(headOfTags)
-                val requestLogging = RequestLogging(
-                  new Date(),
-                  BuildInfo.name,
-                  BuildInfo.version,
-                  InetAddress.getLocalHost.toString,
+                val requestCompletedEvent = HttpRequestCompletedEvent(
                   requestId,
                   request.method.method,
                   methodeName,
                   request.uri.toString(),
                   remoteAddress.getOrElse("NOT_SET"),
                   user,
-                  new org.joda.time.Duration(requestStart, new DateTime()).getMillis,
+                  new org.joda.time.Duration(requestStart, new DateTime()),
                   response.code.code,
                   controllerName,
                   methodeName,
                   endpoint.info.description.getOrElse("NOT_SET")
                 )
-                val insertResponse = MongoDatabase.requestLoggingDao.insertOne(requestLogging).result()
+                EventSystem.eventStream.publish(requestCompletedEvent)
                 histogram
               })
             }
@@ -103,27 +97,47 @@ object RequestLogging {
                 val headOfTags     = endpoint.info.tags.headOption.getOrElse("NOT_SET")
                 val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
                 val methodeName    = endpoint.info.name.getOrElse(headOfTags)
-                val requestLogging = RequestLogging(
-                  new Date(),
-                  BuildInfo.name,
-                  BuildInfo.version,
-                  InetAddress.getLocalHost.toString,
+                val requestCompletedEvent = HttpRequestCompletedEvent(
                   requestId,
                   request.method.method,
                   methodeName,
                   request.uri.toString(),
                   remoteAddress.getOrElse("NOT_SET"),
                   user,
-                  new org.joda.time.Duration(requestStart, new DateTime()).getMillis,
+                  new org.joda.time.Duration(requestStart, new DateTime()),
                   statusCode,
                   controllerName,
                   methodeName,
                   endpoint.info.description.getOrElse("NOT_SET")
                 )
-                MongoDatabase.requestLoggingDao.insertOne(requestLogging).asFuture()
+                EventSystem.eventStream.publish(requestCompletedEvent)
                 histogram
               })
             }
+            .onEndpointRequest((endpoint) =>
+              m.eval({
+                val headOfTags     = endpoint.info.tags.headOption.getOrElse("NOT_SET")
+                val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
+                val methodeName    = endpoint.info.name.getOrElse(headOfTags)
+
+                val requestStartEvent =
+                  HttpRequestStartEvent(
+                    requestId,
+                    request.method.method,
+                    methodeName,
+                    request.uri.toString(),
+                    remoteAddress.getOrElse("NOT_SET"),
+                    user,
+                    controllerName,
+                    methodeName,
+                    endpoint.info.description.getOrElse("NOT_SET")
+                  )
+
+                EventSystem.eventStream.publish(requestStartEvent)
+                endpoint
+              })
+            )
+
         }
       }
     )

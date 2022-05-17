@@ -2,8 +2,8 @@ package dev.mongocamp.server
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.config.Config
-import dev.mongocamp.server.interceptor.cors.CorsInterceptor
 import dev.mongocamp.server.interceptor._
+import dev.mongocamp.server.interceptor.cors.CorsInterceptor
 import sttp.tapir.server.akkahttp.{ AkkaHttpServerInterpreter, AkkaHttpServerOptions }
 import sttp.tapir.server.interceptor.metrics.MetricsRequestInterceptor
 
@@ -19,9 +19,7 @@ object AkkaHttpServer extends LazyLogging with Config {
       .addInterceptor(new HeadersInterceptor())
       .serverLog(new MongoCampAkkaHttpServerLog())
 
-    if (globalConfigBoolean("requestlogging.enabled")) {
-      serverOptions = serverOptions.metricsInterceptor(new MetricsRequestInterceptor[Future](List(RequestLogging.responsesDuration()), List()))
-    }
+    serverOptions = serverOptions.metricsInterceptor(new MetricsRequestInterceptor[Future](List(RequestLogging.responsesDuration()), List()))
 
     serverOptions.options
   }
