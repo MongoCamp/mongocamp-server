@@ -5,6 +5,8 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertIdField }
 import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import dev.mongocamp.server.database.{ FileInformationDao, MongoDatabase }
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.file.{ CreateFileEvent, DeleteFileEvent, UpdateFileEvent }
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model._
@@ -147,6 +149,8 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
               FileAdapterHolder.handler.putFile(authorizedCollectionRequest.collection, fileId.toHexString, uploadedFile)
             }
             val insertedResult = InsertResponse(wasAcknowledged = true, List(fileId.toHexString))
+            EventSystem.eventStream.publish(CreateFileEvent(authorizedCollectionRequest.userInformation, insertedResult))
+
             insertedResult
           }
         }
@@ -226,6 +230,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
         val fileCollectionDelete = FileInformationDao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> convertIdField(parameter))).result()
         val fileDeleted          = FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
         val deleteResponse       = DeleteResponse(fileCollectionDelete.wasAcknowledged() && fileDeleted, fileCollectionDelete.getDeletedCount)
+        EventSystem.eventStream.publish(DeleteFileEvent(authorizedCollectionRequest.userInformation, deleteResponse))
         deleteResponse
       })
     )
@@ -266,13 +271,14 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
         else {
           Option(result.getUpsertedId).map(value => value.asObjectId().getValue)
         }
-        val insertedResult = UpdateResponse(
+        val updateResponse = UpdateResponse(
           result.wasAcknowledged(),
           maybeValue.map(value => value.toHexString).toList,
           result.getModifiedCount,
           result.getMatchedCount
         )
-        insertedResult
+        EventSystem.eventStream.publish(UpdateFileEvent(authorizedCollectionRequest.userInformation, updateResponse))
+        updateResponse
       })
     )
   }

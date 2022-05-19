@@ -32,7 +32,7 @@ class RequestLoggingActor extends Actor with LazyLogging {
         event.uri,
         event.remoteAddress,
         event.userId,
-        0,
+        -1,
         -1,
         event.controller,
         event.controllerMethod,

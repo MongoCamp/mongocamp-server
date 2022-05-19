@@ -2,6 +2,8 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
 import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.user.{ LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent }
 import dev.mongocamp.server.exception.{ ErrorCodes, ErrorDescription, MongoCampException }
 import dev.mongocamp.server.model.JsonResult
 import dev.mongocamp.server.model.auth._
@@ -34,6 +36,7 @@ object AuthRoutes extends BaseRoute {
     Future.successful {
       val user                     = AuthHolder.handler.findUser(loginInformation.userId, AuthHolder.handler.encryptPassword(loginInformation.password))
       val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(user)
+      EventSystem.eventStream.publish(LoginEvent(user))
       Right(loginResult)
     }
   }
@@ -68,6 +71,7 @@ object AuthRoutes extends BaseRoute {
   def logout(token: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
       val result = token.forall(tokenValue => {
+        TokenCache.validateToken(tokenValue).foreach(user => EventSystem.eventStream.publish(LogoutEvent(user)))
         TokenCache.invalidateToken(tokenValue)
         true
       })
@@ -123,7 +127,11 @@ object AuthRoutes extends BaseRoute {
       loginToUpdate: PasswordUpdateRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
-      Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password)))
+      val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password)
+      if (result) {
+        EventSystem.eventStream.publish(UpdatePasswordEvent(loggedInUser, loggedInUser.userId))
+      }
+      Right(JsonResult(result))
     }
   }
 
@@ -145,7 +153,9 @@ object AuthRoutes extends BaseRoute {
     Future.successful {
       val userId = loginToUpdate.getOrElse(loggedInUser.userId)
       if (loggedInUser.userId == userId || loggedInUser.isAdmin) {
-        Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)))
+        val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)
+        EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, userId))
+        Right(JsonResult(result))
       }
       else {
         throw MongoCampException.unauthorizedException("user not authorized to update password for other user", ErrorCodes.unauthorizedUserForOtherUser)
