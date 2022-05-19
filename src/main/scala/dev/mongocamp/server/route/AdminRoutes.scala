@@ -3,6 +3,9 @@ package dev.mongocamp.server.route
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
 import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
 import dev.mongocamp.server.database.paging.PaginationInfo
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.role.{ CreateRoleEvent, DeleteRoleEvent, UpdateRoleEvent }
+import dev.mongocamp.server.event.user.{ CreateUserEvent, DeleteUserEvent, UpdatePasswordEvent, UpdateUserRoleEvent }
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
 import dev.mongocamp.server.model.JsonResult
 import dev.mongocamp.server.model.auth._
@@ -48,14 +51,15 @@ object AdminRoutes extends BaseRoute {
     .description("Add a new User")
     .method(Method.PUT)
     .name("addUser")
-    .serverLogic(_ => userInformation => addUser(userInformation))
+    .serverLogic(authUser => userInformation => addUser(authUser, userInformation))
 
-  def addUser(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
+  def addUser(authUser: UserInformation, userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful {
       if (userInformation.userId == null || userInformation.userId.isBlank || userInformation.userId.isEmpty) {
         throw MongoCampException("UserId could not be empty", StatusCode.PreconditionFailed)
       }
       val users = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addUser(userInformation)
+      EventSystem.eventStream.publish(CreateUserEvent(authUser, userInformation))
       Right(users.toResultUser)
     }
   }
@@ -86,13 +90,18 @@ object AdminRoutes extends BaseRoute {
     .description("Change Password of User")
     .method(Method.PATCH)
     .name("updatePasswordForUser")
-    .serverLogic(_ => loginToUpdate => updatePassword(loginToUpdate))
+    .serverLogic(userInformation => loginToUpdate => updatePassword(userInformation, loginToUpdate))
 
   def updatePassword(
+      userInformation: UserInformation,
       parameter: (String, PasswordUpdateRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
-      Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(parameter._1, parameter._2.password)))
+      val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(parameter._1, parameter._2.password)
+      if (response) {
+        EventSystem.eventStream.publish(UpdatePasswordEvent(userInformation, parameter._1))
+      }
+      Right(JsonResult(response))
     }
   }
 
@@ -115,10 +124,19 @@ object AdminRoutes extends BaseRoute {
     .description("Delete User")
     .method(Method.DELETE)
     .name("deleteUser")
-    .serverLogic(_ => loginToUpdate => deleteUser(loginToUpdate))
+    .serverLogic(loggedInUser => loginToUpdate => deleteUser(loggedInUser, loginToUpdate))
 
-  def deleteUser(loginToUpdate: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
-    Future.successful(Right(JsonResult(AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate))))
+  def deleteUser(
+      loggedInUser: UserInformation,
+      loginToUpdate: String
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+    Future.successful({
+      val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate)
+      if (response) {
+        EventSystem.eventStream.publish(DeleteUserEvent(loggedInUser, loginToUpdate))
+      }
+      Right(JsonResult(response))
+    })
   }
 
   val updateUserRolesEndpoint = adminBase
@@ -131,10 +149,17 @@ object AdminRoutes extends BaseRoute {
     .description("Update Roles of User")
     .method(Method.PATCH)
     .name("updateRolesForUser")
-    .serverLogic(_ => loginToUpdate => updateRolesForUser(loginToUpdate))
+    .serverLogic(loggedInUser => loginToUpdate => updateRolesForUser(loggedInUser, loginToUpdate))
 
-  def updateRolesForUser(loginToUpdate: (String, List[String])): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
-    Future.successful(Right(AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersRoles(loginToUpdate._1, loginToUpdate._2).toResultUser))
+  def updateRolesForUser(
+      loggedInUser: UserInformation,
+      loginToUpdate: (String, List[String])
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
+    Future.successful(Right({
+      val userInformation = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersRoles(loginToUpdate._1, loginToUpdate._2)
+      EventSystem.eventStream.publish(UpdateUserRoleEvent(loggedInUser, loginToUpdate._2))
+      userInformation.toResultUser
+    }))
   }
 
   val listRolesEndpoint = adminBase
@@ -166,13 +191,10 @@ object AdminRoutes extends BaseRoute {
     .name("getRole")
     .serverLogic(_ => role => getRole(role))
 
-  def addRole(role: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
+  def getRole(roleKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
-      if (role.name == null || role.name.isBlank || role.name.isEmpty) {
-        throw MongoCampException("Role name could not be empty", StatusCode.PreconditionFailed)
-      }
-      val addResult = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addRole(role)
-      Right(addResult)
+      val role = AuthHolder.handler.findRole(roleKey).getOrElse(throw MongoCampException("Could not find UserRole", StatusCode.NotFound))
+      Right(role)
     }
   }
 
@@ -184,12 +206,16 @@ object AdminRoutes extends BaseRoute {
     .description("Add a new Role")
     .method(Method.PUT)
     .name("addRole")
-    .serverLogic(_ => role => addRole(role))
+    .serverLogic(loggedInUser => role => addRole(loggedInUser, role))
 
-  def getRole(roleKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
+  def addRole(loggedInUser: UserInformation, role: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
-      val role = AuthHolder.handler.findRole(roleKey).getOrElse(throw MongoCampException("Could not find UserRole", StatusCode.NotFound))
-      Right(role)
+      if (role.name == null || role.name.isBlank || role.name.isEmpty) {
+        throw MongoCampException("Role name could not be empty", StatusCode.PreconditionFailed)
+      }
+      val addResult = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addRole(role)
+      EventSystem.eventStream.publish(CreateRoleEvent(loggedInUser, role))
+      Right(addResult)
     }
   }
 
@@ -201,11 +227,14 @@ object AdminRoutes extends BaseRoute {
     .description("Delete Role")
     .method(Method.DELETE)
     .name("deleteRole")
-    .serverLogic(_ => role => deleteRole(role))
+    .serverLogic(loggedInUser => role => deleteRole(loggedInUser, role))
 
-  def deleteRole(role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def deleteRole(loggedInUser: UserInformation, role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful {
       val deleted = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteRole(role)
+      if (deleted) {
+        EventSystem.eventStream.publish(DeleteRoleEvent(loggedInUser, role))
+      }
       Right(JsonResult(deleted))
     }
   }
@@ -219,11 +248,15 @@ object AdminRoutes extends BaseRoute {
     .description("Update Role")
     .method(Method.PATCH)
     .name("updateRole")
-    .serverLogic(_ => parameter => updateRole(parameter))
+    .serverLogic(loggedInUser => parameter => updateRole(loggedInUser, parameter))
 
-  def updateRole(parameter: (String, UpdateRoleRequest)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
+  def updateRole(
+      loggedInUser: UserInformation,
+      parameter: (String, UpdateRoleRequest)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
       val role = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateRole(parameter._1, parameter._2)
+      EventSystem.eventStream.publish(UpdateRoleEvent(loggedInUser, parameter._1, parameter._2))
       Right(role)
     }
   }

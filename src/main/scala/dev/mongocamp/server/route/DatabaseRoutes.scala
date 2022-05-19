@@ -4,6 +4,8 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseInfo
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.MongoDatabase.databaseProvider.DefaultDatabaseName
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.database.DropDatabaseEvent
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.JsonResult
@@ -76,11 +78,15 @@ object DatabaseRoutes extends RoutesPlugin {
     .description("Delete given Database")
     .method(Method.DELETE)
     .name("deleteDatabase")
-    .serverLogic(_ => databaseName => deleteDatabaseInfo(databaseName))
+    .serverLogic(userInformation => databaseName => deleteDatabaseInfo(userInformation, databaseName))
 
-  def deleteDatabaseInfo(databaseName: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def deleteDatabaseInfo(
+      userInformation: UserInformation,
+      databaseName: String
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dropDatabase(databaseName).result()
+      EventSystem.eventStream.publish(DropDatabaseEvent(userInformation, databaseName))
       JsonResult(true)
     }))
   }

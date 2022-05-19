@@ -6,6 +6,8 @@ import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.collection.{ ClearCollectionEvent, DropCollectionEvent }
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
@@ -172,6 +174,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right({
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       dao.drop().result()
+      EventSystem.eventStream.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonResult(true)
     }))
   }
@@ -194,6 +197,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
         {
           val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result = dao.deleteAll().result()
+          EventSystem.eventStream.publish(ClearCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
           JsonResult(result.wasAcknowledged())
         }
       )
