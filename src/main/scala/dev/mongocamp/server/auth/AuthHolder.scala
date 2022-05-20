@@ -1,7 +1,8 @@
 package dev.mongocamp.server.auth
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.Config
+import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.ConfigHolder.authHandlerType
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
@@ -41,13 +42,13 @@ trait AuthHolder {
       content = userProfile.asJson.toString()
     )
     val algo  = JwtAlgorithm.HS256
-    val token = JwtCirce.encode(claim, AuthHolder.secret, algo)
+    val token = JwtCirce.encode(claim, ConfigHolder.authSecret.value, algo)
     token
   }
 
   def generateLoginResult(user: UserInformation) = {
     val resultUser     = user.toResultUser
-    val expirationDate = new DateTime().plusSeconds(TokenCache.expiringDuration.toSeconds.toInt)
+    val expirationDate = new DateTime().plusSeconds(ConfigHolder.authTokenExpiring.value.toSeconds.toInt)
     val token          = encodeToken(resultUser, expirationDate)
     TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
@@ -55,14 +56,13 @@ trait AuthHolder {
   }
 }
 
-object AuthHolder extends Config {
-  lazy val authHolderType: String = globalConfigString("auth.handler")
+object AuthHolder {
 
-  def isMongoDbAuthHolder: Boolean = authHolderType.equalsIgnoreCase("mongo")
-  def isStaticAuthHolder: Boolean  = authHolderType.equalsIgnoreCase("static")
+  def isMongoDbAuthHolder: Boolean = authHandlerType.value.equalsIgnoreCase("mongo")
+  def isStaticAuthHolder: Boolean  = authHandlerType.value.equalsIgnoreCase("static")
 
   lazy val handler: AuthHolder = {
-    authHolderType match {
+    authHandlerType.value match {
       case s: String if isStaticAuthHolder =>
         new StaticAuthHolder()
       case s: String if isMongoDbAuthHolder =>
@@ -73,10 +73,6 @@ object AuthHolder extends Config {
         throw MongoCampException("Unknown Auth Handler defined", StatusCode.InternalServerError)
     }
   }
-
-  lazy val secret: String = globalConfigString("auth.secret")
-
-  lazy val apiKeyLength: Int = globalConfigInt("auth.apikeylength")
 
   def findUserInformationByLoginRequest(loginInformation: Any): UserInformation = {
     val userInformation = loginInformation match {

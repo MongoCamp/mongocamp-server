@@ -1,7 +1,6 @@
 package dev.mongocamp.server.interceptor.cors
 
 import dev.mongocamp.server.ActorHandler
-import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.interceptor.cors.Cors.KeyCorsHeaderOrigin
 import sttp.model.Header
 import sttp.monad.MonadError
@@ -11,7 +10,7 @@ import sttp.tapir.server.interpreter.BodyListener
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-class CorsInterceptor extends EndpointInterceptor[Future] with Config {
+class CorsInterceptor extends EndpointInterceptor[Future] {
   implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 
   private def corsHeaderFromRequest(request: ServerRequest): List[Header] = {

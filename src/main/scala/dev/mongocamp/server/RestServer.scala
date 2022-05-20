@@ -10,7 +10,7 @@ import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, o
 import akka.http.scaladsl.server.{ Route, RouteConcatenation }
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.config.Config
+import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.http.HttpRequestEvent
 import dev.mongocamp.server.event.listener.RequestLoggingActor
@@ -26,13 +26,13 @@ import sttp.tapir.server.ServerEndpoint
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ ExecutionContext, Future }
 
-trait RestServer extends LazyLogging with RouteConcatenation with Config {
+trait RestServer extends LazyLogging with RouteConcatenation {
 
   implicit val actorSystem: ActorSystem = ActorHandler.requestActorSystem
 
   // init server parameter
-  val interface: String = globalConfigString("server.interface", "127.0.0.1")
-  val port: Int         = globalConfigInt("server.port", 3333)
+  val interface: String = ConfigHolder.serverInterface.value
+  val port: Int         = ConfigHolder.serverPort.value
 
   val serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]
 
@@ -83,7 +83,7 @@ trait RestServer extends LazyLogging with RouteConcatenation with Config {
 
         AuthHolder.handler
 
-        if (globalConfigBoolean("requestlogging.enabled")) {
+        if (ConfigHolder.requestLogging.value) {
           val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "customerSubTypesDownloadActor")
           EventSystem.eventStream.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
         }

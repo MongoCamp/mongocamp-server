@@ -1,14 +1,17 @@
 package dev.mongocamp.server.route
 
+import dev.mongocamp.server.Server
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
 import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
+import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.role.{ CreateRoleEvent, DeleteRoleEvent, UpdateRoleEvent }
 import dev.mongocamp.server.event.user.{ CreateUserEvent, DeleteUserEvent, UpdatePasswordEvent, UpdateUserRoleEvent }
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
-import dev.mongocamp.server.model.JsonResult
+import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.auth._
+import dev.mongocamp.server.model.{ JsonResult, SettingsResponse }
 import dev.mongocamp.server.route.AuthRoutes.updateApiKey
 import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 import io.circe.generic.auto._
@@ -19,6 +22,7 @@ import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.{ path, query }
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 
 object AdminRoutes extends BaseRoute {
@@ -261,6 +265,29 @@ object AdminRoutes extends BaseRoute {
     }
   }
 
+  val settingsEndpoint = adminBase
+    .in("settings")
+    .out(jsonBody[SettingsResponse])
+    .summary("System Settings")
+    .description("Update Role")
+    .method(Method.GET)
+    .name("settings")
+    .serverLogic(loggedInUser => _ => systemSettings(loggedInUser))
+
+  def systemSettings(loggedInUser: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SettingsResponse]] = {
+    Future.successful {
+      val configurations = ListMap(ConfigHolder.allConfigurations.map(config => config.key -> config.value).toMap.toSeq.sortBy(_._1): _*)
+      Right(
+        SettingsResponse(
+          Server.listOfRoutePlugins.map(_.getClass.getName),
+          FileAdapterHolder.listOfFilePlugins.map(_.getClass.getName),
+          ConfigHolder.pluginsIgnored.value,
+          configurations
+        )
+      )
+    }
+  }
+
   lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
     val routesByHolder: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
       if (isMongoDbAuthHolder) {
@@ -279,7 +306,7 @@ object AdminRoutes extends BaseRoute {
         List()
       }
     }
-    routesByHolder ++ List(listUsersEndpoint, userEndpoint, listRolesEndpoint, getRolesEndpoint)
+    List(settingsEndpoint) ++ routesByHolder ++ List(listUsersEndpoint, userEndpoint, listRolesEndpoint, getRolesEndpoint)
   }
 
 }
