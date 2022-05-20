@@ -1,6 +1,5 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.{ ActorHandler, BuildInfo }
 import sttp.model.Header
 import sttp.monad.MonadError
@@ -9,7 +8,7 @@ import sttp.tapir.server.interpreter.BodyListener
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-class HeadersInterceptor extends EndpointInterceptor[Future] with Config {
+class HeadersInterceptor extends EndpointInterceptor[Future] {
 
   implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 

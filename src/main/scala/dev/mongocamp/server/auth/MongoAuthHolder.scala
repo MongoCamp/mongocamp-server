@@ -1,7 +1,7 @@
 package dev.mongocamp.server.auth
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.auth.AuthHolder.apiKeyLength
+import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.database.MongoDatabase.{ rolesDao, userDao }
 import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import dev.mongocamp.server.exception.MongoCampException
@@ -102,7 +102,7 @@ class MongoAuthHolder extends AuthHolder {
 
   def updateApiKeyUser(userId: String): String = {
     val userInformation = findUser(userId)
-    val apiKey          = Random.alphanumeric.take(apiKeyLength).mkString
+    val apiKey          = Random.alphanumeric.take(ConfigHolder.authApiKeyLength.value).mkString
     val updateResult    = userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(apiKey = Some(apiKey))).result()
     if (updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1) {
       apiKey

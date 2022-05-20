@@ -1,7 +1,6 @@
 package dev.mongocamp.server
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.config.Config
 import dev.mongocamp.server.interceptor._
 import dev.mongocamp.server.interceptor.cors.CorsInterceptor
 import sttp.tapir.server.akkahttp.{ AkkaHttpServerInterpreter, AkkaHttpServerOptions }
@@ -9,7 +8,7 @@ import sttp.tapir.server.interceptor.metrics.MetricsRequestInterceptor
 
 import scala.concurrent.Future
 
-object AkkaHttpServer extends LazyLogging with Config {
+object AkkaHttpServer extends LazyLogging {
 
   private val serverOptions: AkkaHttpServerOptions = {
     var serverOptions = AkkaHttpServerOptions.customInterceptors

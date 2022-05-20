@@ -1,7 +1,7 @@
 package dev.mongocamp.server.route.docs
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.Config
+import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.route.BaseRoute
 import sttp.capabilities.WebSockets
@@ -17,12 +17,12 @@ import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
-object ApiDocsRoutes extends BaseRoute with Config {
+object ApiDocsRoutes extends BaseRoute {
   val nameAsyncApiDocsYamlName = "asyncapidocs.yaml"
   val nameOpenApiDocsYamlName  = "docs.yaml"
 
-  lazy val isSwaggerEnabled: Boolean = globalConfigBoolean("docs.swagger")
-  lazy val isOpenApiEnabled: Boolean = globalConfigBoolean("docs.openapi")
+  lazy val isSwaggerEnabled: Boolean = ConfigHolder.docsUseSwagger.value
+  lazy val isOpenApiEnabled: Boolean = ConfigHolder.docsUseOpenApi.value
 
   def docsYamlEndpoint(yamlName: String, content: String): ServerEndpoint[AkkaStreams with WebSockets, Future] = {
     def contentToResponse(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (String, Long)]] = {

@@ -1,7 +1,7 @@
 package dev.mongocamp.server.service
 
 import better.files.File
-import dev.mongocamp.server.config.Config
+import dev.mongocamp.server.config.ConfigHolder
 import org.reflections.Reflections
 import org.reflections.util.{ ClasspathHelper, ConfigurationBuilder }
 
@@ -12,7 +12,7 @@ import scala.reflect.internal.util.ScalaClassLoader.URLClassLoader
 import scala.reflect.runtime.universe.runtimeMirror
 import scala.util.Try
 
-object ReflectionService extends Config {
+object ReflectionService {
   private val reflectionConfigurationBuilder: ConfigurationBuilder = new ConfigurationBuilder().forPackages("")
 
   def instancesForType[T <: Any](clazz: Class[T]): List[T] = {
@@ -58,7 +58,7 @@ object ReflectionService extends Config {
 
   def loadPlugins(): Unit = {
     registerClassLoaders(getClass)
-    val pluginDirectory = File(globalConfigString("plugins.directory"))
+    val pluginDirectory = File(ConfigHolder.pluginsDirectory.value)
     if (pluginDirectory.isDirectory) {
       val listUrl = pluginDirectory.children.map(_.url)
       if (listUrl.nonEmpty) {

@@ -3,7 +3,8 @@ package dev.mongocamp.server.database
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
 import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.Config
+import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.ConfigHolder._
 import dev.mongocamp.server.interceptor.RequestLogging
 import dev.mongocamp.server.model.DBFileInformation
 import dev.mongocamp.server.model.auth.{ Grant, Role, TokenCacheElement, UserInformation }
@@ -11,13 +12,12 @@ import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
 
-object MongoDatabase extends Config {
+object MongoDatabase {
 
-  lazy val collectionPrefix: String                   = globalConfigString("auth.prefix")
-  private[database] lazy val CollectionNameUsers      = s"${MongoDatabase.collectionPrefix}users"
-  private[database] lazy val CollectionNameRoles      = s"${MongoDatabase.collectionPrefix}roles"
-  private[database] lazy val CollectionNameRequestLog = s"${MongoDatabase.collectionPrefix}request_logging"
-  private[database] lazy val CollectionNameTokenCache = s"${MongoDatabase.collectionPrefix}token_cache"
+  private[database] lazy val CollectionNameUsers      = s"${ConfigHolder.authCollectionPrefix.value}users"
+  private[database] lazy val CollectionNameRoles      = s"${ConfigHolder.authCollectionPrefix.value}roles"
+  private[database] lazy val CollectionNameRequestLog = s"${ConfigHolder.authCollectionPrefix.value}request_logging"
+  private[database] lazy val CollectionNameTokenCache = s"${ConfigHolder.authCollectionPrefix.value}token_cache"
 
   lazy val userDao: UserDao                     = UserDao()
   lazy val rolesDao: RolesDao                   = RolesDao()
@@ -25,13 +25,15 @@ object MongoDatabase extends Config {
   lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
 
   lazy val databaseProvider: DatabaseProvider = {
-    val host       = globalConfigString("connection.host")
-    val port       = globalConfigInt("connection.port")
-    val database   = globalConfigString("connection.database")
-    val username   = globalConfigStringOption("connection.username")
-    val password   = globalConfigStringOption("connection.password")
-    val authdb     = globalConfigStringOption("connection.authdb")
-    val connection = MongoConfig(database, host, port, s"${BuildInfo.name}/${BuildInfo.version}", username, password, authdb.getOrElse("admin"))
+    val connection = MongoConfig(
+      dbConnectionDatabase.value,
+      dbConnectionHost.value,
+      dbConnectionPort.value,
+      s"${BuildInfo.name}/${BuildInfo.version}",
+      dbConnectionUsername.value,
+      dbConnectionPassword.value,
+      dbConnectionAuthDb.value.getOrElse("admin")
+    )
     val dbProvider = DatabaseProvider(connection, fromRegistries(DEFAULT_CODEC_REGISTRY, providerRegistry))
     dbProvider
   }
