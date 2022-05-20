@@ -47,7 +47,6 @@ class AuthSuite extends BaseSuite {
   }
 
   test("refresh token") {
-    clearAdminToken
     val cacheCountBefore = tokenCacheDao.count().result()
     val refresh          = executeRequestToResponse(adminApi.refreshToken("", adminBearerToken)())
     val cacheCountAfter  = tokenCacheDao.count().result()

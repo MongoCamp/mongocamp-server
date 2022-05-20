@@ -8,5 +8,5 @@ object FileFunctions {
     .and(header[String]("Content-Disposition"))
     .and(header[String]("Content-Type"))
     .mapTo[FileResult]
-    .and(header("cache-control", "max-age=" + ConfigHolder.fileCacheAge))
+    .and(header("cache-control", "max-age=" + ConfigHolder.fileCacheAge.value))
 }
