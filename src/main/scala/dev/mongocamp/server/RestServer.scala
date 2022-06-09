@@ -11,10 +11,10 @@ import akka.http.scaladsl.server.{ Route, RouteConcatenation }
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.ConfigHolder
-import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.http.HttpRequestEvent
-import dev.mongocamp.server.event.listener.RequestLoggingActor
+import dev.mongocamp.server.event.listener.{ MetricsLoggingActor, RequestLoggingActor }
 import dev.mongocamp.server.event.server.ServerStartedEvent
+import dev.mongocamp.server.event.{ Event, EventSystem }
 import dev.mongocamp.server.interceptor.cors.Cors
 import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
@@ -84,9 +84,12 @@ trait RestServer extends LazyLogging with RouteConcatenation {
         AuthHolder.handler
 
         if (ConfigHolder.requestLogging.value) {
-          val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "customerSubTypesDownloadActor")
+          val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
           EventSystem.eventStream.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
         }
+
+        val metricsLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[MetricsLoggingActor]), "metricsLoggingActor")
+        EventSystem.eventStream.subscribe(metricsLoggingActor, classOf[Event])
         EventSystem.eventStream.publish(ServerStartedEvent())
         serverBinding
       })

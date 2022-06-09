@@ -8,6 +8,8 @@ import dev.mongocamp.server.config.ConfigHolder._
 import dev.mongocamp.server.interceptor.RequestLogging
 import dev.mongocamp.server.model.DBFileInformation
 import dev.mongocamp.server.model.auth.{ Grant, Role, TokenCacheElement, UserInformation }
+import dev.mongocamp.server.monitoring.MetricsConfiguration
+import io.micrometer.core.instrument.binder.mongodb.{ MongoMetricsCommandListener, MongoMetricsConnectionPoolListener }
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
@@ -32,7 +34,9 @@ object MongoDatabase {
       s"${BuildInfo.name}/${BuildInfo.version}",
       dbConnectionUsername.value,
       dbConnectionPassword.value,
-      dbConnectionAuthDb.value.getOrElse("admin")
+      dbConnectionAuthDb.value.getOrElse("admin"),
+      connectionPoolListener = List(new MongoMetricsConnectionPoolListener(MetricsConfiguration.mongoDbRegistry)),
+      commandListener = List(new MongoMetricsCommandListener(MetricsConfiguration.mongoDbRegistry))
     )
     val dbProvider = DatabaseProvider(connection, fromRegistries(DEFAULT_CODEC_REGISTRY, providerRegistry))
     dbProvider
