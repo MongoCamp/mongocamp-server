@@ -1,3 +1,32 @@
+## [0.13.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.12.1...v0.13.0) (2022-05-20)
+
+
+### Bug Fixes
+
+* Wrong Return Value for cache control ([83a0bbe](https://github.com/MongoCamp/mongocamp-server/commit/83a0bbebec53e829e83160f4d560327fa6926c7d))
+
+
+### Code Refactoring
+
+* Removed ExecutionContext.global ([542ca23](https://github.com/MongoCamp/mongocamp-server/commit/542ca232caab47d601c367c721d0f70f1dc27636))
+* Replaced `com.sfxcode.nosql.mongo` with `dev.mongocamp.driver.mongodb` ([daa17d1](https://github.com/MongoCamp/mongocamp-server/commit/daa17d1014bd53bd8237855348c8ed3697ad0f13))
+* Singular name for package ([2c9dfcf](https://github.com/MongoCamp/mongocamp-server/commit/2c9dfcf9c1fe9c8ad727f9b9fc2b475f56f043e2))
+* typo in plugin list name ([62685fb](https://github.com/MongoCamp/mongocamp-server/commit/62685fb687cfc0cf297719af4031ff2c38627b91))
+
+
+### Features
+
+* Ignore plugins ([59fcc8b](https://github.com/MongoCamp/mongocamp-server/commit/59fcc8b9c2aeeaad1b99be1d8d0d0c34821f40fb))
+* Load Configurations at global place ([c1b1b07](https://github.com/MongoCamp/mongocamp-server/commit/c1b1b07ea9a9e37cbfc6a8d8486a4cc284fed51f))
+* Publish Events for many Events to EventStream ([05e05e9](https://github.com/MongoCamp/mongocamp-server/commit/05e05e9e12e9e40f358bf7fe747538a462422002))
+* Use EventListener and EventStream for RequestLogging ([76dc7cc](https://github.com/MongoCamp/mongocamp-server/commit/76dc7cc726bacb98338b59f8968a3233947ac645))
+
+
+### Maintenance
+
+* DependencyUpdates sttClient ([8621393](https://github.com/MongoCamp/mongocamp-server/commit/862139309ec7d956b3e0e8d2c9180ff57cf3d78c))
+* DependencyUpdates Tapir, Circe and scaffeine ([d82f427](https://github.com/MongoCamp/mongocamp-server/commit/d82f4274aa17b9238274358fb205cc55c3b48a4a))
+
 ### [0.12.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.12.0...v0.12.1) (2022-05-02)
 
 
