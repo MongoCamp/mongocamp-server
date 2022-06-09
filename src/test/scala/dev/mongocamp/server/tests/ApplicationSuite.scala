@@ -27,7 +27,7 @@ class ApplicationSuite extends BaseSuite {
 
   test("Show all MongoDb Metrics") {
     val mongoDbMetrics = executeRequestToResponse(applicationApi.mongoDbMetrics("", adminBearerToken)())
-    assertEquals(mongoDbMetrics.size, 31)
+    assertEquals(mongoDbMetrics.size > 25, true)
   }
 
   test("Show all Event Metrics") {
