@@ -15,7 +15,7 @@ import scala.collection.immutable.ListMap
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 
-object ApplicationStatusRoutes extends BaseRoute {
+object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
   private val applicationApiBaseEndpoint = adminEndpoint.tag("Application")
 
   val jvmMetricsRoutes = applicationApiBaseEndpoint
@@ -105,5 +105,5 @@ object ApplicationStatusRoutes extends BaseRoute {
     }
   }
 
-  val routes = List(jvmMetricsRoutes, systemMetricsRoutes, mongoDbMetricsRoutes, eventMetricsRoutes)
+  override def endpoints = List(jvmMetricsRoutes, systemMetricsRoutes, mongoDbMetricsRoutes, eventMetricsRoutes, settingsEndpoint)
 }
