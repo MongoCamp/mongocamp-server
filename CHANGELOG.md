@@ -1,3 +1,10 @@
+## [0.15.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.14.1...v0.15.0) (2022-06-10)
+
+
+### Features
+
+* migration to Tapir 1.0.0-RC3 ([158e0f1](https://github.com/MongoCamp/mongocamp-server/commit/158e0f158aaf272e50683dde8cae4860360743ee))
+
 ### [0.14.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.14.0...v0.14.1) (2022-06-10)
 
 
