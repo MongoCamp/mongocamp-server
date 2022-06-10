@@ -3,12 +3,15 @@ package dev.mongocamp.server.exception
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.exception.ErrorDefinition.errorEndpointDefinition
 import sttp.model.StatusCode
-import sttp.tapir.server.interceptor.ValuedEndpointOutput
+import sttp.monad.MonadError
 import sttp.tapir.server.interceptor.exception.{ ExceptionContext, ExceptionHandler }
+import sttp.tapir.server.model.ValuedEndpointOutput
 
-class MongoCampExceptionHandler extends ExceptionHandler with LazyLogging {
+import scala.concurrent.Future
 
-  override def apply(ctx: ExceptionContext): Option[ValuedEndpointOutput[_]] = {
+class MongoCampExceptionHandler extends ExceptionHandler[Future] with LazyLogging {
+
+  override def apply(ctx: ExceptionContext)(implicit monad: MonadError[Future]): Future[Option[ValuedEndpointOutput[_]]] = {
     val internalErrorStatusCode = StatusCode.InternalServerError
     val response = ctx.e match {
       case jEx: MongoCampException =>
@@ -23,7 +26,6 @@ class MongoCampExceptionHandler extends ExceptionHandler with LazyLogging {
         val description = ErrorDescription(-1, "Unknown Error")
         ValuedEndpointOutput(errorEndpointDefinition, (internalErrorStatusCode, description, description))
     }
-    Some(response)
+    monad.unit(Some(response))
   }
-
 }

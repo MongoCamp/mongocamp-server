@@ -4,13 +4,12 @@ import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.route.BaseRoute
+import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
-import sttp.tapir.openapi.OpenAPI
-import sttp.tapir.openapi.circe.yaml.RichOpenAPI
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
 
@@ -49,15 +48,16 @@ object ApiDocsRoutes extends BaseRoute {
     val docs = ArrayBuffer[ServerEndpoint[AkkaStreams with WebSockets, Future]]()
 
     if (isSwaggerEnabled || isOpenApiEnabled) {
-      val openApiDocs: OpenAPI = OpenAPIDocsInterpreter().toOpenAPI(
+      val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
         serverEndpoints.map(_.endpoint),
         BuildInfo.name,
         BuildInfo.version
       )
+
       val openApiYml: String = openApiDocs.toYaml
 
       if (isSwaggerEnabled) {
-        val swaggerUIRoute = SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List()))
+        val swaggerUIRoute = SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List(), useRelativePaths = true))
         docs ++= swaggerUIRoute
       }
 
