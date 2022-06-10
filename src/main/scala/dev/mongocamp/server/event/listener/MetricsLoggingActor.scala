@@ -31,7 +31,7 @@ class MetricsLoggingActor extends Actor with LazyLogging {
       val regex          = "([a-z])([A-Z]+)"
       val replacement    = "$1.$2"
       val metricsName    = s"${pathArray.mkString(".")}".replaceAll("Event", "").replaceAll(regex, replacement).toLowerCase()
-      eventRegistry.timer(metricsName).record(Duration.ofNanos(1))
+      eventRegistry.summary(metricsName).record(1)
 
   }
 
