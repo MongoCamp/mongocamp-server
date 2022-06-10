@@ -55,7 +55,8 @@ class FileApi(baseUrl: String) extends CirceSchema {
     * @param bucketName
     *   The name of your MongoDb Collection
     * @param mongoFindRequest
-    *   @param rowsPerPage Count elements per page
+    * @param rowsPerPage
+    *   Count elements per page
     * @param page
     *   Requested page of the ResultSets
     */
@@ -130,7 +131,7 @@ class FileApi(baseUrl: String) extends CirceSchema {
     * @param bucketName
     *   The name of your MongoDb Collection
     * @param file
-    *   @param metaData
+    * @param metaData
     * @param fileName
     *   override filename of uploaded file
     */

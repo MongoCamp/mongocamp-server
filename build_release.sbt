@@ -55,7 +55,7 @@ def setMyVersion(version: String, state: State): Unit = {
 }
 
 releaseNextCommitMessage := s"ci: update version after release"
-releaseCommitMessage := s"ci: prepare release of version ${runtimeVersion.value}"
+releaseCommitMessage     := s"ci: prepare release of version ${runtimeVersion.value}"
 
 commands += Command.command("ci-release")((state: State) => {
   val lowerCaseVersion = version.value.toLowerCase
