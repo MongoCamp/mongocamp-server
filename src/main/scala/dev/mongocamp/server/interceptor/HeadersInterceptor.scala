@@ -5,6 +5,7 @@ import sttp.model.Header
 import sttp.monad.MonadError
 import sttp.tapir.server.interceptor._
 import sttp.tapir.server.interpreter.BodyListener
+import sttp.tapir.server.model.ServerResponse
 
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -21,9 +22,9 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
   override def apply[B](responder: Responder[Future, B], endpointHandler: EndpointHandler[Future, B]): EndpointHandler[Future, B] = {
     new EndpointHandler[Future, B] {
 
-      override def onDecodeSuccess[U, I](
-          ctx: DecodeSuccessContext[Future, U, I]
-      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponseFromOutput[B]] = {
+      override def onDecodeSuccess[A, U, I](
+          ctx: DecodeSuccessContext[Future, A, U, I]
+      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onDecodeSuccess(ctx)
           .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ addHeaders()))
@@ -31,7 +32,7 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
 
       override def onSecurityFailure[A](
           ctx: SecurityFailureContext[Future, A]
-      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponseFromOutput[B]] = {
+      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onSecurityFailure(ctx)
           .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ addHeaders()))
@@ -39,7 +40,7 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
 
       override def onDecodeFailure(
           ctx: DecodeFailureContext
-      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponseFromOutput[B]]] = {
+      )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponse[B]]] = {
         endpointHandler
           .onDecodeFailure(ctx)
           .map(serverResponse => serverResponse.map(response => response.copy(headers = response.headers ++ addHeaders())))

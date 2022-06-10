@@ -9,7 +9,7 @@ import dev.mongocamp.server.model.auth._
 import sttp.model.StatusCode
 import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir._
-import sttp.tapir.generic.SchemaDerivation
+import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.model.UsernamePassword
 
 import scala.concurrent.Future

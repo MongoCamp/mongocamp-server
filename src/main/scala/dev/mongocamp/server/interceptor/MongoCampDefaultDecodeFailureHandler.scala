@@ -5,9 +5,10 @@ import dev.mongocamp.server.exception.ErrorDescription
 import io.circe.generic.auto._
 import io.circe.syntax.EncoderOps
 import sttp.model.{ Header, StatusCode }
+import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.interceptor.decodefailure.DecodeFailureHandler
 import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.{ failureResponse, respond, FailureMessages }
-import sttp.tapir.server.interceptor.{ DecodeFailureContext, ValuedEndpointOutput }
+import sttp.tapir.server.model.ValuedEndpointOutput
 
 case class MongoCampDefaultDecodeFailureHandler(
     respond: DecodeFailureContext => Option[(StatusCode, List[Header])],

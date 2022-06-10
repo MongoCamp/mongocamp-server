@@ -6,7 +6,7 @@ import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestS
 import dev.mongocamp.server.exception.MongoCampException
 import org.joda.time.DateTime
 import sttp.model.HeaderNames
-import sttp.tapir.metrics.{ EndpointMetric, Metric, MetricLabels }
+import sttp.tapir.server.metrics.{ EndpointMetric, Metric, MetricLabels }
 
 import java.util.Date
 
@@ -62,7 +62,7 @@ object RequestLogging {
             )
 
           EndpointMetric()
-            .onResponse { (endpoint, response) =>
+            .onResponseBody { (endpoint, response) =>
               m.eval({
                 val headOfTags     = endpoint.info.tags.headOption.getOrElse("NOT_SET")
                 val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
