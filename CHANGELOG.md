@@ -1,3 +1,10 @@
+### [0.14.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.14.0...v0.14.1) (2022-06-10)
+
+
+### Bug Fixes
+
+* For events without duration use summary instead of timer ([52080d8](https://github.com/MongoCamp/mongocamp-server/commit/52080d85443c152f19f71ce74b4211562fbae4a0))
+
 ## [0.14.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.13.0...v0.14.0) (2022-06-09)
 
 
