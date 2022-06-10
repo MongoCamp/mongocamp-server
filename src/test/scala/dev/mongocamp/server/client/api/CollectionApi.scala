@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.{ CollectionStatus, JsonResultBoolean, MongoAggregateRequest, SchemaAnalysis }
+import dev.mongocamp.server.client.model.{CollectionStatus, JsonResultBoolean, MongoAggregateRequest, SchemaAnalysis}
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
@@ -33,7 +33,8 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
     * @param collectionName
     *   The name of your MongoDb Collection
     * @param mongoAggregateRequest
-    *   @param rowsPerPage Count elements per page
+    * @param rowsPerPage
+    *   Count elements per page
     * @param page
     *   Requested page of the ResultSets
     */
@@ -43,7 +44,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       rowsPerPage: Option[Long] = None,
       page: Option[Long] = None
   ) = {
-    val requestBodyString = encodeAnyToJson(mongoAggregateRequest).toString() //todo: Validate on code generation
+    val requestBodyString = encodeAnyToJson(mongoAggregateRequest).toString() // todo: Validate on code generation
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/$collectionName/aggregate?rowsPerPage=$rowsPerPage&page=$page")
       .contentType("application/json")

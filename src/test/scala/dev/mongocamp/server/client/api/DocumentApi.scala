@@ -81,7 +81,8 @@ class DocumentApi(baseUrl: String) extends CirceSchema {
     * @param collectionName
     *   The name of your MongoDb Collection
     * @param mongoFindRequest
-    *   @param rowsPerPage Count elements per page
+    * @param rowsPerPage
+    *   Count elements per page
     * @param page
     *   Requested page of the ResultSets
     */

@@ -92,7 +92,8 @@ class IndexApi(baseUrl: String) extends CirceSchema {
     * @param fieldName
     *   The field Name for your index
     * @param indexOptionsRequest
-    *   @param sortAscending Sort your index ascending
+    * @param sortAscending
+    *   Sort your index ascending
     */
   def createIndexForField(apiKey: String, bearerToken: String)(
       collectionName: String,
