@@ -5,13 +5,13 @@ import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.config.ConfigHolder.authHandlerType
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
+import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userNotFoundException}
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
-import pdi.jwt.{ JwtAlgorithm, JwtCirce, JwtClaim }
+import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 import sttp.model.StatusCode
 
 import java.security.MessageDigest
@@ -19,17 +19,23 @@ import java.time.Instant
 
 trait AuthHolder {
   def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)
+
   def allRoles(roleToSearch: Option[String], paging: Paging): (List[Role], PaginationInfo)
 
   def findUserOption(userId: String): Option[UserInformation]
+
   def findUser(userId: String, password: String): UserInformation
+
   def findUserByApiKeyOption(apiKey: String): Option[UserInformation]
 
   def findUserByApiKey(apiKey: String): UserInformation = findUserByApiKeyOption(apiKey).getOrElse(throw apiKeyException)
-  def findUser(userId: String): UserInformation         = findUserOption(userId).getOrElse(throw userNotFoundException)
+
+  def findUser(userId: String): UserInformation = findUserOption(userId).getOrElse(throw userNotFoundException)
 
   def findRoles(roles: List[String]): List[Role]
-  def findRole(roles: String): Option[Role]                   = findRoles(List(roles)).headOption
+
+  def findRole(roles: String): Option[Role] = findRoles(List(roles)).headOption
+
   def findRoles(userInformation: UserInformation): List[Role] = findRoles(userInformation.roles)
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
@@ -41,15 +47,15 @@ trait AuthHolder {
       issuer = Some(s"${BuildInfo.name}/${BuildInfo.version}"),
       content = userProfile.asJson.toString()
     )
-    val algo  = JwtAlgorithm.HS256
+    val algo = JwtAlgorithm.HS256
     val token = JwtCirce.encode(claim, ConfigHolder.authSecret.value, algo)
     token
   }
 
   def generateLoginResult(user: UserInformation) = {
-    val resultUser     = user.toResultUser
+    val resultUser = user.toResultUser
     val expirationDate = new DateTime().plusSeconds(ConfigHolder.authTokenExpiring.value.toSeconds.toInt)
-    val token          = encodeToken(resultUser, expirationDate)
+    val token = encodeToken(resultUser, expirationDate)
     TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
     loginResult
@@ -59,7 +65,8 @@ trait AuthHolder {
 object AuthHolder {
 
   def isMongoDbAuthHolder: Boolean = authHandlerType.value.equalsIgnoreCase("mongo")
-  def isStaticAuthHolder: Boolean  = authHandlerType.value.equalsIgnoreCase("static")
+
+  def isStaticAuthHolder: Boolean = authHandlerType.value.equalsIgnoreCase("static")
 
   lazy val handler: AuthHolder = {
     authHandlerType.value match {
@@ -137,9 +144,35 @@ object AuthHolder {
         else {
           throw MongoCampException.unauthorizedException()
         }
-      case a: AuthInputAllMethods      => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
-      case a: AuthInputBearerWithBasic => throw MongoCampException.badAuthConfiguration() // todo: https://github.com/softwaremill/tapir/issues/1845
-      case _                           => throw MongoCampException.badAuthConfiguration()
+      case a: AuthInputAllMethods =>
+        if (a.bearerToken.isDefined) {
+          val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
+          userInfo
+        } else if (a.basic.isDefined) {
+          AuthHolder.handler.findUser(a.basic.get.username, AuthHolder.handler.encryptPassword(a.basic.get.password.getOrElse("not_set")))
+        }
+        else if (a.apiKey.isDefined) {
+          val apiKey = a.apiKey.get
+          if (apiKey.trim.isEmpty || apiKey.trim.isBlank) {
+            throw MongoCampException.unauthorizedException()
+          }
+          else {
+            AuthHolder.handler.findUserByApiKey(apiKey)
+          }
+        }
+        else {
+          throw MongoCampException.unauthorizedException()
+        }
+      case a: AuthInputBearerWithBasic =>
+        if (a.bearerToken.isDefined) {
+          val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
+          userInfo
+        } else if (a.basic.isDefined) {
+          AuthHolder.handler.findUser(a.basic.get.username, AuthHolder.handler.encryptPassword(a.basic.get.password.getOrElse("not_set")))
+        } else {
+          throw MongoCampException.unauthorizedException()
+        }
+      case _ => throw MongoCampException.badAuthConfiguration()
     }
     userInformation
   }
