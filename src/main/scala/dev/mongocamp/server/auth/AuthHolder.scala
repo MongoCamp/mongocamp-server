@@ -5,13 +5,13 @@ import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.config.ConfigHolder.authHandlerType
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userNotFoundException}
+import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
-import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
+import pdi.jwt.{ JwtAlgorithm, JwtCirce, JwtClaim }
 import sttp.model.StatusCode
 
 import java.security.MessageDigest
@@ -47,15 +47,15 @@ trait AuthHolder {
       issuer = Some(s"${BuildInfo.name}/${BuildInfo.version}"),
       content = userProfile.asJson.toString()
     )
-    val algo = JwtAlgorithm.HS256
+    val algo  = JwtAlgorithm.HS256
     val token = JwtCirce.encode(claim, ConfigHolder.authSecret.value, algo)
     token
   }
 
   def generateLoginResult(user: UserInformation) = {
-    val resultUser = user.toResultUser
+    val resultUser     = user.toResultUser
     val expirationDate = new DateTime().plusSeconds(ConfigHolder.authTokenExpiring.value.toSeconds.toInt)
-    val token = encodeToken(resultUser, expirationDate)
+    val token          = encodeToken(resultUser, expirationDate)
     TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
     loginResult
@@ -148,7 +148,8 @@ object AuthHolder {
         if (a.bearerToken.isDefined) {
           val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
           userInfo
-        } else if (a.basic.isDefined) {
+        }
+        else if (a.basic.isDefined) {
           AuthHolder.handler.findUser(a.basic.get.username, AuthHolder.handler.encryptPassword(a.basic.get.password.getOrElse("not_set")))
         }
         else if (a.apiKey.isDefined) {
@@ -167,9 +168,11 @@ object AuthHolder {
         if (a.bearerToken.isDefined) {
           val userInfo = TokenCache.validateToken(a.bearerToken.get).getOrElse(throw MongoCampException.unauthorizedException())
           userInfo
-        } else if (a.basic.isDefined) {
+        }
+        else if (a.basic.isDefined) {
           AuthHolder.handler.findUser(a.basic.get.username, AuthHolder.handler.encryptPassword(a.basic.get.password.getOrElse("not_set")))
-        } else {
+        }
+        else {
           throw MongoCampException.unauthorizedException()
         }
       case _ => throw MongoCampException.badAuthConfiguration()

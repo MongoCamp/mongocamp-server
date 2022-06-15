@@ -1,248 +1,102 @@
-## [0.15.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.14.1...v0.15.0) (2022-06-10)
-
-
-### Features
-
-* migration to Tapir 1.0.0-RC3 ([158e0f1](https://github.com/MongoCamp/mongocamp-server/commit/158e0f158aaf272e50683dde8cae4860360743ee))
-
-### [0.14.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.14.0...v0.14.1) (2022-06-10)
+## [1.0.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.3.4...v1.0.0) (2022-06-15)
 
 
 ### Bug Fixes
 
-* For events without duration use summary instead of timer ([52080d8](https://github.com/MongoCamp/mongocamp-server/commit/52080d85443c152f19f71ce74b4211562fbae4a0))
-
-## [0.14.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.13.0...v0.14.0) (2022-06-09)
-
-
-### Features
-
-* Metrics Monitoring ([5387924](https://github.com/MongoCamp/mongocamp-server/commit/5387924439c8270a80f31074166d275d218f0305))
-
-
-### Maintenance
-
-* 5 dependency updates ([31b8e6e](https://github.com/MongoCamp/mongocamp-server/commit/31b8e6efccfaeb3540c078ae443c1d07bc820c63))
-
-## [0.13.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.12.1...v0.13.0) (2022-05-20)
-
-
-### Bug Fixes
-
-* Wrong Return Value for cache control ([83a0bbe](https://github.com/MongoCamp/mongocamp-server/commit/83a0bbebec53e829e83160f4d560327fa6926c7d))
-
-
-### Code Refactoring
-
-* Removed ExecutionContext.global ([542ca23](https://github.com/MongoCamp/mongocamp-server/commit/542ca232caab47d601c367c721d0f70f1dc27636))
-* Replaced `com.sfxcode.nosql.mongo` with `dev.mongocamp.driver.mongodb` ([daa17d1](https://github.com/MongoCamp/mongocamp-server/commit/daa17d1014bd53bd8237855348c8ed3697ad0f13))
-* Singular name for package ([2c9dfcf](https://github.com/MongoCamp/mongocamp-server/commit/2c9dfcf9c1fe9c8ad727f9b9fc2b475f56f043e2))
-* typo in plugin list name ([62685fb](https://github.com/MongoCamp/mongocamp-server/commit/62685fb687cfc0cf297719af4031ff2c38627b91))
-
-
-### Features
-
-* Ignore plugins ([59fcc8b](https://github.com/MongoCamp/mongocamp-server/commit/59fcc8b9c2aeeaad1b99be1d8d0d0c34821f40fb))
-* Load Configurations at global place ([c1b1b07](https://github.com/MongoCamp/mongocamp-server/commit/c1b1b07ea9a9e37cbfc6a8d8486a4cc284fed51f))
-* Publish Events for many Events to EventStream ([05e05e9](https://github.com/MongoCamp/mongocamp-server/commit/05e05e9e12e9e40f358bf7fe747538a462422002))
-* Use EventListener and EventStream for RequestLogging ([76dc7cc](https://github.com/MongoCamp/mongocamp-server/commit/76dc7cc726bacb98338b59f8968a3233947ac645))
-
-
-### Maintenance
-
-* DependencyUpdates sttClient ([8621393](https://github.com/MongoCamp/mongocamp-server/commit/862139309ec7d956b3e0e8d2c9180ff57cf3d78c))
-* DependencyUpdates Tapir, Circe and scaffeine ([d82f427](https://github.com/MongoCamp/mongocamp-server/commit/d82f4274aa17b9238274358fb205cc55c3b48a4a))
-
-### [0.12.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.12.0...v0.12.1) (2022-05-02)
-
-
-### Bug Fixes
-
-* fixed empty role name or userId to add ([89b6ee1](https://github.com/MongoCamp/mongocamp-server/commit/89b6ee1efdb67468da6bab9a43ed8c7f9b0b5d91))
-* Type and some other small errors at schema generation ([9607387](https://github.com/MongoCamp/mongocamp-server/commit/96073870f27ad777d92d0d74cf5aa908dc5b0b0a))
-
-## [0.12.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.11.0...v0.12.0) (2022-04-29)
-
-
-### Features
-
-* Analyze Collection ([3348797](https://github.com/MongoCamp/mongocamp-server/commit/334879732b126b6cd14a6a466fd84b2401e128a8))
-* Generate JsonSchema for Collection ([1491bc8](https://github.com/MongoCamp/mongocamp-server/commit/1491bc8df6b20aa21bf7da69f40109ac3b32e599))
-
-
-### Maintenance
-
-* DependencyUpdates joda-time, jwt-scala ([e79cea1](https://github.com/MongoCamp/mongocamp-server/commit/e79cea12abf7ce5402cd96359c79bfa1cb23846b))
-* DependencyUpdates sfxcode, sttClient, embed.mongo ([3be25aa](https://github.com/MongoCamp/mongocamp-server/commit/3be25aa087b5fb736d294706a29cf267b8d66a11))
-* DependencyUpdates sfxcode, sttClient, embed.mongo ([35aa145](https://github.com/MongoCamp/mongocamp-server/commit/35aa145564ad5cf3984a988e6cddd9579c9333b8))
-
-
-### Reverts
-
-* CollectionSuite reverted ([80cb7fb](https://github.com/MongoCamp/mongocamp-server/commit/80cb7fb78f79c3ca6baf806b771ed8ba934ec206))
-* DatabaseSuite reverted ([8db9e89](https://github.com/MongoCamp/mongocamp-server/commit/8db9e891990d6c602450693437510fd497235781))
-
-## [0.11.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.10.1...v0.11.0) (2022-03-23)
-
-
-### Bug Fixes
-
-* ChangeLog Generation Error ([e584c1f](https://github.com/MongoCamp/mongocamp-server/commit/e584c1ff6b6e1d07f7deb7b5c9ead694769dcf4b))
-* collection status from other database collection ([fc661ce](https://github.com/MongoCamp/mongocamp-server/commit/fc661ceb6dc16ba1c299fd3af2d5f1060353cace))
-
-
-### Code Refactoring
-
-* fix test for BucketSuite ([79f7ed0](https://github.com/MongoCamp/mongocamp-server/commit/79f7ed008144c93d83840c576415b7490f7e9883))
-* fix test for BucketSuite ([b3dddff](https://github.com/MongoCamp/mongocamp-server/commit/b3dddff0d8940c777fb55d4c722a66c2f05baddf))
-* Move from QuadStingray/mongocamp to  mongocamp/mongocamp-server ([8c5e81d](https://github.com/MongoCamp/mongocamp-server/commit/8c5e81df0244c26d07ea51e0b3753a186c9649d5))
-
-### [0.10.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.10.0...v0.10.1) (2022-03-21)
-
-
-### Features
-
-* **Cors:** Access Control Expose Headers ([673191c](https://github.com/MongoCamp/mongocamp-server/commit/673191c720189e8a8ac8213b6313a08903630023))
-
-## [0.10.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.9.1...v0.10.0) (2022-03-21)
-
-
-### Bug Fixes
-
-* Date in Request Logging ([f85f274](https://github.com/MongoCamp/mongocamp-server/commit/f85f2744fcbfa10d790f77daab3214c3a798fd07)), closes [Issue#19](https://github.com/MongoCamp/Issue/issues/19)
-
-
-### Features
-
-* **auth:** Added Route to check isAuthenticated ([3d44283](https://github.com/MongoCamp/mongocamp-server/commit/3d442835eacd27c19cd85f3aa4b24f2cfb9fbd6e))
-* **auth:** Route to check Authenticated ([0cba32e](https://github.com/MongoCamp/mongocamp-server/commit/0cba32e637d8bfee82675c7a4fbe67cae57381ba)), closes [Issue#20](https://github.com/MongoCamp/Issue/issues/20)
-* Dynamic Plugin Loading at StartUp ([f09a63d](https://github.com/MongoCamp/mongocamp-server/commit/f09a63d3b0c7dde86a819f70a76400c57a1a7138)), closes [Issue#21](https://github.com/MongoCamp/Issue/issues/21) [Issue#9](https://github.com/MongoCamp/Issue/issues/9)
-
-### [0.9.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.9.0...v0.9.1) (2022-03-19)
-
-
-### Bug Fixes
-
-* Add id to FileInformation and rename method on buckets for valid openapi specification ([9a986b0](https://github.com/MongoCamp/mongocamp-server/commit/9a986b0d3516c6e00e5c2c5f9d886e96684d146e))
-* **file:** Fix Delete for GridFsFileAdapter ([67cedd9](https://github.com/MongoCamp/mongocamp-server/commit/67cedd98616bd63992df53ae40d6e2e429b1cff5))
-
-
-### Features
-
-* Collections by Database ([ce5aa8d](https://github.com/MongoCamp/mongocamp-server/commit/ce5aa8dcf4d4cfb6b449aa53d10ecf00ab512092))
-* **file:** FileInformation instead of Map[String, Any] as response ([d57935b](https://github.com/MongoCamp/mongocamp-server/commit/d57935bc3c562ef85519be0780d6e31069dafb91))
-* **file:** Use other FilePlugin ([b32705d](https://github.com/MongoCamp/mongocamp-server/commit/b32705d976fccf7a529cad8e01678d0a0d60ae4b)), closes [Issue#13](https://github.com/MongoCamp/Issue/issues/13)
-* Load Routes and File Adapter by Reflection ([086061e](https://github.com/MongoCamp/mongocamp-server/commit/086061e65fd2f1a28112d990692170a49bb95a03))
-* Update FileInformation Request ([1f49296](https://github.com/MongoCamp/mongocamp-server/commit/1f492960989e65faf49298777baea1f13a52ba88))
-
-## [0.9.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.8.0...v0.9.0) (2022-03-17)
-
-
-### Bug Fixes
-
-* Delete wrong Collection from GridFsFileAdapter ([1e66d88](https://github.com/MongoCamp/mongocamp-server/commit/1e66d88605b761d553cd51156528b0109ce56d36))
-
-
-### Code Refactoring
-
-* Extract CollectionBaseRoute from BaseRoute ([fbaadf5](https://github.com/MongoCamp/mongocamp-server/commit/fbaadf5c90f33ec56799bbb96c468b76fa44c615))
-* Moved Configuration for BucketSuffixes to BucketInformation.scala ([3a6696e](https://github.com/MongoCamp/mongocamp-server/commit/3a6696e74c332accf098183021f4f7984e1aae73))
-* Rename Api Documents to Document ([2acbc5f](https://github.com/MongoCamp/mongocamp-server/commit/2acbc5fe298a4927fcb7f5314ad3db885ad557d8))
-* Rename method to convertFields ([24313f9](https://github.com/MongoCamp/mongocamp-server/commit/24313f91d716b224f8b3fa48cc60b779a62b4f2d))
-
-
-### Features
-
-* Bucket Api to List, Get and Delete Buckets ([c934894](https://github.com/MongoCamp/mongocamp-server/commit/c9348943b0f1c822016503d551a21dd97b371c8b))
-* Delete File by Adapter Holder ([9a0b4b4](https://github.com/MongoCamp/mongocamp-server/commit/9a0b4b40c8513ae577665fdd6f203f551d34794f))
-* **file:** Implement File Download ([1a5940a](https://github.com/MongoCamp/mongocamp-server/commit/1a5940a4dd48517fa40f94b35604a062ac1d9868))
-* **file:** Implement File Upload ([829882e](https://github.com/MongoCamp/mongocamp-server/commit/829882ea551238fbe494f4043490775958cfc092))
-* **file:** Implement Routes for Files ([f4a76c9](https://github.com/MongoCamp/mongocamp-server/commit/f4a76c978438d2768568c97884bd5e5d0dda703f))
-
-## [0.8.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.7.1...v0.8.0) (2022-03-14)
-
-
-### Bug Fixes
-
-* convert bson ids in one method ([04f2366](https://github.com/MongoCamp/mongocamp-server/commit/04f2366c1a41554d1693133d2c4f8090348a0963))
-* filter routes with _id field needs to be converted ([a11e8bd](https://github.com/MongoCamp/mongocamp-server/commit/a11e8bd96445aba4e329d2393614eed94cc1c6cd))
-* update many routs needs conversion to OperationMap ([0777e0a](https://github.com/MongoCamp/mongocamp-server/commit/0777e0ae58528ec348fbd897e470103dbcb3a12b))
-
-
-### Code Refactoring
-
-* min port for mongodb and http server ([670eee3](https://github.com/MongoCamp/mongocamp-server/commit/670eee33e76070d0c4a19c0010a69d11bc89855a))
-
-
-### Features
-
-* more auth methods ([386d5c7](https://github.com/MongoCamp/mongocamp-server/commit/386d5c7c05ae3709e09cbad61df51b286724fce2))
-
-### [0.7.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.7.0...v0.7.1) (2022-03-10)
-
-
-### Code Refactoring
-
-* Fixed Typos and `rename` functions ([8d531ee](https://github.com/MongoCamp/mongocamp-server/commit/8d531eea5751829363e28a75cb066476535ecfb7))
-
-
-### Features
-
-* IndexOptions now optional in requests ([39a594e](https://github.com/MongoCamp/mongocamp-server/commit/39a594ef20eeb350e1e93724214c5dc9a3acb431))
-
-## [0.7.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.6.3...v0.7.0) (2022-03-09)
-
-
-### Features
-
-* **Endpoint:** Collection Fields ([213c92e](https://github.com/MongoCamp/mongocamp-server/commit/213c92ef66430d84b56eaac76d152a44862cb119))
-* **Endpoint:** Collection Fields ([c269ae2](https://github.com/MongoCamp/mongocamp-server/commit/c269ae233a3bc2397a7163d9194e4c79d666326c))
-* Reload UserInfos for Refresh or Profile Route ([074b81f](https://github.com/MongoCamp/mongocamp-server/commit/074b81fdafc78040943cdabae2eb3624b3dec6de))
-
-### [0.6.3](https://github.com/MongoCamp/mongocamp-server/compare/v0.6.2...v0.6.3) (2022-03-08)
-
-
-### Bug Fixes
-
-* Disabled logger for MongoCampException ([3aac45d](https://github.com/MongoCamp/mongocamp-server/commit/3aac45d1cc906e36a4f2e5f9a5ac5e4bd7e09cdf))
-
-### [0.6.2](https://github.com/MongoCamp/mongocamp-server/compare/v0.6.1...v0.6.2) (2022-03-07)
-
-### [0.6.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.6.0...v0.6.1) (2022-03-07)
-
-## [0.6.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.5.0...v0.6.0) (2022-03-07)
-
-
-### Features
-
-* Migration to Tapir 0.20.1 ([072012b](https://github.com/MongoCamp/mongocamp-server/commit/072012bfa73a166d70c0d7c944935761a68ad430))
-
-## [0.5.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.3.4...v0.5.0) (2022-03-03)
+* Add id to FileInformation and rename method on buckets for valid openapi specification ([fe39f0e](https://github.com/MongoCamp/mongocamp-server/commit/fe39f0e5188ae0f154c6d9aaa8df7e20eec29258))
+* ChangeLog Generation Error ([0aefaa6](https://github.com/MongoCamp/mongocamp-server/commit/0aefaa6b75b3b51afa7be6960337e061e548de9a))
+* collection status from other database collection ([3a61031](https://github.com/MongoCamp/mongocamp-server/commit/3a61031dfe5543054d1a9ba1223dd7500b29ff9f))
+* convert bson ids in one method ([8529163](https://github.com/MongoCamp/mongocamp-server/commit/8529163cc80b64cedba7adc344a752186740ef46))
+* Date in Request Logging ([84a1b9a](https://github.com/MongoCamp/mongocamp-server/commit/84a1b9a26d6ed276c7d58ddeb964e6ad9a46cf0d)), closes [Issue#19](https://github.com/MongoCamp/Issue/issues/19)
+* Delete wrong Collection from GridFsFileAdapter ([4c57400](https://github.com/MongoCamp/mongocamp-server/commit/4c5740058b68e20e886290a33f053f88d241a658))
+* Disabled logger for MongoCampException ([fa6fa79](https://github.com/MongoCamp/mongocamp-server/commit/fa6fa79c8de46018690935ff8e41e40c41e7ec2f))
+* **file:** Fix Delete for GridFsFileAdapter ([011a272](https://github.com/MongoCamp/mongocamp-server/commit/011a2728b387ee08c42b80fad73385447fdf1831))
+* filter routes with _id field needs to be converted ([fe2b8f5](https://github.com/MongoCamp/mongocamp-server/commit/fe2b8f525dac208d88201599fc4697a4d151e500))
+* fixed empty role name or userId to add ([eff57e7](https://github.com/MongoCamp/mongocamp-server/commit/eff57e7b42ae0998e9f7f4bc80e23ab53c1fb3d9))
+* For events without duration use summary instead of timer ([4ef8bff](https://github.com/MongoCamp/mongocamp-server/commit/4ef8bff6d57bc9a96d3fb04876b8670d1402a1c7))
+* Type and some other small errors at schema generation ([dce548f](https://github.com/MongoCamp/mongocamp-server/commit/dce548f024fb355a59d837b513b408657139015e))
+* update many routs needs conversion to OperationMap ([0adb6ab](https://github.com/MongoCamp/mongocamp-server/commit/0adb6aba9c5edcf11c67ffcbc8a923619718f689))
+* Wrong Return Value for cache control ([bf7ca58](https://github.com/MongoCamp/mongocamp-server/commit/bf7ca58c42baf03a7a6210d8c5c66d028b94c666))
 
 
 ### Code Refactoring
 
 * add document routes for mor RESTlike route naming ([1831ac5](https://github.com/MongoCamp/mongocamp-server/commit/1831ac51e392a2145d0e4aa50b59087bd70dcf02))
 * add document routes for mor RESTlike route naming ([3c30a41](https://github.com/MongoCamp/mongocamp-server/commit/3c30a41b2cce1f427b65981d627aef65765e9680))
+* Extract CollectionBaseRoute from BaseRoute ([ef8b870](https://github.com/MongoCamp/mongocamp-server/commit/ef8b8709bed1e64c4dfdd260b1e8e7b5d459442c))
 * Extract Collections to own API Routes ([3300414](https://github.com/MongoCamp/mongocamp-server/commit/3300414c02916eb943242e2a9579a1404ff57a70))
 * Extract Routes for Database Routes ([446daa1](https://github.com/MongoCamp/mongocamp-server/commit/446daa127ecac2f9a326c8263ebf5b81ee0472a5))
+* fix test for BucketSuite ([2452c5c](https://github.com/MongoCamp/mongocamp-server/commit/2452c5c6d307e44383bb1be51c6725aee9da0375))
+* fix test for BucketSuite ([896c9d4](https://github.com/MongoCamp/mongocamp-server/commit/896c9d46127f9ac889d62799328b891cbcc07e81))
+* Fixed Typos and `rename` functions ([466ccff](https://github.com/MongoCamp/mongocamp-server/commit/466ccff4056e16a22a771a2bafcb19e5e3f51e32))
+* min port for mongodb and http server ([7cb0c4a](https://github.com/MongoCamp/mongocamp-server/commit/7cb0c4ae9ccba618b5e583ea91effeccdf883fd4))
+* Move from QuadStingray/mongocamp to  mongocamp/mongocamp-server ([8c1dfb9](https://github.com/MongoCamp/mongocamp-server/commit/8c1dfb9c0b0172f0867948c65c42c4caae6a4fa2))
+* Moved Configuration for BucketSuffixes to BucketInformation.scala ([70e4e6e](https://github.com/MongoCamp/mongocamp-server/commit/70e4e6e9c53d2cd6b16b39937f3d1d2d54cc130c))
 * Removed "READ" Routes and spitted to DocumentRoutes and CollectionRoutes ([fecde9e](https://github.com/MongoCamp/mongocamp-server/commit/fecde9e5bf4203a8fc3de2ea779f36c48dd2d90c))
+* Removed ExecutionContext.global ([1bb961d](https://github.com/MongoCamp/mongocamp-server/commit/1bb961d2a39665d596f357b83ae4fc4c49540052))
+* Rename Api Documents to Document ([c438152](https://github.com/MongoCamp/mongocamp-server/commit/c4381521a68b1b12cc1c4df29a9634ce167044a2))
+* Rename method to convertFields ([bfb7b42](https://github.com/MongoCamp/mongocamp-server/commit/bfb7b42daf6ea791eb4ed9bf2fdddfecf27349b0))
 * rename userRole to role ([63678c3](https://github.com/MongoCamp/mongocamp-server/commit/63678c3ae571ba86b89872ecfbf07b8719ed4165))
 * rename vals to endpoints ([cacfbec](https://github.com/MongoCamp/mongocamp-server/commit/cacfbeca590c348242cbf48a03388a186188846b))
 * rename vals to endpoints ([bae1baf](https://github.com/MongoCamp/mongocamp-server/commit/bae1baf2e0d62080f7ce45c426c06ad421d905c1))
+* Replaced `com.sfxcode.nosql.mongo` with `dev.mongocamp.driver.mongodb` ([86e97ca](https://github.com/MongoCamp/mongocamp-server/commit/86e97caf84c47add477a92d18235d84c1c2770a3))
+* Singular name for package ([d7f2fbe](https://github.com/MongoCamp/mongocamp-server/commit/d7f2fbe8958e7f4fc112b49d42d0b795b809bfaa))
 * **test:** simplify test request execution ([910a0be](https://github.com/MongoCamp/mongocamp-server/commit/910a0bed7a2d8a0b69bf8f030584b0484aa25733))
+* typo in plugin list name ([c2bca46](https://github.com/MongoCamp/mongocamp-server/commit/c2bca46b7d46969579d65b1b674567a42f3262a9))
 
 
 ### Features
 
+* `AuthInputAllMethods` and `AuthInputBearerWithBasic` added ([dadf7bb](https://github.com/MongoCamp/mongocamp-server/commit/dadf7bb7816ba6befcb5bab34cf2ca1902aa1705))
 * Added Filter to get Route all documents ([6e40be2](https://github.com/MongoCamp/mongocamp-server/commit/6e40be23d90c2aa08e88cc2ebeea8bcbaf9ab8b9))
+* Analyze Collection ([cca0fa5](https://github.com/MongoCamp/mongocamp-server/commit/cca0fa53bdf567dc914275d826ef18ac0dd20e6a))
+* **auth:** Added Route to check isAuthenticated ([0c51f3b](https://github.com/MongoCamp/mongocamp-server/commit/0c51f3bd5b9fdea0f6ace4fc428bc957eca15126))
+* **auth:** Route to check Authenticated ([f99427c](https://github.com/MongoCamp/mongocamp-server/commit/f99427c2d126fa9d5fbac03dc8eee5229ecc4efa)), closes [Issue#20](https://github.com/MongoCamp/Issue/issues/20)
+* Bucket Api to List, Get and Delete Buckets ([f1b055c](https://github.com/MongoCamp/mongocamp-server/commit/f1b055ccdad36949c4eeda742f1e1d3fb08dd5cf))
 * cache tokens to database ([3a87e08](https://github.com/MongoCamp/mongocamp-server/commit/3a87e084b1b1cbfb1f70d0cb46153bd3f257b9b9))
+* Collections by Database ([c25fe73](https://github.com/MongoCamp/mongocamp-server/commit/c25fe731454a9740d4793f9d9b5d97cd8343cde9))
+* **Cors:** Access Control Expose Headers ([835975d](https://github.com/MongoCamp/mongocamp-server/commit/835975d036ed68dea1ae8a991ff9bccf6c73d43c))
+* Delete File by Adapter Holder ([b851a74](https://github.com/MongoCamp/mongocamp-server/commit/b851a745f29201730db80c943a6553912be2bf9c))
+* Dynamic Plugin Loading at StartUp ([2f65e6e](https://github.com/MongoCamp/mongocamp-server/commit/2f65e6e097c5e839d266fdd2e8851f4892452888)), closes [Issue#21](https://github.com/MongoCamp/Issue/issues/21) [Issue#9](https://github.com/MongoCamp/Issue/issues/9)
+* **Endpoint:** Collection Fields ([f953cac](https://github.com/MongoCamp/mongocamp-server/commit/f953cace4a89cd40792220849e8f0c67b3372d7e))
+* **Endpoint:** Collection Fields ([012b24b](https://github.com/MongoCamp/mongocamp-server/commit/012b24b17f7ef104ec63aba3e2929fbd90071fbe))
+* **file:** FileInformation instead of Map[String, Any] as response ([d0c758a](https://github.com/MongoCamp/mongocamp-server/commit/d0c758a3a6364dd2345493d55d847c27416bdacb))
+* **file:** Implement File Download ([75cdd01](https://github.com/MongoCamp/mongocamp-server/commit/75cdd014488835794c9be107f94224f4aa6ba063))
+* **file:** Implement File Upload ([a7ef597](https://github.com/MongoCamp/mongocamp-server/commit/a7ef597b380752c647df970f30d0b9cd5e3f0e5c))
+* **file:** Implement Routes for Files ([a31b2b1](https://github.com/MongoCamp/mongocamp-server/commit/a31b2b1f80a046c669b123f65d33e39c71eae99e))
+* **file:** Use other FilePlugin ([c08ac98](https://github.com/MongoCamp/mongocamp-server/commit/c08ac98e591638ff0fe5f47116cc5a31d2da00a0)), closes [Issue#13](https://github.com/MongoCamp/Issue/issues/13)
+* Generate JsonSchema for Collection ([60c9a1d](https://github.com/MongoCamp/mongocamp-server/commit/60c9a1dd285659f75e543f714d66f66cb33be0d4))
 * Grants for Buckets and Collections ([9fb9eca](https://github.com/MongoCamp/mongocamp-server/commit/9fb9eca217c941f2c4b06762609a78eb0d7d3a75))
+* Ignore plugins ([7f35304](https://github.com/MongoCamp/mongocamp-server/commit/7f35304a6a6043ecff66a465b6f6566d08afa9b1))
+* IndexOptions now optional in requests ([f77ecfa](https://github.com/MongoCamp/mongocamp-server/commit/f77ecfaed6f9ca409d20579ed806c025e2e95924))
+* Load Configurations at global place ([9a91164](https://github.com/MongoCamp/mongocamp-server/commit/9a9116464f344d1f0ce82055a08cabf8dffd30b9))
+* Load Routes and File Adapter by Reflection ([573f4d7](https://github.com/MongoCamp/mongocamp-server/commit/573f4d7fbbf5497d6c643a395d60e30286e0d0f3))
+* Metrics Monitoring ([af3f2ba](https://github.com/MongoCamp/mongocamp-server/commit/af3f2ba89adf88836af99040283934c709655853))
+* Migration to Tapir 0.20.1 ([83405bb](https://github.com/MongoCamp/mongocamp-server/commit/83405bbff6fcfff9ea3e5f11072caf2e1a15e429))
+* migration to Tapir 1.0.0-RC3 ([79537e8](https://github.com/MongoCamp/mongocamp-server/commit/79537e888f85b6c865efbee997a0065efd2950d7))
+* more auth methods ([4675ef1](https://github.com/MongoCamp/mongocamp-server/commit/4675ef180c6818a451c7f3f1960b4041180b112a))
+* Publish Events for many Events to EventStream ([48c9961](https://github.com/MongoCamp/mongocamp-server/commit/48c99610b98e6ded5ed67cee466db6c10aac7737))
+* Reload UserInfos for Refresh or Profile Route ([be05407](https://github.com/MongoCamp/mongocamp-server/commit/be0540746bdce9c012245bae12ba887b78acab24))
+* Update FileInformation Request ([385626c](https://github.com/MongoCamp/mongocamp-server/commit/385626c322033a3b11d01762e79b30f3b62b4c19))
+* update to Tapir 1.0.0 ([bc94f6a](https://github.com/MongoCamp/mongocamp-server/commit/bc94f6a9c09d6875687294dbbd6eddc928270f19))
+* Use EventListener and EventStream for RequestLogging ([bc7743e](https://github.com/MongoCamp/mongocamp-server/commit/bc7743e5429852a0b390ff8521f15e6e95a814c7))
 
 
 ### Maintenance
 
+* 5 dependency updates ([1ba3d79](https://github.com/MongoCamp/mongocamp-server/commit/1ba3d79ccc8ac30b89e1cb7c4c2962e2063a83f3))
 * DependencyUpdate "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "3.4.3" % Test ([664353e](https://github.com/MongoCamp/mongocamp-server/commit/664353e288c9109482bfe41103e30b8743166c42))
+* DependencyUpdates joda-time, jwt-scala ([22859ea](https://github.com/MongoCamp/mongocamp-server/commit/22859ea541807b612ec567157384fb33237be321))
+* DependencyUpdates sfxcode, sttClient, embed.mongo ([d03719c](https://github.com/MongoCamp/mongocamp-server/commit/d03719cb9546677f8f1edd9276de0be3923210ad))
+* DependencyUpdates sfxcode, sttClient, embed.mongo ([00a7c8d](https://github.com/MongoCamp/mongocamp-server/commit/00a7c8db67a6104a994f993433b4cc2846531f5b))
+* DependencyUpdates sttClient ([af7eed9](https://github.com/MongoCamp/mongocamp-server/commit/af7eed9db1f18b5a943897cab131bc6373cc3ae2))
+* DependencyUpdates Tapir, Circe and scaffeine ([503b493](https://github.com/MongoCamp/mongocamp-server/commit/503b49380e0d9ab2db2b29ebf0e87749d9d21add))
+
+
+### Reverts
+
+* CollectionSuite reverted ([68f0e3e](https://github.com/MongoCamp/mongocamp-server/commit/68f0e3e38295e5a81fd7317fad41335db236373e))
+* DatabaseSuite reverted ([21fece2](https://github.com/MongoCamp/mongocamp-server/commit/21fece2bf33aca61bd1895fdd97b0a0a5ecc4d3a))
 
 ### [0.3.4](https://github.com/MongoCamp/mongocamp-server/compare/2da91bf348c241ac31459055b9460898100318a7...v0.3.4) (2022-02-26)
 
