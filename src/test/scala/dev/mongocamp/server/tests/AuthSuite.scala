@@ -2,10 +2,12 @@ package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.client.api.AuthApi
 import dev.mongocamp.server.client.model
-import dev.mongocamp.server.client.model.{ Grant, Login, PasswordUpdateRequest }
+import dev.mongocamp.server.client.model.{Grant, Login, PasswordUpdateRequest}
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
 import dev.mongocamp.server.model.auth
 import dev.mongocamp.server.server.TestAdditions
+
+import scala.concurrent.duration.DurationInt
 
 class AuthSuite extends BaseSuite {
 
@@ -47,8 +49,11 @@ class AuthSuite extends BaseSuite {
   }
 
   test("refresh token") {
+    clearAdminToken
+    Thread.sleep(1.seconds.toMillis)
     val cacheCountBefore = tokenCacheDao.count().result()
     val refresh          = executeRequestToResponse(adminApi.refreshToken("", adminBearerToken)())
+    Thread.sleep(1.seconds.toMillis)
     val cacheCountAfter  = tokenCacheDao.count().result()
     assertEquals(cacheCountBefore + 1, cacheCountAfter)
     assertEquals(refresh.expirationDate.isAfterNow, true)

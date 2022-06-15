@@ -2,12 +2,12 @@ package dev.mongocamp.server.tests
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.client.api.AuthApi
-import dev.mongocamp.server.client.model.{ Login, LoginResult }
+import dev.mongocamp.server.client.model.{Login, LoginResult}
 import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.server.{ TestAdditions, TestServer }
+import dev.mongocamp.server.server.{TestAdditions, TestServer}
 import io.circe
-import sttp.client3.{ Identity, RequestT, Response, ResponseException }
+import sttp.client3.{Identity, RequestT, Response, ResponseException}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
@@ -38,7 +38,7 @@ class BaseSuite extends munit.FunSuite with LazyLogging {
       request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]
   ): Response[Either[ResponseException[String, circe.Error], R]] = {
     val resultFuture   = TestAdditions.backend.send(request)
-    val responseResult = Await.result(resultFuture, 1.seconds)
+    val responseResult = Await.result(resultFuture, 30.seconds)
     responseResult
   }
 
