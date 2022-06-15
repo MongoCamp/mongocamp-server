@@ -10,7 +10,6 @@ case class Configuration[A <: Any](key: String, method: String => A) {
 object ConfigHolder extends Config {
   lazy val serverInterface: Configuration[String] = Configuration("server.interface", globalConfigString)
   lazy val serverPort: Configuration[Int]         = Configuration("server.port", globalConfigInt)
-
   lazy val requestLogging: Configuration[Boolean] = Configuration("requestlogging.enabled", globalConfigBoolean)
 
   lazy val pluginsIgnored: Configuration[List[String]] = Configuration("plugins.ignored", globalConfigStringList)
@@ -42,7 +41,7 @@ object ConfigHolder extends Config {
   lazy val dbConnectionDatabase: Configuration[String]         = Configuration("connection.database", globalConfigString)
   lazy val dbConnectionUsername: Configuration[Option[String]] = Configuration("connection.username", globalConfigStringOption)
   lazy val dbConnectionPassword: Configuration[Option[String]] = Configuration("connection.password", globalConfigStringOption)
-  lazy val dbConnectionAuthDb: Configuration[Option[String]]   = Configuration("connection.authdb", globalConfigStringOption)
+  lazy val dbConnectionAuthDb: Configuration[String]           = Configuration("connection.authdb", globalConfigString)
 
   lazy val fileHandlerType: Configuration[String] = Configuration("file.handler", globalConfigString)
   lazy val fileCacheAge: Configuration[String]    = Configuration("file.cache.age", globalConfigString)
