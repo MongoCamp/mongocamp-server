@@ -1,19 +1,8 @@
 ---
 title: Guide
-editLink: true
 ---
 
 ![](/mongocamp.png)
-
-## Usage
-
-### Auth
-
-## Usage MongoDB
-
-### Information Routes
-
-### Crud Routes
 
 ## References
 1. [MongoDB](https://docs.mongodb.com/)

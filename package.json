@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/MongoCamp/mongocamp-server#readme",
   "devDependencies": {
-    "vitepress": "^0.22.3",
+    "vitepress": "^1.0.0-alpha.2",
     "@openapitools/openapi-generator-cli": "^2.4.26"
   }
 }
