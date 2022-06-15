@@ -2,7 +2,7 @@
 title: Guide
 ---
 
-![](/mongocamp.png)
+![](/logo_with_text_right.png)
 
 ## References
 1. [MongoDB](https://docs.mongodb.com/)

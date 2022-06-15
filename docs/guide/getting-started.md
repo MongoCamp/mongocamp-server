@@ -1,9 +1,8 @@
----
-title: Getting started
----
+# Getting started
 
+Easy way to start is use docker compose
 
-TODO
+<<< @/guide/docker/docker-compose.yaml
 
 
 

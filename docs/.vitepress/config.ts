@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress'
+import {defineConfig} from 'vitepress'
 
 export default defineConfig({
     lang: 'en-US',
@@ -8,6 +8,8 @@ export default defineConfig({
     lastUpdated: true,
 
     themeConfig: {
+        logo: '/logo_without_text.png',
+
         nav: nav(),
 
         sidebar: {
@@ -25,7 +27,7 @@ export default defineConfig({
         ],
 
         footer: {
-            message: 'Released under the MIT License.',
+            message: 'Released under the Apache License 2.0.',
             copyright: 'Copyright © 2022 - MongoCamp Team'
         },
 
@@ -36,7 +38,7 @@ function nav() {
     return [
         { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
         { text: 'Config', link: '/config/', activeMatch: '/config/' },
-        { text: 'REST API', link: '/rest/README', activeMatch: '/config/' },
+        { text: 'REST API', link: '/rest/README', activeMatch: '/rest/' },
         {
             text: 'Changelog',
             link: 'https://github.com/MongoCamp/mongocamp-server/blob/main/CHANGELOG.md'
@@ -52,7 +54,7 @@ function sidebarGuide() {
             items: [
                 { text: 'About', link: '/guide/' },
                 { text: 'Getting Started', link: '/guide/getting-started' },
-                { text: 'Configuration', link: '/guide/configuration' },
+                // { text: 'Configuration', link: '/guide/configuration' },
             ]
         },
 

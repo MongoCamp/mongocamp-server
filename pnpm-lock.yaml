@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@openapitools/openapi-generator-cli': ^2.5.1
+  '@openapitools/openapi-generator-cli': ^2.4.26
   vitepress: ^1.0.0-alpha.2
 
 devDependencies:
@@ -560,7 +560,7 @@ packages:
     dev: true
 
   /console.table/0.10.0:
-    resolution: {integrity: sha1-CRcCVYiHW+/XDPLv9L7yxuLXXQQ=}
+    resolution: {integrity: sha512-dPyZofqggxuvSf7WXvNjuRfnsOk1YazkVP8FdxH4tcH2c37wc79/Yl6Bhr7Lsu00KMgy2ql/qCMuNu8xctZM8g==}
     engines: {node: '> 0.10'}
     dependencies:
       easy-table: 1.1.0
@@ -582,7 +582,7 @@ packages:
     dev: true
 
   /easy-table/1.1.0:
-    resolution: {integrity: sha1-hvmrTBAvA3G3KXuSplHVgkvIy3M=}
+    resolution: {integrity: sha512-oq33hWOSSnl2Hoh00tZWaIPi1ievrD9aFG82/IgjlycAnW9hHx5PkJiXpxPsgEE+H7BsbVQXFVFST8TEXS6/pA==}
     optionalDependencies:
       wcwidth: 1.0.1
     dev: true
