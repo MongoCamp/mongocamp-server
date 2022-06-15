@@ -113,6 +113,9 @@ jobs:
           java-version: '17'
       - name: Publish to Github Packages
         run: sbt +publish
+        env:
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Prepare Release
         run: |
           rm -rf build_publish_gh.sbt
