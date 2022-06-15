@@ -48,12 +48,10 @@ jobs:
         env:
           DOCKER_GIT_USERNAME: ${{ github.actor }}
           DOCKER_GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USER }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
           docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-          docker login -u DOCKERHUB_USERNAME -p DOCKERHUB_PASSWORD
+          docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
           sbt ci-docker
   build-docu:
     needs: test
@@ -73,6 +71,18 @@ jobs:
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
           sbt ci-deploy-docu
+  sync-readme:
+    needs: build-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: meeDamian/sync-readme@v1.0.6
+        with:
+          user: ${{ secrets.DOCKERHUB_USER }}
+          pass: ${{ secrets.DOCKERHUB_PASSWORD }}
+          slug: mongocamp/mongodb
+          readme: README.md
+          description: true
   release:
     needs: build-docker
     runs-on: ubuntu-latest
