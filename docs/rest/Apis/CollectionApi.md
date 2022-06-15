@@ -10,7 +10,10 @@ Method | HTTP request | Description
 [**distinct**](CollectionApi.md#distinct) | **POST** /mongodb/collections/{collectionName}/distinct/{field} | Distinct in Collection
 [**getCollectionFields**](CollectionApi.md#getCollectionFields) | **GET** /mongodb/collections/{collectionName}/fields | Collection Fields
 [**getCollectionInformation**](CollectionApi.md#getCollectionInformation) | **GET** /mongodb/collections/{collectionName} | Collection Information
+[**getJsonSchema**](CollectionApi.md#getJsonSchema) | **GET** /mongodb/collections/{collectionName}/schema | Collection Fields
+[**getSchemaAnalysis**](CollectionApi.md#getSchemaAnalysis) | **GET** /mongodb/collections/{collectionName}/schema/analysis | Collection Fields
 [**listCollections**](CollectionApi.md#listCollections) | **GET** /mongodb/collections | List of Collections
+[**listCollectionsByDatabase**](CollectionApi.md#listCollectionsByDatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections
 
 
 <a name="aggregate"></a>
@@ -36,7 +39,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -63,7 +66,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -90,7 +93,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -120,7 +123,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -148,7 +151,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -176,7 +179,65 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, text/plain
+
+<a name="getJsonSchema"></a>
+# **getJsonSchema**
+> JsonSchema getJsonSchema(collectionName, sampleSize, deepth)
+
+Collection Fields
+
+    List the Fields in a given collection
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **sampleSize** | **Integer**| Use sample size greater 0 (e.g. 5000) for better performance on big collections | [optional] [default to null]
+ **deepth** | **Integer**| How deep should the objects extracted | [optional] [default to 3]
+
+### Return type
+
+[**JsonSchema**](../Models/JsonSchema.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json, text/plain
+
+<a name="getSchemaAnalysis"></a>
+# **getSchemaAnalysis**
+> SchemaAnalysis getSchemaAnalysis(collectionName, sampleSize, deepth)
+
+Collection Fields
+
+    List the Fields in a given collection
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+ **sampleSize** | **Integer**| Use sample size greater 0 (e.g. 5000) for better performance on big collections | [optional] [default to null]
+ **deepth** | **Integer**| How deep should the objects extracted | [optional] [default to 3]
+
+### Return type
+
+[**SchemaAnalysis**](../Models/SchemaAnalysis.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -200,7 +261,34 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="listCollectionsByDatabase"></a>
+# **listCollectionsByDatabase**
+> List listCollectionsByDatabase(databaseName)
+
+List of Collections
+
+    List of all Collections of the given database
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **databaseName** | **String**| Name of your Database | [default to null]
+
+### Return type
+
+**List**
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 

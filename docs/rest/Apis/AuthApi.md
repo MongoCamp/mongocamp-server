@@ -5,6 +5,7 @@ All URIs are relative to *http://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**generateNewApiKey**](AuthApi.md#generateNewApiKey) | **PATCH** /auth/profile/apikey | Update ApiKey
+[**isAuthenticated**](AuthApi.md#isAuthenticated) | **GET** /auth/authenticated | Check Authentication
 [**login**](AuthApi.md#login) | **POST** /auth/login | Login User
 [**logout**](AuthApi.md#logout) | **POST** /auth/logout | Logout User
 [**logoutByDelete**](AuthApi.md#logoutByDelete) | **DELETE** /auth/logout | Logout User
@@ -33,12 +34,36 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
 - **Accept**: application/json, text/plain
+
+<a name="isAuthenticated"></a>
+# **isAuthenticated**
+> JsonResult_Boolean isAuthenticated()
+
+Check Authentication
+
+    Check a given Login for is authenticated
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 <a name="login"></a>
 # **login**
@@ -84,7 +109,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -108,7 +133,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -132,7 +157,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -159,7 +184,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -183,7 +208,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 

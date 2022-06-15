@@ -1,4 +1,4 @@
-# Documentation for mongocamp
+# Documentation for mongocamp-server
 
 <a name="documentation-for-api-endpoints"></a>
 ## Documentation for API Endpoints
@@ -19,7 +19,13 @@ Class | Method | HTTP request | Description
 *AdminApi* | [**updatePasswordForUser**](Apis/AdminApi.md#updatepasswordforuser) | **PATCH** /admin/users/{userId}/password | Update Password
 *AdminApi* | [**updateRole**](Apis/AdminApi.md#updaterole) | **PATCH** /admin/roles/{roleName} | Update Role
 *AdminApi* | [**updateRolesForUser**](Apis/AdminApi.md#updaterolesforuser) | **PATCH** /admin/users/{userId}/roles | Update User Roles
+*ApplicationApi* | [**eventMetrics**](Apis/ApplicationApi.md#eventmetrics) | **GET** /system/monitoring/events | Event Metrics
+*ApplicationApi* | [**jvmMetrics**](Apis/ApplicationApi.md#jvmmetrics) | **GET** /system/monitoring/jvm | JVM Metrics
+*ApplicationApi* | [**mongoDbMetrics**](Apis/ApplicationApi.md#mongodbmetrics) | **GET** /system/monitoring/mongodb | MongoDb Metrics
+*ApplicationApi* | [**settings**](Apis/ApplicationApi.md#settings) | **GET** /system/settings | System Settings
+*ApplicationApi* | [**systemMetrics**](Apis/ApplicationApi.md#systemmetrics) | **GET** /system/monitoring/system | System Metrics
 *AuthApi* | [**generateNewApiKey**](Apis/AuthApi.md#generatenewapikey) | **PATCH** /auth/profile/apikey | Update ApiKey
+*AuthApi* | [**isAuthenticated**](Apis/AuthApi.md#isauthenticated) | **GET** /auth/authenticated | Check Authentication
 *AuthApi* | [**login**](Apis/AuthApi.md#login) | **POST** /auth/login | Login User
 *AuthApi* | [**logout**](Apis/AuthApi.md#logout) | **POST** /auth/logout | Logout User
 *AuthApi* | [**logoutByDelete**](Apis/AuthApi.md#logoutbydelete) | **DELETE** /auth/logout | Logout User
@@ -36,10 +42,14 @@ Class | Method | HTTP request | Description
 *CollectionApi* | [**distinct**](Apis/CollectionApi.md#distinct) | **POST** /mongodb/collections/{collectionName}/distinct/{field} | Distinct in Collection
 *CollectionApi* | [**getCollectionFields**](Apis/CollectionApi.md#getcollectionfields) | **GET** /mongodb/collections/{collectionName}/fields | Collection Fields
 *CollectionApi* | [**getCollectionInformation**](Apis/CollectionApi.md#getcollectioninformation) | **GET** /mongodb/collections/{collectionName} | Collection Information
+*CollectionApi* | [**getJsonSchema**](Apis/CollectionApi.md#getjsonschema) | **GET** /mongodb/collections/{collectionName}/schema | Collection Fields
+*CollectionApi* | [**getSchemaAnalysis**](Apis/CollectionApi.md#getschemaanalysis) | **GET** /mongodb/collections/{collectionName}/schema/analysis | Collection Fields
 *CollectionApi* | [**listCollections**](Apis/CollectionApi.md#listcollections) | **GET** /mongodb/collections | List of Collections
+*CollectionApi* | [**listCollectionsByDatabase**](Apis/CollectionApi.md#listcollectionsbydatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections
 *DatabaseApi* | [**databaseInfos**](Apis/DatabaseApi.md#databaseinfos) | **GET** /mongodb/databases/infos | List of Database Infos
 *DatabaseApi* | [**deleteDatabase**](Apis/DatabaseApi.md#deletedatabase) | **DELETE** /mongodb/databases/{databaseName} | Delete Database
 *DatabaseApi* | [**getDatabaseInfo**](Apis/DatabaseApi.md#getdatabaseinfo) | **GET** /mongodb/databases/{databaseName} | Database Infos of selected Database
+*DatabaseApi* | [**listCollectionsByDatabase**](Apis/DatabaseApi.md#listcollectionsbydatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections
 *DatabaseApi* | [**listDatabases**](Apis/DatabaseApi.md#listdatabases) | **GET** /mongodb/databases | List of Databases
 *DocumentApi* | [**deleteDocument**](Apis/DocumentApi.md#deletedocument) | **DELETE** /mongodb/collections/{collectionName}/documents/{documentId} | Delete Document from Collection
 *DocumentApi* | [**deleteMany**](Apis/DocumentApi.md#deletemany) | **DELETE** /mongodb/collections/{collectionName}/documents/many/delete | Delete Many in Collection
@@ -86,14 +96,22 @@ Class | Method | HTTP request | Description
  - [InsertResponse](./Models/InsertResponse.md)
  - [JsonResult_Boolean](./Models/JsonResult_Boolean.md)
  - [JsonResult_String](./Models/JsonResult_String.md)
+ - [JsonSchema](./Models/JsonSchema.md)
+ - [JsonSchemaDefinition](./Models/JsonSchemaDefinition.md)
  - [Login](./Models/Login.md)
  - [LoginResult](./Models/LoginResult.md)
+ - [Measurement](./Models/Measurement.md)
+ - [Metric](./Models/Metric.md)
  - [MongoAggregateRequest](./Models/MongoAggregateRequest.md)
  - [MongoFindRequest](./Models/MongoFindRequest.md)
  - [MongoIndex](./Models/MongoIndex.md)
  - [PasswordUpdateRequest](./Models/PasswordUpdateRequest.md)
  - [PipelineStage](./Models/PipelineStage.md)
  - [Role](./Models/Role.md)
+ - [SchemaAnalysis](./Models/SchemaAnalysis.md)
+ - [SchemaAnalysisField](./Models/SchemaAnalysisField.md)
+ - [SchemaAnalysisFieldType](./Models/SchemaAnalysisFieldType.md)
+ - [SettingsResponse](./Models/SettingsResponse.md)
  - [UpdateFileInformationRequest](./Models/UpdateFileInformationRequest.md)
  - [UpdateRequest](./Models/UpdateRequest.md)
  - [UpdateResponse](./Models/UpdateResponse.md)
@@ -115,6 +133,11 @@ Class | Method | HTTP request | Description
 
 <a name="httpAuth"></a>
 ### httpAuth
+
+- **Type**: HTTP basic authentication
+
+<a name="httpAuth1"></a>
+### httpAuth1
 
 - **Type**: HTTP basic authentication
 

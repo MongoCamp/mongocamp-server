@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**databaseInfos**](DatabaseApi.md#databaseInfos) | **GET** /mongodb/databases/infos | List of Database Infos
 [**deleteDatabase**](DatabaseApi.md#deleteDatabase) | **DELETE** /mongodb/databases/{databaseName} | Delete Database
 [**getDatabaseInfo**](DatabaseApi.md#getDatabaseInfo) | **GET** /mongodb/databases/{databaseName} | Database Infos of selected Database
+[**listCollectionsByDatabase**](DatabaseApi.md#listCollectionsByDatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections
 [**listDatabases**](DatabaseApi.md#listDatabases) | **GET** /mongodb/databases | List of Databases
 
 
@@ -27,7 +28,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -54,7 +55,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -81,7 +82,34 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="listCollectionsByDatabase"></a>
+# **listCollectionsByDatabase**
+> List listCollectionsByDatabase(databaseName)
+
+List of Collections
+
+    List of all Collections of the given database
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **databaseName** | **String**| Name of your Database | [default to null]
+
+### Return type
+
+**List**
+
+### Authorization
+
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
@@ -105,7 +133,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth)
+[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
 
 ### HTTP request headers
 
