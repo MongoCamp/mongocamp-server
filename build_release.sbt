@@ -72,12 +72,6 @@ commands += Command.command("ci-release")((state: State) => {
   }
 })
 
-val prepareReleaseToGithubPackages = ReleaseStep(action = st => {
-  "rm -rf build_publish_sonartype.sbt".!!
-  "mv build_publish_gh.sbt.tmp build_publish_gh.sbt".!!
-  st
-})
-
 releaseProcess := {
   Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -94,8 +88,6 @@ releaseProcess := {
     gitAddAllTask,
     commitNextVersion,
     pushChanges,
-    prepareReleaseToGithubPackages,
-    publishArtifacts,
     addGithubRelease
   )
 }
