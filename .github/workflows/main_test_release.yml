@@ -52,7 +52,7 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
           docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
-          docker login ghcr.io -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           docker login -u DOCKERHUB_USERNAME -p DOCKERHUB_PASSWORD
           sbt ci-docker
   build-docu:
@@ -74,7 +74,7 @@ jobs:
           git config --global user.name "MongoCamp CI"
           sbt ci-deploy-docu
   release:
-    needs: test
+    needs: build-docker
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
