@@ -72,6 +72,12 @@ commands += Command.command("ci-release")((state: State) => {
   }
 })
 
+val prepareReleaseToGithubPackages = ReleaseStep(action = st => {
+  "rm -rf build_publish_sonartype.sbt".!!
+  "mv build_publish_gh.sbt.tmp build_publish_gh.sbt".!!
+  st
+})
+
 releaseProcess := {
   Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -82,14 +88,14 @@ releaseProcess := {
     gitAddAllTask,
     commitReleaseVersion,
     tagRelease,
+    releaseStepCommandAndRemaining("+publishSigned"),
+    releaseStepCommand("sonatypeBundleRelease"),
     setToMyNextVersion,
     gitAddAllTask,
     commitNextVersion,
     pushChanges,
+    prepareReleaseToGithubPackages,
     publishArtifacts,
     addGithubRelease
   )
 }
-
-publishTo := Some("GitHub Package Registry".at("https://maven.pkg.github.com/mongocamp/mongocamp-server/"))
-credentials += Credentials("GitHub Package Registry", "maven.pkg.github.com", System.getenv("GITHUB_USER"), System.getenv("GITHUB_TOKEN"))

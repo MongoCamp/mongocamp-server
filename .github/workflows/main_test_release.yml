@@ -46,11 +46,14 @@ jobs:
           java-version: '17'
       - name: Build Docker Container for GitHub Registry
         env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          DOCKER_GIT_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_GIT_PASSWORD: ${{ secrets.GH_ADMIN_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
-          docker login docker.pkg.github.com -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker login ghcr.io -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
+          docker login ghcr.io -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
+          docker login -u DOCKER_HUB_USERNAME -p DOCKER_HUB_PASSWORD
           sbt ci-docker
   build-docu:
     needs: test
@@ -65,7 +68,7 @@ jobs:
       - name: Build Docu and deploy to GitHub
         env:
           GITHUB_USER: ${{ secrets.DOCKER_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
         run: |
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
@@ -93,9 +96,9 @@ jobs:
           java-version: '17'
       - name: Release
         env:
-          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
           GITHUB_USER: ${{ secrets.DOCKER_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
         run: |
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
