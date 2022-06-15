@@ -46,14 +46,14 @@ jobs:
           java-version: '17'
       - name: Build Docker Container for GitHub Registry
         env:
-          DOCKER_GIT_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_GIT_USERNAME: ${{ secrets.GH_USERNAME }}
           DOCKER_GIT_PASSWORD: ${{ secrets.GH_ADMIN_TOKEN }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
           docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
           docker login ghcr.io -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
-          docker login -u DOCKER_HUB_USERNAME -p DOCKER_HUB_PASSWORD
+          docker login -u DOCKERHUB_USERNAME -p DOCKERHUB_PASSWORD
           sbt ci-docker
   build-docu:
     needs: test
@@ -67,7 +67,7 @@ jobs:
           version: 6.0.2
       - name: Build Docu and deploy to GitHub
         env:
-          GITHUB_USER: ${{ secrets.DOCKER_USERNAME }}
+          GITHUB_USER: ${{ secrets.GH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
         run: |
           git config --global user.email "ci@mongocamp.dev"
@@ -89,6 +89,9 @@ jobs:
         run: pnpm install -g conventional-changelog-cli
       - name: install conventional-github-release
         run: pnpm install -g conventional-github-releaser
+      - id: install-secret-key
+        name: Install gpg secret key
+        run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
       - name: Set up JDK
         uses: actions/setup-java@v3.3.0
         with:
@@ -97,7 +100,7 @@ jobs:
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
-          GITHUB_USER: ${{ secrets.DOCKER_USERNAME }}
+          GITHUB_USER: ${{ secrets.GH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
         run: |
           git config --global user.email "ci@mongocamp.dev"
