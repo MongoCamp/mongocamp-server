@@ -112,14 +112,14 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
       - name: Publish to Github Packages
-        run: sbt +publish
+        run: |
+          rm -rf build_publish_sonartype.sbt
+          mv build_publish_gh.sbt.tmp build_publish_gh.sbt
+          sbt +publish
+          git stash
         env:
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Prepare Release
-        run: |
-          rm -rf build_publish_gh.sbt
-          mv build_publish_sonartype.sbt.tmp build_publish_sonartype.sbt
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
