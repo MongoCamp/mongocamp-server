@@ -28,7 +28,7 @@ commands += Command.command("ci-docker")((state: State) => {
     state
   }
   else {
-    Command.process("docker:publishLocal", state)
+    Command.process("docker:publish", state)
     val dockerHubRepository = "mongocamp"
     val originalContainerName = s"${dockerRepository.value.get}/${name.value}:${version.value}"
     val newContainerName = originalContainerName.replace(dockerRepository.value.get, dockerHubRepository)
