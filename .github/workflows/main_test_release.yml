@@ -116,6 +116,7 @@ jobs:
           rm -rf build_publish_sonartype.sbt
           mv build_publish_gh.sbt.tmp build_publish_gh.sbt
           sbt +publish
+          git add .
           git stash
         env:
           GITHUB_USER: ${{ github.actor }}
