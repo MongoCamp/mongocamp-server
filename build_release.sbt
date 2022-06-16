@@ -13,7 +13,6 @@ val gitAddAllTask = ReleaseStep(action = st => {
 
 val generateChangeLog = ReleaseStep(action = st => {
   st.log.warn("start generating changelog")
-  "env DEBUG=\"conventional-github-releaser\"".!!
   val response = "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0 -n ./changelog/config.js".!!
   st.log.warn("Output of conventional-changelog" + response)
   st
