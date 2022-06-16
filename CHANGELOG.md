@@ -1,11 +1,4 @@
-## [](https://github.com/MongoCamp/mongocamp-server/compare/v1.0.1...v) (2022-06-16)
-
-
-### Bug Fixes
-
-* cleanup ([48ce013](https://github.com/MongoCamp/mongocamp-server/commit/48ce013fa6df734ed744c20dfc9dd4d1495a01ab))
-
-### [1.0.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.0.0...v1.0.1) (2022-06-16)
+## [1.0.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.0.0...v1.0.1) (2022-06-16)
 
 
 ### Features
