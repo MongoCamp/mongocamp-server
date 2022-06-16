@@ -1,4 +1,4 @@
-## [1.0.0](https://github.com/MongoCamp/mongocamp-server/compare/v0.3.4...v1.0.0) (2022-06-15)
+### [1.0.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.3.4...v1.0.1) (2022-06-16)
 
 
 ### Bug Fixes
@@ -54,6 +54,7 @@
 * **auth:** Route to check Authenticated ([f99427c](https://github.com/MongoCamp/mongocamp-server/commit/f99427c2d126fa9d5fbac03dc8eee5229ecc4efa)), closes [Issue#20](https://github.com/MongoCamp/Issue/issues/20)
 * Bucket Api to List, Get and Delete Buckets ([f1b055c](https://github.com/MongoCamp/mongocamp-server/commit/f1b055ccdad36949c4eeda742f1e1d3fb08dd5cf))
 * cache tokens to database ([3a87e08](https://github.com/MongoCamp/mongocamp-server/commit/3a87e084b1b1cbfb1f70d0cb46153bd3f257b9b9))
+* changed some defaults for container ([12ca66d](https://github.com/MongoCamp/mongocamp-server/commit/12ca66da6752e6de350e42d85cd52198599c8c84))
 * Collections by Database ([c25fe73](https://github.com/MongoCamp/mongocamp-server/commit/c25fe731454a9740d4793f9d9b5d97cd8343cde9))
 * **Cors:** Access Control Expose Headers ([835975d](https://github.com/MongoCamp/mongocamp-server/commit/835975d036ed68dea1ae8a991ff9bccf6c73d43c))
 * Delete File by Adapter Holder ([b851a74](https://github.com/MongoCamp/mongocamp-server/commit/b851a745f29201730db80c943a6553912be2bf9c))
