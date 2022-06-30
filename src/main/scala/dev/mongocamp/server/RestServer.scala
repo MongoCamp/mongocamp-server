@@ -1,22 +1,23 @@
 package dev.mongocamp.server
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
-import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
-import akka.http.scaladsl.server.{ Route, RouteConcatenation }
+import akka.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
+import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.event.http.HttpRequestEvent
-import dev.mongocamp.server.event.listener.{ MetricsLoggingActor, RequestLoggingActor }
-import dev.mongocamp.server.event.server.ServerStartedEvent
-import dev.mongocamp.server.event.{ Event, EventSystem }
+import dev.mongocamp.server.event.listener.{MetricsLoggingActor, RequestLoggingActor}
+import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
+import dev.mongocamp.server.event.{Event, EventSystem}
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
+import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
+import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.ReflectionService
 import sttp.capabilities.WebSockets
@@ -24,7 +25,7 @@ import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 trait RestServer extends LazyLogging with RouteConcatenation {
 
@@ -65,6 +66,16 @@ trait RestServer extends LazyLogging with RouteConcatenation {
 
   def routeHandler(r: Route): Route = {
     preflightRequestHandler ~ r
+  }
+
+  private def activateServerPlugins(): Unit = {
+    ReflectionService
+      .instancesForType(classOf[ServerPlugin])
+      .filterNot(plugin => ConfigHolder.pluginsIgnored.value.contains(plugin.getClass.getName))
+      .map(plugin => {
+        EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
+        plugin
+      })
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
