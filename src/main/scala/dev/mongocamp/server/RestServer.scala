@@ -70,7 +70,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
     ReflectionService.loadPlugins()
     ReflectionService.registerClassLoaders(getClass)
-
+    doBeforeServerStartUp()
     Http()
       .newServerAt(interface, port)
       .bindFlow(routeHandler(routes))
@@ -91,8 +91,14 @@ trait RestServer extends LazyLogging with RouteConcatenation {
         val metricsLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[MetricsLoggingActor]), "metricsLoggingActor")
         EventSystem.eventStream.subscribe(metricsLoggingActor, classOf[Event])
         EventSystem.eventStream.publish(ServerStartedEvent())
+        doAfterServerStartUp()
         serverBinding
       })
   }
 
+  def doBeforeServerStartUp(): Unit = {
+    activateServerPlugins()
+  }
+
+  def doAfterServerStartUp(): Unit = {}
 }
