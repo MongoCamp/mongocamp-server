@@ -1,5 +1,6 @@
-package dev.mongocamp.server.route
+package dev.mongocamp.server.plugin
 
+import dev.mongocamp.server.route.BaseRoute
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint

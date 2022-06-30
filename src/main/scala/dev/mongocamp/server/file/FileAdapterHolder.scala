@@ -4,6 +4,7 @@ import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.server.PluginLoadedEvent
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.plugin.FilePlugin
 import dev.mongocamp.server.service.ReflectionService
 import sttp.model.StatusCode
 

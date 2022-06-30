@@ -2,6 +2,7 @@ package dev.mongocamp.server
 import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.server.PluginLoadedEvent
+import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.service.ReflectionService
 

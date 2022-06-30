@@ -1,4 +1,4 @@
-package dev.mongocamp.server.file
+package dev.mongocamp.server.plugin
 
 import better.files.File
 
