@@ -4,9 +4,9 @@ organization := "dev.mongocamp"
 
 scalaVersion := "2.13.8"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.4.6"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.4.8"
 
-val TapirVersion = "1.0.0"
+val TapirVersion = "1.0.1"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % TapirVersion
@@ -30,4 +30,4 @@ dependencyOverrides += "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0
 
 libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 
-libraryDependencies += "io.micrometer" % "micrometer-core" % "1.9.0"
+libraryDependencies += "io.micrometer" % "micrometer-core" % "1.9.1"
