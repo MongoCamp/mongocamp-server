@@ -1,6 +1,7 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.server.client.api.DocumentApi
-import dev.mongocamp.server.client.model.{ MongoFindRequest, UpdateRequest }
+import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateRequest}
+import dev.mongocamp.server.database.MongoDatabase
 import io.circe.syntax.EncoderOps
 
 import java.util.UUID
@@ -398,4 +399,21 @@ class DocumentSuite extends BaseSuite {
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
   }
 
+  test("document with simple list document") {
+    val response = executeRequestToResponse(
+      documentsApi.find("", testUserBearerToken)(collectionNameUsers, MongoFindRequest(Map("email" -> "varius.ultrices@icloud.net"), Map(), Map()))
+    )
+    assertEquals(response.head("list").asInstanceOf[List[Long]], List(47L, 3L, 71L))
+  }
+
+  test("document with complex list document") {
+    val response = executeRequestToResponse(
+      documentsApi.find("", adminBearerToken)(MongoDatabase.rolesDao.name, MongoFindRequest(Map("name" -> "adminRole"), Map(), Map()))
+    )
+    val grantsList = List(
+      Map("name" -> "*", "read" -> true, "write" -> true, "administrate" -> true, "grantType" -> "COLLECTION"),
+      Map("name" -> "*", "read" -> true, "write" -> true, "administrate" -> true, "grantType" -> "BUCKET")
+    )
+    assertEquals(response.head("collectionGrants").asInstanceOf[List[Map[String, Any]]], grantsList)
+  }
 }

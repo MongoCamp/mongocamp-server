@@ -32,6 +32,7 @@ class BaseSuite extends munit.FunSuite with LazyLogging {
   }
   protected val collectionNameTest     = "test"
   protected val collectionNameAccounts = "accounts"
+  protected val collectionNameUsers    = "users"
   protected val indexCollection        = "indexTestCollection"
 
   def executeRequest[R <: Any](
