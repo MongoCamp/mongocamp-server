@@ -30,4 +30,4 @@ dependencyOverrides += "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0
 
 libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 
-libraryDependencies += "io.micrometer" % "micrometer-core" % "1.9.1"
+libraryDependencies += "io.micrometer" % "micrometer-core" % "1.9.2"
