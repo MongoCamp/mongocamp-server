@@ -5,10 +5,10 @@ import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.SettingsResponse
-import dev.mongocamp.server.monitoring.{Metric, MetricsConfiguration}
+import dev.mongocamp.server.monitoring.{ Metric, MetricsConfiguration }
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 
