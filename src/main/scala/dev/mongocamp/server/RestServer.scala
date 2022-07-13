@@ -73,6 +73,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
       .instancesForType(classOf[ServerPlugin])
       .filterNot(plugin => ConfigHolder.pluginsIgnored.value.contains(plugin.getClass.getName))
       .map(plugin => {
+        plugin.activate()
         EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
         plugin
       })
