@@ -231,10 +231,10 @@ object SchemaService extends CirceSchema {
       }
       val types: List[SchemaAnalysisFieldType] = documentMap
         .get("T")
-        .map(_.asInstanceOf[List[org.mongodb.scala.bson.collection.immutable.Document]])
+        .map(_.asInstanceOf[List[Map[String, Any]]])
         .getOrElse(List())
         .map(typeDocument => {
-          val doc                         = documentFromDocument(typeDocument)
+          val doc                         = documentFromScalaMap(typeDocument)
           val count                       = doc.getLongValue("c")
           val fieldTypePercentage: Double = count.toDouble / parent.count.toDouble
           SchemaAnalysisFieldType(doc.getStringValue("t"), count, fieldTypePercentage)

@@ -1,8 +1,8 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.client.api.{ CollectionApi, DatabaseApi }
-import dev.mongocamp.server.client.model.{ MongoAggregateRequest, PipelineStage }
+import dev.mongocamp.server.client.api.{CollectionApi, DatabaseApi}
+import dev.mongocamp.server.client.model.{MongoAggregateRequest, PipelineStage}
 import dev.mongocamp.server.database.MongoDatabase
 
 class CollectionSuite extends BaseSuite {
@@ -146,6 +146,22 @@ class CollectionSuite extends BaseSuite {
     val headResponse = aggreationResult.head
     assertEquals(headResponse("name").toString, "Mollis Dui Associates")
     assertEquals(headResponse("type").toString, "company")
+  }
+
+  test("check schema of `users` collection") {
+    val schemaAnalysis = executeRequestToResponse(collectionApi.getSchemaAnalysis("", adminBearerToken)("users"))
+    assertEquals(schemaAnalysis.count, 1000L)
+    assertEquals(schemaAnalysis.sample, 1000L)
+    assertEquals(schemaAnalysis.percentageOfAnalysed, 1.0)
+    val emailField = schemaAnalysis.fields.get.filter(f => f.name.equalsIgnoreCase("email"))
+    assertEquals(emailField.nonEmpty, true)
+    assertEquals(emailField.head.percentageOfParent, 1.0)
+  }
+
+  test("check schema of `pokemon` collection") {
+    val jsonSchema = executeRequestToResponse(collectionApi.getJsonSchema("", adminBearerToken)("pokemon"))
+    assertEquals(jsonSchema.$schema, "https://json-schema.org/draft/2020-12/schema")
+    ""
   }
 
 }
