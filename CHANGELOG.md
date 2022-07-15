@@ -1,3 +1,10 @@
+### [1.1.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.1.0...v1.1.1) (2022-07-15)
+
+
+### Bug Fixes
+
+* Exception by Change in BsonConverter ([d85fd22](https://github.com/MongoCamp/mongocamp-server/commit/d85fd22d74c2d43bf2ccfef9098c3d9249e7b990)), closes [#30](https://github.com/MongoCamp/mongocamp-server/issues/30)
+
 ## [1.1.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.0.1...v1.1.0) (2022-07-13)
 
 
