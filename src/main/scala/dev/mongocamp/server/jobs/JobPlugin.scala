@@ -137,8 +137,10 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   }
 
   def executeJob(jobName: String, groupName: String): Boolean = {
-    try
+    try {
       scheduler.triggerJob(new JobKey(jobName, groupName))
+      true
+    }
     catch {
       case _: Exception =>
         throw MongoCampException(s"$jobName with group $groupName not found", StatusCode.NotFound, jobCouldNotFound)
