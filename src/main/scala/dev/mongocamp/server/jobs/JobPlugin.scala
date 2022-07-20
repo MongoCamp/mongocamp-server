@@ -3,7 +3,7 @@ package dev.mongocamp.server.jobs
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobCouldNotFound, jobCouldNotUpdated}
+import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated}
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.plugin.ServerPlugin
@@ -63,32 +63,22 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   }
 
   def addJob(jobConfig: JobConfig): Boolean = {
-    addJob(jobConfig.className, jobConfig.cronExpression, jobConfig.name, jobConfig.group, jobConfig.description, jobConfig.priority)
-  }
-
-  def addJob(
-      className: String,
-      cronExpression: String,
-      jobName: String = "",
-      groupName: String = JobConfig.defaultGroup,
-      description: String = "",
-      priority: Int = 1
-  ): Boolean = {
-    val internalJobName = if (jobName.trim.equalsIgnoreCase("")) {
-      val jobClass = ReflectionService.getClassByName(className).asInstanceOf[Class[_ <: Job]]
+    val jobClass = getJobClass(jobConfig)
+    val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
       jobClass.getSimpleName
     }
     else {
-      jobName
+      jobConfig.name
     }
-    val couldAddJob = MongoDatabase.jobDao.find(Map("name" -> internalJobName, "group" -> groupName)).resultOption().isEmpty
+    val couldAddJob = MongoDatabase.jobDao.find(Map("name" -> internalJobName, "group" -> jobConfig.group)).resultOption().isEmpty
 
     if (couldAddJob) {
-      val jobConfigDetail = JobConfig(internalJobName, groupName, className, description, cronExpression, priority)
+      val jobConfigDetail =
+        JobConfig(internalJobName, jobConfig.group, jobConfig.className, jobConfig.description, jobConfig.cronExpression, jobConfig.priority)
       MongoDatabase.jobDao.insertOne(jobConfigDetail).result().wasAcknowledged()
     }
     else {
-      throw MongoCampException(s"$jobName with group $groupName is already added.", StatusCode.PreconditionFailed, jobAlreadyAdded)
+      throw MongoCampException(s"${jobConfig.name} with group ${jobConfig.group} is already added.", StatusCode.PreconditionFailed, jobAlreadyAdded)
     }
   }
 
@@ -101,13 +91,28 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     }
   }
 
+  def getJobClass(jobConfig: JobConfig) = {
+    var jobClass: Class[_ <: Job] = null
+    try
+      jobClass = ReflectionService.getClassByName(jobConfig.className).asInstanceOf[Class[_ <: Job]]
+    catch {
+      case _: ClassNotFoundException =>
+        throw MongoCampException(
+          s"${jobConfig.className} for ${jobConfig.name} with group ${jobConfig.group} not found.",
+          StatusCode.NotFound,
+          jobClassNotFound
+        )
+    }
+    jobClass
+  }
+
   def updateJob(groupName: String, jobName: String, jobConfig: JobConfig): Boolean = {
     val couldUpdate = if (jobName == jobConfig.name && groupName == jobConfig.group) {
       true
     }
     else {
+      val jobClass = getJobClass(jobConfig)
       val internalJobName = if (jobName.trim.equalsIgnoreCase("")) {
-        val jobClass = ReflectionService.getClassByName(jobConfig.className).asInstanceOf[Class[_ <: Job]]
         jobClass.getSimpleName
       }
       else {
