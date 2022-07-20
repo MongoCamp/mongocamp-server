@@ -9,6 +9,8 @@ object ErrorCodes {
   val unauthorizedUser: Int             = 4011
   val unauthorizedUserForOtherUser: Int = 4012
 
-  val jobAlreadyAdded: Int = 4121
+  val jobAlreadyAdded: Int    = 4121
+  val jobCouldNotUpdated: Int = 4122
+  val jobCouldNotFound: Int = 4041
 
 }

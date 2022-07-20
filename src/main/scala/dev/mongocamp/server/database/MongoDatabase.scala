@@ -7,7 +7,7 @@ import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.config.ConfigHolder._
 import dev.mongocamp.server.interceptor.RequestLogging
 import dev.mongocamp.server.model.auth.{Grant, Role, TokenCacheElement, UserInformation}
-import dev.mongocamp.server.model.{DBFileInformation, JobConfigDetail}
+import dev.mongocamp.server.model.{DBFileInformation, JobConfig}
 import dev.mongocamp.server.monitoring.MetricsConfiguration
 import io.micrometer.core.instrument.binder.mongodb.{MongoMetricsCommandListener, MongoMetricsConnectionPoolListener}
 import org.bson.codecs.configuration.CodecRegistries._
@@ -51,7 +51,7 @@ object MongoDatabase {
     classOf[RequestLogging],
     classOf[TokenCacheElement],
     classOf[DBFileInformation],
-    classOf[JobConfigDetail],
+    classOf[JobConfig],
     CustomCodecProvider()
   )
 
