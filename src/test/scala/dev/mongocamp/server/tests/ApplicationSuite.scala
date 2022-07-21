@@ -9,7 +9,7 @@ class ApplicationSuite extends BaseSuite {
   test("Show all System Settings") {
     val systemSettings = executeRequestToResponse(applicationApi.settings("", adminBearerToken)())
     assertEquals(systemSettings.filePlugins.size, 1)
-    assertEquals(systemSettings.routesPlugins.size, 6)
+    assertEquals(systemSettings.routesPlugins.size, 7)
     assertEquals(systemSettings.ignoredPlugins.size, 0)
     assertEquals(systemSettings.configurations.size, 29)
     assertEquals(systemSettings.configurations("cors.headers.allowed"), List("Authorization", "Content-Type", "X-Requested-With", "X-AUTH-APIKEY"))

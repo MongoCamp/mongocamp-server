@@ -23,7 +23,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   private lazy val scheduler = StdSchedulerFactory.getDefaultScheduler
 
   override def activate(): Unit = {
-    scheduler.startDelayed(30)
+    scheduler.start()
     MongoDatabase.jobDao.createIndex(Map("group" -> 1, "name" -> 1), IndexOptions().unique(true)).toFuture()
     loadJobs()
     sys.addShutdownHook({
@@ -73,9 +73,10 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     val couldAddJob = MongoDatabase.jobDao.find(Map("name" -> internalJobName, "group" -> jobConfig.group)).resultOption().isEmpty
 
     if (couldAddJob) {
-      val jobConfigDetail =
-        JobConfig(internalJobName, jobConfig.group, jobConfig.className, jobConfig.description, jobConfig.cronExpression, jobConfig.priority)
-      MongoDatabase.jobDao.insertOne(jobConfigDetail).result().wasAcknowledged()
+      val jobConfigDetail = jobConfig.copy(name = internalJobName)
+      val inserted = MongoDatabase.jobDao.insertOne(jobConfigDetail).result()
+      reloadJobs()
+      inserted.wasAcknowledged()
     }
     else {
       throw MongoCampException(s"${jobConfig.name} with group ${jobConfig.group} is already added.", StatusCode.PreconditionFailed, jobAlreadyAdded)
@@ -107,18 +108,24 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   }
 
   def updateJob(groupName: String, jobName: String, jobConfig: JobConfig): Boolean = {
+    val jobExists = MongoDatabase.jobDao.find(Map("name" -> jobName, "group" -> groupName)).resultOption().isDefined
+
+    if (!jobExists) {
+      throw MongoCampException(s"$jobName with group $groupName does not exists.", StatusCode.NotFound, jobCouldNotFound)
+    }
+
     val couldUpdate = if (jobName == jobConfig.name && groupName == jobConfig.group) {
       true
     }
     else {
       val jobClass = getJobClass(jobConfig)
-      val internalJobName = if (jobName.trim.equalsIgnoreCase("")) {
+      val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
         jobClass.getSimpleName
       }
       else {
-        jobName
+        jobConfig.name
       }
-      MongoDatabase.jobDao.find(Map("name" -> internalJobName, "group" -> groupName)).resultOption().isEmpty
+      MongoDatabase.jobDao.find(Map("name" -> internalJobName, "group" -> jobConfig.group)).resultOption().isEmpty
     }
     if (couldUpdate) {
       val updateResponse = MongoDatabase.jobDao.replaceOne(Map("name" -> jobName, "group" -> groupName), jobConfig).result()
@@ -130,13 +137,13 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     }
   }
 
-  def deleteJob(jobName: String, groupName: String): Boolean = {
+  def deleteJob(groupName: String, jobName: String): Boolean = {
     val deleteResponse = MongoDatabase.jobDao.deleteMany(Map("name" -> jobName, "group" -> groupName)).result()
     reloadJobs()
     deleteResponse.wasAcknowledged()
   }
 
-  def executeJob(jobName: String, groupName: String): Boolean = {
+  def executeJob(groupName: String, jobName: String): Boolean = {
     try {
       scheduler.triggerJob(new JobKey(jobName, groupName))
       true
@@ -148,7 +155,8 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   }
 
   private def loadJobs(): Unit = {
-    MongoDatabase.jobDao.find().resultList().foreach(scheduleJob)
+    val foundJobs = MongoDatabase.jobDao.find().resultList()
+    foundJobs.foreach(scheduleJob)
   }
 
   private def scheduleJob(dbJob: JobConfig): Unit = {

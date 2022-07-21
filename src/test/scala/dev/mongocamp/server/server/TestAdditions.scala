@@ -2,10 +2,12 @@ package dev.mongocamp.server.server
 
 import better.files.File
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
+import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder}
 import dev.mongocamp.server.converter.CirceSchema
-import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.model.auth.{ Grant, Role, UserInformation }
+import dev.mongocamp.server.database.{JobDao, MongoDatabase}
+import dev.mongocamp.server.jobs.JobPlugin
+import dev.mongocamp.server.model.JobConfig
+import dev.mongocamp.server.model.auth.{Grant, Role, UserInformation}
 import dev.mongocamp.server.service.SystemFileService
 import org.joda.time.DateTime
 import sttp.capabilities
@@ -78,6 +80,10 @@ object TestAdditions extends CirceSchema {
         )
       )
       authHolder.updatePasswordForUser(adminUser, adminPassword)
+
+      JobDao().insertOne(JobConfig("CountingTestJob", classOf[CountingTestJob].getName, "", "0/5 * * ? * * *")).result()
+      JobPlugin.reloadJobs()
+
       dataImported = true
     }
   }

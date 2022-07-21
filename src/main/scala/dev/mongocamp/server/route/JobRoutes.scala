@@ -61,6 +61,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
   lazy val jobGroupParameter =
     path[String]("jobGroup").description("Group Name of the Job").default(JobConfig.defaultGroup).and(path[String]("jobName").description("Name of the Job"))
 
+  // https://www.freeformatter.com/cron-expression-generator-quartz.html
   val updateJobRoutes = jobApiBaseEndpoint
     .in(jobGroupParameter)
     .in(jsonBody[JobConfig])
@@ -68,14 +69,14 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .summary("Update Job")
     .description("Add Job and get JobInformation back")
     .method(Method.PATCH)
-    .name("addJob")
+    .name("updateJob")
     .serverLogic(_ => parameter => updateJob(parameter))
 
   def updateJob(parameter: (String, String, JobConfig)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
     Future.successful(Right({
       val jobConfig = parameter._3
-      val added     = JobPlugin.updateJob(parameter._1, parameter._2, jobConfig)
-      if (added) {
+      val updated     = JobPlugin.updateJob(parameter._1, parameter._2, jobConfig)
+      if (updated) {
         Some(JobPlugin.convertToJobInformation(jobConfig))
       }
       else {
