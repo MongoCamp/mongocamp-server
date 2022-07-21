@@ -3,7 +3,7 @@ package dev.mongocamp.server.service
 import better.files.File
 import dev.mongocamp.server.config.ConfigHolder
 import org.reflections.Reflections
-import org.reflections.util.{ ClasspathHelper, ConfigurationBuilder }
+import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
 
 import java.net.URL
 import scala.collection.mutable.ArrayBuffer
@@ -16,12 +16,27 @@ object ReflectionService {
   private val reflectionConfigurationBuilder: ConfigurationBuilder = new ConfigurationBuilder().forPackages("")
 
   def instancesForType[T <: Any](clazz: Class[T]): List[T] = {
+    val reflected = getSubClassesList(clazz).flatMap(foundClazz => {
+      lazy val mirror = runtimeMirror(foundClazz.getClassLoader)
+      val instance = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
+      val clazzInstance = Try(foundClazz.getDeclaredConstructor().newInstance()).toOption
+      if (clazzInstance.isDefined) {
+        clazzInstance.map(_.asInstanceOf[T])
+      }
+      else {
+        instance.map(_.asInstanceOf[T])
+      }
+    })
+    reflected
+  }
+
+  def getSubClassesList[T <: Any](clazz: Class[T]): List[Class[_ <: T]] = {
     val urls: ArrayBuffer[URL] = ArrayBuffer[URL]()
     urls.addAll(ClasspathHelper.forJavaClassPath().asScala)
     reflectionConfigurationBuilder.getClassLoaders.foreach(classLoader => {
       classLoader match {
         case loader: URLClassLoader => urls.addAll(loader.getURLs)
-        case _                      => classLoader.getDefinedPackages.foreach(p => urls.addAll(ClasspathHelper.forPackage(p.toString, classLoader).asScala))
+        case _ => classLoader.getDefinedPackages.foreach(p => urls.addAll(ClasspathHelper.forPackage(p.toString, classLoader).asScala))
       }
       ""
     })
@@ -29,19 +44,8 @@ object ReflectionService {
     val reflected = new Reflections(reflectionConfigurationBuilder)
       .getSubTypesOf(clazz)
       .asScala
-      .flatMap(foundClazz => {
-        lazy val mirror   = runtimeMirror(foundClazz.getClassLoader)
-        val instance      = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
-        val clazzInstance = Try(foundClazz.getDeclaredConstructor().newInstance()).toOption
-        if (clazzInstance.isDefined) {
-          clazzInstance
-        }
-        else {
-          instance.map(_.asInstanceOf[T])
-        }
-      })
-      .toList
-    reflected
+
+    reflected.toList
   }
 
   def registerClassLoaders[T <: Any](clazz: Class[T]): Unit = {
@@ -54,6 +58,20 @@ object ReflectionService {
     if (classLoader.getParent != null) {
       registerClassLoaders(classLoader.getParent)
     }
+  }
+
+  def getClassListByName(className: String): List[Class[_]] = {
+    val arrayBuffer = ArrayBuffer[Class[_]]()
+    reflectionConfigurationBuilder.getClassLoaders.foreach(cl => Try {
+      val clazz = cl.loadClass(className)
+      arrayBuffer.addOne(clazz)
+    })
+    arrayBuffer.toList
+  }
+
+  def getClassByName(className: String): Class[_] = {
+    val classList = getClassListByName(className)
+    classList.headOption.getOrElse(throw new ClassNotFoundException())
   }
 
   def loadPlugins(): Unit = {
