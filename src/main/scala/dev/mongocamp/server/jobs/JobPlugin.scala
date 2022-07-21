@@ -3,16 +3,16 @@ package dev.mongocamp.server.jobs
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated}
+import dev.mongocamp.server.exception.ErrorCodes.{ jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated }
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.model.{JobConfig, JobInformation}
+import dev.mongocamp.server.model.{ JobConfig, JobInformation }
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.service.ReflectionService
 import org.mongodb.scala.model.IndexOptions
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
 import org.quartz.impl.StdSchedulerFactory
-import org.quartz.{CronScheduleBuilder, Job, JobKey, Trigger}
+import org.quartz.{ CronScheduleBuilder, Job, JobKey, Trigger }
 import sttp.model.StatusCode
 
 import java.util.Date
@@ -74,7 +74,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
 
     if (couldAddJob) {
       val jobConfigDetail = jobConfig.copy(name = internalJobName)
-      val inserted = MongoDatabase.jobDao.insertOne(jobConfigDetail).result()
+      val inserted        = MongoDatabase.jobDao.insertOne(jobConfigDetail).result()
       reloadJobs()
       inserted.wasAcknowledged()
     }

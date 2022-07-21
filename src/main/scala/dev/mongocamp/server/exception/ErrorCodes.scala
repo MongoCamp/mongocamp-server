@@ -11,7 +11,7 @@ object ErrorCodes {
 
   val jobAlreadyAdded: Int    = 4121
   val jobCouldNotUpdated: Int = 4122
-  val jobCouldNotFound: Int = 4041
-  val jobClassNotFound: Int = 4042
+  val jobCouldNotFound: Int   = 4041
+  val jobClassNotFound: Int   = 4042
 
 }

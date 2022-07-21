@@ -3,7 +3,7 @@ package dev.mongocamp.server.service
 import better.files.File
 import dev.mongocamp.server.config.ConfigHolder
 import org.reflections.Reflections
-import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
+import org.reflections.util.{ ClasspathHelper, ConfigurationBuilder }
 
 import java.net.URL
 import scala.collection.mutable.ArrayBuffer
@@ -17,8 +17,8 @@ object ReflectionService {
 
   def instancesForType[T <: Any](clazz: Class[T]): List[T] = {
     val reflected = getSubClassesList(clazz).flatMap(foundClazz => {
-      lazy val mirror = runtimeMirror(foundClazz.getClassLoader)
-      val instance = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
+      lazy val mirror   = runtimeMirror(foundClazz.getClassLoader)
+      val instance      = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
       val clazzInstance = Try(foundClazz.getDeclaredConstructor().newInstance()).toOption
       if (clazzInstance.isDefined) {
         clazzInstance.map(_.asInstanceOf[T])
@@ -36,7 +36,7 @@ object ReflectionService {
     reflectionConfigurationBuilder.getClassLoaders.foreach(classLoader => {
       classLoader match {
         case loader: URLClassLoader => urls.addAll(loader.getURLs)
-        case _ => classLoader.getDefinedPackages.foreach(p => urls.addAll(ClasspathHelper.forPackage(p.toString, classLoader).asScala))
+        case _                      => classLoader.getDefinedPackages.foreach(p => urls.addAll(ClasspathHelper.forPackage(p.toString, classLoader).asScala))
       }
       ""
     })
@@ -62,10 +62,12 @@ object ReflectionService {
 
   def getClassListByName(className: String): List[Class[_]] = {
     val arrayBuffer = ArrayBuffer[Class[_]]()
-    reflectionConfigurationBuilder.getClassLoaders.foreach(cl => Try {
-      val clazz = cl.loadClass(className)
-      arrayBuffer.addOne(clazz)
-    })
+    reflectionConfigurationBuilder.getClassLoaders.foreach(cl =>
+      Try {
+        val clazz = cl.loadClass(className)
+        arrayBuffer.addOne(clazz)
+      }
+    )
     arrayBuffer.toList
   }
 

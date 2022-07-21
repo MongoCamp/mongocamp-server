@@ -1,3 +1,18 @@
+## [1.2.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.1.1...v1.2.0) (2022-07-21)
+
+
+### Bug Fixes
+
+* missing return type ([27e5685](https://github.com/MongoCamp/mongocamp-server/commit/27e568510d75ccc31466054aebef7602023ffe40))
+
+
+### Features
+
+* Added Quartz scheduling methods ([423b16f](https://github.com/MongoCamp/mongocamp-server/commit/423b16fb557213073856db15691973966f627c97)), closes [#31](https://github.com/MongoCamp/mongocamp-server/issues/31)
+* Added some more reflection methods ([8e7240c](https://github.com/MongoCamp/mongocamp-server/commit/8e7240c54f0c83b58894bfbddb9ffcac1fa793cb)), closes [#31](https://github.com/MongoCamp/mongocamp-server/issues/31)
+* Routes for Jobs ([340c7a8](https://github.com/MongoCamp/mongocamp-server/commit/340c7a828368bdd2ceb32d547dfad50f81d61969)), closes [#31](https://github.com/MongoCamp/mongocamp-server/issues/31)
+* Routes for Jobs ([daa167b](https://github.com/MongoCamp/mongocamp-server/commit/daa167b0d6f66b10fb8b8ef7d5fa0d0134390ee5)), closes [#31](https://github.com/MongoCamp/mongocamp-server/issues/31)
+
 ### [1.1.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.1.0...v1.1.1) (2022-07-15)
 
 

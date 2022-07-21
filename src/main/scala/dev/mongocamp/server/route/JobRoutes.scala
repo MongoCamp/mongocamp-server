@@ -3,14 +3,14 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.jobs.JobPlugin
-import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonResult}
+import dev.mongocamp.server.model.{ JobConfig, JobInformation, JsonResult }
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -75,7 +75,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
   def updateJob(parameter: (String, String, JobConfig)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
     Future.successful(Right({
       val jobConfig = parameter._3
-      val updated     = JobPlugin.updateJob(parameter._1, parameter._2, jobConfig)
+      val updated   = JobPlugin.updateJob(parameter._1, parameter._2, jobConfig)
       if (updated) {
         Some(JobPlugin.convertToJobInformation(jobConfig))
       }
