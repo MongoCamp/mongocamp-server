@@ -2,9 +2,8 @@ package dev.mongocamp.server.route
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
-import dev.mongocamp.server.jobs.JobPlugin
 import dev.mongocamp.server.model.{ JobConfig, JobInformation, JsonResult }
-import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job

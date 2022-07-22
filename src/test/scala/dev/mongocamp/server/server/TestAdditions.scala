@@ -5,9 +5,9 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder}
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.database.{JobDao, MongoDatabase}
-import dev.mongocamp.server.jobs.JobPlugin
 import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.model.auth.{Grant, Role, UserInformation}
+import dev.mongocamp.server.plugin.JobPlugin
 import dev.mongocamp.server.service.SystemFileService
 import org.joda.time.DateTime
 import sttp.capabilities

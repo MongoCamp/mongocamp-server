@@ -1,18 +1,17 @@
-package dev.mongocamp.server.jobs
+package dev.mongocamp.server.plugin
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.exception.ErrorCodes.{ jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated }
+import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated}
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.model.{ JobConfig, JobInformation }
-import dev.mongocamp.server.plugin.ServerPlugin
+import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.service.ReflectionService
 import org.mongodb.scala.model.IndexOptions
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
 import org.quartz.impl.StdSchedulerFactory
-import org.quartz.{ CronScheduleBuilder, Job, JobKey, Trigger }
+import org.quartz.{CronScheduleBuilder, Job, JobKey, Trigger}
 import sttp.model.StatusCode
 
 import java.util.Date
@@ -41,13 +40,13 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     val schedulerTriggerList        = JobPlugin.getTriggerList(jobConfig.name, jobConfig.group)
     var nextFireTime: Option[Date]  = None
     var lastFireTime: Option[Date]  = None
-    var scheduleIno: Option[String] = None
+    var scheduleInfo: Option[String] = None
     if (schedulerTriggerList.nonEmpty) {
       nextFireTime = Option(schedulerTriggerList.map(_.getNextFireTime).min)
       lastFireTime = Option(schedulerTriggerList.map(_.getPreviousFireTime).max)
     }
     else {
-      scheduleIno = Some(s"Job `${jobConfig.name}` in group `${jobConfig.group}` is not scheduled.")
+      scheduleInfo = Some(s"Job `${jobConfig.name}` in group `${jobConfig.group}` is not scheduled.")
     }
     JobInformation(
       jobConfig.name,
@@ -58,7 +57,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       jobConfig.priority,
       lastFireTime,
       nextFireTime,
-      scheduleIno
+      scheduleInfo
     )
   }
 
