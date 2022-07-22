@@ -6,4 +6,6 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - init: npm install
+  - init: |
+      npm install
+      sbt compile

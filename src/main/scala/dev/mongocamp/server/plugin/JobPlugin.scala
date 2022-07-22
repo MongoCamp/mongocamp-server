@@ -3,8 +3,11 @@ package dev.mongocamp.server.plugin
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.job.{CreateJobEvent, DeleteJobEvent, UpdateJobEvent}
 import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated}
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.service.ReflectionService
 import org.mongodb.scala.model.IndexOptions
@@ -61,7 +64,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     )
   }
 
-  def addJob(jobConfig: JobConfig): Boolean = {
+  def addJob(userInformation: UserInformation, jobConfig: JobConfig): Boolean = {
     val jobClass = getJobClass(jobConfig)
     val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
       jobClass.getSimpleName
@@ -75,6 +78,9 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       val jobConfigDetail = jobConfig.copy(name = internalJobName)
       val inserted        = MongoDatabase.jobDao.insertOne(jobConfigDetail).result()
       reloadJobs()
+      if (inserted.wasAcknowledged()) {
+        EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig))
+      }
       inserted.wasAcknowledged()
     }
     else {
@@ -106,7 +112,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     jobClass
   }
 
-  def updateJob(groupName: String, jobName: String, jobConfig: JobConfig): Boolean = {
+  def updateJob(userInformation: UserInformation, groupName: String, jobName: String, jobConfig: JobConfig): Boolean = {
     val jobExists = MongoDatabase.jobDao.find(Map("name" -> jobName, "group" -> groupName)).resultOption().isDefined
 
     if (!jobExists) {
@@ -129,17 +135,23 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     if (couldUpdate) {
       val updateResponse = MongoDatabase.jobDao.replaceOne(Map("name" -> jobName, "group" -> groupName), jobConfig).result()
       reloadJobs()
-      updateResponse.wasAcknowledged()
+      if (updateResponse.getModifiedCount > 0) {
+        EventSystem.eventStream.publish(UpdateJobEvent(userInformation, jobName, groupName, jobConfig))
+      }
+      updateResponse.wasAcknowledged() && updateResponse.getModifiedCount > 0
     }
     else {
       throw MongoCampException(s"$jobName with group $groupName is already exists. Could not rename.", StatusCode.PreconditionFailed, jobCouldNotUpdated)
     }
   }
 
-  def deleteJob(groupName: String, jobName: String): Boolean = {
+  def deleteJob(userInformation: UserInformation, groupName: String, jobName: String): Boolean = {
     val deleteResponse = MongoDatabase.jobDao.deleteMany(Map("name" -> jobName, "group" -> groupName)).result()
     reloadJobs()
-    deleteResponse.wasAcknowledged()
+    if (deleteResponse.getDeletedCount > 0) {
+      EventSystem.eventStream.publish(DeleteJobEvent(userInformation, jobName, groupName))
+    }
+    deleteResponse.wasAcknowledged() && deleteResponse.getDeletedCount > 0
   }
 
   def executeJob(groupName: String, jobName: String): Boolean = {
