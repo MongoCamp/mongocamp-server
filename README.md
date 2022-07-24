@@ -7,6 +7,8 @@
 Universal REST Handling for MongoDB ....
 
 ### Contributing
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/MongoCamp/mongocamp-server)
+
 If you find this library helpfull, so you can see here how you can help:
 - Send a pull request with your features and bug fixes
 - Help users resolve their [issues](https://github.com/mongocamp/mongocamp-server/issues).
