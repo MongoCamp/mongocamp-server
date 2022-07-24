@@ -9,3 +9,12 @@ tasks:
   - init: |
       npm install
       sbt compile
+
+jetbrains:
+  intellij:
+    plugins:
+      - zielu.gittoolbox
+      - com.github.lppedd.idea-conventional-commit
+      - org.intellij.scala
+    prebuilds:
+      version: stable
