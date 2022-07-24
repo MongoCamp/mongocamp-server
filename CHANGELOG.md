@@ -1,3 +1,17 @@
+### [1.2.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.2.0...v1.2.1) (2022-07-24)
+
+
+### Bug Fixes
+
+* changes for events in jobs ([f4e568f](https://github.com/MongoCamp/mongocamp-server/commit/f4e568f7358174d6ec282db9eb8e75bca9a5b758))
+
+
+### Features
+
+* Events for Jobs Plugin ([5e26d49](https://github.com/MongoCamp/mongocamp-server/commit/5e26d49ca040f04c2821784aa955efdeb15a73eb))
+* **gitpod:** First Try to code at gitpod ([7e2f9ea](https://github.com/MongoCamp/mongocamp-server/commit/7e2f9ea0de35d52e732b494aabf53d5704ce8ed5))
+* **jobs:** Moved JobPlugin to  `plugin` ([3a8afb8](https://github.com/MongoCamp/mongocamp-server/commit/3a8afb868708ced8c89d720756e2b1eda64c94cc))
+
 ## [1.2.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.1.1...v1.2.0) (2022-07-21)
 
 

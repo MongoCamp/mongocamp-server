@@ -3,14 +3,14 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonResult}
-import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
+import dev.mongocamp.server.model.{ JobConfig, JobInformation, JsonResult }
+import dev.mongocamp.server.plugin.{ JobPlugin, RoutesPlugin }
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -72,7 +72,10 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .name("updateJob")
     .serverLogic(auth => parameter => updateJob(auth, parameter))
 
-  def updateJob(auth: UserInformation,parameter: (String, String, JobConfig)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
+  def updateJob(
+      auth: UserInformation,
+      parameter: (String, String, JobConfig)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
     Future.successful(Right({
       val jobConfig = parameter._3
       val updated   = JobPlugin.updateJob(auth, parameter._1, parameter._2, jobConfig)
@@ -92,9 +95,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Delete Job and reload all Job Information")
     .method(Method.DELETE)
     .name("deleteJob")
-    .serverLogic(auth => parameter => deleteJob(auth,parameter))
+    .serverLogic(auth => parameter => deleteJob(auth, parameter))
 
-  def deleteJob(auth: UserInformation,parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def deleteJob(auth: UserInformation, parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
     Future.successful(Right({
       JsonResult(JobPlugin.deleteJob(auth, parameter._1, parameter._2))
     }))
