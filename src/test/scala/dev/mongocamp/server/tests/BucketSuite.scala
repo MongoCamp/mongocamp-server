@@ -2,7 +2,7 @@ package dev.mongocamp.server.tests
 
 import better.files.File
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.client.api.{ BucketApi, DatabaseApi }
+import dev.mongocamp.server.client.api.{BucketApi, DatabaseApi}
 import dev.mongocamp.server.database.MongoDatabase
 
 import scala.util.Random
@@ -25,7 +25,7 @@ class BucketSuite extends BaseSuite {
     val maxSize = 401100
     assertEquals(response.size > minSize, true, s"size (${response.size}) is not larger than $minSize")
     assertEquals(response.size < maxSize, true, s"size (${response.size}) is not smaller than $maxSize")
-    val minObjectSize = 100230
+    val minObjectSize = 100225
     val maxObjectSize = 100260
     assertEquals(response.avgObjectSize > minObjectSize, true, s"avgObjectSize (${response.avgObjectSize}) is not larger than $minObjectSize")
     assertEquals(response.avgObjectSize < maxObjectSize, true, s"avgObjectSize (${response.avgObjectSize}) is not smaller than $maxObjectSize")
