@@ -1,20 +1,20 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
+import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder, TokenCache}
 import dev.mongocamp.server.config.ConfigHolder
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.user.{ LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent }
-import dev.mongocamp.server.exception.{ ErrorCodes, ErrorDescription, MongoCampException }
+import dev.mongocamp.server.event.user.{LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent}
+import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.JsonResult
 import dev.mongocamp.server.model.auth._
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
+import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{ auth, query }
 
 import scala.concurrent.Future
 
@@ -139,28 +139,20 @@ object AuthRoutes extends BaseRoute {
   val updateApiKeyEndpoint = authBase
     .in("profile")
     .in("apikey")
-    .in(query[Option[String]]("userid").description("UserId to update or create the ApiKey"))
     .out(jsonBody[JsonResult[String]])
     .summary("Update ApiKey")
     .description("Generate new ApiKey of logged in User")
     .method(Method.PATCH)
     .name("generateNewApiKey")
-    .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate))
+    .serverLogic(loggedInUser => _ => updateApiKey(loggedInUser))
 
   def updateApiKey(
-      loggedInUser: UserInformation,
-      loginToUpdate: Option[String]
+      loggedInUser: UserInformation
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[String]]] = {
     Future.successful {
-      val userId = loginToUpdate.getOrElse(loggedInUser.userId)
-      if (loggedInUser.userId == userId || loggedInUser.isAdmin) {
-        val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)
-        EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, userId))
-        Right(JsonResult(result))
-      }
-      else {
-        throw MongoCampException.unauthorizedException("user not authorized to update password for other user", ErrorCodes.unauthorizedUserForOtherUser)
-      }
+      val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(loggedInUser.userId)
+      EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, loggedInUser.userId))
+      Right(JsonResult(result))
     }
   }
 
