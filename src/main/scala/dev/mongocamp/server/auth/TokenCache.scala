@@ -5,16 +5,26 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.AuthHolder.handler
 import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
+import dev.mongocamp.server.jobs.CleanUpTokenJob
+import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.model.auth.{TokenCacheElement, UserInformation}
+import dev.mongocamp.server.plugin.JobPlugin
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.util.Try
 
 object TokenCache {
   val keyToken   = "token"
   val keyValidTo = "validTo"
 
+  private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
+
+  Try {
+    val cleanUpJobClass = classOf[CleanUpTokenJob]
+    JobPlugin.addJob(JobConfig(cleanUpJobClass.getSimpleName, cleanUpJobClass.getName, "", "0 0/5 * ? * * *", "CleanUp", 10))
+  }
   private def authTokenCacheDB = ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
 
   if (authTokenCacheDB) {
@@ -31,8 +41,6 @@ object TokenCache {
       FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
     }
   }
-
-  private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
 
   def validateToken(token: String): Option[UserInformation] = {
     val cachedToken = internalTokenCache.getIfPresent(token)

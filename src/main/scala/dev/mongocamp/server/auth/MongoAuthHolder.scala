@@ -35,6 +35,7 @@ class MongoAuthHolder extends AuthHolder {
           .insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, roles = List(roleName)))
           .result()
         userDao.createUniqueIndexForField(KeyUserId).result()
+        userDao.createUniqueIndexForField(KeyApiKey).result()
 
         rolesDao
           .insertOne(
