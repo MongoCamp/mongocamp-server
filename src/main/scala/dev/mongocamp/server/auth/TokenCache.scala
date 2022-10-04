@@ -22,7 +22,7 @@ object TokenCache {
     tokenCacheDao.createExpiringIndexForField(keyValidTo, 1.seconds).result()
   }
 
-  private lazy val cacheDuration: FiniteDuration = {
+  def cacheDuration: FiniteDuration = {
     if (authTokenCacheDB) {
       FiniteDuration(5, TimeUnit.MINUTES)
     }

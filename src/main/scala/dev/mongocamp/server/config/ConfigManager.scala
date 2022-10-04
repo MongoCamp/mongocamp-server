@@ -1,5 +1,6 @@
 package dev.mongocamp.server.config
 
+import com.github.blemale.scaffeine.Scaffeine
 import com.typesafe.config
 import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
@@ -9,7 +10,7 @@ import io.circe.parser.decode
 import sttp.model.StatusCode
 
 import scala.collection.mutable
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 
 object ConfigManager {
 
@@ -17,18 +18,23 @@ object ConfigManager {
 
   private lazy val nonPersistentConfigs: mutable.Map[String, MongoCampConfiguration] = mutable.Map[String, MongoCampConfiguration]()
 
+  private lazy val configCache = Scaffeine().recordStats().expireAfterWrite(15.minutes).build[String, MongoCampConfiguration]()
+
   def registerNonPersistentConfig(configKey: String, configType: String, value: Option[Any] = None, comment: String = ""): Boolean = {
     val internalValue = if (value.isDefined) {
       value.get
-    } else {
+    }
+    else {
       val envValue = loadEnvValue(configKey)
       if (envValue.isDefined) {
         envValue.get
-      } else {
+      }
+      else {
         try {
           val scalaConfigValue = conf.getValue(configKey)
           scalaConfigValue.unwrapped()
-        } catch {
+        }
+        catch {
           case e: Exception =>
             null
         }
@@ -86,8 +92,13 @@ object ConfigManager {
       nonPersistentConfigs.get(key)
     }
     else {
-      checkAndUpdateWithEnv(key)
-      getConfigFromDatabase(key)
+      val cachedOption = configCache.getIfPresent(key)
+      if (cachedOption.isDefined) {
+        cachedOption
+      } else {
+        checkAndUpdateWithEnv(key)
+        getConfigFromDatabase(key)
+      }
     }
   }
 
@@ -112,6 +123,7 @@ object ConfigManager {
       if (dbOption.isDefined) {
         val mongoCampConfiguration = dbOption.get.copy(value = value, comment = commentOption.getOrElse(dbOption.get.comment))
         val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
+        configCache.invalidate(key)
         replaceResult.wasAcknowledged()
       }
       else {
@@ -128,8 +140,9 @@ object ConfigManager {
       loadEnvValue(key)
         .map(s => convertStringToValue(s, dbConfig.configType))
         .map(envConfigValue => {
-          if (dbConfig.value.equals(envConfigValue)) {
+          if (!dbConfig.value.equals(envConfigValue)) {
             val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
+            configCache.invalidate(key)
             val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
             replaceResult.wasAcknowledged()
           }
@@ -172,8 +185,10 @@ object ConfigManager {
       }
     }
     val isIntType = configType.equalsIgnoreCase(invalidConfInt) || configType.toLowerCase.contains(invalidConfInt.toLowerCase)
-    val isLongType = configType.equalsIgnoreCase(MongoCampConfiguration.confTypeLong) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeLong.toLowerCase)
-    val isDoubleType = configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDouble) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeDouble.toLowerCase)
+    val isLongType =
+      configType.equalsIgnoreCase(MongoCampConfiguration.confTypeLong) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeLong.toLowerCase)
+    val isDoubleType =
+      configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDouble) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeDouble.toLowerCase)
     var configValue = value
     if (value.isDefined) {
       value.get match {
@@ -260,7 +275,7 @@ object ConfigManager {
       }
     }
 
-    def generateConfigurationInternal : MongoCampConfiguration = {
+    def generateConfigurationInternal: MongoCampConfiguration = {
       var configurationValue = configValue.getOrElse(None)
       if (configurationValue.isInstanceOf[Some[_]]) {
         configurationValue = configurationValue.asInstanceOf[Some[_]].get
@@ -289,14 +304,17 @@ object ConfigManager {
         if (!configValue.value.isInstanceOf[Option[_]]) {
           val myConfType = if (configValue.configType.toLowerCase.contains("Option".toLowerCase)) {
             configValue.configType
-          } else {
+          }
+          else {
             s"Option[${configValue.configType}]"
           }
           configValue.copy(value = Option(configValue.value), configType = myConfType)
-        } else {
+        }
+        else {
           configValue
         }
-      } else {
+      }
+      else {
         throw MongoCampException(s"invalid configuration value $configValue for type $configType", StatusCode.PreconditionFailed)
       }
     }

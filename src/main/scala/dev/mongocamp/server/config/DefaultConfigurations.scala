@@ -46,7 +46,7 @@ object DefaultConfigurations {
     registerNonPersistentConfig(ConfigKeyConnectionAuthDb, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyAuthPrefix, MongoCampConfiguration.confTypeString)
 
-    ConfigDao().createIndex(Map("key" -> 1)).result()
+    ConfigDao().createUniqueIndexForField("key").result()
 
     registerConfig(ConfigKeyServerInterface, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
@@ -67,13 +67,14 @@ object DefaultConfigurations {
     registerConfig(ConfigKeyAuthUsers, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
     registerConfig(ConfigKeyAuthRoles, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
 
-    registerConfig(ConfigKeyFileHandler, MongoCampConfiguration.confTypeString)
+    registerConfig(ConfigKeyFileHandler, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyFileCache, MongoCampConfiguration.confTypeString)
 
     registerConfig(ConfigKeyCorsHeadersAllowed, s"List[${MongoCampConfiguration.confTypeString}]")
     registerConfig(ConfigKeyCorsHeadersExposed, s"List[${MongoCampConfiguration.confTypeString}]")
     registerConfig(ConfigKeyCorsOriginsAllowed, s"List[${MongoCampConfiguration.confTypeString}]")
-    registerConfig(ConfigKeyDocsSwagger, MongoCampConfiguration.confTypeBoolean)
-    registerConfig(ConfigKeyOpenApi, MongoCampConfiguration.confTypeBoolean)
+
+    registerConfig(ConfigKeyDocsSwagger, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+    registerConfig(ConfigKeyOpenApi, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
   }
 }

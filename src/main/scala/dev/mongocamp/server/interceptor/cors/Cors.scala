@@ -4,7 +4,7 @@ import sttp.model.Header
 
 object Cors {
 
-  lazy val allowedOrigins: List[String] = ConfigManager.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsOriginsAllowed).filter(_.nonEmpty)
+  def allowedOrigins: List[String] = ConfigManager.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsOriginsAllowed).filter(_.nonEmpty)
 
   val KeyCorsHeaderOrigin  = "Origin"
   val KeyCorsHeaderReferer = "Referer"
