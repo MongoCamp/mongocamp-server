@@ -1,10 +1,10 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.exception.ErrorDefinition.errorEndpointDefinition
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.model.auth._
 import sttp.model.StatusCode
 import sttp.model.headers.WWWAuthenticateChallenge
@@ -27,9 +27,9 @@ abstract class BaseRoute extends CirceSchema with SchemaDerivation {
     )
     val bearer              = auth.bearer[Option[String]]()
     val basicAuth           = auth.basic[Option[UsernamePassword]](WWWAuthenticateChallenge.basic("mongocamp Login"))
-    val isAuthBasicEnabled  = ConfigHolder.authUseTypeBasic.value
-    val isAuthBearerEnabled = ConfigHolder.authUseTypeBearer.value
-    val isAuthTokenEnabled  = ConfigHolder.authUseTypeToken.value
+    val isAuthBasicEnabled  = ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthBasic)
+    val isAuthBearerEnabled = ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthBearer)
+    val isAuthTokenEnabled  = ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthToken)
 
     val authInput = if (isAuthBearerEnabled && !isAuthBasicEnabled && !isAuthTokenEnabled) {
       bearer.mapTo[AuthInputBearer]

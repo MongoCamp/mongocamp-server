@@ -3,7 +3,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.client.api.AuthApi
 import dev.mongocamp.server.client.model.{Login, LoginResult}
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.server.{TestAdditions, TestServer}
 import io.circe
@@ -72,7 +72,7 @@ class BaseSuite extends munit.FunSuite with LazyLogging {
           MongoDatabase.databaseProvider
             .collectionNames(db)
             .foreach(collection => {
-              if (!collection.startsWith(ConfigHolder.authCollectionPrefix.value)) {
+              if (!collection.startsWith(ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix))) {
                 MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
               }
             })

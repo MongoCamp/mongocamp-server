@@ -2,7 +2,7 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
 import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder, TokenCache}
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.user.{LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent}
 import dev.mongocamp.server.exception.ErrorDescription
@@ -166,7 +166,7 @@ object AuthRoutes extends BaseRoute {
   }
 
   lazy val onlyBearerEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    if (ConfigHolder.authUseTypeBearer.value) {
+    if (ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthBearer)) {
       List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint)
     }
     else {

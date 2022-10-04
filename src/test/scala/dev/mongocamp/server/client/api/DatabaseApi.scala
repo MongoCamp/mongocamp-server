@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.{ DatabaseInfo, JsonResultBoolean }
+import dev.mongocamp.server.client.model.{DatabaseInfo, JsonResultBoolean}
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
@@ -15,7 +15,6 @@ import sttp.client3.circe.asJson
 import sttp.model.Method
 
 object DatabaseApi {
-
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new DatabaseApi(baseUrl)
 }
 

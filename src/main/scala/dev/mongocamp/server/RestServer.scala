@@ -1,22 +1,22 @@
 package dev.mongocamp.server
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
-import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
-import akka.http.scaladsl.server.{ Route, RouteConcatenation }
+import akka.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
+import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.event.http.HttpRequestEvent
-import dev.mongocamp.server.event.listener.{ MetricsLoggingActor, RequestLoggingActor }
-import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
-import dev.mongocamp.server.event.{ Event, EventSystem }
+import dev.mongocamp.server.event.listener.{MetricsLoggingActor, RequestLoggingActor}
+import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
+import dev.mongocamp.server.event.{Event, EventSystem}
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
+import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.ReflectionService
@@ -25,15 +25,15 @@ import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 trait RestServer extends LazyLogging with RouteConcatenation {
 
   implicit val actorSystem: ActorSystem = ActorHandler.requestActorSystem
 
   // init server parameter
-  val interface: String = ConfigHolder.serverInterface.value
-  val port: Int         = ConfigHolder.serverPort.value
+  lazy val interface: String = ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
+  lazy val port: Int         = ConfigManager.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
 
   val serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]
 
@@ -71,7 +71,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
   private def activateServerPlugins(): Unit = {
     ReflectionService
       .instancesForType(classOf[ServerPlugin])
-      .filterNot(plugin => ConfigHolder.pluginsIgnored.value.contains(plugin.getClass.getName))
+      .filterNot(plugin => ConfigManager.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
       .map(plugin => {
         plugin.activate()
         EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
@@ -80,6 +80,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
+    DefaultConfigurations.registerMongoCampServerDefaultConfigs()
     ReflectionService.loadPlugins()
     ReflectionService.registerClassLoaders(getClass)
     doBeforeServerStartUp()
@@ -95,7 +96,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
 
         AuthHolder.handler
 
-        if (ConfigHolder.requestLogging.value) {
+        if (ConfigManager.getConfigValue(DefaultConfigurations.ConfigKeyRequestLogging)) {
           val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
           EventSystem.eventStream.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
         }

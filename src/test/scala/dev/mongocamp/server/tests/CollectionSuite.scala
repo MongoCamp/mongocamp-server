@@ -17,6 +17,7 @@ class CollectionSuite extends BaseSuite {
       List(
         "accounts",
         "admin-test",
+        "mc_configuration",
         "mc_jobs",
         "mc_request_logging",
         "mc_roles",
@@ -29,7 +30,7 @@ class CollectionSuite extends BaseSuite {
         "users"
       )
     )
-    assertEquals(response.size, 12)
+    assertEquals(response.size, 13)
 
   }
 

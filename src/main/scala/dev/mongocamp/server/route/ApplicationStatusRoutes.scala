@@ -1,14 +1,14 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.Server
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.SettingsResponse
-import dev.mongocamp.server.monitoring.{ Metric, MetricsConfiguration }
+import dev.mongocamp.server.monitoring.{Metric, MetricsConfiguration}
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 
@@ -94,12 +94,13 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
 
   def systemSettings(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SettingsResponse]] = {
     Future.successful {
-      val configurations = ListMap(ConfigHolder.allConfigurations.map(config => config.key -> config.value).toMap.toSeq.sortBy(_._1): _*)
+      val configurations: Map[String, Any] =
+        ListMap(ConfigManager.getAllRegisteredConfigurations().map(config => config.key -> config.typedValue()).toMap.toSeq.sortBy(_._1): _*)
       Right(
         SettingsResponse(
           Server.listOfRoutePlugins.map(_.getClass.getName),
           FileAdapterHolder.listOfFilePlugins.map(_.getClass.getName),
-          ConfigHolder.pluginsIgnored.value,
+          ConfigManager.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored),
           configurations
         )
       )

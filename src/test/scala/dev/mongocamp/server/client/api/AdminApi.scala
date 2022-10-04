@@ -14,7 +14,6 @@ import sttp.client3.circe.asJson
 import sttp.model.Method
 
 object AdminApi {
-
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new AdminApi(baseUrl)
 }
 

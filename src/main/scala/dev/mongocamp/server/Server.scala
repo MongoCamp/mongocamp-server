@@ -1,5 +1,5 @@
 package dev.mongocamp.server
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.server.PluginLoadedEvent
 import dev.mongocamp.server.plugin.RoutesPlugin
@@ -15,7 +15,7 @@ object Server extends App with RestServer {
   lazy val listOfRoutePlugins: List[RoutesPlugin] = {
     ReflectionService
       .instancesForType(classOf[RoutesPlugin])
-      .filterNot(plugin => ConfigHolder.pluginsIgnored.value.contains(plugin.getClass.getName))
+      .filterNot(plugin => ConfigManager.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
       .map(plugin => {
         EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
         plugin

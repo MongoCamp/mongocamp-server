@@ -3,29 +3,32 @@ package dev.mongocamp.server.auth
 import com.github.blemale.scaffeine.Scaffeine
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.AuthHolder.handler
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
-import dev.mongocamp.server.model.auth.{ TokenCacheElement, UserInformation }
+import dev.mongocamp.server.model.auth.{TokenCacheElement, UserInformation}
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{ DurationInt, FiniteDuration }
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 
 object TokenCache {
   val keyToken   = "token"
   val keyValidTo = "validTo"
 
-  if (ConfigHolder.authTokenCacheDb.value) {
+  private def authTokenCacheDB = ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
+
+  if (authTokenCacheDB) {
     tokenCacheDao.createUniqueIndexForField(keyToken).result()
     tokenCacheDao.createExpiringIndexForField(keyValidTo, 1.seconds).result()
   }
 
   private lazy val cacheDuration: FiniteDuration = {
-    if (ConfigHolder.authTokenCacheDb.value) {
+    if (authTokenCacheDB) {
       FiniteDuration(5, TimeUnit.MINUTES)
     }
     else {
-      FiniteDuration(ConfigHolder.authTokenExpiring.value.getSeconds, TimeUnit.SECONDS)
+      val duration = ConfigManager.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration)
+      FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
     }
   }
 
@@ -33,7 +36,7 @@ object TokenCache {
 
   def validateToken(token: String): Option[UserInformation] = {
     val cachedToken = internalTokenCache.getIfPresent(token)
-    if (cachedToken.isEmpty && ConfigHolder.authTokenCacheDb.value) {
+    if (cachedToken.isEmpty && authTokenCacheDB) {
       val userOption = tokenCacheDao
         .find(Map(keyToken -> token))
         .resultOption()
@@ -62,8 +65,12 @@ object TokenCache {
 
   def saveToken(token: String, userInformation: UserInformation): Unit = {
     internalTokenCache.put(token, userInformation)
-    val element = TokenCacheElement(token, userInformation.userId, new DateTime().plusSeconds(ConfigHolder.authTokenExpiring.value.getSeconds.toInt).toDate)
-    if (ConfigHolder.authTokenCacheDb.value) {
+    val element = TokenCacheElement(
+      token,
+      userInformation.userId,
+      new DateTime().plusMillis(ConfigManager.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt).toDate
+    )
+    if (authTokenCacheDB) {
       tokenCacheDao.insertOne(element).asFuture()
     }
   }

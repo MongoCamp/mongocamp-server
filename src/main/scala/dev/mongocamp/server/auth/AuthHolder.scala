@@ -1,21 +1,21 @@
 package dev.mongocamp.server.auth
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.ConfigHolder
-import dev.mongocamp.server.config.ConfigHolder.authHandlerType
+import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
+import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userNotFoundException}
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
-import pdi.jwt.{ JwtAlgorithm, JwtCirce, JwtClaim }
+import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
 import sttp.model.StatusCode
 
 import java.security.MessageDigest
 import java.time.Instant
+import scala.concurrent.duration.Duration
 
 trait AuthHolder {
   def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)
@@ -48,13 +48,13 @@ trait AuthHolder {
       content = userProfile.asJson.toString()
     )
     val algo  = JwtAlgorithm.HS256
-    val token = JwtCirce.encode(claim, ConfigHolder.authSecret.value, algo)
+    val token = JwtCirce.encode(claim, ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthSecret), algo)
     token
   }
 
   def generateLoginResult(user: UserInformation) = {
     val resultUser     = user.toResultUser
-    val expirationDate = new DateTime().plusSeconds(ConfigHolder.authTokenExpiring.value.toSeconds.toInt)
+    val expirationDate = new DateTime().plusSeconds(ConfigManager.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toSeconds.toInt)
     val token          = encodeToken(resultUser, expirationDate)
     TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
@@ -63,13 +63,15 @@ trait AuthHolder {
 }
 
 object AuthHolder {
+  private lazy val authHandlerType = ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthHandler)
+  def isMongoDbAuthHolder: Boolean = {
+    authHandlerType.equalsIgnoreCase("mongo")
+  }
 
-  def isMongoDbAuthHolder: Boolean = authHandlerType.value.equalsIgnoreCase("mongo")
-
-  def isStaticAuthHolder: Boolean = authHandlerType.value.equalsIgnoreCase("static")
+  def isStaticAuthHolder: Boolean = authHandlerType.equalsIgnoreCase("static")
 
   lazy val handler: AuthHolder = {
-    authHandlerType.value match {
+    authHandlerType match {
       case s: String if isStaticAuthHolder =>
         new StaticAuthHolder()
       case s: String if isMongoDbAuthHolder =>
