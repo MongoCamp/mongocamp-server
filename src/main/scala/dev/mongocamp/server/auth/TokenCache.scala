@@ -3,12 +3,13 @@ package dev.mongocamp.server.auth
 import com.github.blemale.scaffeine.Scaffeine
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.AuthHolder.handler
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
 import dev.mongocamp.server.jobs.CleanUpTokenJob
 import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.model.auth.{TokenCacheElement, UserInformation}
 import dev.mongocamp.server.plugin.JobPlugin
+import dev.mongocamp.server.service.ConfigurationService
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
@@ -25,7 +26,7 @@ object TokenCache {
     val cleanUpJobClass = classOf[CleanUpTokenJob]
     JobPlugin.addJob(JobConfig(cleanUpJobClass.getSimpleName, cleanUpJobClass.getName, "", "0 0/5 * ? * * *", "CleanUp", 10))
   }
-  private def authTokenCacheDB = ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
+  private def authTokenCacheDB = ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
 
   if (authTokenCacheDB) {
     tokenCacheDao.createUniqueIndexForField(keyToken).result()
@@ -37,7 +38,7 @@ object TokenCache {
       FiniteDuration(5, TimeUnit.MINUTES)
     }
     else {
-      val duration = ConfigManager.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration)
+      val duration = ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration)
       FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
     }
   }
@@ -76,7 +77,7 @@ object TokenCache {
     val element = TokenCacheElement(
       token,
       userInformation.userId,
-      new DateTime().plusMillis(ConfigManager.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt).toDate
+      new DateTime().plusMillis(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt).toDate
     )
     if (authTokenCacheDB) {
       tokenCacheDao.insertOne(element).asFuture()

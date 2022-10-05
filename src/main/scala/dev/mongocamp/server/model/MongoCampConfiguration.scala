@@ -1,7 +1,7 @@
-package dev.mongocamp.server.config
+package dev.mongocamp.server.model
 
-import dev.mongocamp.server.config.MongoCampConfiguration._
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.MongoCampConfiguration._
 import sttp.model.StatusCode
 
 import scala.concurrent.duration.Duration
@@ -23,7 +23,7 @@ case class MongoCampConfiguration(key: String, value: Any, configType: String, c
       if (configType.toLowerCase().startsWith("option")) classOf[Option[valueClass.type]]
       else if (configType.toLowerCase().startsWith("list")) classOf[::[valueClass.type]]
       else valueClass
-    
+
     val response = if (value.isInstanceOf[Option[valueClass.type]]) {
       val valueOption = value.asInstanceOf[Option[A]]
       if(resultClass == classOf[Option[valueClass.type]]){

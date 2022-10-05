@@ -10,7 +10,7 @@ import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, op
 import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.http.HttpRequestEvent
 import dev.mongocamp.server.event.listener.{MetricsLoggingActor, RequestLoggingActor}
 import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
@@ -19,7 +19,7 @@ import dev.mongocamp.server.interceptor.cors.Cors
 import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.ReflectionService
+import dev.mongocamp.server.service.{ConfigurationService, ReflectionService}
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
@@ -32,8 +32,8 @@ trait RestServer extends LazyLogging with RouteConcatenation {
   implicit val actorSystem: ActorSystem = ActorHandler.requestActorSystem
 
   // init server parameter
-  lazy val interface: String = ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
-  lazy val port: Int         = ConfigManager.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
+  lazy val interface: String = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
+  lazy val port: Int         = ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
 
   val serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]
 
@@ -71,7 +71,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
   private def activateServerPlugins(): Unit = {
     ReflectionService
       .instancesForType(classOf[ServerPlugin])
-      .filterNot(plugin => ConfigManager.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
+      .filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
       .map(plugin => {
         plugin.activate()
         EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
@@ -96,7 +96,7 @@ trait RestServer extends LazyLogging with RouteConcatenation {
 
         AuthHolder.handler
 
-        if (ConfigManager.getConfigValue(DefaultConfigurations.ConfigKeyRequestLogging)) {
+        if (ConfigurationService.getConfigValue(DefaultConfigurations.ConfigKeyRequestLogging)) {
           val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
           EventSystem.eventStream.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
         }

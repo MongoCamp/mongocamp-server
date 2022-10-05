@@ -1,7 +1,7 @@
 package dev.mongocamp.server.service
 
 import better.files.File
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import org.reflections.Reflections
 import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
 
@@ -78,7 +78,7 @@ object ReflectionService {
 
   def loadPlugins(): Unit = {
     registerClassLoaders(getClass)
-    val pluginDirectory = File(ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
+    val pluginDirectory = File(ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
     if (pluginDirectory.isDirectory) {
       val listUrl = pluginDirectory.children.map(_.url)
       if (listUrl.nonEmpty) {

@@ -9,14 +9,16 @@ class JobSuite extends BaseSuite {
   val jobsApi: JobsApi = JobsApi()
 
   test("check pre triggered job was running") {
+    // test fails sometime if only JobSuite is running
     val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", adminBearerToken, "", "")())
     assertEquals(CountingTestJob.counter > 0, true)
   }
 
   test("check possible jobs as admin") {
     val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", adminBearerToken, "", "")())
-    assertEquals(jobsList.size, 1)
+    assertEquals(jobsList.size, 2)
     assertEquals(jobsList.head, "dev.mongocamp.server.server.CountingTestJob")
+    assertEquals(jobsList.last, "dev.mongocamp.server.jobs.CleanUpTokenJob")
   }
 
   test("check possible jobs as user") {
@@ -28,7 +30,7 @@ class JobSuite extends BaseSuite {
 
   test("list jobs as admin") {
     val jobsList = executeRequestToResponse(jobsApi.jobsList("", adminBearerToken, "", "")())
-    assertEquals(jobsList.size, 1)
+    assertEquals(jobsList.size, 2)
     val fistJob = jobsList.head
     assertEquals(fistJob.jobClassName, "dev.mongocamp.server.server.CountingTestJob")
     assertEquals(fistJob.name, "CountingTestJob")
@@ -108,11 +110,11 @@ class JobSuite extends BaseSuite {
 
   test("delete job as admin") {
     val jobsList1 = executeRequestToResponse(jobsApi.jobsList("", adminBearerToken, "", "")())
-    assertEquals(jobsList1.size, 2)
+    assertEquals(jobsList1.size, 3)
     val deleteResponse = executeRequestToResponse(jobsApi.deleteJob("", adminBearerToken, "", "")("NewGroup", "RandomNewJobNameChanged"))
     assertEquals(deleteResponse.value, true)
     val jobsList2 = executeRequestToResponse(jobsApi.jobsList("", adminBearerToken, "", "")())
-    assertEquals(jobsList2.size, 1)
+    assertEquals(jobsList2.size, 2)
   }
 
   test("delete job as user") {

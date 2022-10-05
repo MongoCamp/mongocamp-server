@@ -1,4 +1,4 @@
-package dev.mongocamp.server.config
+package dev.mongocamp.server.service
 
 import com.github.blemale.scaffeine.Scaffeine
 import com.typesafe.config
@@ -6,13 +6,14 @@ import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.MongoCampConfiguration
 import io.circe.parser.decode
 import sttp.model.StatusCode
 
 import scala.collection.mutable
 import scala.concurrent.duration._
 
-object ConfigManager {
+object ConfigurationService {
 
   private lazy val conf: config.Config = ConfigFactory.load()
 
@@ -135,7 +136,7 @@ object ConfigManager {
     }
   }
 
-  private[config] def checkAndUpdateWithEnv(key: String): Unit = {
+  private[service] def checkAndUpdateWithEnv(key: String): Unit = {
     getConfigFromDatabase(key).foreach(dbConfig => {
       loadEnvValue(key)
         .map(s => convertStringToValue(s, dbConfig.configType))
@@ -150,7 +151,7 @@ object ConfigManager {
     })
   }
 
-  private[config] def getConfigFromDatabase(key: String): Option[MongoCampConfiguration] = {
+  private[service] def getConfigFromDatabase(key: String): Option[MongoCampConfiguration] = {
     ConfigDao()
       .find(Map("key" -> key))
       .resultOption()
@@ -165,7 +166,7 @@ object ConfigManager {
       )
   }
 
-  private[config] def convertToDbConfiguration(
+  private[service] def convertToDbConfiguration(
       configKey: String,
       configType: String,
       value: Option[Any] = None,
@@ -320,7 +321,8 @@ object ConfigManager {
     }
   }
 
-  private[config] def convertStringToValue(stringValue: String, configType: String): Any = {
+  private[service] def convertStringToValue(stringValue: String, configType: String): Any = {
+
     configType match {
       case s"List[${MongoCampConfiguration.confTypeString}]"  => decode[List[String]](stringValue).getOrElse(List())
       case s"List[${MongoCampConfiguration.confTypeBoolean}]" => decode[List[Boolean]](stringValue).getOrElse(List())

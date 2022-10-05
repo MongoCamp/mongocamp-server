@@ -1,7 +1,7 @@
 package dev.mongocamp.server.auth
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.MongoDatabase.{rolesDao, userDao}
 import dev.mongocamp.server.database.paging.{MongoPaginatedFilter, PaginationInfo}
 import dev.mongocamp.server.exception.MongoCampException
@@ -9,6 +9,7 @@ import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userO
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest.all
 import dev.mongocamp.server.model.auth.{Grant, Role, UpdateRoleRequest, UserInformation}
 import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
+import dev.mongocamp.server.service.ConfigurationService
 import org.mongodb.scala.model.Filters
 import sttp.model.StatusCode
 
@@ -34,8 +35,8 @@ class MongoAuthHolder extends AuthHolder {
         userDao
           .insertOne(UserInformation(userId = generatedUserId, password = encryptPassword(newPassword), apiKey = None, roles = List(roleName)))
           .result()
+
         userDao.createUniqueIndexForField(KeyUserId).result()
-        userDao.createUniqueIndexForField(KeyApiKey).result()
 
         rolesDao
           .insertOne(
@@ -103,7 +104,7 @@ class MongoAuthHolder extends AuthHolder {
 
   def updateApiKeyUser(userId: String): String = {
     val userInformation = findUser(userId)
-    val apiKey          = Random.alphanumeric.take(ConfigManager.getConfigValue[Long](DefaultConfigurations.ConfigKeyAuthApiKeyLength).toInt).mkString
+    val apiKey          = Random.alphanumeric.take(ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyAuthApiKeyLength).toInt).mkString
     val updateResult    = userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(apiKey = Some(apiKey))).result()
     if (updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1) {
       apiKey

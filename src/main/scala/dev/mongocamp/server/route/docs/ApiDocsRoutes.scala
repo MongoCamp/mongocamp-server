@@ -1,9 +1,10 @@
 package dev.mongocamp.server.route.docs
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.route.BaseRoute
+import dev.mongocamp.server.service.ConfigurationService
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
@@ -45,7 +46,7 @@ object ApiDocsRoutes extends BaseRoute {
     val docs = ArrayBuffer[ServerEndpoint[AkkaStreams with WebSockets, Future]]()
 
     val swaggerEnabled = isSwaggerEnabled
-    if (swaggerEnabled || ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyOpenApi)) {
+    if (swaggerEnabled || ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyOpenApi)) {
       val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
         serverEndpoints.map(_.endpoint),
         BuildInfo.name,
@@ -68,6 +69,6 @@ object ApiDocsRoutes extends BaseRoute {
   }
 
   def isSwaggerEnabled: Boolean = {
-    ConfigManager.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyDocsSwagger)
+    ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyDocsSwagger)
   }
 }

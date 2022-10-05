@@ -1,12 +1,13 @@
 package dev.mongocamp.server.auth
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userNotFoundException}
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
+import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
@@ -48,13 +49,13 @@ trait AuthHolder {
       content = userProfile.asJson.toString()
     )
     val algo  = JwtAlgorithm.HS256
-    val token = JwtCirce.encode(claim, ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthSecret), algo)
+    val token = JwtCirce.encode(claim, ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthSecret), algo)
     token
   }
 
   def generateLoginResult(user: UserInformation) = {
     val resultUser     = user.toResultUser
-    val expirationDate = new DateTime().plusSeconds(ConfigManager.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toSeconds.toInt)
+    val expirationDate = new DateTime().plusSeconds(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toSeconds.toInt)
     val token          = encodeToken(resultUser, expirationDate)
     TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
@@ -63,7 +64,7 @@ trait AuthHolder {
 }
 
 object AuthHolder {
-  private lazy val authHandlerType = ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthHandler)
+  private lazy val authHandlerType = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthHandler)
   def isMongoDbAuthHolder: Boolean = {
     authHandlerType.equalsIgnoreCase("mongo")
   }

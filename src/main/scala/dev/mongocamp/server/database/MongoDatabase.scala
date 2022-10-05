@@ -3,11 +3,12 @@ package dev.mongocamp.server.database
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
 import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.{ConfigManager, DefaultConfigurations}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.interceptor.RequestLogging
 import dev.mongocamp.server.model.auth.{Grant, Role, TokenCacheElement, UserInformation}
 import dev.mongocamp.server.model.{DBFileInformation, JobConfig}
 import dev.mongocamp.server.monitoring.MetricsConfiguration
+import dev.mongocamp.server.service.ConfigurationService
 import io.micrometer.core.instrument.binder.mongodb.{MongoMetricsCommandListener, MongoMetricsConnectionPoolListener}
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
@@ -15,7 +16,7 @@ import org.mongodb.scala.bson.codecs.Macros._
 
 object MongoDatabase {
 
-  private lazy val collectionPrefix = ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+  private lazy val collectionPrefix = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
 
   private[database] lazy val CollectionNameConfiguration = s"${collectionPrefix}configuration"
   private[database] lazy val CollectionNameUsers         = s"${collectionPrefix}users"
@@ -32,13 +33,13 @@ object MongoDatabase {
 
   lazy val databaseProvider: DatabaseProvider = {
     val connection = MongoConfig(
-      ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase),
-      ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost),
-      ConfigManager.getConfigValue[Long](DefaultConfigurations.ConfigKeyConnectionPort).toInt,
+      ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase),
+      ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost),
+      ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyConnectionPort).toInt,
       s"${BuildInfo.name}/${BuildInfo.version}",
-      ConfigManager.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionUsername),
-      ConfigManager.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionPassword),
-      ConfigManager.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionAuthDb),
+      ConfigurationService.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionUsername),
+      ConfigurationService.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionPassword),
+      ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionAuthDb),
       connectionPoolListener = List(new MongoMetricsConnectionPoolListener(MetricsConfiguration.mongoDbRegistry)),
       commandListener = List(new MongoMetricsCommandListener(MetricsConfiguration.mongoDbRegistry))
     )

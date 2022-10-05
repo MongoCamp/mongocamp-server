@@ -1,8 +1,9 @@
 package dev.mongocamp.server.config
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.config.ConfigManager.{registerConfig, registerNonPersistentConfig}
 import dev.mongocamp.server.database.ConfigDao
+import dev.mongocamp.server.model.MongoCampConfiguration
+import dev.mongocamp.server.service.ConfigurationService._
 
 import scala.util.Random
 
