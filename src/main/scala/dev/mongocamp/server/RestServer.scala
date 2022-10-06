@@ -89,13 +89,13 @@ trait RestServer extends LazyLogging with RouteConcatenation {
       .newServerAt(interface, port)
       .bindFlow(routeHandler(routes))
       .map(serverBinding => {
+        AuthHolder.handler
+
         logger.warn("init server with interface: %s at port: %s".format(interface, port))
 
         if (ApiDocsRoutes.isSwaggerEnabled) {
           println("For Swagger go to: http://%s:%s/docs".format(interface, port))
         }
-
-        AuthHolder.handler
 
         if (ConfigurationService.getConfigValue(DefaultConfigurations.ConfigKeyRequestLogging)) {
           val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
