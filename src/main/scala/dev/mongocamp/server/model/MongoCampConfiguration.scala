@@ -54,7 +54,7 @@ case class MongoCampConfiguration(key: String, value: Any, configType: String, c
       else if (configType.equalsIgnoreCase(confTypeLong) && value.isInstanceOf[Int]) {
         value.asInstanceOf[Int].toLong
       }
-      else if (value.getClass.equals(resultClass) && value.isInstanceOf[A]) {
+      else if (value != null && value.getClass.equals(resultClass) && value.isInstanceOf[A]) {
         value
       }
       else if (configType.equalsIgnoreCase(s"List[$confTypeLong]") && value.isInstanceOf[List[Int]]) {

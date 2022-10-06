@@ -19,7 +19,7 @@ import dev.mongocamp.server.interceptor.cors.Cors
 import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ConfigurationService, ReflectionService}
+import dev.mongocamp.server.service.{ConfigurationService, PluginService, ReflectionService}
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
@@ -81,7 +81,8 @@ trait RestServer extends LazyLogging with RouteConcatenation {
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
     DefaultConfigurations.registerMongoCampServerDefaultConfigs()
-    ReflectionService.loadPlugins()
+    PluginService.downloadPlugins()
+    PluginService.loadPlugins()
     ReflectionService.registerClassLoaders(getClass)
     doBeforeServerStartUp()
     Http()

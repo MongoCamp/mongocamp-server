@@ -16,6 +16,10 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
+val sttClientVersion = "3.6.2"
+libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion
+libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % sttClientVersion
+
 libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.2.0"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11"

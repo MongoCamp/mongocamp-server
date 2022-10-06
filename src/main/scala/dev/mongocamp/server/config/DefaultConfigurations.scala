@@ -13,6 +13,8 @@ object DefaultConfigurations {
   lazy val ConfigKeyRequestLogging       = "requestlogging.enabled"
   lazy val ConfigKeyPluginsIgnored       = "plugins.ignored"
   lazy val ConfigKeyPluginsDirectory     = "plugins.directory"
+  lazy val ConfigKeyPluginsUrls          = "plugins.urls"
+  lazy val ConfigKeyHttpClientHeaders    = "http.client.headers"
   lazy val ConfigKeyAuthHandler          = "auth.handler"
   lazy val ConfigKeyAuthSecret           = "auth.secret"
   lazy val ConfigKeyAuthApiKeyLength     = "auth.apikeylength"
@@ -54,7 +56,10 @@ object DefaultConfigurations {
     registerConfig(ConfigKeyRequestLogging, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
 
     registerConfig(ConfigKeyPluginsIgnored, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsUrls, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsDirectory, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
+
+    registerConfig(ConfigKeyHttpClientHeaders, MongoCampConfiguration.confTypeString)
 
     registerConfig(ConfigKeyAuthHandler, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyAuthSecret, MongoCampConfiguration.confTypeString, Some(Random.alphanumeric.take(32).mkString))
