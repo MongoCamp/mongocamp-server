@@ -15,15 +15,17 @@ object PluginService extends LazyLogging {
   private def getChildFiles(dir: File): List[File] = {
     if (dir.isDirectory) {
       val files = ArrayBuffer[File]()
-      dir.children.toList.foreach(file =>{
-        if(file.isDirectory) {
+      dir.children.toList.foreach(file => {
+        if (file.isDirectory) {
           files ++= getChildFiles(file)
-        } else {
+        }
+        else {
           files += file
         }
       })
       files.toList
-    } else {
+    }
+    else {
       List()
     }
   }
@@ -39,7 +41,8 @@ object PluginService extends LazyLogging {
           try {
             Vfs.fromURL(url)
             true
-          } catch {
+          }
+          catch {
             case _: Exception =>
               false
           }
@@ -52,16 +55,21 @@ object PluginService extends LazyLogging {
   }
 
   def downloadPlugins(): Unit = {
-    val pluginDirectory = File(ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory)).createChild("managed", asDirectory = true, createParents = true)
-    val pluginsToDownload = ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsUrls)
-    pluginDirectory.children.foreach(_.delete())
-    pluginsToDownload.foreach(pluginUrl => {
-      try
-        HttpClientService.downloadToFile(pluginUrl, pluginDirectory)
-      catch {
-        case e: MongoCampException => logger.error(s"Error on downloading plugin from $pluginUrl with following error message ${e.getMessage}")
-      }
-    })
+    val pluginDirectory = File(ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
+    if (pluginDirectory.isWritable) {
+      val managedPluginDirectory = pluginDirectory.createChild("managed", asDirectory = true, createParents = true)
+      val pluginsToDownload      = ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsUrls)
+      managedPluginDirectory.children.foreach(_.delete())
+      pluginsToDownload.foreach(pluginUrl => {
+        try
+          HttpClientService.downloadToFile(pluginUrl, managedPluginDirectory)
+        catch {
+          case e: MongoCampException => logger.error(s"Error on downloading plugin from $pluginUrl with following error message ${e.getMessage}")
+        }
+      })
+    } else {
+      logger.error(s"could not manage plugins from server side. ${pluginDirectory.toString()} is not writeable.")
+    }
   }
 
 }

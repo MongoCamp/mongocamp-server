@@ -5,7 +5,7 @@ import dev.mongocamp.server.ActorHandler
 import dev.mongocamp.server.client.api.InformationApi
 
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ Await, ExecutionContext, Future }
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.Random
 
 object TestServer extends LazyLogging {
@@ -53,6 +53,8 @@ object TestServer extends LazyLogging {
   }
 
   def isServerRunning(): Boolean = serverRunning
-  def serverBaseUrl: String      = "http://%s:%s".format(dev.mongocamp.server.Server.interface, dev.mongocamp.server.Server.port)
+  def serverBaseUrl: String      = {
+    "http://%s:%s".format(dev.mongocamp.server.Server.interface, dev.mongocamp.server.Server.port)
+  }
 
 }
