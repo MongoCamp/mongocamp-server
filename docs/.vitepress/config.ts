@@ -67,7 +67,8 @@ function sidebarConfig() {
             text: 'Config',
             items: [
                 { text: 'Introduction', link: '/config/' },
-                { text: 'Docker Config', link: '/config/docker' },
+                { text: 'Environment Config', link: '/config/environment' },
+                { text: 'DB or Environment', link: '/config/environment-db' },
             ]
         }
     ]
