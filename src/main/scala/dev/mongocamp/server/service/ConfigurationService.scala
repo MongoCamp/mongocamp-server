@@ -32,7 +32,8 @@ object ConfigurationService {
       }
       else {
         try {
-          val scalaConfigValue = conf.getValue(configKey)
+          val key = configKey.toLowerCase().replace("_", ".")
+          val scalaConfigValue = conf.getValue(key)
           scalaConfigValue.unwrapped()
         }
         catch {
@@ -63,7 +64,8 @@ object ConfigurationService {
       val configToInsert: MongoCampConfiguration = {
         try {
           if (value.isEmpty) {
-            val scalaConfigValue = conf.getValue(configKey)
+            val key = configKey.toLowerCase().replace("_", ".")
+            val scalaConfigValue = conf.getValue(key)
             dbConfiguration.copy(value = scalaConfigValue.unwrapped())
           }
           else {
@@ -141,7 +143,7 @@ object ConfigurationService {
       loadEnvValue(key)
         .map(s => convertStringToValue(s, dbConfig.configType))
         .map(envConfigValue => {
-          if (!dbConfig.value.equals(envConfigValue)) {
+          if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
             val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
             configCache.invalidate(key)
             val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
@@ -340,13 +342,12 @@ object ConfigurationService {
   }
 
   private def loadEnvValue(key: String): Option[String] = {
-    val systemSettingKey = key.toUpperCase().replace(".", "_")
-    val envSetting       = System.getenv(systemSettingKey)
+    val envSetting       = System.getenv(key)
     if (envSetting != null && !"".equalsIgnoreCase(envSetting.trim)) {
       Some(envSetting)
     }
     else {
-      val propertySetting = System.getProperty(systemSettingKey)
+      val propertySetting = System.getProperty(key)
       if (propertySetting != null && !"".equalsIgnoreCase(propertySetting.trim)) {
         Some(propertySetting)
       }

@@ -66,7 +66,9 @@ case class MongoCampConfiguration(key: String, value: Any, configType: String, c
       else {
         if (configType.toLowerCase.contains("List".toLowerCase)) List()
         else if (configType.toLowerCase.contains("Option".toLowerCase)) None
-        else throw MongoCampException("no value set in database", StatusCode.PreconditionFailed)
+        else {
+          throw MongoCampException("no value set in database", StatusCode.PreconditionFailed)
+        }
       }
     }
     if (response.isInstanceOf[A]) {
