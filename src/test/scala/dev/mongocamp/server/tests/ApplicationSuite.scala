@@ -12,7 +12,7 @@ class ApplicationSuite extends BaseSuite {
     assertEquals(systemSettings.routesPlugins.size, 7)
     assertEquals(systemSettings.ignoredPlugins.size, 0)
     assertEquals(systemSettings.configurations.size, 31)
-    assertEquals(systemSettings.configurations("cors.headers.allowed"), List("Authorization", "Content-Type", "X-Requested-With", "X-AUTH-APIKEY"))
+    assertEquals(systemSettings.configurations("CORS_HEADERS_ALLOWED"), List("Authorization", "Content-Type", "X-Requested-With", "X-AUTH-APIKEY"))
   }
 
   test("Show all JVM Metrics") {

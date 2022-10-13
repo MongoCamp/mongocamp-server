@@ -164,8 +164,8 @@ class ConfigSuite extends munit.FunSuite with LazyLogging {
   }
 
   test("register and test option string configuration with setting") {
-    val testConfig2 = "test.config.for.you"
-    System.setProperty(testConfig2.replace('.', '_').toUpperCase, "hello world")
+    val testConfig2 = "TEST_CONFIG_FOR_YOU"
+    System.setProperty(testConfig2, "hello world")
     registerNonPersistentConfig(testConfig2, s"Option[${MongoCampConfiguration.confTypeString}]")
     val config2 = getConfig(testConfig2)
     assertEquals(config2.get.configType, s"Option[${MongoCampConfiguration.confTypeString}]")
