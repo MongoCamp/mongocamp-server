@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.Metric
+import dev.mongocamp.server.client.model.{JsonValueAny, JsonValueBoolean, Metric, MongoCampConfiguration}
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.model.SettingsResponse
 import dev.mongocamp.server.server.TestServer
@@ -97,4 +97,83 @@ class ApplicationApi(baseUrl: String) extends CirceSchema {
       .bearer(bearerToken)
       .response(asJson[SettingsResponse])
 
+  /**
+   * Update Configuration with the value
+   *
+   * Expected answers:
+   * code 200 : JsonValueBoolean
+   * code 400 : String (Invalid value for: body)
+   * code 0 : ErrorDescription
+   * Headers :
+   * x-error-code - Error Code
+   * x-error-message - Message of the MongoCampException
+   * x-error-additional-info - Additional information for the MongoCampException
+   *
+   * Available security schemes:
+   * apiKeyAuth (apiKey)
+   * httpAuth (http)
+   * httpAuth1 (http)
+   *
+   * @param configurationKey configurationKey to edit
+   * @param jsonValueAny
+   */
+  def updateConfiguration(apiKey: String, bearerToken: String)(configurationKey: String, jsonValueAny: JsonValueAny)=
+    basicRequest
+      .method(Method.PATCH, uri"$baseUrl/system/configurations/${configurationKey}")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth.bearer(bearerToken)
+      .body(jsonValueAny)
+      .response(asJson[JsonValueBoolean])
+
+  /**
+   * List all Configurations or filtered
+   *
+   * Expected answers:
+   * code 200 : Seq[MongoCampConfiguration]
+   * code 0 : ErrorDescription
+   * Headers :
+   * x-error-code - Error Code
+   * x-error-message - Message of the MongoCampException
+   * x-error-additional-info - Additional information for the MongoCampException
+   *
+   * Available security schemes:
+   * apiKeyAuth (apiKey)
+   * httpAuth (http)
+   * httpAuth1 (http)
+   */
+  def listConfigurations(apiKey: String, bearerToken: String)()=
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/system/configurations")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth.bearer(bearerToken)
+      .response(asJson[Seq[MongoCampConfiguration]])
+
+
+  /**
+   * Get Configuration for key
+   *
+   * Expected answers:
+   * code 200 : MongoCampConfiguration
+   * code 0 : ErrorDescription
+   * Headers :
+   * x-error-code - Error Code
+   * x-error-message - Message of the MongoCampException
+   * x-error-additional-info - Additional information for the MongoCampException
+   *
+   * Available security schemes:
+   * apiKeyAuth (apiKey)
+   * httpAuth (http)
+   * httpAuth1 (http)
+   *
+   * @param configurationKey configurationKey to get
+   */
+  def getConfig(apiKey: String, bearerToken: String)(configurationKey: String) =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/system/configurations/${configurationKey}")
+      .contentType("application/json")
+      .header("X-AUTH-APIKEY", apiKey)
+      .auth.bearer(bearerToken)
+      .response(asJson[MongoCampConfiguration])
 }

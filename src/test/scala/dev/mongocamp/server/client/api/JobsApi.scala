@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.{JobConfig, JobInformation, JsonResultBoolean}
+import dev.mongocamp.server.client.model.{JobConfig, JobInformation, JsonValueBoolean}
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
 import sttp.client3.circe.asJson
@@ -66,7 +66,7 @@ class JobsApi(baseUrl: String) {
       .bearer(bearerToken)
       .auth
       .basic(username, password)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
   }
 
   /** Execute scheduled Job manually
@@ -90,7 +90,7 @@ class JobsApi(baseUrl: String) {
       .bearer(bearerToken)
       .auth
       .basic(username, password)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
   }
 
   /** Returns the List of all registered Jobs with full information

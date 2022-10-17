@@ -72,7 +72,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Delete a given Collection
     *
@@ -91,7 +91,7 @@ class CollectionApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Distinct for Field in a given Collection
     *

@@ -40,7 +40,7 @@ class AuthApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultString])
+      .response(asJson[JsonValueString])
 
   /** Login for one user and return Login Information
     *
@@ -72,7 +72,7 @@ class AuthApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Logout by bearer Token
     *
@@ -89,7 +89,7 @@ class AuthApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Refresh Token and return Login Information
     *
@@ -127,7 +127,7 @@ class AuthApi(baseUrl: String) extends CirceSchema {
       .auth
       .bearer(bearerToken)
       .body(passwordUpdateRequest)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Return the User Profile of loggedin user
     *
@@ -159,6 +159,6 @@ class AuthApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
 }
