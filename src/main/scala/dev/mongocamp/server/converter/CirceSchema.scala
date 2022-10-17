@@ -1,11 +1,12 @@
 package dev.mongocamp.server.converter
 
+import dev.mongocamp.server.model.MongoCampConfiguration
 import io.circe.Decoder.Result
-import io.circe.{ Decoder, Encoder, HCursor, Json }
+import io.circe.{Decoder, Encoder, HCursor, Json}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
-import sttp.tapir.{ Schema, SchemaType }
+import sttp.tapir.{Schema, SchemaType}
 
 import java.util.Date
 
@@ -43,6 +44,10 @@ trait CirceSchema {
     override def apply(c: HCursor): Result[Any] = {
       Decoder.decodeJson.map(a => decodeFromJson(a)).apply(c)
     }
+  }
+
+  implicit val ConfigFormat: Encoder[MongoCampConfiguration] = new Encoder[MongoCampConfiguration] {
+    override def apply(a: MongoCampConfiguration): Json = encodeAnyToJson(a)
   }
 
   def encodeMapStringAny(a: Map[String, Any]): Json = {

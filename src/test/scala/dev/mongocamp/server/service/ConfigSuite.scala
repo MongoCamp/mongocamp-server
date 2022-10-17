@@ -2,6 +2,7 @@ package dev.mongocamp.server.service
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.model.MongoCampConfiguration
+import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.service.ConfigurationService.{getConfig, registerNonPersistentConfig}
 
 import scala.concurrent.duration.Duration

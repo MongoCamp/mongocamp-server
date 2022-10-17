@@ -7,12 +7,13 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
+import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import io.circe.parser.decode
+import org.mongodb.scala.bson.Document
 import sttp.model.StatusCode
 
 import scala.collection.mutable
 import scala.concurrent.duration._
-
 object ConfigurationService {
 
   private lazy val conf: config.Config = ConfigFactory.load()
@@ -32,7 +33,7 @@ object ConfigurationService {
       }
       else {
         try {
-          val key = configKey.toLowerCase().replace("_", ".")
+          val key              = configKey.toLowerCase().replace("_", ".")
           val scalaConfigValue = conf.getValue(key)
           scalaConfigValue.unwrapped()
         }
@@ -64,7 +65,7 @@ object ConfigurationService {
       val configToInsert: MongoCampConfiguration = {
         try {
           if (value.isEmpty) {
-            val key = configKey.toLowerCase().replace("_", ".")
+            val key              = configKey.toLowerCase().replace("_", ".")
             val scalaConfigValue = conf.getValue(key)
             dbConfiguration.copy(value = scalaConfigValue.unwrapped())
           }
@@ -98,7 +99,8 @@ object ConfigurationService {
       val cachedOption = configCache.getIfPresent(key)
       if (cachedOption.isDefined) {
         cachedOption
-      } else {
+      }
+      else {
         checkAndUpdateWithEnv(key)
         getConfigFromDatabase(key)
       }
@@ -106,18 +108,12 @@ object ConfigurationService {
   }
 
   def getAllRegisteredConfigurations(): List[MongoCampConfiguration] = {
-    ConfigDao()
-      .find()
+    val databaseConfigs = ConfigDao()
+      .find(Map(), Map("key" -> 1))
       .resultList()
-      .map(d =>
-        MongoCampConfiguration(
-          d.getStringValue("key"),
-          d.getValue("value"),
-          d.getStringValue("configType"),
-          d.getStringValue("comment"),
-          d.getBoolean("needsRestartForActivation")
-        )
-      ) ++ nonPersistentConfigs.values
+      .map(convertDocumentToConfiguration)
+    val response = databaseConfigs ++ nonPersistentConfigs.values
+    response.sortBy(_.key)
   }
 
   def updateConfig(key: String, value: Any, commentOption: Option[String] = None): Boolean = {
@@ -146,7 +142,7 @@ object ConfigurationService {
           if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
             val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
             configCache.invalidate(key)
-            val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
+            val replaceResult = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
             replaceResult.wasAcknowledged()
           }
         })
@@ -157,15 +153,17 @@ object ConfigurationService {
     ConfigDao()
       .find(Map("key" -> key))
       .resultOption()
-      .map(d =>
-        MongoCampConfiguration(
-          d.getStringValue("key"),
-          d.getValue("value"),
-          d.getStringValue("configType"),
-          d.getStringValue("comment"),
-          d.getBoolean("needsRestartForActivation")
-        )
-      )
+      .map(convertDocumentToConfiguration)
+  }
+
+  private def convertDocumentToConfiguration(d: Document): MongoCampConfiguration = {
+    MongoCampConfiguration(
+      d.getStringValue("key"),
+      d.getValue("value"),
+      d.getStringValue("configType"),
+      d.getStringValue("comment"),
+      d.getBoolean("needsRestartForActivation")
+    )
   }
 
   private[service] def convertToDbConfiguration(
@@ -342,7 +340,7 @@ object ConfigurationService {
   }
 
   private def loadEnvValue(key: String): Option[String] = {
-    val envSetting       = System.getenv(key)
+    val envSetting = System.getenv(key)
     if (envSetting != null && !"".equalsIgnoreCase(envSetting.trim)) {
       Some(envSetting)
     }
