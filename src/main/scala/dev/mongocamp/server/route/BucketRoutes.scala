@@ -3,17 +3,17 @@ package dev.mongocamp.server.route
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.bucket.{ ClearBucketEvent, DropBucketEvent }
+import dev.mongocamp.server.event.bucket.{ClearBucketEvent, DropBucketEvent}
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, Grant, UserInformation }
-import dev.mongocamp.server.model.{ BucketInformation, JsonResult }
+import dev.mongocamp.server.model.auth.{AuthorizedCollectionRequest, Grant, UserInformation}
+import dev.mongocamp.server.model.{BucketInformation, JsonValue}
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -67,7 +67,7 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
   }
 
   val deleteBucketEndpoint = writeBucketEndpoint
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete Bucket")
     .description("Delete a given Bucket")
     .tag(apiName)
@@ -77,18 +77,18 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
 
   def deleteBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").drop().result()
       FileAdapterHolder.handler.delete(authorizedCollectionRequest.collection)
       EventSystem.eventStream.publish(DropBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
-      JsonResult[Boolean](true)
+      JsonValue[Boolean](true)
     }))
   }
 
   val clearBucketEndpoint = writeBucketEndpoint
     .in("clear")
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Clear Bucket")
     .description("Delete all Files in Bucket")
     .tag(apiName)
@@ -98,12 +98,12 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
 
   def clearBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").deleteAll().result()
       val clearResponse = FileAdapterHolder.handler.clear(authorizedCollectionRequest.collection)
       EventSystem.eventStream.publish(ClearBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
-      JsonResult[Boolean](clearResponse)
+      JsonValue[Boolean](clearResponse)
     }))
   }
 

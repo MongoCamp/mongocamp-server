@@ -3,7 +3,7 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonResult}
+import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonValue}
 import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
@@ -90,16 +90,16 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
 
   val deleteJobRoutes = jobApiBaseEndpoint
     .in(jobGroupParameter)
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete Job")
     .description("Delete Job and reload all Job Information")
     .method(Method.DELETE)
     .name("deleteJob")
     .serverLogic(auth => parameter => deleteJob(auth, parameter))
 
-  def deleteJob(auth: UserInformation, parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def deleteJob(auth: UserInformation, parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
-      JsonResult(JobPlugin.deleteJob(auth, parameter._1, parameter._2))
+      JsonValue(JobPlugin.deleteJob(auth, parameter._1, parameter._2))
     }))
   }
 
@@ -120,16 +120,16 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
 
   val executeJobRoutes = jobApiBaseEndpoint
     .in(jobGroupParameter)
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Execute Job")
     .description("Execute scheduled Job manually")
     .method(Method.POST)
     .name("executeJob")
     .serverLogic(_ => parameter => executeJob(parameter))
 
-  def executeJob(parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def executeJob(parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
-      JsonResult(JobPlugin.executeJob(parameter._1, parameter._2))
+      JsonValue(JobPlugin.executeJob(parameter._1, parameter._2))
     }))
   }
 

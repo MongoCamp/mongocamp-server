@@ -7,7 +7,7 @@ import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.role.{CreateRoleEvent, DeleteRoleEvent, UpdateRoleEvent}
 import dev.mongocamp.server.event.user._
 import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
-import dev.mongocamp.server.model.JsonResult
+import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import io.circe.generic.auto._
@@ -84,7 +84,7 @@ object AdminRoutes extends BaseRoute {
     .in(path[String]("userId").description("UserId to Update"))
     .in("password")
     .in(jsonBody[PasswordUpdateRequest])
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Update Password")
     .description("Change Password of User")
     .method(Method.PATCH)
@@ -94,13 +94,13 @@ object AdminRoutes extends BaseRoute {
   def updatePassword(
       userInformation: UserInformation,
       parameter: (String, PasswordUpdateRequest)
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(parameter._1, parameter._2.password)
       if (response) {
         EventSystem.eventStream.publish(UpdatePasswordEvent(userInformation, parameter._1))
       }
-      Right(JsonResult(response))
+      Right(JsonValue(response))
     }
   }
 
@@ -108,7 +108,7 @@ object AdminRoutes extends BaseRoute {
     .in("users")
     .in(path[String]("userId").description("UserId to Update"))
     .in("apikey")
-    .out(jsonBody[JsonResult[String]])
+    .out(jsonBody[JsonValue[String]])
     .summary("Update ApiKey")
     .description("Generate an new APIkey for the user")
     .method(Method.PATCH)
@@ -117,18 +117,18 @@ object AdminRoutes extends BaseRoute {
 
   def updateApiKey(
                     loggedInUser: UserInformation, userId: String
-                  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[String]]] = {
+                  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)
       EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, userId))
-      Right(JsonResult(result))
+      Right(JsonValue(result))
     }
   }
 
   val deleteUserEndpoint = adminBase
     .in("users")
     .in(path[String]("userId").description("UserId to Delete"))
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete User")
     .description("Delete User")
     .method(Method.DELETE)
@@ -138,13 +138,13 @@ object AdminRoutes extends BaseRoute {
   def deleteUser(
       loggedInUser: UserInformation,
       loginToUpdate: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful({
       val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate)
       if (response) {
         EventSystem.eventStream.publish(DeleteUserEvent(loggedInUser, loginToUpdate))
       }
-      Right(JsonResult(response))
+      Right(JsonValue(response))
     })
   }
 
@@ -231,20 +231,20 @@ object AdminRoutes extends BaseRoute {
   val deleteRolesEndpoint = adminBase
     .in("roles")
     .in(path[String]("roleName").description("RoleKey"))
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete Role")
     .description("Delete Role")
     .method(Method.DELETE)
     .name("deleteRole")
     .serverLogic(loggedInUser => role => deleteRole(loggedInUser, role))
 
-  def deleteRole(loggedInUser: UserInformation, role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def deleteRole(loggedInUser: UserInformation, role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       val deleted = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteRole(role)
       if (deleted) {
         EventSystem.eventStream.publish(DeleteRoleEvent(loggedInUser, role))
       }
-      Right(JsonResult(deleted))
+      Right(JsonValue(deleted))
     }
   }
 
