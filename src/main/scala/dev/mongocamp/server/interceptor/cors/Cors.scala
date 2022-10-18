@@ -1,10 +1,12 @@
 package dev.mongocamp.server.interceptor.cors
-import dev.mongocamp.server.config.ConfigHolder
+
+import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.service.ConfigurationService
 import sttp.model.Header
 
 object Cors {
 
-  lazy val allowedOrigins: List[String] = ConfigHolder.corsOriginsAllowed.value.filter(_.nonEmpty)
+  def allowedOrigins: List[String] = ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsOriginsAllowed).filter(_.nonEmpty)
 
   val KeyCorsHeaderOrigin  = "Origin"
   val KeyCorsHeaderReferer = "Referer"
@@ -22,8 +24,8 @@ object Cors {
     List(
       Header("Access-Control-Allow-Origin", allowedOrigin),
       Header("Access-Control-Allow-Credentials", "true"),
-      Header("Access-Control-Allow-Headers", ConfigHolder.corsHeadersAllowed.value.mkString(",")),
-      Header("Access-Control-Expose-Headers", ConfigHolder.corsHeadersExposed.value.mkString(","))
+      Header("Access-Control-Allow-Headers", ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsHeadersAllowed).mkString(",")),
+      Header("Access-Control-Expose-Headers", ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsHeadersExposed).mkString(","))
     )
   }
 

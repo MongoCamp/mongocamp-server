@@ -1,20 +1,21 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder.isMongoDbAuthHolder
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder, TokenCache}
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.user.{ LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent }
-import dev.mongocamp.server.exception.{ ErrorCodes, ErrorDescription, MongoCampException }
-import dev.mongocamp.server.model.JsonResult
+import dev.mongocamp.server.event.user.{LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent}
+import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
+import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
+import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{ auth, query }
 
 import scala.concurrent.Future
 
@@ -44,24 +45,24 @@ object AuthRoutes extends BaseRoute {
 
   val checkAuthEndpoint = authBase
     .in("authenticated")
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Check Authentication")
     .description("Check a given Login for is authenticated")
     .method(Method.GET)
     .name("isAuthenticated")
     .serverLogic(loginInformation => _ => checkAuth(loginInformation))
 
-  def checkAuth(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def checkAuth(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       // If a request comes at this point User, Token etc. is valid
-      Right(JsonResult(true))
+      Right(JsonValue(true))
     }
   }
 
   private val baseLogoutEndpoint = authBase
     .in("logout")
     .in(auth.bearer[Option[String]]())
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Logout User")
     .description("Logout by bearer Token")
 
@@ -69,14 +70,14 @@ object AuthRoutes extends BaseRoute {
 
   val logoutDeleteEndpoint = baseLogoutEndpoint.method(Method.DELETE).name("logoutByDelete").serverLogic(_ => token => logout(token))
 
-  def logout(token: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  def logout(token: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       val result = token.forall(tokenValue => {
         TokenCache.validateToken(tokenValue).foreach(user => EventSystem.eventStream.publish(LogoutEvent(user)))
         TokenCache.invalidateToken(tokenValue)
         true
       })
-      Right(JsonResult(result))
+      Right(JsonValue(result))
     }
   }
 
@@ -116,7 +117,7 @@ object AuthRoutes extends BaseRoute {
     .in("profile")
     .in("password")
     .in(jsonBody[PasswordUpdateRequest])
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Update Password")
     .description("Change Password of logged in User")
     .method(Method.PATCH)
@@ -126,41 +127,33 @@ object AuthRoutes extends BaseRoute {
   def updatePassword(
       loggedInUser: UserInformation,
       loginToUpdate: PasswordUpdateRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password)
       if (result) {
         EventSystem.eventStream.publish(UpdatePasswordEvent(loggedInUser, loggedInUser.userId))
       }
-      Right(JsonResult(result))
+      Right(JsonValue(result))
     }
   }
 
   val updateApiKeyEndpoint = authBase
     .in("profile")
     .in("apikey")
-    .in(query[Option[String]]("userid").description("UserId to update or create the ApiKey"))
-    .out(jsonBody[JsonResult[String]])
+    .out(jsonBody[JsonValue[String]])
     .summary("Update ApiKey")
     .description("Generate new ApiKey of logged in User")
     .method(Method.PATCH)
     .name("generateNewApiKey")
-    .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate))
+    .serverLogic(loggedInUser => _ => updateApiKey(loggedInUser))
 
   def updateApiKey(
-      loggedInUser: UserInformation,
-      loginToUpdate: Option[String]
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[String]]] = {
+      loggedInUser: UserInformation
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
     Future.successful {
-      val userId = loginToUpdate.getOrElse(loggedInUser.userId)
-      if (loggedInUser.userId == userId || loggedInUser.isAdmin) {
-        val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)
-        EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, userId))
-        Right(JsonResult(result))
-      }
-      else {
-        throw MongoCampException.unauthorizedException("user not authorized to update password for other user", ErrorCodes.unauthorizedUserForOtherUser)
-      }
+      val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(loggedInUser.userId)
+      EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, loggedInUser.userId))
+      Right(JsonValue(result))
     }
   }
 
@@ -174,7 +167,7 @@ object AuthRoutes extends BaseRoute {
   }
 
   lazy val onlyBearerEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    if (ConfigHolder.authUseTypeBearer.value) {
+    if (ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthBearer)) {
       List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint)
     }
     else {

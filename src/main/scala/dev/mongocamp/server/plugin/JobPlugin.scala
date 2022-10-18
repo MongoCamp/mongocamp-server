@@ -4,17 +4,17 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.job.{ CreateJobEvent, DeleteJobEvent, UpdateJobEvent }
-import dev.mongocamp.server.exception.ErrorCodes.{ jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated }
+import dev.mongocamp.server.event.job.{CreateJobEvent, DeleteJobEvent, UpdateJobEvent}
+import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated}
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JobConfig, JobInformation }
+import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.service.ReflectionService
 import org.mongodb.scala.model.IndexOptions
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
 import org.quartz.impl.StdSchedulerFactory
-import org.quartz.{ CronScheduleBuilder, Job, JobKey, Trigger }
+import org.quartz.{CronScheduleBuilder, Job, JobKey, Trigger}
 import sttp.model.StatusCode
 
 import java.util.Date
@@ -64,7 +64,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     )
   }
 
-  def addJob(userInformation: UserInformation, jobConfig: JobConfig): Boolean = {
+  def addJob(jobConfig: JobConfig, userInformationOption: Option[UserInformation] = None): Boolean = {
     val jobClass = getJobClass(jobConfig)
     val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
       jobClass.getSimpleName
@@ -79,7 +79,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       val inserted        = MongoDatabase.jobDao.insertOne(jobConfigDetail).result()
       reloadJobs()
       if (inserted.wasAcknowledged()) {
-        EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig))
+        userInformationOption.foreach(userInformation => EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig)))
       }
       inserted.wasAcknowledged()
     }

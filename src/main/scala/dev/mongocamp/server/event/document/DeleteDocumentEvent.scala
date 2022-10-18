@@ -3,4 +3,4 @@ import dev.mongocamp.server.event.Event
 import dev.mongocamp.server.model.DeleteResponse
 import dev.mongocamp.server.model.auth.UserInformation
 
-case class DeleteDocumentEvent(userInformation: UserInformation, deleteResponse: DeleteResponse) extends Event
+case class DeleteDocumentEvent(userInformation: UserInformation, deleteResponse: DeleteResponse, oldValues: List[Map[String, Any]]) extends Event

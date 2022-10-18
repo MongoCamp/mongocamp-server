@@ -1,17 +1,19 @@
 package dev.mongocamp.server.auth
 
-import dev.mongocamp.server.config.ConfigHolder
-import dev.mongocamp.server.database.paging.{ PaginationInfo, PaginationResult }
+import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.database.paging.{PaginationInfo, PaginationResult}
 import dev.mongocamp.server.exception.MongoCampException.userOrPasswordException
-import dev.mongocamp.server.model.auth.{ Role, UserInformation }
+import dev.mongocamp.server.model.auth.{Role, UserInformation}
 import dev.mongocamp.server.route.parameter.paging.Paging
+import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import io.circe.parser._
 
 class StaticAuthHolder extends AuthHolder {
 
   private lazy val users: List[UserInformation] = {
-    ConfigHolder.authStaticUsers.value
+    ConfigurationService
+      .getConfigValue[List[String]](DefaultConfigurations.ConfigKeyAuthUsers)
       .map(string => decode[Option[UserInformation]](string))
       .filter(_.isRight)
       .map(_.getOrElse(None).get)
@@ -19,7 +21,8 @@ class StaticAuthHolder extends AuthHolder {
   }
 
   private lazy val roles: List[Role] = {
-    ConfigHolder.authStaticRoles.value
+    ConfigurationService
+      .getConfigValue[List[String]](DefaultConfigurations.ConfigKeyAuthRoles)
       .map(string => decode[Option[Role]](string))
       .filter(_.isRight)
       .map(_.getOrElse(None).get)

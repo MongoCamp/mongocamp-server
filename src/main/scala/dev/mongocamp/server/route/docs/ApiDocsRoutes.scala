@@ -1,17 +1,18 @@
 package dev.mongocamp.server.route.docs
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.route.BaseRoute
+import dev.mongocamp.server.service.ConfigurationService
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
+import sttp.tapir.swagger.{SwaggerUI, SwaggerUIOptions}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
@@ -19,9 +20,6 @@ import scala.concurrent.Future
 object ApiDocsRoutes extends BaseRoute {
   val nameAsyncApiDocsYamlName = "asyncapidocs.yaml"
   val nameOpenApiDocsYamlName  = "docs.yaml"
-
-  lazy val isSwaggerEnabled: Boolean = ConfigHolder.docsUseSwagger.value
-  lazy val isOpenApiEnabled: Boolean = ConfigHolder.docsUseOpenApi.value
 
   def docsYamlEndpoint(yamlName: String, content: String): ServerEndpoint[AkkaStreams with WebSockets, Future] = {
     def contentToResponse(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (String, Long)]] = {
@@ -47,7 +45,8 @@ object ApiDocsRoutes extends BaseRoute {
   def addDocsRoutes(serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]): List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
     val docs = ArrayBuffer[ServerEndpoint[AkkaStreams with WebSockets, Future]]()
 
-    if (isSwaggerEnabled || isOpenApiEnabled) {
+    val swaggerEnabled = isSwaggerEnabled
+    if (swaggerEnabled || ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyOpenApi)) {
       val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
         serverEndpoints.map(_.endpoint),
         BuildInfo.name,
@@ -56,12 +55,12 @@ object ApiDocsRoutes extends BaseRoute {
 
       val openApiYml: String = openApiDocs.toYaml
 
-      if (isSwaggerEnabled) {
+      if (swaggerEnabled) {
         val swaggerUIRoute = SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List(), useRelativePaths = true))
         docs ++= swaggerUIRoute
       }
 
-      if (!isSwaggerEnabled) {
+      if (!swaggerEnabled) {
         docs += docsYamlEndpoint(nameOpenApiDocsYamlName, openApiYml)
       }
     }
@@ -69,4 +68,7 @@ object ApiDocsRoutes extends BaseRoute {
     docs.toList
   }
 
+  def isSwaggerEnabled: Boolean = {
+    ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyDocsSwagger)
+  }
 }

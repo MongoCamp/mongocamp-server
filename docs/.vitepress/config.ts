@@ -14,7 +14,8 @@ export default defineConfig({
 
         sidebar: {
             '/guide/': sidebarGuide(),
-            '/config/': sidebarConfig()
+            '/config/': sidebarConfig(),
+            '/plugins/': sidebarPlugins()
         },
 
         editLink: {
@@ -38,6 +39,7 @@ function nav() {
     return [
         { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
         { text: 'Config', link: '/config/', activeMatch: '/config/' },
+        { text: 'Plugins', link: '/plugins/', activeMatch: '/plugins/' },
         { text: 'REST API', link: '/rest/README', activeMatch: '/rest/' },
         {
             text: 'Changelog',
@@ -66,8 +68,21 @@ function sidebarConfig() {
         {
             text: 'Config',
             items: [
-                { text: 'Introduction', link: '/config/' },
-                { text: 'Docker Config', link: '/config/docker' },
+                {text: 'Introduction', link: '/config/'},
+                {text: 'Environment Config', link: '/config/environment'},
+                {text: 'DB or Environment', link: '/config/environment-db'},
+            ]
+        }
+    ]
+}
+function sidebarPlugins() {
+    return [
+        {
+            text: 'Plugins',
+            items: [
+                {text: 'Introduction', link: '/plugins/'},
+                {text: 'List of Plugins', link: '/plugins/list'},
+                {text: 'Development', link: '/plugins/development'},
             ]
         }
     ]

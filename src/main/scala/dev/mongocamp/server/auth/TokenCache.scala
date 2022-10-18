@@ -3,37 +3,49 @@ package dev.mongocamp.server.auth
 import com.github.blemale.scaffeine.Scaffeine
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.AuthHolder.handler
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
-import dev.mongocamp.server.model.auth.{ TokenCacheElement, UserInformation }
+import dev.mongocamp.server.jobs.CleanUpTokenJob
+import dev.mongocamp.server.model.JobConfig
+import dev.mongocamp.server.model.auth.{TokenCacheElement, UserInformation}
+import dev.mongocamp.server.plugin.JobPlugin
+import dev.mongocamp.server.service.ConfigurationService
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{ DurationInt, FiniteDuration }
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.util.Try
 
 object TokenCache {
   val keyToken   = "token"
   val keyValidTo = "validTo"
 
-  if (ConfigHolder.authTokenCacheDb.value) {
+  private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
+
+  Try {
+    val cleanUpJobClass = classOf[CleanUpTokenJob]
+    JobPlugin.addJob(JobConfig(cleanUpJobClass.getSimpleName, cleanUpJobClass.getName, "", "0 0/5 * ? * * *", "CleanUp", 10))
+  }
+  private def authTokenCacheDB = ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
+
+  if (authTokenCacheDB) {
     tokenCacheDao.createUniqueIndexForField(keyToken).result()
     tokenCacheDao.createExpiringIndexForField(keyValidTo, 1.seconds).result()
   }
 
-  private lazy val cacheDuration: FiniteDuration = {
-    if (ConfigHolder.authTokenCacheDb.value) {
+  def cacheDuration: FiniteDuration = {
+    if (authTokenCacheDB) {
       FiniteDuration(5, TimeUnit.MINUTES)
     }
     else {
-      FiniteDuration(ConfigHolder.authTokenExpiring.value.getSeconds, TimeUnit.SECONDS)
+      val duration = ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration)
+      FiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
     }
   }
 
-  private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
-
   def validateToken(token: String): Option[UserInformation] = {
     val cachedToken = internalTokenCache.getIfPresent(token)
-    if (cachedToken.isEmpty && ConfigHolder.authTokenCacheDb.value) {
+    if (cachedToken.isEmpty && authTokenCacheDB) {
       val userOption = tokenCacheDao
         .find(Map(keyToken -> token))
         .resultOption()
@@ -62,8 +74,12 @@ object TokenCache {
 
   def saveToken(token: String, userInformation: UserInformation): Unit = {
     internalTokenCache.put(token, userInformation)
-    val element = TokenCacheElement(token, userInformation.userId, new DateTime().plusSeconds(ConfigHolder.authTokenExpiring.value.getSeconds.toInt).toDate)
-    if (ConfigHolder.authTokenCacheDb.value) {
+    val element = TokenCacheElement(
+      token,
+      userInformation.userId,
+      new DateTime().plusMillis(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt).toDate
+    )
+    if (authTokenCacheDB) {
       tokenCacheDao.insertOne(element).asFuture()
     }
   }

@@ -5,20 +5,20 @@ import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
+import dev.mongocamp.server.database.paging.{MongoPaginatedAggregation, PaginationInfo}
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.collection.{ ClearCollectionEvent, DropCollectionEvent }
+import dev.mongocamp.server.event.collection.{ClearCollectionEvent, DropCollectionEvent}
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import dev.mongocamp.server.model.{ JsonResult, JsonSchema, MongoAggregateRequest, SchemaAnalysis }
+import dev.mongocamp.server.model.auth.{AuthorizedCollectionRequest, UserInformation}
+import dev.mongocamp.server.model.{JsonSchema, JsonValue, MongoAggregateRequest, SchemaAnalysis}
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
-import dev.mongocamp.server.service.{ AggregationService, SchemaService }
+import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
+import dev.mongocamp.server.service.{AggregationService, SchemaService}
 import io.circe.generic.auto._
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -161,7 +161,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
   }
 
   val deleteCollectionStatusEndpoint = administrateCollectionEndpoint
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete Collection")
     .description("Delete a given Collection")
     .tag("Collection")
@@ -171,18 +171,18 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def deleteCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       dao.drop().result()
       EventSystem.eventStream.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
-      JsonResult(true)
+      JsonValue(true)
     }))
   }
 
   val deleteAllEndpoint = writeCollectionEndpoint
     .in("clear")
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Clear Collection")
     .description("Delete all Document in Collection")
     .tag("Collection")
@@ -192,14 +192,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def deleteAllInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(
       Right(
         {
           val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result = dao.deleteAll().result()
           EventSystem.eventStream.publish(ClearCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
-          JsonResult(result.wasAcknowledged())
+          JsonValue(result.wasAcknowledged())
         }
       )
     )

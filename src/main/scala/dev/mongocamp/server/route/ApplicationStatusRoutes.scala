@@ -1,14 +1,17 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.Server
-import dev.mongocamp.server.config.ConfigHolder
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
-import dev.mongocamp.server.model.SettingsResponse
-import dev.mongocamp.server.monitoring.{ Metric, MetricsConfiguration }
+import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
+import dev.mongocamp.server.model.auth.UserInformation
+import dev.mongocamp.server.model.{JsonValue, MongoCampConfiguration, SettingsResponse}
+import dev.mongocamp.server.monitoring.{Metric, MetricsConfiguration}
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 
@@ -94,17 +97,86 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
 
   def systemSettings(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SettingsResponse]] = {
     Future.successful {
-      val configurations = ListMap(ConfigHolder.allConfigurations.map(config => config.key -> config.value).toMap.toSeq.sortBy(_._1): _*)
+      val configurations: Map[String, Any] =
+        ListMap(ConfigurationService.getAllRegisteredConfigurations().map(config => config.key -> config.typedValue()).toMap.toSeq.sortBy(_._1): _*)
       Right(
         SettingsResponse(
           Server.listOfRoutePlugins.map(_.getClass.getName),
           FileAdapterHolder.listOfFilePlugins.map(_.getClass.getName),
-          ConfigHolder.pluginsIgnored.value,
+          ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored),
           configurations
         )
       )
     }
   }
 
-  override def endpoints = List(jvmMetricsRoutes, systemMetricsRoutes, mongoDbMetricsRoutes, eventMetricsRoutes, settingsEndpoint)
+  val listConfigurationEndpoint = applicationApiBaseEndpoint
+    .in("system" / "configurations")
+    .out(jsonBody[List[MongoCampConfiguration]])
+    .summary("List Configurations")
+    .description("List all Configurations or filtered")
+    .method(Method.GET)
+    .name("listConfigurations")
+    .serverLogic(_ => _ => listConfigurations())
+
+  def listConfigurations(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[MongoCampConfiguration]]] = {
+    Future.successful {
+      Right({
+        ConfigurationService.getAllRegisteredConfigurations()
+      })
+    }
+  }
+
+  val getConfigEndpoint = applicationApiBaseEndpoint
+    .in("system" / "configurations")
+    .in(path[String]("configurationKey").description("configurationKey to get"))
+    .out(jsonBody[Option[MongoCampConfiguration]])
+    .summary("Configuration for configurationKey")
+    .description("Get Configuration for key")
+    .method(Method.GET)
+    .name("getConfig")
+    .serverLogic(_ => loginToUpdate => getConfig(loginToUpdate))
+
+  def getConfig(configKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[MongoCampConfiguration]]] = {
+    Future.successful {
+      Right({
+        ConfigurationService.getConfig(configKey)
+      })
+    }
+  }
+
+  val updateConfigEndpoint = applicationApiBaseEndpoint
+    .in("system" / "configurations")
+    .in(path[String]("configurationKey").description("configurationKey to edit"))
+    .in(jsonBody[JsonValue[Any]])
+    .out(jsonBody[JsonValue[Boolean]])
+    .summary("Update Configuration")
+    .description("Update Configuration with the value")
+    .method(Method.PATCH)
+    .name("updateConfiguration")
+    .serverLogic(userInformation => loginToUpdate => updateConfig(userInformation, loginToUpdate))
+
+  def updateConfig(
+      userInformation: UserInformation,
+      parameter: (String, JsonValue[Any])
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
+    Future.successful {
+      Right({
+        val response = ConfigurationService.updateConfig(parameter._1, parameter._2.value)
+        JsonValue(response)
+      })
+    }
+  }
+
+  override def endpoints = List(
+    jvmMetricsRoutes,
+    systemMetricsRoutes,
+    mongoDbMetricsRoutes,
+    eventMetricsRoutes,
+    settingsEndpoint,
+    listConfigurationEndpoint,
+    getConfigEndpoint,
+    updateConfigEndpoint
+  )
+
 }

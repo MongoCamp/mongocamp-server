@@ -6,6 +6,6 @@
   */
 package dev.mongocamp.server.client.model
 
-case class JsonResultBoolean(
+case class JsonValueBoolean(
     value: Boolean
 )

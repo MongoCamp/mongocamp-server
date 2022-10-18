@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.{ BucketInformation, JsonResultBoolean }
+import dev.mongocamp.server.client.model.{BucketInformation, JsonValueBoolean}
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
@@ -38,7 +38,7 @@ class BucketApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
   }
 
   /** Delete a given Bucket
@@ -58,7 +58,7 @@ class BucketApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
   }
 
   /** All Information about a single Bucket

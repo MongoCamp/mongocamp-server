@@ -14,7 +14,6 @@ import sttp.client3.circe.asJson
 import sttp.model.Method
 
 object AdminApi {
-
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new AdminApi(baseUrl)
 }
 
@@ -75,7 +74,7 @@ class AdminApi(baseUrl: String) {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Delete User
     *
@@ -94,7 +93,7 @@ class AdminApi(baseUrl: String) {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Get Role by RoleKey
     *
@@ -151,7 +150,7 @@ class AdminApi(baseUrl: String) {
       .header("X-AUTH-APIKEY", apiKey)
       .auth
       .bearer(bearerToken)
-      .response(asJson[JsonResultString])
+      .response(asJson[JsonValueString])
 
   /** List all Roles or filtered
     *
@@ -222,7 +221,7 @@ class AdminApi(baseUrl: String) {
       .auth
       .bearer(bearerToken)
       .body(passwordUpdateRequest)
-      .response(asJson[JsonResultBoolean])
+      .response(asJson[JsonValueBoolean])
 
   /** Update Role
     *

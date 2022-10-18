@@ -55,7 +55,7 @@ class AuthSuite extends BaseSuite {
     val refresh          = executeRequestToResponse(adminApi.refreshToken("", adminBearerToken)())
     Thread.sleep(1.seconds.toMillis)
     val cacheCountAfter  = tokenCacheDao.count().result()
-    assertEquals(cacheCountBefore + 1, cacheCountAfter)
+    assertEquals(cacheCountBefore < cacheCountAfter, true, "cacheCountBefore is not lower cacheCountAfter")
     assertEquals(refresh.expirationDate.isAfterNow, true)
     assertEquals(refresh.userProfile.user, "admin")
     assertEquals(

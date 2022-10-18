@@ -6,15 +6,15 @@ import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.database.MongoDatabase.databaseProvider.DefaultDatabaseName
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.database.DropDatabaseEvent
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.JsonResult
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
+import dev.mongocamp.server.model.JsonValue
+import dev.mongocamp.server.model.auth.{AuthorizedCollectionRequest, UserInformation}
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -74,7 +74,7 @@ object DatabaseRoutes extends RoutesPlugin {
 
   val deleteDatabaseEndpoint = databaseBaseEndpoint
     .in(path[String]("databaseName").description("Name of your Database"))
-    .out(jsonBody[JsonResult[Boolean]])
+    .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete Database")
     .description("Delete given Database")
     .method(Method.DELETE)
@@ -84,11 +84,11 @@ object DatabaseRoutes extends RoutesPlugin {
   def deleteDatabaseInfo(
       userInformation: UserInformation,
       databaseName: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonResult[Boolean]]] = {
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dropDatabase(databaseName).result()
       EventSystem.eventStream.publish(DropDatabaseEvent(userInformation, databaseName))
-      JsonResult(true)
+      JsonValue(true)
     }))
   }
 

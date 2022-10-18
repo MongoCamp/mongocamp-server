@@ -1,17 +1,17 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertToOperationMap }
+import dev.mongocamp.server.converter.MongoCampBsonConverter.{convertFields, convertToOperationMap}
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.document.{ CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent }
+import dev.mongocamp.server.event.document.{CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent}
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.{ DeleteResponse, InsertResponse, UpdateRequest, UpdateResponse }
+import dev.mongocamp.server.model.{DeleteResponse, InsertResponse, UpdateRequest, UpdateResponse}
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -75,14 +75,16 @@ object DocumentManyRoutes extends CollectionBaseRoute {
         {
           val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val documentMap = parameter.document
-          val result      = dao.updateMany(convertFields(parameter.filter), documentFromScalaMap(convertToOperationMap(documentMap))).result()
+          val filter      = convertFields(parameter.filter)
+          val oldValues   = dao.find(filter).resultList()
+          val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(documentMap))).result()
           val updateResponse = UpdateResponse(
             result.wasAcknowledged(),
             Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,
             result.getModifiedCount,
             result.getMatchedCount
           )
-          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse))
+          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
           updateResponse
         }
       )
@@ -111,9 +113,10 @@ object DocumentManyRoutes extends CollectionBaseRoute {
         {
           val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val deleteFilter   = convertFields(parameter)
+          val oldValues      = dao.find(deleteFilter).resultList()
           val result         = dao.deleteMany(deleteFilter).result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-          EventSystem.eventStream.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse))
+          EventSystem.eventStream.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
           deleteResponse
         }
       )
