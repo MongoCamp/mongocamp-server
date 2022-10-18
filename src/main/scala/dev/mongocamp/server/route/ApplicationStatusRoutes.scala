@@ -6,12 +6,12 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{JsonValue, MongoCampConfiguration, SettingsResponse}
-import dev.mongocamp.server.monitoring.{Metric, MetricsConfiguration}
+import dev.mongocamp.server.model.{ JsonValue, MongoCampConfiguration, SettingsResponse }
+import dev.mongocamp.server.monitoring.{ Metric, MetricsConfiguration }
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 

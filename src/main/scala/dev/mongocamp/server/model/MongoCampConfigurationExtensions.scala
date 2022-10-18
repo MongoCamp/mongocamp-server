@@ -49,13 +49,17 @@ object MongoCampConfigurationExtensions {
         else if (mongoCampConfiguration.configType.equalsIgnoreCase(s"List[$confTypeDuration]") && mongoCampConfiguration.value.isInstanceOf[List[String]]) {
           mongoCampConfiguration.value.asInstanceOf[List[String]].map(s => Duration(s))
         }
-        else if (mongoCampConfiguration.configType.equalsIgnoreCase(s"Option[$confTypeDuration]") && mongoCampConfiguration.value.isInstanceOf[Option[String]]) {
+        else if (
+          mongoCampConfiguration.configType.equalsIgnoreCase(s"Option[$confTypeDuration]") && mongoCampConfiguration.value.isInstanceOf[Option[String]]
+        ) {
           mongoCampConfiguration.value.asInstanceOf[Option[String]].map(s => Duration(s))
         }
         else if (mongoCampConfiguration.configType.equalsIgnoreCase(confTypeLong) && mongoCampConfiguration.value.isInstanceOf[Int]) {
           mongoCampConfiguration.value.asInstanceOf[Int].toLong
         }
-        else if (mongoCampConfiguration.value != null && mongoCampConfiguration.value.getClass.equals(resultClass) && mongoCampConfiguration.value.isInstanceOf[A]) {
+        else if (
+          mongoCampConfiguration.value != null && mongoCampConfiguration.value.getClass.equals(resultClass) && mongoCampConfiguration.value.isInstanceOf[A]
+        ) {
           mongoCampConfiguration.value
         }
         else if (mongoCampConfiguration.configType.equalsIgnoreCase(s"List[$confTypeLong]") && mongoCampConfiguration.value.isInstanceOf[List[Int]]) {
@@ -73,22 +77,22 @@ object MongoCampConfigurationExtensions {
         }
       }
       if (response.isInstanceOf[A]) {
-        try {
+        try
           response.asInstanceOf[A]
-        } catch {
-          case e: Exception => {
+        catch {
+          case e: Exception =>
             ""
             throw e
-          }
         }
-      } else {
+      }
+      else {
         throw MongoCampException(s"$response is not instance of requested type", StatusCode.PreconditionFailed)
       }
     }
 
     def validate: Boolean = {
       val internalConfigType = mongoCampConfiguration.configType.replace("List[", "").replace("]", "").replace("Option[", "").replace("]", "")
-      val configTypeIsValid = allowedConfTypes.map(_.toLowerCase).contains(internalConfigType.toLowerCase)
+      val configTypeIsValid  = allowedConfTypes.map(_.toLowerCase).contains(internalConfigType.toLowerCase)
       val valueIsValid =
         try {
           val response = typedValue[Any]()

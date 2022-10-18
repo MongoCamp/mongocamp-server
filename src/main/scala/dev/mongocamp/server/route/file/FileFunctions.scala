@@ -2,7 +2,7 @@ package dev.mongocamp.server.route.file
 
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.service.ConfigurationService
-import sttp.tapir.{fileBody, header}
+import sttp.tapir.{ fileBody, header }
 object FileFunctions {
   def fileResult = fileBody
     .and(header[Long]("Content-Length"))

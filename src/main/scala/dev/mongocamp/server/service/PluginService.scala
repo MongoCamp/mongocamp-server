@@ -67,7 +67,8 @@ object PluginService extends LazyLogging {
           case e: MongoCampException => logger.error(s"Error on downloading plugin from $pluginUrl with following error message ${e.getMessage}")
         }
       })
-    } else {
+    }
+    else {
       logger.error(s"could not manage plugins from server side. ${pluginDirectory.toString()} is not writeable.")
     }
   }

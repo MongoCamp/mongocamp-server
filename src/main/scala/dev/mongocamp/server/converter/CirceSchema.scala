@@ -2,11 +2,11 @@ package dev.mongocamp.server.converter
 
 import dev.mongocamp.server.model.MongoCampConfiguration
 import io.circe.Decoder.Result
-import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.{ Decoder, Encoder, HCursor, Json }
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
-import sttp.tapir.{Schema, SchemaType}
+import sttp.tapir.{ Schema, SchemaType }
 
 import java.util.Date
 

@@ -1,3 +1,34 @@
+## [1.3.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.2.1...v1.3.0) (2022-10-18)
+
+
+### Bug Fixes
+
+* Auth Route for update ApiKey only for own user ([568558a](https://github.com/MongoCamp/mongocamp-server/commit/568558a5d83b6a2c693b665ebb790393cb52776f))
+* check if plugin dir is writeable ([bcf9f12](https://github.com/MongoCamp/mongocamp-server/commit/bcf9f127ad459d75089d5b9575190d03483755e5))
+
+
+### Code Refactoring
+
+* **config:** refactoring configuration handling ([2c85ef3](https://github.com/MongoCamp/mongocamp-server/commit/2c85ef3adedea7bfab2fa5c3ee8538b63188493e))
+* Moved ConfigurationManager to ConfigurationService ([3da3d3a](https://github.com/MongoCamp/mongocamp-server/commit/3da3d3a569534c692d5e041a7ae3d548746e1164))
+* Renamed JsonResult to JsonValue ([a3a6d63](https://github.com/MongoCamp/mongocamp-server/commit/a3a6d638a7fd1cd1e3d13c63b1b9e595d1d50590))
+* Use same key for Database or Environment loaded Keys ([c3aa688](https://github.com/MongoCamp/mongocamp-server/commit/c3aa68813f22e225326c5bda47d85a4d22851eef))
+
+
+### Features
+
+* added routes for MongoCampConfiguration ([3fb6ba6](https://github.com/MongoCamp/mongocamp-server/commit/3fb6ba6a9191fd96e51a2797c3abfb7a8cfbc94f))
+* Caching for Configuration ([108b314](https://github.com/MongoCamp/mongocamp-server/commit/108b314c2c60d1974baef82d1f7efd7cde4dd60f))
+* Cleanup for Token DB for not working TTL Indices ([ec1c1be](https://github.com/MongoCamp/mongocamp-server/commit/ec1c1bedc5ac969b2bffc8958f43f0cc8eac47f2))
+* download plugins by url on server startup ([019f7ca](https://github.com/MongoCamp/mongocamp-server/commit/019f7cac9e54e842ca77d7ac4c3be8a3857f986e))
+* **events:** Added old values to Document Events ([4851bbc](https://github.com/MongoCamp/mongocamp-server/commit/4851bbc24ff3abe366f17eef2a3bed99e69feed7)), closes [#36](https://github.com/MongoCamp/mongocamp-server/issues/36)
+
+
+### Maintenance
+
+* **dependencies:** Removed unnecessary dependency override for slf4j ([eff6fba](https://github.com/MongoCamp/mongocamp-server/commit/eff6fba68fb9c3ab8dff3950f82cb610e9284607))
+* **dependencies:** Update 19 dependencies and SBT ([36bb0b9](https://github.com/MongoCamp/mongocamp-server/commit/36bb0b9a520cf20c08739d05595e1ad0f875c5c8))
+
 ### [1.2.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.2.0...v1.2.1) (2022-07-24)
 
 
@@ -213,4 +244,4 @@
 
 * **Config:** Change Docs Serve Port to 5555 ([4f8501b](https://github.com/MongoCamp/mongocamp-server/commit/4f8501b6d9f1472d7fb1847a5da6ff7f071b1245))
 * **Git:** Fix defected git files ([6193fb1](https://github.com/MongoCamp/mongocamp-server/commit/6193fb1809139b56db02ac1ee978a4d5735d59e5))
- 
+

@@ -4,14 +4,14 @@ import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userNotFoundException}
+import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.joda.time.DateTime
-import pdi.jwt.{JwtAlgorithm, JwtCirce, JwtClaim}
+import pdi.jwt.{ JwtAlgorithm, JwtCirce, JwtClaim }
 import sttp.model.StatusCode
 
 import java.security.MessageDigest
@@ -54,9 +54,10 @@ trait AuthHolder {
   }
 
   def generateLoginResult(user: UserInformation) = {
-    val resultUser     = user.toResultUser
-    val expirationDate = new DateTime().plusSeconds(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toSeconds.toInt)
-    val token          = encodeToken(resultUser, expirationDate)
+    val resultUser = user.toResultUser
+    val expirationDate =
+      new DateTime().plusSeconds(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toSeconds.toInt)
+    val token = encodeToken(resultUser, expirationDate)
     TokenCache.saveToken(token, user)
     val loginResult = LoginResult(token, resultUser, expirationDate.toDate)
     loginResult

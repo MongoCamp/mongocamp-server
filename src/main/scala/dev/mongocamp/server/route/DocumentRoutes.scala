@@ -2,22 +2,22 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.MongoCampBsonConverter
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{convertFields, convertIdField, convertToOperationMap}
+import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertIdField, convertToOperationMap }
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.paging.{MongoPaginatedFilter, PaginationInfo}
+import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.document.{CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent}
-import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
+import dev.mongocamp.server.event.document.{ CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent }
+import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.{DeleteResponse, InsertResponse, MongoFindRequest, UpdateResponse}
+import dev.mongocamp.server.model.{ DeleteResponse, InsertResponse, MongoFindRequest, UpdateResponse }
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
+import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.bson.types.ObjectId
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -204,8 +204,8 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
           val dao                = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val documentMap        = parameter._2
           val originalDocumentId = convertIdField(parameter._1)
-          val filter = Map[String, Any]("_id" -> originalDocumentId)
-          val oldValues      = dao.find(filter).resultList()
+          val filter             = Map[String, Any]("_id" -> originalDocumentId)
+          val oldValues          = dao.find(filter).resultList()
           val result             = dao.replaceOne(filter, documentFromScalaMap(documentMap)).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)
@@ -219,7 +219,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse,oldValues))
+          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
           updateResponse
         }
       )
@@ -251,8 +251,8 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
           val document = convertToOperationMap(parameter._2)
 
           val originalDocumentId = convertIdField(parameter._1)
-          val filter = Map[String, Any]("_id" -> originalDocumentId)
-          val oldValues = dao.find(filter).resultList()
+          val filter             = Map[String, Any]("_id" -> originalDocumentId)
+          val oldValues          = dao.find(filter).resultList()
           val result             = dao.updateOne(filter, documentFromScalaMap(document)).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)

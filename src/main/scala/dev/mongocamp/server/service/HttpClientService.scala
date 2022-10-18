@@ -8,17 +8,17 @@ import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
 import sttp.client3._
 import sttp.client3.akkahttp.AkkaHttpBackend
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.util.Random
 
 object HttpClientService {
   private lazy val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] = AkkaHttpBackend()
 
   def additionalHeaderByHost(host: String): Map[String, String] = {
-    val hostHeadersString = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyHttpClientHeaders)
+    val hostHeadersString                                = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyHttpClientHeaders)
     val hostHeadersMap: Map[String, Map[String, String]] = decode[Map[String, Map[String, String]]](hostHeadersString).getOrElse(Map())
     hostHeadersMap.getOrElse(host, Map())
   }

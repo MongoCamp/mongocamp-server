@@ -24,8 +24,14 @@ object Cors {
     List(
       Header("Access-Control-Allow-Origin", allowedOrigin),
       Header("Access-Control-Allow-Credentials", "true"),
-      Header("Access-Control-Allow-Headers", ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsHeadersAllowed).mkString(",")),
-      Header("Access-Control-Expose-Headers", ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsHeadersExposed).mkString(","))
+      Header(
+        "Access-Control-Allow-Headers",
+        ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsHeadersAllowed).mkString(",")
+      ),
+      Header(
+        "Access-Control-Expose-Headers",
+        ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyCorsHeadersExposed).mkString(",")
+      )
     )
   }
 
