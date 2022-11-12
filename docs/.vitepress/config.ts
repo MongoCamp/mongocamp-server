@@ -1,4 +1,7 @@
-import {defineConfig} from 'vitepress'
+import Unocss from 'unocss/vite'
+import { defineConfig } from 'vitepress'
+import { version } from '../../package.json'
+import { SearchPlugin } from 'vitepress-plugin-search'
 
 export default defineConfig({
     lang: 'en-US',
@@ -32,7 +35,16 @@ export default defineConfig({
             copyright: 'Copyright © 2022 - MongoCamp Team'
         },
 
-    }
+    },
+    vite: {
+        plugins: [
+            Unocss({
+                configFile: '../../unocss.config.ts',
+            }),
+            SearchPlugin(),
+        ],
+    },
+
 })
 
 function nav() {
@@ -42,9 +54,15 @@ function nav() {
         { text: 'Plugins', link: '/plugins/', activeMatch: '/plugins/' },
         { text: 'REST API', link: '/rest/README', activeMatch: '/rest/' },
         {
-            text: 'Changelog',
-            link: 'https://github.com/MongoCamp/mongocamp-server/blob/main/CHANGELOG.md'
-        }
+            text: version,
+            items: [
+                {
+                    text: 'Changelog',
+                    link: 'https://github.com/MongoCamp/mongocamp-server/blob/main/CHANGELOG.md'
+                },
+            ],
+        },
+
     ]
 }
 
