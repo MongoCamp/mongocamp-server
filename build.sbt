@@ -1,6 +1,10 @@
-name := "mongocamp-server"
+import dev.quadstingray.sbt.json.JsonFile
 
-organization := "dev.mongocamp"
+val json = JsonFile(file("package.json"))
+
+name := json.stringValue("name")
+
+organization := json.stringValue("organization")
 
 scalaVersion := "2.13.10"
 

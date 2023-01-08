@@ -1,3 +1,7 @@
+import dev.quadstingray.sbt.json.JsonFile
+
+val json = JsonFile(file("package.json"))
+
 enablePlugins(BuildInfoPlugin)
 
 buildInfoPackage := "dev.mongocamp.server"
@@ -8,7 +12,7 @@ val MongoCampHomepage = "https://www.mongocamp.dev"
 
 organizationHomepage := Some(url(MongoCampHomepage))
 
-homepage := Some(url("https://mongodb-server.mongocamp.dev"))
+homepage := Some(url(json.stringValue("homepage")))
 
 scmInfo := Some(
   ScmInfo(
@@ -38,4 +42,4 @@ developers := List(
   )
 )
 
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+licenses += (json.stringValue("license"), url("https://github.com/MongoCamp/mongocamp-server/blob/main/LICENSE"))

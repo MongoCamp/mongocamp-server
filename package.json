@@ -1,5 +1,6 @@
 {
   "name": "mongocamp-server",
+  "organization": "dev.mongocamp",
   "version": "1.3.1",
   "description": "",
   "directories": {
@@ -21,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/MongoCamp/mongocamp-server/issues"
   },
-  "homepage": "https://github.com/MongoCamp/mongocamp-server#readme",
+  "homepage": "https://mongodb-server.mongocamp.dev",
   "devDependencies": {
     "@antfu/eslint-config": "^0.29.4",
     "@iconify-json/bx": "^1.1.4",
