@@ -1,7 +1,7 @@
 # Plugins Urls
 
 The URLs for Plugins or other JARs you need in your individual MongoCamp instance. 
-The URLs were resolved as GET-Request to download the file to the folder you configured [PLUGINS_DIRECTORY](environment-db#plugins) in the subfolder `managed`.
+The URLs were resolved as GET-Request to download the file to the folder you configured [PLUGINS_DIRECTORY](../environment-db.md#plugins) in the subfolder `managed`.
 
 ## Github Maven Repository
 To download an JAR or Plugin from the GitHub Maven Repository you have to configure a url with that pattern:

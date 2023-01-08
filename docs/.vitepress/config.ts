@@ -1,7 +1,7 @@
 import Unocss from 'unocss/vite'
-import { defineConfig } from 'vitepress'
-import { version } from '../../package.json'
-import { SearchPlugin } from 'vitepress-plugin-search'
+import {defineConfig} from 'vitepress'
+import {version} from '../../package.json'
+import {SearchPlugin} from 'vitepress-plugin-search'
 
 export default defineConfig({
     lang: 'en-US',
@@ -58,7 +58,7 @@ function nav() {
             items: [
                 {
                     text: 'Changelog',
-                    link: 'https://github.com/MongoCamp/mongocamp-server/blob/main/CHANGELOG.md'
+                    link: '/changelog.html'
                 },
             ],
         },
