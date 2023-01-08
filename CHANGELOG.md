@@ -1,3 +1,11 @@
+### [1.3.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.0...v1.3.1) (2023-01-08)
+
+
+### Maintenance
+
+* dependency updates plugins ([c595300](https://github.com/MongoCamp/mongocamp-server/commit/c595300baf79a89afbae2805d3e7932eddd5a360))
+* Many dependencies updated (tapir, sttp-client, mongodb-driver) ([c128d6f](https://github.com/MongoCamp/mongocamp-server/commit/c128d6fe593add7cfe11ec9d4496b324cab7955e))
+
 ## [1.3.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.2.1...v1.3.0) (2022-10-18)
 
 
