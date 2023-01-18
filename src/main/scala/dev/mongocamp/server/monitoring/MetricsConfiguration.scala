@@ -1,47 +1,57 @@
 package dev.mongocamp.server.monitoring
 
-import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.binder.jvm._
 import io.micrometer.core.instrument.binder.mongodb.{ MongoMetricsCommandListener, MongoMetricsConnectionPoolListener }
 import io.micrometer.core.instrument.binder.system.{ DiskSpaceMetrics, FileDescriptorMetrics, ProcessorMetrics, UptimeMetrics }
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import io.micrometer.core.instrument.{ MeterRegistry, Metrics }
 
 import java.io.File
+import scala.collection.mutable.ArrayBuffer
 
 object MetricsConfiguration {
 
-  val jvmRegistry     = new SimpleMeterRegistry()
-  val systemRegistry  = new SimpleMeterRegistry()
-  val mongoDbRegistry = new SimpleMeterRegistry()
-  val eventRegistry   = new SimpleMeterRegistry()
+  private lazy val jvmMetricsRegistries: ArrayBuffer[MeterRegistry]     = ArrayBuffer()
+  private lazy val systemMetricsRegistries: ArrayBuffer[MeterRegistry]  = ArrayBuffer()
+  private lazy val mongoDbMetricsRegistries: ArrayBuffer[MeterRegistry] = ArrayBuffer()
+  private lazy val eventMetricsRegistries: ArrayBuffer[MeterRegistry]   = ArrayBuffer()
 
-  Metrics.globalRegistry.add(jvmRegistry)
-  Metrics.globalRegistry.add(systemRegistry)
-  Metrics.globalRegistry.add(mongoDbRegistry)
-  Metrics.globalRegistry.add(eventRegistry)
-
-  registerJvmMonitoring()
-  registerSystemMonitoring()
-  registerMongoDbMonitoring()
-
-  private def registerJvmMonitoring() = {
-    new ClassLoaderMetrics().bindTo(jvmRegistry)
-    new JvmMemoryMetrics().bindTo(jvmRegistry)
-    new JvmGcMetrics().bindTo(jvmRegistry)
-    new JvmHeapPressureMetrics().bindTo(jvmRegistry)
-    new JvmThreadMetrics().bindTo(jvmRegistry)
+  def addJvmRegistry(registry: MeterRegistry): Unit = {
+    jvmMetricsRegistries += registry
+    new ClassLoaderMetrics().bindTo(registry)
+    new JvmMemoryMetrics().bindTo(registry)
+    new JvmGcMetrics().bindTo(registry)
+    new JvmHeapPressureMetrics().bindTo(registry)
+    new JvmThreadMetrics().bindTo(registry)
+    new JvmInfoMetrics().bindTo(registry)
+    new JvmCompilationMetrics().bindTo(registry)
+    Metrics.globalRegistry.add(registry)
   }
 
-  private def registerSystemMonitoring() = {
-    new DiskSpaceMetrics(new File("/")).bindTo(systemRegistry)
-    new FileDescriptorMetrics().bindTo(systemRegistry)
-    new ProcessorMetrics().bindTo(systemRegistry)
-    new UptimeMetrics().bindTo(systemRegistry)
+  def addSystemRegistry(registry: MeterRegistry): Unit = {
+    systemMetricsRegistries += registry
+    new DiskSpaceMetrics(new File("/")).bindTo(registry)
+    new FileDescriptorMetrics().bindTo(registry)
+    new ProcessorMetrics().bindTo(registry)
+    new UptimeMetrics().bindTo(registry)
+    Metrics.globalRegistry.add(registry)
   }
 
-  private def registerMongoDbMonitoring() = {
-    new MongoMetricsConnectionPoolListener(mongoDbRegistry)
-    new MongoMetricsCommandListener(mongoDbRegistry)
+  def addMongoRegistry(registry: MeterRegistry): Unit = {
+    mongoDbMetricsRegistries += registry
+    new MongoMetricsConnectionPoolListener(registry)
+    new MongoMetricsCommandListener(registry)
+    Metrics.globalRegistry.add(registry)
   }
+
+  def addEventRegistry(registry: MeterRegistry): Unit = {
+    eventMetricsRegistries += registry
+    Metrics.globalRegistry.add(registry)
+  }
+
+
+  def getJvmMetricsRegistries = jvmMetricsRegistries.toList
+  def getSystemMetricsRegistries = systemMetricsRegistries.toList
+  def getMongoDbMetricsRegistries = mongoDbMetricsRegistries.toList
+  def getEventMetricsRegistries = eventMetricsRegistries.toList
 
 }
