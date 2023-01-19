@@ -13,15 +13,19 @@ case class MonitoringMongoConfig(mongoDAO: MongoDAO[Document], configurationMap:
   override def prefix(): String = "dev.mongocamp.micrometer.mongodb"
 
   override def get(key: String): String = {
+    loadConfigValue(key).orNull
+  }
+
+  private def loadConfigValue(key: String): Option[String] = {
     try {
-      val mapKey = key.replace(s"$prefix().", "")
+      val mapKey = key.replace(s"$prefix.", "")
       (configurationMap.get(mapKey) ++ configurationMap.get(key)).foreach(v => {
-        return v
+        return Some(v)
       })
-      conf.getValue(key).render().replace("\"", "")
+      Option(conf.getValue(key).render().replace("\"", ""))
     } catch {
-      case e: Exception =>
-        null
+      case _: Exception =>
+        None
     }
   }
 

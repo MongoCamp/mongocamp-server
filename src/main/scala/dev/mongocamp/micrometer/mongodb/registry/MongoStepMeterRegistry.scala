@@ -102,7 +102,7 @@ object MongoStepMeterRegistry {
 
   private lazy val threadFactory = new NamedThreadFactory("mongodb-metrics-publisher")
 
-  def apply(mongoDAO: MongoDAO[Document]): MongoStepMeterRegistry = {
-    new MongoStepMeterRegistry(MonitoringMongoConfig(mongoDAO))
+  def apply(mongoDAO: MongoDAO[Document], configurationMap: Map[String, String] = Map()): MongoStepMeterRegistry = {
+    new MongoStepMeterRegistry(MonitoringMongoConfig(mongoDAO, configurationMap))
   }
 }
