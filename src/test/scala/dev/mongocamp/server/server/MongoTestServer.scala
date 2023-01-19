@@ -5,12 +5,24 @@ import com.typesafe.scalalogging.LazyLogging
 import de.flapdoodle.embed.mongo.config._
 import de.flapdoodle.embed.mongo.distribution.Version
 import de.flapdoodle.embed.mongo.packageresolver.Command
-import de.flapdoodle.embed.mongo.{ MongodExecutable, MongodStarter }
+import de.flapdoodle.embed.mongo.{MongodExecutable, MongodStarter}
 import de.flapdoodle.embed.process.config.process.ProcessOutput
-import de.flapdoodle.embed.process.io.{ Processors, Slf4jLevel }
+import de.flapdoodle.embed.process.io.{Processors, Slf4jLevel}
 import de.flapdoodle.embed.process.runtime.Network
+import sttp.client3.basicRequest
+import sttp.model.Method
 
 import scala.util.Random
+import dev.mongocamp.server.client.core.JsonSupport._
+import dev.mongocamp.server.client.model._
+import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.server.TestServer
+import sttp.client3._
+import sttp.client3.circe.asJson
+import sttp.model.Method
+
+import scala.concurrent.Await
+import scala.concurrent.duration.DurationInt
 
 object MongoTestServer extends LazyLogging {
   private var running: Boolean = false
@@ -52,7 +64,27 @@ object MongoTestServer extends LazyLogging {
 
   def isRunning: Boolean = running
 
+  def checkForLocalRunningMongoDb(): Unit = {
+    if (!running) {
+      try {
+        val checkRequest = basicRequest.method(Method.GET, uri"http://localhost:4711").response(asString)
+        val resultFuture = TestAdditions.backend.send(checkRequest)
+        val responseResult = Await.result(resultFuture, 1.seconds).body.getOrElse("not found")
+        if (responseResult.contains("HTTP on the native driver port.")) {
+          println("Use local running MongoDb")
+          System.setProperty("CONNECTION_PORT", "4711")
+          running = true
+        }
+      } catch {
+        case _: Exception =>
+          ""
+      }
+    }
+
+  }
+
   def startMongoDatabase(): Unit = {
+    checkForLocalRunningMongoDb()
     if (!running) {
       mongodExecutable.start()
       running = true

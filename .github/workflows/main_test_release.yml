@@ -12,6 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
+        mongodb-version: [ '4.4', '5.0', '6.0' ]
         os: [ubuntu-latest]
     steps:
       - name: Git Checkout
@@ -26,11 +27,16 @@ jobs:
         with:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-      - name: Set up JDK ${{ matrix.jdk }}
+      - name: Set up JDK
         uses: actions/setup-java@v3.3.0
         with:
           distribution: 'corretto'
           java-version: '17'
+      - name: Start MongoDB ${{ matrix.mongodb-version }}
+        uses: MongoCamp/mongodb-github-action@1.2.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-port: 4711
       - name: Run tests
         run: sbt test
   build-docker:

@@ -1,5 +1,6 @@
 package dev.mongocamp.server.server
 
+import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.ActorHandler
 import dev.mongocamp.server.client.api.InformationApi
@@ -16,6 +17,7 @@ object TestServer extends LazyLogging {
 
   System.setProperty("CONNECTION_HOST", "localhost")
   System.setProperty("CONNECTION_DATABASE", "test")
+  System.setProperty("PLUGINS_DIRECTORY", File.temporaryDirectory().toString)
 
   var retries = 0
 
