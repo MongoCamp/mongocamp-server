@@ -5,6 +5,8 @@ import com.typesafe.config
 import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.config.{ConfigRegisterEvent, ConfigUpdateEvent}
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
@@ -49,6 +51,7 @@ object ConfigurationService {
     }
     else {
       nonPersistentConfigs.put(configKey, config)
+      EventSystem.eventStream.publish(ConfigRegisterEvent(persistent = false, configKey, configType, value, comment, config.needsRestartForActivation))
       true
     }
   }
@@ -79,6 +82,7 @@ object ConfigurationService {
         }
       }
       val insertResponse = ConfigDao().insertOne(Converter.toDocument(configToInsert)).result()
+      EventSystem.eventStream.publish(ConfigRegisterEvent(persistent = true, configKey, configType, value, comment, needsRestartForActivation = needsRestartForActivation))
       checkAndUpdateWithEnv(configKey)
       insertResponse.wasAcknowledged()
     }
@@ -123,6 +127,7 @@ object ConfigurationService {
         val mongoCampConfiguration = dbOption.get.copy(value = value, comment = commentOption.getOrElse(dbOption.get.comment))
         val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
         configCache.invalidate(key)
+        EventSystem.eventStream.publish(ConfigUpdateEvent(key, value, dbOption.get.value, "updateConfig"))
         replaceResult.wasAcknowledged()
       }
       else {
@@ -141,8 +146,9 @@ object ConfigurationService {
         .map(envConfigValue => {
           if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
             val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
-            configCache.invalidate(key)
             val replaceResult = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
+            configCache.invalidate(key)
+            EventSystem.eventStream.publish(ConfigUpdateEvent(key, envConfigValue, dbConfig.value, "checkAndUpdateWithEnv"))
             replaceResult.wasAcknowledged()
           }
         })
