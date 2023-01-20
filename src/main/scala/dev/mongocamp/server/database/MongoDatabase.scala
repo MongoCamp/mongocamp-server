@@ -31,7 +31,19 @@ object MongoDatabase {
   lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
   lazy val jobDao: JobDao                       = JobDao()
 
-  lazy val databaseProvider: DatabaseProvider = {
+  private var _databaseProvider: DatabaseProvider = null
+
+  def databaseProvider = {
+    if (_databaseProvider == null) {
+      createNewDatabaseProvider()
+    }
+    _databaseProvider
+  }
+
+  def createNewDatabaseProvider(): DatabaseProvider = {
+    val connectionPoolListener =
+      MetricsConfiguration.getMongoDbMetricsRegistries.map(mongoDbRegistry => new MongoMetricsConnectionPoolListener(mongoDbRegistry))
+    val commandListener = MetricsConfiguration.getMongoDbMetricsRegistries.map(mongoDbRegistry => new MongoMetricsCommandListener(mongoDbRegistry))
     val connection = MongoConfig(
       ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase),
       ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost),
@@ -40,10 +52,11 @@ object MongoDatabase {
       ConfigurationService.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionUsername),
       ConfigurationService.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionPassword),
       ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionAuthDb),
-      connectionPoolListener = List(new MongoMetricsConnectionPoolListener(MetricsConfiguration.mongoDbRegistry)),
-      commandListener = List(new MongoMetricsCommandListener(MetricsConfiguration.mongoDbRegistry))
+      connectionPoolListener = connectionPoolListener,
+      commandListener = commandListener
     )
     val dbProvider = DatabaseProvider(connection, fromRegistries(DEFAULT_CODEC_REGISTRY, providerRegistry))
+    _databaseProvider = dbProvider
     dbProvider
   }
 

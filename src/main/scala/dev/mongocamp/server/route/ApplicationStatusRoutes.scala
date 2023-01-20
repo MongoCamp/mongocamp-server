@@ -6,14 +6,17 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JsonValue, MongoCampConfiguration, SettingsResponse }
-import dev.mongocamp.server.monitoring.{ Metric, MetricsConfiguration }
+import dev.mongocamp.server.model.{JsonValue, MongoCampConfiguration, SettingsResponse}
+import dev.mongocamp.server.monitoring.{Metric, MetricsConfiguration}
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.WebSockets
+import sttp.capabilities.akka.AkkaStreams
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.Future
@@ -33,7 +36,7 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
 
   def jvmMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.jvmRegistry.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getJvmMetricsRegistries.head.getMeters.asScala.toList
       meters.map(Metric(_))
     }))
   }
@@ -49,7 +52,7 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
 
   def systemMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.systemRegistry.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getSystemMetricsRegistries.head.getMeters.asScala.toList
       meters.map(Metric(_))
     }))
   }
@@ -65,7 +68,7 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
 
   def mongoDbMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.mongoDbRegistry.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getMongoDbMetricsRegistries.head.getMeters.asScala.toList
       meters.map(Metric(_))
     }))
   }
@@ -81,7 +84,7 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
 
   def eventMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.eventRegistry.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getEventMetricsRegistries.head.getMeters.asScala.toList
       meters.map(Metric(_))
     }))
   }
@@ -168,15 +171,26 @@ object ApplicationStatusRoutes extends BaseRoute with RoutesPlugin {
     }
   }
 
-  override def endpoints = List(
-    jvmMetricsRoutes,
-    systemMetricsRoutes,
-    mongoDbMetricsRoutes,
-    eventMetricsRoutes,
-    settingsEndpoint,
-    listConfigurationEndpoint,
-    getConfigEndpoint,
-    updateConfigEndpoint
-  )
+  override def endpoints = {
+    var endpoints : List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(
+      settingsEndpoint,
+      listConfigurationEndpoint,
+      getConfigEndpoint,
+      updateConfigEndpoint
+    )
+    if (MetricsConfiguration.getJvmMetricsRegistries.nonEmpty) {
+      endpoints ++= List(jvmMetricsRoutes)
+    }
+    if (MetricsConfiguration.getSystemMetricsRegistries.nonEmpty) {
+      endpoints ++= List(systemMetricsRoutes)
+    }
+    if (MetricsConfiguration.getMongoDbMetricsRegistries.nonEmpty) {
+      endpoints ++= List(mongoDbMetricsRoutes)
+    }
+    if (MetricsConfiguration.getEventMetricsRegistries.nonEmpty) {
+      endpoints ++= List(eventMetricsRoutes)
+    }
+    endpoints
+  }
 
 }

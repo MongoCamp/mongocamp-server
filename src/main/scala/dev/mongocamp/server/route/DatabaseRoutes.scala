@@ -3,7 +3,6 @@ package dev.mongocamp.server.route
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseInfo
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.MongoDatabase.databaseProvider.DefaultDatabaseName
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.database.DropDatabaseEvent
 import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
@@ -111,7 +110,7 @@ object DatabaseRoutes extends RoutesPlugin {
       val result           = MongoDatabase.databaseProvider.collectionNames(database)
       val collectionGrants = userInformation.getCollectionGrants
       result.filter(coll => {
-        val collection      = if (database.equalsIgnoreCase(DefaultDatabaseName)) coll else s"$database:$coll"
+        val collection      = if (database.equalsIgnoreCase(MongoDatabase.databaseProvider.DefaultDatabaseName)) coll else s"$database:$coll"
         val readCollections = collectionGrants.filter(_.read).map(_.name)
         val allBucketMetaFilter =
           readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)

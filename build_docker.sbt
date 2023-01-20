@@ -17,7 +17,7 @@ dockerRepository := Some("ghcr.io/mongocamp")
 Docker / daemonUser := mongoCampUser
 
 dockerCommands += Cmd("USER", "root")
-dockerCommands += Cmd("RUN", "apk add --update --no-cache snappy-dev zlib-dev bash")
+dockerCommands += Cmd("RUN", "apk add --update --no-cache snappy-dev zlib-dev bash;")
 dockerCommands += Cmd("USER", mongoCampUser)
 
 dockerExposedPorts := List(8080)
