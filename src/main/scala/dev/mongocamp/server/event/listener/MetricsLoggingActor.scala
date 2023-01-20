@@ -22,7 +22,9 @@ class MetricsLoggingActor extends Actor with LazyLogging {
       val replacement    = "$1.$2"
       val metricsName    = s"${pathArray.mkString(".")}".replaceAll("Event", "").replaceAll(regex, replacement).toLowerCase()
       MetricsConfiguration.getEventMetricsRegistries.foreach(_.timer(metricsName).record(Duration.ofMillis(e.duration.getMillis)))
-      MetricsConfiguration.getEventMetricsRegistries.foreach(_.timer(s"$metricsName.${e.controller.toLowerCase()}.${e.controllerMethod.toLowerCase()}").record(Duration.ofMillis(e.duration.getMillis)))
+      MetricsConfiguration.getEventMetricsRegistries.foreach(
+        _.timer(s"$metricsName.${e.controller.toLowerCase()}.${e.controllerMethod.toLowerCase()}").record(Duration.ofMillis(e.duration.getMillis))
+      )
 
     case e: Event =>
       val eventNameArray = e.getClass.getName.split('.')

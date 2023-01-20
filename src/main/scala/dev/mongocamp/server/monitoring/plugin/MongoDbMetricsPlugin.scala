@@ -20,7 +20,7 @@ object MongoDbMetricsPlugin extends ServerPlugin with LazyLogging {
     ConfigurationService.registerConfig("micrometer.mongodb.event", MongoCampConfiguration.confTypeBoolean)
     ConfigurationService.registerConfig("micrometer.mongodb.step", MongoCampConfiguration.confTypeDuration)
 
-    val step = java.time.Duration.ofSeconds(ConfigurationService.getConfigValue[Duration]("micrometer.mongodb.step").toSeconds)
+    val step      = java.time.Duration.ofSeconds(ConfigurationService.getConfigValue[Duration]("micrometer.mongodb.step").toSeconds)
     val configMap = Map("step" -> step.toString)
     if (ConfigurationService.getConfigValue[Boolean]("micrometer.mongodb.jvm")) {
       MetricsConfiguration.addJvmRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_jvm"), configMap))

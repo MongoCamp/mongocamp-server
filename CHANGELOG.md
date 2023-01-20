@@ -1,3 +1,23 @@
+### [1.3.2](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.1...v1.3.2) (2023-01-20)
+
+
+### Bug Fixes
+
+* MongoMetrics Plugins were loaded to late ([1827f51](https://github.com/MongoCamp/mongocamp-server/commit/1827f5160d536d3959b3f2bdb46f39395500dd56))
+
+
+### Features
+
+* Configurations for micrometer mongodb plugin ([801f52b](https://github.com/MongoCamp/mongocamp-server/commit/801f52b15fb1ce0635807762908cc2c9d17354bf))
+* Events on Configuration Settings and Changes ([b54a6b9](https://github.com/MongoCamp/mongocamp-server/commit/b54a6b94d6a040df07c63f3b36f6fc1de658d492))
+* Micrometer as Plugin ([5bf84fb](https://github.com/MongoCamp/mongocamp-server/commit/5bf84fb26b7563db0abbe9407efd10059f49d628))
+* MongoDb Micrometer Registry ([d14363c](https://github.com/MongoCamp/mongocamp-server/commit/d14363c6cca131df46fca4fa477e1c29cc9f3d55))
+
+
+### Maintenance
+
+* **dependencies:** Found 9 dependency updates for mongocamp-server ([fae90d4](https://github.com/MongoCamp/mongocamp-server/commit/fae90d4677f5a720a3113c69535ac6d8f014626e))
+
 ### [1.3.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.0...v1.3.1) (2023-01-08)
 
 

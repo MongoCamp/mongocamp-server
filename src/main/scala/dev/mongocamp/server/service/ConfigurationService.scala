@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.config.{ConfigRegisterEvent, ConfigUpdateEvent}
+import dev.mongocamp.server.event.config.{ ConfigRegisterEvent, ConfigUpdateEvent }
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
@@ -82,7 +82,9 @@ object ConfigurationService {
         }
       }
       val insertResponse = ConfigDao().insertOne(Converter.toDocument(configToInsert)).result()
-      EventSystem.eventStream.publish(ConfigRegisterEvent(persistent = true, configKey, configType, value, comment, needsRestartForActivation = needsRestartForActivation))
+      EventSystem.eventStream.publish(
+        ConfigRegisterEvent(persistent = true, configKey, configType, value, comment, needsRestartForActivation = needsRestartForActivation)
+      )
       checkAndUpdateWithEnv(configKey)
       insertResponse.wasAcknowledged()
     }
@@ -146,7 +148,7 @@ object ConfigurationService {
         .map(envConfigValue => {
           if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
             val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
-            val replaceResult = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
+            val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
             configCache.invalidate(key)
             EventSystem.eventStream.publish(ConfigUpdateEvent(key, envConfigValue, dbConfig.value, "checkAndUpdateWithEnv"))
             replaceResult.wasAcknowledged()

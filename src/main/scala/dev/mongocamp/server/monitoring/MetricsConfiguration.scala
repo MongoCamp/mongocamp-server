@@ -2,9 +2,9 @@ package dev.mongocamp.server.monitoring
 
 import dev.mongocamp.server.database.MongoDatabase.createNewDatabaseProvider
 import io.micrometer.core.instrument.binder.jvm._
-import io.micrometer.core.instrument.binder.mongodb.{MongoMetricsCommandListener, MongoMetricsConnectionPoolListener}
-import io.micrometer.core.instrument.binder.system.{DiskSpaceMetrics, FileDescriptorMetrics, ProcessorMetrics, UptimeMetrics}
-import io.micrometer.core.instrument.{MeterRegistry, Metrics}
+import io.micrometer.core.instrument.binder.mongodb.{ MongoMetricsCommandListener, MongoMetricsConnectionPoolListener }
+import io.micrometer.core.instrument.binder.system.{ DiskSpaceMetrics, FileDescriptorMetrics, ProcessorMetrics, UptimeMetrics }
+import io.micrometer.core.instrument.{ MeterRegistry, Metrics }
 
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
@@ -50,10 +50,9 @@ object MetricsConfiguration {
     Metrics.globalRegistry.add(registry)
   }
 
-
-  def getJvmMetricsRegistries = jvmMetricsRegistries.toList
-  def getSystemMetricsRegistries = systemMetricsRegistries.toList
+  def getJvmMetricsRegistries     = jvmMetricsRegistries.toList
+  def getSystemMetricsRegistries  = systemMetricsRegistries.toList
   def getMongoDbMetricsRegistries = mongoDbMetricsRegistries.toList
-  def getEventMetricsRegistries = eventMetricsRegistries.toList
+  def getEventMetricsRegistries   = eventMetricsRegistries.toList
 
 }
