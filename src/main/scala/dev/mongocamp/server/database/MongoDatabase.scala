@@ -31,21 +31,19 @@ object MongoDatabase {
   lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
   lazy val jobDao: JobDao                       = JobDao()
 
-  lazy val databaseProvider: DatabaseProvider = createNewDatabaseProvider(true)
+  private var _databaseProvider: DatabaseProvider = null
 
-  def createNewDatabaseProvider(includeMetrics: Boolean): DatabaseProvider = {
-    val connectionPoolListener = if (includeMetrics) {
+  def databaseProvider = {
+    if (_databaseProvider == null) {
+      createNewDatabaseProvider()
+    }
+    _databaseProvider
+  }
+
+  def createNewDatabaseProvider(): DatabaseProvider = {
+    val connectionPoolListener =
       MetricsConfiguration.getMongoDbMetricsRegistries.map(mongoDbRegistry => new MongoMetricsConnectionPoolListener(mongoDbRegistry))
-    }
-    else {
-      List()
-    }
-    val commandListener = if (includeMetrics) {
-      MetricsConfiguration.getMongoDbMetricsRegistries.map(mongoDbRegistry => new MongoMetricsCommandListener(mongoDbRegistry))
-    }
-    else {
-      List()
-    }
+    val commandListener = MetricsConfiguration.getMongoDbMetricsRegistries.map(mongoDbRegistry => new MongoMetricsCommandListener(mongoDbRegistry))
     val connection = MongoConfig(
       ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase),
       ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost),
@@ -58,6 +56,7 @@ object MongoDatabase {
       commandListener = commandListener
     )
     val dbProvider = DatabaseProvider(connection, fromRegistries(DEFAULT_CODEC_REGISTRY, providerRegistry))
+    _databaseProvider = dbProvider
     dbProvider
   }
 
