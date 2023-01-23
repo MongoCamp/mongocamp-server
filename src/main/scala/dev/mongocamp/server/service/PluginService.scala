@@ -2,10 +2,18 @@ package dev.mongocamp.server.service
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
+import coursier.core.Authentication
+import coursier.params.ResolutionParams
+import coursier.util.StringInterpolators
+import coursier.{Dependency, _}
+import dev.mongocamp.server.BuildInfo
+import dev.mongocamp.server.plugin.maven.{MavenDependency, MavenRepository => MReop}
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.service.ReflectionService.registerClassLoaders
 import org.reflections.vfs.Vfs
+import io.circe.generic.auto._
+import io.circe.parser._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.internal.util.ScalaClassLoader.URLClassLoader
@@ -35,7 +43,7 @@ object PluginService extends LazyLogging {
     registerClassLoaders(ReflectionService.getClass)
     val pluginDirectory = File(ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
     if (pluginDirectory.isDirectory) {
-      val listUrl = getChildFiles(pluginDirectory)
+      val listUrl = (getChildFiles(pluginDirectory) ++ CoursierModuleService.resolvePlugins())
         .map(_.url)
         .filter(url =>
           try {
@@ -48,7 +56,7 @@ object PluginService extends LazyLogging {
           }
         )
       if (listUrl.nonEmpty) {
-        val urlClassLoader = new URLClassLoader(listUrl.toSeq, this.getClass.getClassLoader)
+        val urlClassLoader = new URLClassLoader(listUrl, this.getClass.getClassLoader)
         registerClassLoaders(urlClassLoader)
       }
     }

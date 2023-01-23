@@ -10,7 +10,7 @@ scalaVersion := "2.13.10"
 
 libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.5.3"
 
-val TapirVersion = "1.2.5"
+val TapirVersion = "1.2.6"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % TapirVersion
@@ -39,3 +39,5 @@ libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 libraryDependencies += "io.micrometer" % "micrometer-core" % "1.10.3"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
+
+libraryDependencies += "io.get-coursier" %% "coursier" % "2.0.16"
