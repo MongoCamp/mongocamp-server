@@ -7,7 +7,6 @@ import coursier.params.ResolutionParams
 import coursier.util.StringInterpolators
 import coursier.{Dependency, _}
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.plugin.maven.{MavenDependency, MavenRepository => MReop}
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.service.ReflectionService.registerClassLoaders
