@@ -43,7 +43,7 @@ object PluginService extends LazyLogging {
     registerClassLoaders(ReflectionService.getClass)
     val pluginDirectory = File(ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
     if (pluginDirectory.isDirectory) {
-      val listUrl = (getChildFiles(pluginDirectory) ++ CoursierModuleService.resolvePlugins())
+      val listUrl = (getChildFiles(pluginDirectory) ++ CoursierModuleService.loadMavenConfiguredDependencies())
         .map(_.url)
         .filter(url =>
           try {
