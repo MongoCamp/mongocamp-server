@@ -64,7 +64,6 @@ object DefaultConfigurations {
     registerConfig(ConfigKeyPluginsDirectory, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsModules, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsMavenRepositories, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
-    registerConfig(ConfigKeyPluginIvyRepositories, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
 
     registerConfig(ConfigKeyHttpClientHeaders, MongoCampConfiguration.confTypeString)
 

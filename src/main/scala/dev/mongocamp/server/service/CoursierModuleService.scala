@@ -2,8 +2,10 @@ package dev.mongocamp.server.service
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
+import coursier._
+import coursier.core.Configuration
 import coursier.params.ResolutionParams
-import coursier.{ Dependency, _ }
+import coursier.parse.DependencyParser
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
 
@@ -33,7 +35,15 @@ object CoursierModuleService extends LazyLogging {
   }
 
   def loadMavenConfiguredDependencies(): List[File] = {
-    val dependencies: List[Dependency] = ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsModules).map(s => dep"$s")
+    loadMavenConfiguredDependencies(ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsModules))
+  }
+
+  def loadMavenConfiguredDependencies(dependencyStrings: List[String]): List[File] = {
+    val dependencies: List[Dependency] = dependencyStrings.map(s =>
+      DependencyParser
+        .dependency(s, scala.util.Properties.versionNumberString, Configuration.empty)
+        .getOrElse(throw new Exception(s"$s is not a right configured maven dependency"))
+    )
     fetchMavenDependencies(dependencies)
   }
 
@@ -42,8 +52,8 @@ object CoursierModuleService extends LazyLogging {
       val mvnRepository: List[coursier.MavenRepository] = getConfiguredMavenRepositories
       val resolution = Fetch()
         .withDependencies(dependencies)
-        .withRepositories(mvnRepository)
-        .withRepositories(defaultRepositories)
+        .addRepositories(mvnRepository :_*)
+        .addRepositories(defaultRepositories :_*)
         .withResolutionParams(resolutionParams)
         .run()
       resolution.toList.map(jFile => File(jFile.toURI))
@@ -67,8 +77,8 @@ object CoursierModuleService extends LazyLogging {
       try {
         val resolution = Fetch()
           .addDependencies(dependency)
-          .withRepositories(mvnRepository)
-          .withRepositories(defaultRepositories)
+          .addRepositories(mvnRepository :_*)
+          .addRepositories(defaultRepositories :_*)
           .withResolutionParams(resolutionParams)
           .run()
         resolution.nonEmpty
