@@ -10,7 +10,7 @@ object Repository {
   def mvn(repoString: String): coursier.MavenRepository = {
     val repoAuthSplitter = "@"
     val authSplitter     = ':'
-    if (repoString.contains(repoAuthSplitter)) {
+    if (repoString.contains(repoAuthSplitter) || !repoString.startsWith("htt")) {
       val parts      = ArrayBuffer[String]() ++ repoString.split(repoAuthSplitter)
       val authString = parts.head
       parts.remove(parts.indexOf(authString))
