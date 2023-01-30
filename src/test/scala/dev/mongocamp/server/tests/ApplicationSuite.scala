@@ -12,7 +12,7 @@ class ApplicationSuite extends BaseSuite {
     assertEquals(systemSettings.filePlugins.size, 1)
     assertEquals(systemSettings.routesPlugins.size, 7)
     assertEquals(systemSettings.ignoredPlugins.size, 0)
-    assertEquals(systemSettings.configurations.size, 36)
+    assertEquals(systemSettings.configurations.size, 38)
     assertEquals(systemSettings.configurations("CORS_HEADERS_ALLOWED"), List("Authorization", "Content-Type", "X-Requested-With", "X-AUTH-APIKEY"))
   }
 
