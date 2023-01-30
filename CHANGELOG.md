@@ -1,3 +1,26 @@
+### [1.3.3](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.2...v1.3.3) (2023-01-30)
+
+
+### Bug Fixes
+
+* create parent dirs when plugin directory not exists ([76d1387](https://github.com/MongoCamp/mongocamp-server/commit/76d13872148cbf5ce9551f2b9de0958bb938ee33))
+* fix splitter for checking auth is needed ([87d6b3e](https://github.com/MongoCamp/mongocamp-server/commit/87d6b3e484f05b1b489cc188e6c4a9e930e85ad4))
+* fix splitter for checking auth is needed ([02d562d](https://github.com/MongoCamp/mongocamp-server/commit/02d562d0a065f8e422d113c57129bd39f84bc179))
+* Removed import for not longer existing Classes ([1fdb799](https://github.com/MongoCamp/mongocamp-server/commit/1fdb799b30485d4f01533338c0ec713ae874c619))
+* use `addRepository` instead of withDependency ([2fd129d](https://github.com/MongoCamp/mongocamp-server/commit/2fd129d00702910df97f178de59f66991bed83b5))
+
+
+### Features
+
+* Coursier as Handler for Plugins and more ([8c74398](https://github.com/MongoCamp/mongocamp-server/commit/8c743984ecc57d125696133e5e01179b8a27200e))
+* plugin service change to coursier ([6690e38](https://github.com/MongoCamp/mongocamp-server/commit/6690e38158df68c5be314766ed527bcfe80dd680))
+* Startup fault tolerant by excluding invalid configured maven modules ([bb4cf63](https://github.com/MongoCamp/mongocamp-server/commit/bb4cf63cb212561041a09b2fc5b6c83b55d89d74))
+
+
+### Maintenance
+
+* **dependencies:** update sttp.client and and tapir ([1d004bc](https://github.com/MongoCamp/mongocamp-server/commit/1d004bc55c59bf204563765eca3d9640c5e1d7f9))
+
 ### [1.3.2](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.1...v1.3.2) (2023-01-20)
 
 

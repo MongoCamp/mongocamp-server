@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import coursier.core.Authentication
 import coursier.params.ResolutionParams
 import coursier.util.StringInterpolators
-import coursier.{Dependency, _}
+import coursier.{ Dependency, _ }
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.MongoCampException

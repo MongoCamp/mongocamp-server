@@ -52,8 +52,8 @@ object CoursierModuleService extends LazyLogging {
       val mvnRepository: List[coursier.MavenRepository] = getConfiguredMavenRepositories
       val resolution = Fetch()
         .withDependencies(dependencies)
-        .addRepositories(mvnRepository :_*)
-        .addRepositories(defaultRepositories :_*)
+        .addRepositories(mvnRepository: _*)
+        .addRepositories(defaultRepositories: _*)
         .withResolutionParams(resolutionParams)
         .run()
       resolution.toList.map(jFile => File(jFile.toURI))
@@ -77,8 +77,8 @@ object CoursierModuleService extends LazyLogging {
       try {
         val resolution = Fetch()
           .addDependencies(dependency)
-          .addRepositories(mvnRepository :_*)
-          .addRepositories(defaultRepositories :_*)
+          .addRepositories(mvnRepository: _*)
+          .addRepositories(defaultRepositories: _*)
           .withResolutionParams(resolutionParams)
           .run()
         resolution.nonEmpty
