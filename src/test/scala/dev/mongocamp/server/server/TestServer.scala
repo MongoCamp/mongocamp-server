@@ -17,7 +17,7 @@ object TestServer extends LazyLogging {
 
   System.setProperty("CONNECTION_HOST", "localhost")
   System.setProperty("CONNECTION_DATABASE", "test")
-  System.setProperty("PLUGINS_DIRECTORY", File.temporaryDirectory().toString)
+  System.setProperty("PLUGINS_DIRECTORY", File.temporaryDirectory().get().toString())
 
   var retries = 0
 

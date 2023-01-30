@@ -1,7 +1,15 @@
 # Plugins Urls
 
+::: warning
+Recommended way for loading Plugins is using [PLUGINS_MODULES](plugins-module.md). This loader resolves all dependencies of used plugin. 
+:::
+
 The URLs for Plugins or other JARs you need in your individual MongoCamp instance. 
 The URLs were resolved as GET-Request to download the file to the folder you configured [PLUGINS_DIRECTORY](../environment-db.md#plugins) in the subfolder `managed`.
+
+::: info
+You have to configure all needed dependencies of your used plugins as download url as well. 
+:::
 
 ## Github Maven Repository
 To download an JAR or Plugin from the GitHub Maven Repository you have to configure a url with that pattern:

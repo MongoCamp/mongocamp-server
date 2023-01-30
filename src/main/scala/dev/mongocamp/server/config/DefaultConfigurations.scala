@@ -8,37 +8,39 @@ import dev.mongocamp.server.service.ConfigurationService._
 import scala.util.Random
 
 object DefaultConfigurations {
-  lazy val ConfigKeyServerInterface      = "SERVER_INTERFACE"
-  lazy val ConfigKeyServerPort           = "SERVER_PORT"
-  lazy val ConfigKeyRequestLogging       = "REQUESTLOGGING_ENABLED"
-  lazy val ConfigKeyPluginsIgnored       = "PLUGINS_IGNORED"
-  lazy val ConfigKeyPluginsDirectory     = "PLUGINS_DIRECTORY"
-  lazy val ConfigKeyPluginsUrls          = "PLUGINS_URLS"
-  lazy val ConfigKeyHttpClientHeaders    = "HTTP_CLIENT_HEADERS"
-  lazy val ConfigKeyAuthHandler          = "AUTH_HANDLER"
-  lazy val ConfigKeyAuthSecret           = "AUTH_SECRET"
-  lazy val ConfigKeyAuthApiKeyLength     = "AUTH_APIKEYLENGTH"
-  lazy val ConfigKeyAuthCacheDb          = "AUTH_CACHE_DB"
-  lazy val ConfigKeyAuthExpiringDuration = "AUTH_EXPIRING_DURATION"
-  lazy val ConfigKeyAuthPrefix           = "AUTH_PREFIX"
-  lazy val ConfigKeyAuthBearer           = "AUTH_BEARER"
-  lazy val ConfigKeyAuthBasic            = "AUTH_BASIC"
-  lazy val ConfigKeyAuthToken            = "AUTH_TOKEN"
-  lazy val ConfigKeyAuthUsers            = "AUTH_USERS"
-  lazy val ConfigKeyAuthRoles            = "AUTH_ROLES"
-  lazy val ConfigKeyConnectionHost       = "CONNECTION_HOST"
-  lazy val ConfigKeyConnectionPort       = "CONNECTION_PORT"
-  lazy val ConfigKeyConnectionDatabase   = "CONNECTION_DATABASE"
-  lazy val ConfigKeyConnectionUsername   = "CONNECTION_USERNAME"
-  lazy val ConfigKeyConnectionPassword   = "CONNECTION_PASSWORD"
-  lazy val ConfigKeyConnectionAuthDb     = "CONNECTION_AUTHDB"
-  lazy val ConfigKeyFileHandler          = "FILE_HANDLER"
-  lazy val ConfigKeyFileCache            = "FILE_CACHE_AGE"
-  lazy val ConfigKeyCorsHeadersAllowed   = "CORS_HEADERS_ALLOWED"
-  lazy val ConfigKeyCorsHeadersExposed   = "CORS_HEADERS_EXPOSED"
-  lazy val ConfigKeyCorsOriginsAllowed   = "CORS_ORIGINS_ALLOWED"
-  lazy val ConfigKeyDocsSwagger          = "DOCS_SWAGGER"
-  lazy val ConfigKeyOpenApi              = "DOCS_OPENAPI"
+  lazy val ConfigKeyServerInterface          = "SERVER_INTERFACE"
+  lazy val ConfigKeyServerPort               = "SERVER_PORT"
+  lazy val ConfigKeyRequestLogging           = "REQUESTLOGGING_ENABLED"
+  lazy val ConfigKeyPluginsIgnored           = "PLUGINS_IGNORED"
+  lazy val ConfigKeyPluginsDirectory         = "PLUGINS_DIRECTORY"
+  lazy val ConfigKeyPluginsUrls              = "PLUGINS_URLS"
+  lazy val ConfigKeyPluginsModules           = "PLUGINS_MODULES"
+  lazy val ConfigKeyPluginsMavenRepositories = "PLUGINS_MAVEN_REPOSITORIES"
+  lazy val ConfigKeyHttpClientHeaders        = "HTTP_CLIENT_HEADERS"
+  lazy val ConfigKeyAuthHandler              = "AUTH_HANDLER"
+  lazy val ConfigKeyAuthSecret               = "AUTH_SECRET"
+  lazy val ConfigKeyAuthApiKeyLength         = "AUTH_APIKEYLENGTH"
+  lazy val ConfigKeyAuthCacheDb              = "AUTH_CACHE_DB"
+  lazy val ConfigKeyAuthExpiringDuration     = "AUTH_EXPIRING_DURATION"
+  lazy val ConfigKeyAuthPrefix               = "AUTH_PREFIX"
+  lazy val ConfigKeyAuthBearer               = "AUTH_BEARER"
+  lazy val ConfigKeyAuthBasic                = "AUTH_BASIC"
+  lazy val ConfigKeyAuthToken                = "AUTH_TOKEN"
+  lazy val ConfigKeyAuthUsers                = "AUTH_USERS"
+  lazy val ConfigKeyAuthRoles                = "AUTH_ROLES"
+  lazy val ConfigKeyConnectionHost           = "CONNECTION_HOST"
+  lazy val ConfigKeyConnectionPort           = "CONNECTION_PORT"
+  lazy val ConfigKeyConnectionDatabase       = "CONNECTION_DATABASE"
+  lazy val ConfigKeyConnectionUsername       = "CONNECTION_USERNAME"
+  lazy val ConfigKeyConnectionPassword       = "CONNECTION_PASSWORD"
+  lazy val ConfigKeyConnectionAuthDb         = "CONNECTION_AUTHDB"
+  lazy val ConfigKeyFileHandler              = "FILE_HANDLER"
+  lazy val ConfigKeyFileCache                = "FILE_CACHE_AGE"
+  lazy val ConfigKeyCorsHeadersAllowed       = "CORS_HEADERS_ALLOWED"
+  lazy val ConfigKeyCorsHeadersExposed       = "CORS_HEADERS_EXPOSED"
+  lazy val ConfigKeyCorsOriginsAllowed       = "CORS_ORIGINS_ALLOWED"
+  lazy val ConfigKeyDocsSwagger              = "DOCS_SWAGGER"
+  lazy val ConfigKeyOpenApi                  = "DOCS_OPENAPI"
 
   def registerMongoCampServerDefaultConfigs(): Unit = {
     registerNonPersistentConfig(ConfigKeyConnectionHost, MongoCampConfiguration.confTypeString)
@@ -60,6 +62,8 @@ object DefaultConfigurations {
     registerConfig(ConfigKeyPluginsIgnored, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsUrls, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsDirectory, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsModules, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsMavenRepositories, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
 
     registerConfig(ConfigKeyHttpClientHeaders, MongoCampConfiguration.confTypeString)
 
