@@ -64,7 +64,7 @@ object PluginService extends LazyLogging {
   def downloadPlugins(): Unit = {
     val pluginDirectory = File(ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
     if (pluginDirectory.notExists) {
-      pluginDirectory.createDirectory()
+      pluginDirectory.toJava.mkdirs()
     }
     if (pluginDirectory.isWritable) {
       val managedPluginDirectory = pluginDirectory.createChild("managed", asDirectory = true, createParents = true)
