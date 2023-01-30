@@ -38,7 +38,7 @@ class ApplicationSuite extends BaseSuite {
 
   test("List Configurations for Application") {
     val configurationsList = executeRequestToResponse(applicationApi.listConfigurations("", adminBearerToken)())
-    assertEquals(configurationsList.size, 36)
+    assertEquals(configurationsList.size, 38)
     val config = configurationsList.find(_.key.equalsIgnoreCase("SERVER_INTERFACE")).get
     assertEquals(config.configType, "String")
     assertEquals(config.key, "SERVER_INTERFACE")

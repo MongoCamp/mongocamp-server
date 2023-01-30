@@ -46,7 +46,7 @@ The configurations can also change by using the configuration routes.
 | Configuration                                           | Description                                             |         Default          |
 |---------------------------------------------------------|---------------------------------------------------------|:------------------------:|
 | PLUGINS_IGNORED                                         | List of ignored Plugins.                                |           `[]`           |
-| [PLUGINS_MODULES](properties/plugins-urls.md)           | List of your used Plugins / Maven Dependencies.         |           `[]`           |
+| [PLUGINS_MODULES](properties/plugins-module.md)         | List of your used Plugins / Maven Dependencies.         |           `[]`           |
 | [PLUGINS_MAVEN_REPOSITORIES](properties/plugins-mvn.md) | List of your special MVN Repository (maybe private).    |           `[]`           |
 | PLUGINS_DIRECTORY                                       | Directory where the app search the plugins.             | `/opt/mongocamp/plugins` |
 | [PLUGINS_URLS](properties/plugins-urls.md)              | Urls of JARs the Server should download before startup. |           `[]`           |

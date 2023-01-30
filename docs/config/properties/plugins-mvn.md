@@ -1,7 +1,12 @@
 # Plugins Repositories
+If you have your own Maven Repository where your Plugins are hosted, or your plugin is only on Github Maven Repository and not on a global Maven Repository you can add your repo by this parameter.  
 
 ## Format
-yourmavenurl:user@password
+* `user:password@yourmavenrepositoryurl`
+* `yourmavenrepositoryurl`
+
+## Sample
+`username:password@https://maven.pkg.github.com/mongocamp/mongocamp-sample-plugin/`
 
 ## Default Maven Repositories
 * https://oss.sonatype.org/content/repositories/releases

@@ -16,13 +16,13 @@ class CoursierModuleSuite extends BaseSuite {
   }
 
   test("fetch dependencies for sample plugin with own repository") {
-    val samplePlugin = "dev.mongocamp:mongocamp-sample-plugin_2.13:0.6.0"
+    System.setProperty("PLUGINS_MAVEN_REPOSITORIES", "[]")
+    val samplePlugin = "org.springframework:spring-core:6.0.0-M1"
     val mavenFilesWithoutRegistry = CoursierModuleService.loadMavenConfiguredDependencies(List(samplePlugin))
     assertEquals(mavenFilesWithoutRegistry.size, 0)
-    System.setProperty("PLUGINS_MAVEN_REPOSITORIES", "[\"https://maven.pkg.github.com/mongocamp/mongocamp-sample-plugin/\"]")
+    System.setProperty("PLUGINS_MAVEN_REPOSITORIES", "[\"https://repo.spring.io/milestone\"]")
     val mavenFiles = CoursierModuleService.loadMavenConfiguredDependencies(List(samplePlugin))
-    assertEquals(mavenFiles.size, 1)
+    assertEquals(mavenFiles.size, 2)
   }
-
 
 }

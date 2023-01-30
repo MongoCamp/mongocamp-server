@@ -59,7 +59,7 @@ object CoursierModuleService extends LazyLogging {
       resolution.toList.map(jFile => File(jFile.toURI))
     }
     catch {
-      case _: Exception =>
+      case e: Exception =>
         fetchMavenDependencies(checkMavenDependencies(dependencies))
     }
   }
