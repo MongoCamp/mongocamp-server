@@ -20,7 +20,7 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
-val sttClientVersion = "3.8.9"
+val sttClientVersion = "3.8.10"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % sttClientVersion
 
