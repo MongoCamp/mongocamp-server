@@ -3,7 +3,6 @@ package dev.mongocamp.server.monitoring.plugin
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.micrometer.mongodb.registry.MongoStepMeterRegistry
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.MongoDatabase.createNewDatabaseProvider
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.monitoring.MetricsConfiguration
 import dev.mongocamp.server.plugin.ServerPlugin
