@@ -8,9 +8,9 @@ organization := json.stringValue("organization")
 
 scalaVersion := "2.13.10"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.5.3"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.5.4"
 
-val TapirVersion = "1.2.7"
+val TapirVersion = "1.2.8"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % TapirVersion
@@ -20,7 +20,7 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
-val sttClientVersion = "3.8.10"
+val sttClientVersion = "3.8.11"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % sttClientVersion
 
