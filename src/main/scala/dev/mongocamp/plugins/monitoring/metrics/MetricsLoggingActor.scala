@@ -1,4 +1,4 @@
-package dev.mongocamp.server.event.listener
+package dev.mongocamp.plugins.monitoring.metrics
 
 import akka.actor.Actor
 import com.typesafe.scalalogging.LazyLogging

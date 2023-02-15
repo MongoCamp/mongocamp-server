@@ -1,4 +1,4 @@
-package dev.mongocamp.server.monitoring.plugin
+package dev.mongocamp.plugins.monitoring.mongodb
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.micrometer.mongodb.registry.MongoStepMeterRegistry
