@@ -1,7 +1,7 @@
 package dev.mongocamp.micrometer.mongodb.binder
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.micrometer.mongodb.MetricsCache.metricsCache
+import dev.mongocamp.micrometer.mongodb.MetricsCache
 import io.micrometer.core.instrument.binder.{BaseUnits, MeterBinder}
 import io.micrometer.core.instrument.{Gauge, MeterRegistry, Tag}
 import org.mongodb.scala.{Document, MongoDatabase}
@@ -43,10 +43,10 @@ case class CollectionMetrics(mongoDatabase: MongoDatabase, collectionName: Strin
 
   private def getCollectionStats: Document = {
     val cacheKey = s"${mongoDatabase.name}:::${collectionName}"
-    val cachedDocument = metricsCache.getIfPresent(cacheKey)
+    val cachedDocument = MetricsCache.getMetricsCache.getIfPresent(cacheKey)
     cachedDocument.getOrElse({
       val freshDocument = refreshCollectionStatsFromDatabase
-      metricsCache.put(cacheKey, freshDocument)
+      MetricsCache.getMetricsCache.put(cacheKey, freshDocument)
       freshDocument
     })
   }

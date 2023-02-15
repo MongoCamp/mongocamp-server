@@ -1,22 +1,18 @@
 package dev.mongocamp.micrometer.mongodb.binder
 
-import io.micrometer.core.instrument.binder.MeterBinder
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.micrometer.mongodb.MetricsCache.metricsCache
-import io.micrometer.core.instrument.binder.{ BaseUnits, MeterBinder }
-import io.micrometer.core.instrument._
-import org.mongodb.scala.{ Document, MongoDatabase }
-
-import scala.jdk.CollectionConverters.IterableHasAsJava
+import dev.mongocamp.micrometer.mongodb.MetricsCache
+import io.micrometer.core.instrument.binder.MeterBinder
+import org.mongodb.scala.{Document, MongoDatabase}
 trait ServerMetricsBase extends MeterBinder {
 
   def mongoDatabase: MongoDatabase
   protected def getServerStats: Document = {
     val cacheKey = s"ServerStats"
-    val cachedDocument = metricsCache.getIfPresent(cacheKey)
+    val cachedDocument = MetricsCache.getMetricsCache.getIfPresent(cacheKey)
     cachedDocument.getOrElse({
       val freshDocument = refreshStatsFromDatabase
-      metricsCache.put(cacheKey, freshDocument)
+      MetricsCache.getMetricsCache.put(cacheKey, freshDocument)
       freshDocument
     })
   }

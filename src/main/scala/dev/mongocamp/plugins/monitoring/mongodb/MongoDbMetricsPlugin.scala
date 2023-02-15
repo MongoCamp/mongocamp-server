@@ -11,26 +11,32 @@ import dev.mongocamp.server.service.ConfigurationService
 import scala.concurrent.duration.Duration
 
 object MongoDbMetricsPlugin extends ServerPlugin with LazyLogging {
+  private val ConfKeyMicrometerStep = "micrometer.mongodb.step"
+  private val ConfKeyMonitorJVM     = "micrometer.mongodb.jvm"
+  private val ConfKeyMonitorSystem  = "micrometer.mongodb.system"
+  private val ConfKeyMonitorMongo   = "micrometer.mongodb.mongo"
+  private val ConfKeyMonitorEvent   = "micrometer.mongodb.event"
 
   override def activate(): Unit = {
-    ConfigurationService.registerConfig("micrometer.mongodb.jvm", MongoCampConfiguration.confTypeBoolean)
-    ConfigurationService.registerConfig("micrometer.mongodb.system", MongoCampConfiguration.confTypeBoolean)
-    ConfigurationService.registerConfig("micrometer.mongodb.mongo", MongoCampConfiguration.confTypeBoolean)
-    ConfigurationService.registerConfig("micrometer.mongodb.event", MongoCampConfiguration.confTypeBoolean)
-    ConfigurationService.registerConfig("micrometer.mongodb.step", MongoCampConfiguration.confTypeDuration)
 
-    val step      = java.time.Duration.ofSeconds(ConfigurationService.getConfigValue[Duration]("micrometer.mongodb.step").toSeconds)
+    ConfigurationService.registerConfig(ConfKeyMonitorJVM, MongoCampConfiguration.confTypeBoolean)
+    ConfigurationService.registerConfig(ConfKeyMonitorSystem, MongoCampConfiguration.confTypeBoolean)
+    ConfigurationService.registerConfig(ConfKeyMonitorMongo, MongoCampConfiguration.confTypeBoolean)
+    ConfigurationService.registerConfig(ConfKeyMonitorEvent, MongoCampConfiguration.confTypeBoolean)
+    ConfigurationService.registerConfig(ConfKeyMicrometerStep, MongoCampConfiguration.confTypeDuration)
+
+    val step      = java.time.Duration.ofSeconds(ConfigurationService.getConfigValue[Duration](ConfKeyMicrometerStep).toSeconds)
     val configMap = Map("step" -> step.toString)
-    if (ConfigurationService.getConfigValue[Boolean]("micrometer.mongodb.jvm")) {
+    if (ConfigurationService.getConfigValue[Boolean](ConfKeyMonitorJVM)) {
       MetricsConfiguration.addJvmRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_jvm"), configMap))
     }
-    if (ConfigurationService.getConfigValue[Boolean]("micrometer.mongodb.system")) {
+    if (ConfigurationService.getConfigValue[Boolean](ConfKeyMonitorSystem)) {
       MetricsConfiguration.addSystemRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_system"), configMap))
     }
-    if (ConfigurationService.getConfigValue[Boolean]("micrometer.mongodb.mongo")) {
+    if (ConfigurationService.getConfigValue[Boolean](ConfKeyMonitorMongo)) {
       MetricsConfiguration.addMongoRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_mongo_db"), configMap))
     }
-    if (ConfigurationService.getConfigValue[Boolean]("micrometer.mongodb.event")) {
+    if (ConfigurationService.getConfigValue[Boolean](ConfKeyMonitorEvent)) {
       MetricsConfiguration.addEventRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_event"), configMap))
     }
   }
