@@ -46,12 +46,12 @@ object DefaultConfigurations {
     registerNonPersistentConfig(ConfigKeyConnectionHost, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyConnectionPort, MongoCampConfiguration.confTypeLong)
     registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString)
-    registerNonPersistentConfig(ConfigKeyConnectionUsername, s"Option[${MongoCampConfiguration.confTypeString}]")
-    registerNonPersistentConfig(ConfigKeyConnectionPassword, s"Option[${MongoCampConfiguration.confTypeString}]")
+    registerNonPersistentConfig(ConfigKeyConnectionUsername, MongoCampConfiguration.confTypeStringOption)
+    registerNonPersistentConfig(ConfigKeyConnectionPassword, MongoCampConfiguration.confTypeStringOption)
     registerNonPersistentConfig(ConfigKeyConnectionAuthDb, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyAuthPrefix, MongoCampConfiguration.confTypeString)
-    registerNonPersistentConfig(ConfigKeyAuthUsers, s"List[${MongoCampConfiguration.confTypeString}]")
-    registerNonPersistentConfig(ConfigKeyAuthRoles, s"List[${MongoCampConfiguration.confTypeString}]")
+    registerNonPersistentConfig(ConfigKeyAuthUsers, MongoCampConfiguration.confTypeStringList)
+    registerNonPersistentConfig(ConfigKeyAuthRoles, MongoCampConfiguration.confTypeStringList)
 
     ConfigDao().createUniqueIndexForField("key").result()
 
@@ -59,11 +59,11 @@ object DefaultConfigurations {
     registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
     registerConfig(ConfigKeyRequestLogging, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
 
-    registerConfig(ConfigKeyPluginsIgnored, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
-    registerConfig(ConfigKeyPluginsUrls, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsIgnored, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsUrls, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsDirectory, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
-    registerConfig(ConfigKeyPluginsModules, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
-    registerConfig(ConfigKeyPluginsMavenRepositories, s"List[${MongoCampConfiguration.confTypeString}]", needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsModules, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsMavenRepositories, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
 
     registerConfig(ConfigKeyHttpClientHeaders, MongoCampConfiguration.confTypeString)
 
@@ -80,9 +80,9 @@ object DefaultConfigurations {
     registerConfig(ConfigKeyFileHandler, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyFileCache, MongoCampConfiguration.confTypeString)
 
-    registerConfig(ConfigKeyCorsHeadersAllowed, s"List[${MongoCampConfiguration.confTypeString}]")
-    registerConfig(ConfigKeyCorsHeadersExposed, s"List[${MongoCampConfiguration.confTypeString}]")
-    registerConfig(ConfigKeyCorsOriginsAllowed, s"List[${MongoCampConfiguration.confTypeString}]")
+    registerConfig(ConfigKeyCorsHeadersAllowed, MongoCampConfiguration.confTypeStringList)
+    registerConfig(ConfigKeyCorsHeadersExposed, MongoCampConfiguration.confTypeStringList)
+    registerConfig(ConfigKeyCorsOriginsAllowed, MongoCampConfiguration.confTypeStringList)
 
     registerConfig(ConfigKeyDocsSwagger, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
     registerConfig(ConfigKeyOpenApi, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)

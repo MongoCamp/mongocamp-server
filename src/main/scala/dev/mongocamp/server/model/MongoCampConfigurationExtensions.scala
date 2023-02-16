@@ -46,11 +46,11 @@ object MongoCampConfigurationExtensions {
       }
       else {
         if (mongoCampConfiguration.configType.equalsIgnoreCase(confTypeDuration)) Duration(mongoCampConfiguration.value.toString)
-        else if (mongoCampConfiguration.configType.equalsIgnoreCase(s"List[$confTypeDuration]") && mongoCampConfiguration.value.isInstanceOf[List[String]]) {
+        else if (mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDurationList) && mongoCampConfiguration.value.isInstanceOf[List[String]]) {
           mongoCampConfiguration.value.asInstanceOf[List[String]].map(s => Duration(s))
         }
         else if (
-          mongoCampConfiguration.configType.equalsIgnoreCase(s"Option[$confTypeDuration]") && mongoCampConfiguration.value.isInstanceOf[Option[String]]
+          mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDurationOption) && mongoCampConfiguration.value.isInstanceOf[Option[String]]
         ) {
           mongoCampConfiguration.value.asInstanceOf[Option[String]].map(s => Duration(s))
         }
@@ -62,15 +62,17 @@ object MongoCampConfigurationExtensions {
         ) {
           mongoCampConfiguration.value
         }
-        else if (mongoCampConfiguration.configType.equalsIgnoreCase(s"List[$confTypeLong]") && mongoCampConfiguration.value.isInstanceOf[List[Int]]) {
-          mongoCampConfiguration.value.asInstanceOf[List[Int]].map(s => s.toLong)
+        else if (mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeLongList) && mongoCampConfiguration.value.isInstanceOf[List[Int]]) {
+          mongoCampConfiguration.value.asInstanceOf[List[Long]]//.map(s => s.toLong)
         }
-        else if (mongoCampConfiguration.configType.equalsIgnoreCase(s"Option[$confTypeLong]") && mongoCampConfiguration.value.isInstanceOf[Option[Int]]) {
-          mongoCampConfiguration.value.asInstanceOf[Option[Int]].map(s => s.toLong)
+        else if (mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeLongOption) && mongoCampConfiguration.value.isInstanceOf[Option[Int]]) {
+          mongoCampConfiguration.value.asInstanceOf[Option[Long]]//.map(s => s.toLong)
         }
         else {
-          if (mongoCampConfiguration.configType.toLowerCase.contains("List".toLowerCase)) List()
-          else if (mongoCampConfiguration.configType.toLowerCase.contains("Option".toLowerCase)) None
+          if (mongoCampConfiguration.configType.toLowerCase.contains("List".toLowerCase))
+            List()
+          else if (mongoCampConfiguration.configType.toLowerCase.contains("Option".toLowerCase))
+            None
           else {
             throw MongoCampException("no value set in database", StatusCode.PreconditionFailed)
           }
