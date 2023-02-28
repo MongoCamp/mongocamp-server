@@ -11,11 +11,11 @@ import dev.mongocamp.server.service.ConfigurationService
 import scala.concurrent.duration.Duration
 
 object MongoDbMetricsLoggingPlugin extends ServerPlugin with LazyLogging {
-  private val ConfKeyMicrometerStep         = "logging.metrics.mongodb.step"
-  private val ConfKeyLoggingJvmToMongoDb    = "logging.metrics.mongodb.jvm"
-  private val ConfKeyLoggingSystemToMongoDb = "logging.metrics.mongodb.system"
-  private val ConfKeyLoggingMongoToMongoDb  = "logging.metrics.mongodb.mongo"
-  private val ConfKeyLoggingEventToMongoDb  = "logging.metrics.mongodb.event"
+  private val ConfKeyMicrometerStep         = "LOGGING_METRICS_MONGODB_STEP"
+  private val ConfKeyLoggingJvmToMongoDb    = "LOGGING_METRICS_MONGODB_JVM"
+  private val ConfKeyLoggingSystemToMongoDb = "LOGGING_METRICS_MONGODB_SYSTEM"
+  private val ConfKeyLoggingMongoToMongoDb  = "LOGGING_METRICS_MONGODB_MONGO"
+  private val ConfKeyLoggingEventToMongoDb  = "LOGGING_METRICS_MONGODB_EVENT"
 
   override def activate(): Unit = {
 

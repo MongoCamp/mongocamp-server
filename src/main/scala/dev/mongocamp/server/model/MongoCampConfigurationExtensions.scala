@@ -74,7 +74,7 @@ object MongoCampConfigurationExtensions {
           else if (mongoCampConfiguration.configType.toLowerCase.contains("Option".toLowerCase))
             None
           else {
-            throw MongoCampException("no value set in database", StatusCode.PreconditionFailed)
+            throw MongoCampException(s"no value set in database for key ${this.mongoCampConfiguration.key}", StatusCode.PreconditionFailed)
           }
         }
       }
