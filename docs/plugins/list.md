@@ -3,6 +3,7 @@ title: List of Plugins
 ---
 # {{ $frontmatter.title }}
 
+## Other
 |                                 Name                                  |                 Description                  |
 |:---------------------------------------------------------------------:|:--------------------------------------------:|
 | [Sample Plugin](https://github.com/MongoCamp/mongocamp-sample-plugin) | Sample Implementation of an MongoCamp Plugin |
