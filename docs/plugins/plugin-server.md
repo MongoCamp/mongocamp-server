@@ -1,5 +1,5 @@
 ---
-title: Routes Plugin
+title: Server Plugin
 ---
 # {{ $frontmatter.title }}
 

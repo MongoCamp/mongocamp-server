@@ -1,6 +1,7 @@
 ---
-title: Files Plugin
+title: Bucket Events
 ---
 # {{ $frontmatter.title }}
 
 <todo />
+

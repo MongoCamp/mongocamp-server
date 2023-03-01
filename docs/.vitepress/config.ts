@@ -100,7 +100,28 @@ function sidebarPlugins() {
             items: [
                 {text: 'Introduction', link: '/plugins/'},
                 {text: 'List of Plugins', link: '/plugins/list'},
-                {text: 'Development', link: '/plugins/development'},
+                {
+                    text: 'Development',
+                    link: '/plugins/development',
+                    items: [
+                        {
+                            text: 'Server Plugin',
+                            link: '/plugins/plugin-server'
+                        },
+                        {
+                            text: 'Routes Plugin',
+                            link: '/plugins/plugin-routes'
+                        },
+                        {
+                            text: 'Files Plugin',
+                            link: '/plugins/plugin-files'
+                        },
+                        {
+                            text: 'Events',
+                            link: '/plugins/events'
+                        },
+                    ],
+                },
             ]
         }
     ]

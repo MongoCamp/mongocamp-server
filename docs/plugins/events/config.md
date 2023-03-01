@@ -1,6 +1,7 @@
 ---
-title: Files Plugin
+title: Config Events
 ---
 # {{ $frontmatter.title }}
 
 <todo />
+
