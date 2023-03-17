@@ -11,8 +11,8 @@ libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
 
 libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "3.5.4" % Test
 
-val circeVersion     = "0.14.4"
-val sttClientVersion = "3.8.10"
+val circeVersion     = "0.14.5"
+val sttClientVersion = "3.8.13"
 
 libraryDependencies += "com.softwaremill.sttp.client3" %% "circe"             % sttClientVersion % Test
 libraryDependencies += "io.circe"                      %% "circe-core"        % circeVersion     % Test
