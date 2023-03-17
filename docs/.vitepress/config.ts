@@ -102,23 +102,23 @@ function sidebarPlugins() {
                 {text: 'List of Plugins', link: '/plugins/list'},
                 {
                     text: 'Development',
-                    link: '/plugins/development',
+                    link: '/plugins/development/',
                     items: [
                         {
                             text: 'Server Plugin',
-                            link: '/plugins/plugin-server'
+                            link: '/plugins/development/plugin-server'
                         },
                         {
                             text: 'Routes Plugin',
-                            link: '/plugins/plugin-routes'
+                            link: '/plugins/development/plugin-routes'
                         },
                         {
                             text: 'Files Plugin',
-                            link: '/plugins/plugin-files'
+                            link: '/plugins/development/plugin-files'
                         },
                         {
                             text: 'Events',
-                            link: '/plugins/events'
+                            link: '/plugins/events/'
                         },
                     ],
                 },

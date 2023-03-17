@@ -1,6 +1,0 @@
----
-title: Files Plugin
----
-# {{ $frontmatter.title }}
-
-<todo />

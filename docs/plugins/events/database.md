@@ -3,5 +3,6 @@ title: Database Events
 ---
 # {{ $frontmatter.title }}
 
-<todo />
+## DropDatabaseEvent
+Published when the [`deleteDatabase` Route](../../rest/Apis/DatabaseApi.md#deletedatabase) is called.
 
