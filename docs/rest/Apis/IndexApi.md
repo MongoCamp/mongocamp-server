@@ -2,16 +2,16 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**createExpiringIndex**](IndexApi.md#createExpiringIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/{duration}/expiring | Create expiring Index by Field for Collection
-[**createIndex**](IndexApi.md#createIndex) | **PUT** /mongodb/collections/{collectionName}/index | Create Index for Collection
-[**createIndexForField**](IndexApi.md#createIndexForField) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName} | Create Index by Field for Collection
-[**createTextIndex**](IndexApi.md#createTextIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/text | Create text index by field for collection
-[**createUniqueIndex**](IndexApi.md#createUniqueIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/unique | Create Unique Index
-[**deleteIndex**](IndexApi.md#deleteIndex) | **DELETE** /mongodb/collections/{collectionName}/index/{indexName} | Delete Index
-[**index**](IndexApi.md#index) | **GET** /mongodb/collections/{collectionName}/index/{indexName} | Index for Collection
-[**listIndices**](IndexApi.md#listIndices) | **GET** /mongodb/collections/{collectionName}/index | List Indices for Collection
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**createExpiringIndex**](IndexApi.md#createExpiringIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/{duration}/expiring | Create expiring Index by Field for Collection |
+| [**createIndex**](IndexApi.md#createIndex) | **PUT** /mongodb/collections/{collectionName}/index | Create Index for Collection |
+| [**createIndexForField**](IndexApi.md#createIndexForField) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName} | Create Index by Field for Collection |
+| [**createTextIndex**](IndexApi.md#createTextIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/text | Create text index by field for collection |
+| [**createUniqueIndex**](IndexApi.md#createUniqueIndex) | **PUT** /mongodb/collections/{collectionName}/index/field/{fieldName}/unique | Create Unique Index |
+| [**deleteIndex**](IndexApi.md#deleteIndex) | **DELETE** /mongodb/collections/{collectionName}/index/{indexName} | Delete Index |
+| [**index**](IndexApi.md#index) | **GET** /mongodb/collections/{collectionName}/index/{indexName} | Index for Collection |
+| [**listIndices**](IndexApi.md#listIndices) | **GET** /mongodb/collections/{collectionName}/index | List Indices for Collection |
 
 
 <a name="createExpiringIndex"></a>
@@ -24,13 +24,13 @@ Create expiring Index by Field for Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
- **duration** | **String**| Expiring Duration in format 15d (https://www.scala-lang.org/api/2.13.7/scala/concurrent/duration/Duration.html) | [default to 15d]
- **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **name** | **String**| Name for your index | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fieldName** | **String**| The field Name for your index | [default to null] |
+| **duration** | **String**| Expiring Duration in format 15d (https://www.scala-lang.org/api/2.13.7/scala/concurrent/duration/Duration.html) | [default to 15d] |
+| **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true] |
+| **name** | **String**| Name for your index | [optional] [default to null] |
 
 ### Return type
 
@@ -38,7 +38,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -55,10 +55,10 @@ Create Index for Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **IndexCreateRequest** | [**IndexCreateRequest**](../Models/IndexCreateRequest.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **IndexCreateRequest** | [**IndexCreateRequest**](../Models/IndexCreateRequest.md)|  | |
 
 ### Return type
 
@@ -66,7 +66,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -83,12 +83,12 @@ Create Index by Field for Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
- **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  | [optional]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fieldName** | **String**| The field Name for your index | [default to null] |
+| **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true] |
+| **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  | [optional] |
 
 ### Return type
 
@@ -96,7 +96,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -113,11 +113,11 @@ Create text index by field for collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
- **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  | [optional]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fieldName** | **String**| The field Name for your index | [default to null] |
+| **IndexOptionsRequest** | [**IndexOptionsRequest**](../Models/IndexOptionsRequest.md)|  | [optional] |
 
 ### Return type
 
@@ -125,7 +125,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -142,12 +142,12 @@ Create Unique Index
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **fieldName** | **String**| The field Name for your index | [default to null]
- **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true]
- **name** | **String**| Name for your index | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fieldName** | **String**| The field Name for your index | [default to null] |
+| **sortAscending** | **Boolean**| Sort your index ascending | [optional] [default to true] |
+| **name** | **String**| Name for your index | [optional] [default to null] |
 
 ### Return type
 
@@ -155,7 +155,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -172,10 +172,10 @@ Delete Index
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **indexName** | **String**| The name of your Index | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **indexName** | **String**| The name of your Index | [default to null] |
 
 ### Return type
 
@@ -183,7 +183,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -200,10 +200,10 @@ Index for Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **indexName** | **String**| The name of your Index | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **indexName** | **String**| The name of your Index | [default to null] |
 
 ### Return type
 
@@ -211,7 +211,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -228,9 +228,9 @@ List Indices for Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
 
 ### Return type
 
@@ -238,7 +238,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

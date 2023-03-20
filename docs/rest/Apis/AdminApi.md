@@ -2,20 +2,20 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**addRole**](AdminApi.md#addRole) | **PUT** /admin/roles | Add Role
-[**addUser**](AdminApi.md#addUser) | **PUT** /admin/users | Add User
-[**deleteRole**](AdminApi.md#deleteRole) | **DELETE** /admin/roles/{roleName} | Delete Role
-[**deleteUser**](AdminApi.md#deleteUser) | **DELETE** /admin/users/{userId} | Delete User
-[**getRole**](AdminApi.md#getRole) | **GET** /admin/roles/{roleName} | Get Role
-[**getUser**](AdminApi.md#getUser) | **GET** /admin/users/{userId} | UserProfile for userId
-[**gnerateNewApiKeyForUser**](AdminApi.md#gnerateNewApiKeyForUser) | **PATCH** /admin/users/{userId}/apikey | Update ApiKey
-[**listRoles**](AdminApi.md#listRoles) | **GET** /admin/roles | List Roles
-[**listUsers**](AdminApi.md#listUsers) | **GET** /admin/users | List Users
-[**updatePasswordForUser**](AdminApi.md#updatePasswordForUser) | **PATCH** /admin/users/{userId}/password | Update Password
-[**updateRole**](AdminApi.md#updateRole) | **PATCH** /admin/roles/{roleName} | Update Role
-[**updateRolesForUser**](AdminApi.md#updateRolesForUser) | **PATCH** /admin/users/{userId}/roles | Update User Roles
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**addRole**](AdminApi.md#addRole) | **PUT** /admin/roles | Add Role |
+| [**addUser**](AdminApi.md#addUser) | **PUT** /admin/users | Add User |
+| [**deleteRole**](AdminApi.md#deleteRole) | **DELETE** /admin/roles/{roleName} | Delete Role |
+| [**deleteUser**](AdminApi.md#deleteUser) | **DELETE** /admin/users/{userId} | Delete User |
+| [**getRole**](AdminApi.md#getRole) | **GET** /admin/roles/{roleName} | Get Role |
+| [**getUser**](AdminApi.md#getUser) | **GET** /admin/users/{userId} | UserProfile for userId |
+| [**gnerateNewApiKeyForUser**](AdminApi.md#gnerateNewApiKeyForUser) | **PATCH** /admin/users/{userId}/apikey | Update ApiKey |
+| [**listRoles**](AdminApi.md#listRoles) | **GET** /admin/roles | List Roles |
+| [**listUsers**](AdminApi.md#listUsers) | **GET** /admin/users | List Users |
+| [**updatePasswordForUser**](AdminApi.md#updatePasswordForUser) | **PATCH** /admin/users/{userId}/password | Update Password |
+| [**updateRole**](AdminApi.md#updateRole) | **PATCH** /admin/roles/{roleName} | Update Role |
+| [**updateRolesForUser**](AdminApi.md#updateRolesForUser) | **PATCH** /admin/users/{userId}/roles | Update User Roles |
 
 
 <a name="addRole"></a>
@@ -28,9 +28,9 @@ Add Role
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **Role** | [**Role**](../Models/Role.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **Role** | [**Role**](../Models/Role.md)|  | |
 
 ### Return type
 
@@ -38,7 +38,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -55,9 +55,9 @@ Add User
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **UserInformation** | [**UserInformation**](../Models/UserInformation.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **UserInformation** | [**UserInformation**](../Models/UserInformation.md)|  | |
 
 ### Return type
 
@@ -65,7 +65,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -74,7 +74,7 @@ Name | Type | Description  | Notes
 
 <a name="deleteRole"></a>
 # **deleteRole**
-> JsonResult_Boolean deleteRole(roleName)
+> JsonValue_Boolean deleteRole(roleName)
 
 Delete Role
 
@@ -82,17 +82,17 @@ Delete Role
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **roleName** | **String**| RoleKey | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -101,7 +101,7 @@ Name | Type | Description  | Notes
 
 <a name="deleteUser"></a>
 # **deleteUser**
-> JsonResult_Boolean deleteUser(userId)
+> JsonValue_Boolean deleteUser(userId)
 
 Delete User
 
@@ -109,17 +109,17 @@ Delete User
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Delete | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **userId** | **String**| UserId to Delete | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -136,9 +136,9 @@ Get Role
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey to search | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **roleName** | **String**| RoleKey to search | [default to null] |
 
 ### Return type
 
@@ -146,7 +146,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -163,9 +163,9 @@ UserProfile for userId
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to search | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **userId** | **String**| UserId to search | [default to null] |
 
 ### Return type
 
@@ -173,7 +173,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -182,7 +182,7 @@ Name | Type | Description  | Notes
 
 <a name="gnerateNewApiKeyForUser"></a>
 # **gnerateNewApiKeyForUser**
-> JsonResult_String gnerateNewApiKeyForUser(userId)
+> JsonValue_String gnerateNewApiKeyForUser(userId)
 
 Update ApiKey
 
@@ -190,17 +190,17 @@ Update ApiKey
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **userId** | **String**| UserId to Update | [default to null] |
 
 ### Return type
 
-[**JsonResult_String**](../Models/JsonResult_String.md)
+[**JsonValue_String**](../Models/JsonValue_String.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -217,11 +217,11 @@ List Roles
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **filter** | **String**| filter after userId by contains | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **filter** | **String**| filter after userId by contains | [optional] [default to null] |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -229,7 +229,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -246,11 +246,11 @@ List Users
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **filter** | **String**| filter after userId by contains | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **filter** | **String**| filter after userId by contains | [optional] [default to null] |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -258,7 +258,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -267,7 +267,7 @@ Name | Type | Description  | Notes
 
 <a name="updatePasswordForUser"></a>
 # **updatePasswordForUser**
-> JsonResult_Boolean updatePasswordForUser(userId, PasswordUpdateRequest)
+> JsonValue_Boolean updatePasswordForUser(userId, PasswordUpdateRequest)
 
 Update Password
 
@@ -275,18 +275,18 @@ Update Password
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
- **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **userId** | **String**| UserId to Update | [default to null] |
+| **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  | |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -303,10 +303,10 @@ Update Role
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **roleName** | **String**| RoleKey | [default to null]
- **UpdateRoleRequest** | [**UpdateRoleRequest**](../Models/UpdateRoleRequest.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **roleName** | **String**| RoleKey | [default to null] |
+| **UpdateRoleRequest** | [**UpdateRoleRequest**](../Models/UpdateRoleRequest.md)|  | |
 
 ### Return type
 
@@ -314,7 +314,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -331,10 +331,10 @@ Update User Roles
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userId** | **String**| UserId to Update | [default to null]
- **request\_body** | [**List**](../Models/string.md)|  | [optional]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **userId** | **String**| UserId to Update | [default to null] |
+| **request\_body** | [**List**](../Models/string.md)|  | [optional] |
 
 ### Return type
 
@@ -342,7 +342,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

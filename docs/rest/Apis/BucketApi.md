@@ -2,17 +2,17 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**clearBucket**](BucketApi.md#clearBucket) | **DELETE** /mongodb/buckets/{bucketName}/clear | Clear Bucket
-[**deleteBucket**](BucketApi.md#deleteBucket) | **DELETE** /mongodb/buckets/{bucketName} | Delete Bucket
-[**getBucket**](BucketApi.md#getBucket) | **GET** /mongodb/buckets/{bucketName} | Bucket Information
-[**listBuckets**](BucketApi.md#listBuckets) | **GET** /mongodb/buckets | List of Buckets
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**clearBucket**](BucketApi.md#clearBucket) | **DELETE** /mongodb/buckets/{bucketName}/clear | Clear Bucket |
+| [**deleteBucket**](BucketApi.md#deleteBucket) | **DELETE** /mongodb/buckets/{bucketName} | Delete Bucket |
+| [**getBucket**](BucketApi.md#getBucket) | **GET** /mongodb/buckets/{bucketName} | Bucket Information |
+| [**listBuckets**](BucketApi.md#listBuckets) | **GET** /mongodb/buckets | List of Buckets |
 
 
 <a name="clearBucket"></a>
 # **clearBucket**
-> JsonResult_Boolean clearBucket(bucketName)
+> JsonValue_Boolean clearBucket(bucketName)
 
 Clear Bucket
 
@@ -20,17 +20,17 @@ Clear Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -39,7 +39,7 @@ Name | Type | Description  | Notes
 
 <a name="deleteBucket"></a>
 # **deleteBucket**
-> JsonResult_Boolean deleteBucket(bucketName)
+> JsonValue_Boolean deleteBucket(bucketName)
 
 Delete Bucket
 
@@ -47,17 +47,17 @@ Delete Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -74,9 +74,9 @@ Bucket Information
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
 
 ### Return type
 
@@ -84,7 +84,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -108,7 +108,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

@@ -2,15 +2,15 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**deleteFile**](FileApi.md#deleteFile) | **DELETE** /mongodb/buckets/{bucketName}/files/{fileId} | Delete File from Bucket
-[**findFiles**](FileApi.md#findFiles) | **POST** /mongodb/buckets/{bucketName}/files | Files in Bucket
-[**getFile**](FileApi.md#getFile) | **GET** /mongodb/buckets/{bucketName}/files/{fileId}/file | File from Bucket
-[**getFileInformation**](FileApi.md#getFileInformation) | **GET** /mongodb/buckets/{bucketName}/files/{fileId} | FileInformation from Bucket
-[**insertFile**](FileApi.md#insertFile) | **PUT** /mongodb/buckets/{bucketName}/files | Insert File
-[**listFiles**](FileApi.md#listFiles) | **GET** /mongodb/buckets/{bucketName}/files | Files in Bucket
-[**updateFileInformation**](FileApi.md#updateFileInformation) | **PATCH** /mongodb/buckets/{bucketName}/files/{fileId} | Update FileInformation in Bucket
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**deleteFile**](FileApi.md#deleteFile) | **DELETE** /mongodb/buckets/{bucketName}/files/{fileId} | Delete File from Bucket |
+| [**findFiles**](FileApi.md#findFiles) | **POST** /mongodb/buckets/{bucketName}/files | Files in Bucket |
+| [**getFile**](FileApi.md#getFile) | **GET** /mongodb/buckets/{bucketName}/files/{fileId}/file | File from Bucket |
+| [**getFileInformation**](FileApi.md#getFileInformation) | **GET** /mongodb/buckets/{bucketName}/files/{fileId} | FileInformation from Bucket |
+| [**insertFile**](FileApi.md#insertFile) | **PUT** /mongodb/buckets/{bucketName}/files | Insert File |
+| [**listFiles**](FileApi.md#listFiles) | **GET** /mongodb/buckets/{bucketName}/files | Files in Bucket |
+| [**updateFileInformation**](FileApi.md#updateFileInformation) | **PATCH** /mongodb/buckets/{bucketName}/files/{fileId} | Update FileInformation in Bucket |
 
 
 <a name="deleteFile"></a>
@@ -23,10 +23,10 @@ Delete File from Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **fileId** | **String**| fileId to delete | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fileId** | **String**| fileId to delete | [default to null] |
 
 ### Return type
 
@@ -34,7 +34,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -51,12 +51,12 @@ Files in Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **MongoFindRequest** | [**MongoFindRequest**](../Models/MongoFindRequest.md)|  |
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **MongoFindRequest** | [**MongoFindRequest**](../Models/MongoFindRequest.md)|  | |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -64,7 +64,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -81,10 +81,10 @@ File from Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **fileId** | **String**| FileId to read | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fileId** | **String**| FileId to read | [default to null] |
 
 ### Return type
 
@@ -92,7 +92,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -109,10 +109,10 @@ FileInformation from Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **fileId** | **String**| fileId to read | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fileId** | **String**| fileId to read | [default to null] |
 
 ### Return type
 
@@ -120,7 +120,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -137,12 +137,12 @@ Insert File
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **file** | **File**|  | [default to null]
- **metaData** | **String**|  | [default to null]
- **fileName** | **String**| override filename of uploaded file | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **file** | **File**|  | [default to null] |
+| **metaData** | **String**|  | [default to null] |
+| **fileName** | **String**| override filename of uploaded file | [optional] [default to null] |
 
 ### Return type
 
@@ -150,7 +150,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -167,14 +167,14 @@ Files in Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **filter** | **String**| MongoDB Filter Query by Default all filter | [optional] [default to null]
- **sort** | **String**| MongoDB sorting | [optional] [default to null]
- **projection** | **String**| MongoDB projection | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **filter** | **String**| MongoDB Filter Query by Default all filter | [optional] [default to null] |
+| **sort** | **String**| MongoDB sorting | [optional] [default to null] |
+| **projection** | **String**| MongoDB projection | [optional] [default to null] |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -182,7 +182,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -199,11 +199,11 @@ Update FileInformation in Bucket
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **bucketName** | **String**| The name of your MongoDb Collection | [default to null]
- **fileId** | **String**| fileId to update | [default to null]
- **UpdateFileInformationRequest** | [**UpdateFileInformationRequest**](../Models/UpdateFileInformationRequest.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **bucketName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **fileId** | **String**| fileId to update | [default to null] |
+| **UpdateFileInformationRequest** | [**UpdateFileInformationRequest**](../Models/UpdateFileInformationRequest.md)|  | |
 
 ### Return type
 
@@ -211,7 +211,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

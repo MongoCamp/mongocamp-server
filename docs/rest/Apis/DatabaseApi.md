@@ -2,13 +2,13 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**databaseInfos**](DatabaseApi.md#databaseInfos) | **GET** /mongodb/databases/infos | List of Database Infos
-[**deleteDatabase**](DatabaseApi.md#deleteDatabase) | **DELETE** /mongodb/databases/{databaseName} | Delete Database
-[**getDatabaseInfo**](DatabaseApi.md#getDatabaseInfo) | **GET** /mongodb/databases/{databaseName} | Database Infos of selected Database
-[**listCollectionsByDatabase**](DatabaseApi.md#listCollectionsByDatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections
-[**listDatabases**](DatabaseApi.md#listDatabases) | **GET** /mongodb/databases | List of Databases
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**databaseInfos**](DatabaseApi.md#databaseInfos) | **GET** /mongodb/databases/infos | List of Database Infos |
+| [**deleteDatabase**](DatabaseApi.md#deleteDatabase) | **DELETE** /mongodb/databases/{databaseName} | Delete Database |
+| [**getDatabaseInfo**](DatabaseApi.md#getDatabaseInfo) | **GET** /mongodb/databases/{databaseName} | Database Infos of selected Database |
+| [**listCollectionsByDatabase**](DatabaseApi.md#listCollectionsByDatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections |
+| [**listDatabases**](DatabaseApi.md#listDatabases) | **GET** /mongodb/databases | List of Databases |
 
 
 <a name="databaseInfos"></a>
@@ -28,7 +28,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -37,7 +37,7 @@ This endpoint does not need any parameter.
 
 <a name="deleteDatabase"></a>
 # **deleteDatabase**
-> JsonResult_Boolean deleteDatabase(databaseName)
+> JsonValue_Boolean deleteDatabase(databaseName)
 
 Delete Database
 
@@ -45,17 +45,17 @@ Delete Database
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **databaseName** | **String**| Name of your Database | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **databaseName** | **String**| Name of your Database | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -72,9 +72,9 @@ Database Infos of selected Database
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **databaseName** | **String**| Name of your Database | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **databaseName** | **String**| Name of your Database | [default to null] |
 
 ### Return type
 
@@ -82,7 +82,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -99,9 +99,9 @@ List of Collections
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **databaseName** | **String**| Name of your Database | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **databaseName** | **String**| Name of your Database | [default to null] |
 
 ### Return type
 
@@ -109,7 +109,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -133,7 +133,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
