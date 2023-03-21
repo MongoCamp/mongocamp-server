@@ -22,14 +22,14 @@ class FileSuite extends BaseSuite {
   private val BucketNameSample = "sample-files"
 
   test("list all files as admin") {
-    val response = executeRequestToResponse(api.listFiles("", adminBearerToken)(BucketNameSample))
+    val response = executeRequestToResponse(api.listFiles("", "", adminBearerToken, "")(BucketNameSample))
     assertEquals(response.size, 4)
     assertEquals(response.map(_.filename), List("accounts.json", "geodata.json", "users.json", "mongocamp.png"))
   }
 
   test("paginated files with filter as admin") {
     val responseResult = executeRequest(
-      api.listFiles("", adminBearerToken)(
+      api.listFiles("", "", adminBearerToken, "")(
         BucketNameSample,
         Some(Map("filename" -> Map("$regex" -> "(.*?).json")).asJson.toString()),
         rowsPerPage = Some(2),
@@ -46,14 +46,14 @@ class FileSuite extends BaseSuite {
   }
 
   test("list all files (post) as admin") {
-    val response = executeRequestToResponse(api.findFiles("", adminBearerToken)(BucketNameSample, MongoFindRequest(Map(), Map(), Map())))
+    val response = executeRequestToResponse(api.findFiles("", "", adminBearerToken, "")(BucketNameSample, MongoFindRequest(Map(), Map(), Map())))
     assertEquals(response.size, 4)
     assertEquals(response.map(_.filename), List("accounts.json", "geodata.json", "users.json", "mongocamp.png"))
   }
 
   test("paginated files (post) with filter as admin") {
     val responseResult = executeRequest(
-      api.findFiles("", adminBearerToken)(
+      api.findFiles("", "", adminBearerToken, "")(
         BucketNameSample,
         MongoFindRequest(Map("filename" -> Map("$regex" -> "(.*?).json")), Map(), Map()),
         rowsPerPage = Some(2),
@@ -73,7 +73,7 @@ class FileSuite extends BaseSuite {
     val geoFile = File(getClass.getResource("/geodata.json").getPath)
     val response =
       executeRequestToResponse(
-        api.insertFile("", adminBearerToken)(
+        api.insertFile("", "", adminBearerToken, "")(
           BucketNameSample,
           geoFile.toJava,
           Map("originalFilePath" -> geoFile.pathAsString).asJson.toString(),
@@ -90,7 +90,7 @@ class FileSuite extends BaseSuite {
 
     val response =
       executeRequestToResponse(
-        api.getFileInformation("", adminBearerToken)(BucketNameSample, fileId)
+        api.getFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId)
       )
     assertEquals(response._id, fileId)
     assertEquals(response.filename, "myFileName.txt")
@@ -100,7 +100,7 @@ class FileSuite extends BaseSuite {
   test("get file of fileId as admin") {
     val geoFile = File(getClass.getResource("/geodata.json").getPath)
 
-    val request        = api.getFile("", adminBearerToken)(BucketNameSample, fileId, File.newTemporaryFile().toJava)
+    val request        = api.getFile("", "", adminBearerToken, "")(BucketNameSample, fileId, File.newTemporaryFile().toJava)
     val resultFuture   = TestAdditions.backend.send(request)
     val responseResult = Await.result(resultFuture, 60.seconds)
     val response: File = File(responseResult.body.getOrElse(throw new Exception("error")).getPath)
@@ -113,12 +113,12 @@ class FileSuite extends BaseSuite {
     val geoFile     = File(getClass.getResource("/geodata.json").getPath)
     val newFileName = "myNewFileName.json"
     val response =
-      executeRequestToResponse(api.updateFileInformation("", adminBearerToken)(BucketNameSample, fileId, UpdateFileInformationRequest(Some(newFileName), None)))
+      executeRequestToResponse(api.updateFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId, UpdateFileInformationRequest(Some(newFileName), None)))
     assertEquals(response.matchedCount, 1L)
     assertEquals(response.modifiedCount, 1L)
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.upsertedIds, List(fileId))
-    val validationResponse = executeRequestToResponse(api.getFileInformation("", adminBearerToken)(BucketNameSample, fileId))
+    val validationResponse = executeRequestToResponse(api.getFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId))
     assertEquals(validationResponse._id, fileId)
     assertEquals(validationResponse.filename, newFileName)
     assertEquals(validationResponse.metadata, Map("originalFilePath" -> geoFile.pathAsString))
@@ -128,13 +128,13 @@ class FileSuite extends BaseSuite {
   test("update file information just metadata of fileId as admin") {
     val response =
       executeRequestToResponse(
-        api.updateFileInformation("", adminBearerToken)(BucketNameSample, fileId, UpdateFileInformationRequest(None, Some(Map("new" -> "value"))))
+        api.updateFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId, UpdateFileInformationRequest(None, Some(Map("new" -> "value"))))
       )
     assertEquals(response.matchedCount, 1L)
     assertEquals(response.modifiedCount, 1L)
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.upsertedIds, List(fileId))
-    val validationResponse = executeRequestToResponse(api.getFileInformation("", adminBearerToken)(BucketNameSample, fileId))
+    val validationResponse = executeRequestToResponse(api.getFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId))
     assertEquals(validationResponse._id, fileId)
     assertEquals(validationResponse.filename, "myNewFileName.json")
     assertEquals(validationResponse.metadata, Map("new" -> "value"))
@@ -144,7 +144,7 @@ class FileSuite extends BaseSuite {
     val newFileName = Random.alphanumeric.take(10).mkString + ".json"
     val response =
       executeRequestToResponse(
-        api.updateFileInformation("", adminBearerToken)(
+        api.updateFileInformation("", "", adminBearerToken, "")(
           BucketNameSample,
           fileId,
           UpdateFileInformationRequest(Some(newFileName), Some(Map("new" -> Map("crazy" -> "value"))))
@@ -154,7 +154,7 @@ class FileSuite extends BaseSuite {
     assertEquals(response.modifiedCount, 1L)
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.upsertedIds, List(fileId))
-    val validationResponse = executeRequestToResponse(api.getFileInformation("", adminBearerToken)(BucketNameSample, fileId))
+    val validationResponse = executeRequestToResponse(api.getFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId))
     assertEquals(validationResponse._id, fileId)
     assertEquals(validationResponse.filename, newFileName)
     assertEquals(validationResponse.metadata, Map("new" -> Map("crazy" -> "value")))
@@ -164,7 +164,7 @@ class FileSuite extends BaseSuite {
     val countStart = MongoDatabase.databaseProvider.dao(s"$BucketNameSample$BucketCollectionSuffix").count().result()
     val response =
       executeRequestToResponse(
-        api.deleteFile("", adminBearerToken)(BucketNameSample, fileId)
+        api.deleteFile("", "", adminBearerToken, "")(BucketNameSample, fileId)
       )
     assertEquals(response.deletedCount, 1L)
     assertEquals(response.wasAcknowledged, true)
@@ -174,7 +174,7 @@ class FileSuite extends BaseSuite {
   }
 
   test("list all files as user") {
-    val response = executeRequest(api.listFiles("", testUserBearerToken)(BucketNameSample))
+    val response = executeRequest(api.listFiles("", "", testUserBearerToken, "")(BucketNameSample))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")
@@ -182,7 +182,7 @@ class FileSuite extends BaseSuite {
 
   test("paginated files with filter as user") {
     val response = executeRequest(
-      api.listFiles("", testUserBearerToken)(
+      api.listFiles("", "", testUserBearerToken, "")(
         BucketNameSample,
         Some(Map("filename" -> Map("$regex" -> "(.*?).json")).asJson.toString()),
         rowsPerPage = Some(2),
@@ -195,7 +195,7 @@ class FileSuite extends BaseSuite {
   }
 
   test("list all files (post) as user") {
-    val response = executeRequest(api.findFiles("", testUserBearerToken)(BucketNameSample, MongoFindRequest(Map(), Map(), Map())))
+    val response = executeRequest(api.findFiles("", "", testUserBearerToken, "")(BucketNameSample, MongoFindRequest(Map(), Map(), Map())))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")
@@ -203,7 +203,7 @@ class FileSuite extends BaseSuite {
 
   test("paginated files (post) with filter as user") {
     val response = executeRequest(
-      api.findFiles("", testUserBearerToken)(
+      api.findFiles("", "", testUserBearerToken, "")(
         BucketNameSample,
         MongoFindRequest(Map("filename" -> Map("$regex" -> "(.*?).json")), Map(), Map()),
         rowsPerPage = Some(2),
@@ -219,7 +219,7 @@ class FileSuite extends BaseSuite {
     val geoFile = File(getClass.getResource("/geodata.json").getPath)
     val response =
       executeRequest(
-        api.insertFile("", testUserBearerToken)(
+        api.insertFile("", "", testUserBearerToken, "")(
           BucketNameSample,
           geoFile.toJava,
           Map("originalFilePath" -> geoFile.pathAsString).asJson.toString(),
@@ -236,7 +236,7 @@ class FileSuite extends BaseSuite {
 
     val response =
       executeRequest(
-        api.getFileInformation("", testUserBearerToken)(BucketNameSample, fileId)
+        api.getFileInformation("", "", testUserBearerToken, "")(BucketNameSample, fileId)
       )
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
@@ -246,7 +246,7 @@ class FileSuite extends BaseSuite {
   test("get file of fileId as user") {
     val geoFile = File(getClass.getResource("/geodata.json").getPath)
 
-    val request        = api.getFile("", testUserBearerToken)(BucketNameSample, fileId, File.newTemporaryFile().toJava)
+    val request        = api.getFile("", "", testUserBearerToken, "")(BucketNameSample, fileId, File.newTemporaryFile().toJava)
     val resultFuture   = TestAdditions.backend.send(request)
     val responseResult = Await.result(resultFuture, 60.seconds)
 
@@ -259,7 +259,7 @@ class FileSuite extends BaseSuite {
   test("delete file of fileId as user") {
     val response =
       executeRequest(
-        api.deleteFile("", testUserBearerToken)(BucketNameSample, fileId)
+        api.deleteFile("", "", testUserBearerToken, "")(BucketNameSample, fileId)
       )
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)

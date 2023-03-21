@@ -10,26 +10,26 @@ class JobSuite extends BaseSuite {
 
   test("check pre triggered job was running") {
     // test fails sometime if only JobSuite is running
-    val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", adminBearerToken, "", "")())
+    val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
     assertEquals(CountingTestJob.counter > 0, true)
   }
 
   test("check possible jobs as admin") {
-    val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", adminBearerToken, "", "")())
+    val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
     assertEquals(jobsList.head, "dev.mongocamp.server.server.CountingTestJob")
     assertEquals(jobsList.last, "dev.mongocamp.server.jobs.CleanUpTokenJob")
   }
 
   test("check possible jobs as user") {
-    val response = executeRequest(jobsApi.possibleJobsList("", testUserBearerToken, "", "")())
+    val response = executeRequest(jobsApi.possibleJobsList("", "", testUserBearerToken, "")())
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
   }
 
   test("list jobs as admin") {
-    val jobsList = executeRequestToResponse(jobsApi.jobsList("", adminBearerToken, "", "")())
+    val jobsList = executeRequestToResponse(jobsApi.jobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
     val fistJob = jobsList.head
     assertEquals(fistJob.jobClassName, "dev.mongocamp.server.server.CountingTestJob")
@@ -41,7 +41,7 @@ class JobSuite extends BaseSuite {
   }
 
   test("list jobs as user") {
-    val response = executeRequest(jobsApi.jobsList("", testUserBearerToken, "", "")())
+    val response = executeRequest(jobsApi.jobsList("", "", testUserBearerToken, "")())
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
@@ -49,14 +49,14 @@ class JobSuite extends BaseSuite {
 
   test("execute jobs as admin") {
     val countBefore = CountingTestJob.counter
-    val executedJob = executeRequestToResponse(jobsApi.executeJob("", adminBearerToken, "", "")("Default", "CountingTestJob"))
+    val executedJob = executeRequestToResponse(jobsApi.executeJob("", "", adminBearerToken, "")("Default", "CountingTestJob"))
     assertEquals(executedJob.value, true)
     val countAfter = CountingTestJob.counter
     assertEquals(countAfter > countBefore, true)
   }
 
   test("execute jobs as user") {
-    val response = executeRequest(jobsApi.executeJob("", testUserBearerToken, "", "")("Default", "CountingTestJob"))
+    val response = executeRequest(jobsApi.executeJob("", "", testUserBearerToken, "")("Default", "CountingTestJob"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
@@ -64,7 +64,7 @@ class JobSuite extends BaseSuite {
 
   test("register job as admin") {
     val config = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val executedJob = executeRequestToResponse(jobsApi.registerJob("", adminBearerToken, "", "")(config))
+    val executedJob = executeRequestToResponse(jobsApi.registerJob("", "", adminBearerToken, "")(config))
     assertEquals(executedJob.name, config.name)
     assertEquals(executedJob.group, config.group)
     assertEquals(executedJob.jobClassName, config.className)
@@ -75,7 +75,7 @@ class JobSuite extends BaseSuite {
 
   test("register job as user") {
     val config = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val response = executeRequest(jobsApi.registerJob("", testUserBearerToken, "", "")(config))
+    val response = executeRequest(jobsApi.registerJob("", "", testUserBearerToken, "")(config))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
@@ -83,7 +83,7 @@ class JobSuite extends BaseSuite {
 
   test("update job as admin") {
     val config = JobConfig("RandomNewJobNameChanged", "dev.mongocamp.server.server.CountingTestJob", "Changed Description", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val executedJob = executeRequestToResponse(jobsApi.updateJob("", adminBearerToken, "", "")("NewGroup" ,"RandomNewJobName", config))
+    val executedJob = executeRequestToResponse(jobsApi.updateJob("", "", adminBearerToken, "")("NewGroup" ,"RandomNewJobName", config))
     assertEquals(executedJob.name, config.name)
     assertEquals(executedJob.group, config.group)
     assertEquals(executedJob.jobClassName, config.className)
@@ -94,7 +94,7 @@ class JobSuite extends BaseSuite {
 
   test("update not existing job as admin") {
     val config = JobConfig("RandomNewJobNameChanged", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val response = executeRequest(jobsApi.updateJob("", adminBearerToken, "", "")("NewGroup" ,"FreakyName", config))
+    val response = executeRequest(jobsApi.updateJob("", "", adminBearerToken, "")("NewGroup" ,"FreakyName", config))
     assertEquals(response.code.code, 404)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "FreakyName with group NewGroup does not exists.")
@@ -102,23 +102,23 @@ class JobSuite extends BaseSuite {
 
   test("update job as user") {
     val config = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val response = executeRequest(jobsApi.updateJob("", testUserBearerToken, "", "")("NewGroup" ,"RandomNewJobName", config))
+    val response = executeRequest(jobsApi.updateJob("", "", testUserBearerToken, "")("NewGroup" ,"RandomNewJobName", config))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
   }
 
   test("delete job as admin") {
-    val jobsList1 = executeRequestToResponse(jobsApi.jobsList("", adminBearerToken, "", "")())
+    val jobsList1 = executeRequestToResponse(jobsApi.jobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList1.size, 3)
-    val deleteResponse = executeRequestToResponse(jobsApi.deleteJob("", adminBearerToken, "", "")("NewGroup", "RandomNewJobNameChanged"))
+    val deleteResponse = executeRequestToResponse(jobsApi.deleteJob("", "", adminBearerToken, "")("NewGroup", "RandomNewJobNameChanged"))
     assertEquals(deleteResponse.value, true)
-    val jobsList2 = executeRequestToResponse(jobsApi.jobsList("", adminBearerToken, "", "")())
+    val jobsList2 = executeRequestToResponse(jobsApi.jobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList2.size, 2)
   }
 
   test("delete job as user") {
-    val response = executeRequest(jobsApi.deleteJob("", testUserBearerToken, "", "")("NewGroup", "RandomNewJobNameChanged"))
+    val response = executeRequest(jobsApi.deleteJob("", "", testUserBearerToken, "")("NewGroup", "RandomNewJobNameChanged"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")

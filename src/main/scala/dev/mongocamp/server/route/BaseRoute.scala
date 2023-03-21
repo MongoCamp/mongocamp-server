@@ -59,8 +59,8 @@ abstract class BaseRoute extends CirceSchema with SchemaDerivation {
     baseEndpoint.securityIn(authInput)
   }
 
-  protected val securedEndpoint = securedEndpointDefinition.serverSecurityLogic(connection => login(connection))
-  protected val adminEndpoint   = securedEndpointDefinition.serverSecurityLogic(connection => loginAdmin(connection))
+  protected val securedEndpoint = securedEndpointDefinition.serverSecurityLogic(loginInformation => login(loginInformation))
+  protected val adminEndpoint   = securedEndpointDefinition.serverSecurityLogic(loginInformation => loginAdmin(loginInformation))
 
   lazy val mongoDbPath = "mongodb"
 

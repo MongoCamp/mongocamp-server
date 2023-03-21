@@ -8,13 +8,13 @@ class DatabaseSuite extends BaseSuite {
   val databaseApi: DatabaseApi = DatabaseApi()
 
   test("list all databases as admin") {
-    val response = executeRequestToResponse(databaseApi.listDatabases("", adminBearerToken)())
+    val response = executeRequestToResponse(databaseApi.listDatabases("", "", adminBearerToken, "")())
     assertEquals(response, List("admin", "config", "geodata", "local", "test"))
     assertEquals(response.size, 5)
   }
 
   test("database infos as admin") {
-    val response = executeRequestToResponse(databaseApi.databaseInfos("", adminBearerToken)())
+    val response = executeRequestToResponse(databaseApi.databaseInfos("", "", adminBearerToken, "")())
     assertEquals(response.size, 5)
     val databaseInfoGeoDataOption = response.find(_.name.equals("geodata"))
     assertEquals(databaseInfoGeoDataOption.isDefined, true)
@@ -24,16 +24,16 @@ class DatabaseSuite extends BaseSuite {
 
   test("delete database infos as admin") {
     MongoDatabase.databaseProvider.dao("deleteTest:collection").createIndexForField("index_for_test").result()
-    val response = executeRequestToResponse(databaseApi.getDatabaseInfo("", adminBearerToken)("deleteTest"))
+    val response = executeRequestToResponse(databaseApi.getDatabaseInfo("", "", adminBearerToken, "")("deleteTest"))
     assertEquals(response.name, "deleteTest")
-    val deleteResponse = executeRequestToResponse(databaseApi.deleteDatabase("", adminBearerToken)("deleteTest"))
+    val deleteResponse = executeRequestToResponse(databaseApi.deleteDatabase("", "", adminBearerToken, "")("deleteTest"))
     assertEquals(deleteResponse.value, true)
-    val response2Result = executeRequest(databaseApi.getDatabaseInfo("", adminBearerToken)("deleteTest"))
+    val response2Result = executeRequest(databaseApi.getDatabaseInfo("", "", adminBearerToken, "")("deleteTest"))
     assertEquals(response2Result.code.code, 404)
   }
 
   test("list all collections for database test as admin") {
-    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", adminBearerToken)("test"))
+    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", "", adminBearerToken, "")("test"))
     assertEquals(
       response,
       List(
@@ -56,40 +56,40 @@ class DatabaseSuite extends BaseSuite {
   }
 
   test("list all collections for database geodata as admin") {
-    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", adminBearerToken)("geodata"))
+    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", "", adminBearerToken, "")("geodata"))
     assertEquals(response.size, 2)
     assertEquals(response, List("companies", "locations"))
   }
 
   test("list all databases as user") {
-    val responseResult = executeRequest(databaseApi.listDatabases("", testUserBearerToken)())
+    val responseResult = executeRequest(databaseApi.listDatabases("", "", testUserBearerToken, "")())
     assertEquals(responseResult.code.code, 401)
     assertEquals(responseResult.header("x-error-message").isDefined, true)
     assertEquals(responseResult.header("x-error-message").get, "user not authorized for request")
   }
 
   test("database infos as user") {
-    val responseResult = executeRequest(databaseApi.databaseInfos("", testUserBearerToken)())
+    val responseResult = executeRequest(databaseApi.databaseInfos("", "", testUserBearerToken, "")())
     assertEquals(responseResult.code.code, 401)
     assertEquals(responseResult.header("x-error-message").isDefined, true)
     assertEquals(responseResult.header("x-error-message").get, "user not authorized for request")
   }
 
   test("delete database infos as user") {
-    val responseResult = executeRequest(databaseApi.deleteDatabase("", testUserBearerToken)("test-db"))
+    val responseResult = executeRequest(databaseApi.deleteDatabase("", "", testUserBearerToken, "")("test-db"))
     assertEquals(responseResult.code.code, 401)
     assertEquals(responseResult.header("x-error-message").isDefined, true)
     assertEquals(responseResult.header("x-error-message").get, "user not authorized for request")
   }
 
   test("list all collections for database test as user") {
-    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", testUserBearerToken)("test"))
+    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", "", testUserBearerToken, "")("test"))
     assertEquals(response.size, 3)
     assertEquals(response, List("accounts", "test", "users"))
   }
 
   test("list all collections for database geodata as user") {
-    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", testUserBearerToken)("geodata"))
+    val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", "", testUserBearerToken, "")("geodata"))
     assertEquals(response.size, 1)
     assertEquals(response, List("locations"))
   }
