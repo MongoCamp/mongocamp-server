@@ -1,7 +1,7 @@
 package dev.mongocamp.micrometer.mongodb
 
-import com.github.blemale.scaffeine.{Cache, Scaffeine}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.github.blemale.scaffeine.{ Cache, Scaffeine }
+import com.typesafe.config.{ Config, ConfigFactory }
 import org.mongodb.scala.Document
 
 import java.time

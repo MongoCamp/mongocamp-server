@@ -89,7 +89,6 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     }))
   }
 
-
   override def endpoints = {
     var endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List()
     if (MetricsConfiguration.getJvmMetricsRegistries.nonEmpty) {

@@ -1,7 +1,7 @@
 package dev.mongocamp.micrometer.mongodb.registry
 
 import better.files.File
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{ Config, ConfigFactory }
 import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.micrometer.mongodb.MetricsCache
 import io.micrometer.core.instrument.step.StepRegistryConfig

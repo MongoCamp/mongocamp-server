@@ -1,7 +1,7 @@
 package dev.mongocamp.plugins.monitoring.mongodb
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.micrometer.mongodb.binder.{CollectionMetrics, ConnectionsMetrics, DatabaseMetrics, NetworkMetrics, OperationMetrics, ServerMetrics}
+import dev.mongocamp.micrometer.mongodb.binder.{ CollectionMetrics, ConnectionsMetrics, DatabaseMetrics, NetworkMetrics, OperationMetrics, ServerMetrics }
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.monitoring.MetricsConfiguration
@@ -45,9 +45,9 @@ object MongoDbMetricsPlugin extends ServerPlugin with LazyLogging {
       MetricsConfiguration.addMongoDbBinder(ServerMetrics(MongoDatabase.databaseProvider.database()))
     }
 
-    ConfigurationService.getConfigValue[List[String]](ConfKeyMetricsCollectionList).foreach(collection => {
-      MetricsConfiguration.addMongoDbBinder(CollectionMetrics(MongoDatabase.databaseProvider.database(), collection))
-    })
+    ConfigurationService
+      .getConfigValue[List[String]](ConfKeyMetricsCollectionList)
+      .foreach(collection => MetricsConfiguration.addMongoDbBinder(CollectionMetrics(MongoDatabase.databaseProvider.database(), collection)))
 
   }
 

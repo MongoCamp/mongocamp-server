@@ -3,8 +3,8 @@ package dev.mongocamp.micrometer.mongodb.binder
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.micrometer.mongodb.MetricsCache.metricsCache
 import io.micrometer.core.instrument._
-import io.micrometer.core.instrument.binder.{BaseUnits, MeterBinder}
-import org.mongodb.scala.{Document, MongoDatabase}
+import io.micrometer.core.instrument.binder.{ BaseUnits, MeterBinder }
+import org.mongodb.scala.{ Document, MongoDatabase }
 
 import scala.jdk.CollectionConverters.IterableHasAsJava
 

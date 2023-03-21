@@ -1,4 +1,35 @@
-### [1.3.3](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.2...v1.3.3) (2023-01-30)
+## [1.3.4]() (2023-03-21)
+
+
+### Bug Fixes
+
+* gitpod scala ([c35e2ca](https://github.com/MongoCamp/mongocamp-server/commit/c35e2ca0a76795c894c065cd1d206c7aa6489bda))
+
+
+### Code Refactoring
+
+* **config:** Constants for Option and List Types ([37eb24b](https://github.com/MongoCamp/mongocamp-server/commit/37eb24b402e04be91cadd2b2bbee7d13eefc582d))
+* **metrics:** Micrometer MongoDb Package ([8a1bc92](https://github.com/MongoCamp/mongocamp-server/commit/8a1bc9216de9a9a9bd10e6b3aedca6e1f9f967a4))
+* **metrics:** Micrometer MongoDb Package ([c69a6e7](https://github.com/MongoCamp/mongocamp-server/commit/c69a6e707639913027f1510465de79bab7d1df9a))
+* **metrics:** renaming config keys for Logging Plugin ([a145938](https://github.com/MongoCamp/mongocamp-server/commit/a145938e0f0b244d5b8ece39da6facc0a1a320be))
+* Split ApplicationStatusRoutes to ConfigurationRoutes and  MetricsRoutes ([dc472d4](https://github.com/MongoCamp/mongocamp-server/commit/dc472d41053d911bf0f520da6fbafe764c4a9ecf))
+
+
+### Features
+
+* **metrics:** Extracted metrics to own packages ([ee7d37b](https://github.com/MongoCamp/mongocamp-server/commit/ee7d37b39471f6a8b0eb6113a6fc74ae5f0f7a65))
+* **metrics:** MicroMeter Plugin for MongoDb Metrics ([e651845](https://github.com/MongoCamp/mongocamp-server/commit/e651845904e0c0fb60ef6c2a6b3477e7aadea8d5))
+* More details in Metrics Store for mongodb ([85b0971](https://github.com/MongoCamp/mongocamp-server/commit/85b0971608c6cab2cf0957591d732fffb40e32a7))
+
+
+### Maintenance
+
+* **dependencies:** Found 13 dependency updates for mongocamp-server ([776ff9f](https://github.com/MongoCamp/mongocamp-server/commit/776ff9f8e6540e93f9ececd3a551b15c5e2354d6))
+* DependencyUpdates ([2806e02](https://github.com/MongoCamp/mongocamp-server/commit/2806e0266dadcc03d1c77238311222e85c53ee3f))
+* Found 17 dependency updates for mongocamp-server ([cabe85e](https://github.com/MongoCamp/mongocamp-server/commit/cabe85e0906cb68e9905eec582d576ea2e8f3c1e))
+* Found 17 dependency updates for mongocamp-server ([65d7c11](https://github.com/MongoCamp/mongocamp-server/commit/65d7c11f8e3d12e598399e534ed857f4ae9b1008))
+
+## [1.3.3]() (2023-01-30)
 
 
 ### Bug Fixes
@@ -21,7 +52,7 @@
 
 * **dependencies:** update sttp.client and and tapir ([1d004bc](https://github.com/MongoCamp/mongocamp-server/commit/1d004bc55c59bf204563765eca3d9640c5e1d7f9))
 
-### [1.3.2](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.1...v1.3.2) (2023-01-20)
+## [1.3.2]() (2023-01-20)
 
 
 ### Bug Fixes
@@ -41,7 +72,7 @@
 
 * **dependencies:** Found 9 dependency updates for mongocamp-server ([fae90d4](https://github.com/MongoCamp/mongocamp-server/commit/fae90d4677f5a720a3113c69535ac6d8f014626e))
 
-### [1.3.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.3.0...v1.3.1) (2023-01-08)
+## [1.3.1]() (2023-01-08)
 
 
 ### Maintenance
@@ -49,7 +80,7 @@
 * dependency updates plugins ([c595300](https://github.com/MongoCamp/mongocamp-server/commit/c595300baf79a89afbae2805d3e7932eddd5a360))
 * Many dependencies updated (tapir, sttp-client, mongodb-driver) ([c128d6f](https://github.com/MongoCamp/mongocamp-server/commit/c128d6fe593add7cfe11ec9d4496b324cab7955e))
 
-## [1.3.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.2.1...v1.3.0) (2022-10-18)
+## [1.3.0]() (2022-10-18)
 
 
 ### Bug Fixes
@@ -80,7 +111,7 @@
 * **dependencies:** Removed unnecessary dependency override for slf4j ([eff6fba](https://github.com/MongoCamp/mongocamp-server/commit/eff6fba68fb9c3ab8dff3950f82cb610e9284607))
 * **dependencies:** Update 19 dependencies and SBT ([36bb0b9](https://github.com/MongoCamp/mongocamp-server/commit/36bb0b9a520cf20c08739d05595e1ad0f875c5c8))
 
-### [1.2.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.2.0...v1.2.1) (2022-07-24)
+## [1.2.1]() (2022-07-24)
 
 
 ### Bug Fixes
@@ -94,7 +125,7 @@
 * **gitpod:** First Try to code at gitpod ([7e2f9ea](https://github.com/MongoCamp/mongocamp-server/commit/7e2f9ea0de35d52e732b494aabf53d5704ce8ed5))
 * **jobs:** Moved JobPlugin to  `plugin` ([3a8afb8](https://github.com/MongoCamp/mongocamp-server/commit/3a8afb868708ced8c89d720756e2b1eda64c94cc))
 
-## [1.2.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.1.1...v1.2.0) (2022-07-21)
+## [1.2.0]() (2022-07-21)
 
 
 ### Bug Fixes
@@ -109,14 +140,14 @@
 * Routes for Jobs ([340c7a8](https://github.com/MongoCamp/mongocamp-server/commit/340c7a828368bdd2ceb32d547dfad50f81d61969)), closes [#31](https://github.com/MongoCamp/mongocamp-server/issues/31)
 * Routes for Jobs ([daa167b](https://github.com/MongoCamp/mongocamp-server/commit/daa167b0d6f66b10fb8b8ef7d5fa0d0134390ee5)), closes [#31](https://github.com/MongoCamp/mongocamp-server/issues/31)
 
-### [1.1.1](https://github.com/MongoCamp/mongocamp-server/compare/v1.1.0...v1.1.1) (2022-07-15)
+## [1.1.1]() (2022-07-15)
 
 
 ### Bug Fixes
 
 * Exception by Change in BsonConverter ([d85fd22](https://github.com/MongoCamp/mongocamp-server/commit/d85fd22d74c2d43bf2ccfef9098c3d9249e7b990)), closes [#30](https://github.com/MongoCamp/mongocamp-server/issues/30)
 
-## [1.1.0](https://github.com/MongoCamp/mongocamp-server/compare/v1.0.1...v1.1.0) (2022-07-13)
+## [1.1.0]() (2022-07-13)
 
 
 ### Bug Fixes
@@ -141,7 +172,7 @@
 * 7 Dependency Updates ([a73b98d](https://github.com/MongoCamp/mongocamp-server/commit/a73b98dcc93e9b2502e118f301d2f8178c7259e1))
 * update version of `micrometer-core` ([fdf6727](https://github.com/MongoCamp/mongocamp-server/commit/fdf6727d343b7972189def40ac1bafded05e1443))
 
-### [1.0.1](https://github.com/MongoCamp/mongocamp-server/compare/v0.3.4...v1.0.1) (2022-06-16)
+## [1.0.1]() (2022-06-16)
 
 
 ### Bug Fixes
@@ -242,7 +273,7 @@
 * CollectionSuite reverted ([68f0e3e](https://github.com/MongoCamp/mongocamp-server/commit/68f0e3e38295e5a81fd7317fad41335db236373e))
 * DatabaseSuite reverted ([21fece2](https://github.com/MongoCamp/mongocamp-server/commit/21fece2bf33aca61bd1895fdd97b0a0a5ecc4d3a))
 
-### [0.3.4](https://github.com/MongoCamp/mongocamp-server/compare/2da91bf348c241ac31459055b9460898100318a7...v0.3.4) (2022-02-26)
+## [0.3.4]() (2022-02-26)
 
 
 ### Bug Fixes
