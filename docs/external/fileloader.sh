@@ -3,7 +3,7 @@
 BASEDIR=$(dirname "$0")
 FILEDIR="$BASEDIR/files"
 
-rm -rf $FILEDIR;
+rm -rf "$FILEDIR";
 
 mkdir "$FILEDIR";
 
