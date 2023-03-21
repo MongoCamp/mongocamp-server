@@ -2,9 +2,9 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**version**](InformationApi.md#version) | **GET** /version | Version Information
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**version**](InformationApi.md#version) | **GET** /version | Version Information |
 
 
 <a name="version"></a>

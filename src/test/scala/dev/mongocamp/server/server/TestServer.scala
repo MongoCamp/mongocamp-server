@@ -21,11 +21,6 @@ object TestServer extends LazyLogging {
 
   var retries = 0
 
-  def setPort(): Unit = {
-    val port = Random.nextInt(10000) + TestAdditions.minPort
-    System.setProperty("SERVER_PORT", port.toString)
-  }
-
   while (!serverRunning) {
     try {
       if (!mongoServerStarted) {
@@ -59,4 +54,8 @@ object TestServer extends LazyLogging {
     "http://%s:%s".format(dev.mongocamp.server.Server.interface, dev.mongocamp.server.Server.port)
   }
 
+  def setPort(): Unit = {
+    val port = Random.nextInt(10000) + TestAdditions.minPort
+    System.setProperty("SERVER_PORT", port.toString)
+  }
 }

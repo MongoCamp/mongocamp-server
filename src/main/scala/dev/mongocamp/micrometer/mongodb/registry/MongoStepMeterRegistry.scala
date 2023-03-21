@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
 
-class MongoStepMeterRegistry(config: MonitoringMongoConfig, threadFactory: NamedThreadFactory = threadFactory, clock: Clock = Clock.SYSTEM)
+class MongoStepMeterRegistry(config: MongoRegistryConfig, threadFactory: NamedThreadFactory = threadFactory, clock: Clock = Clock.SYSTEM)
     extends StepMeterRegistry(config, clock) {
 
   start(threadFactory)
@@ -103,6 +103,7 @@ object MongoStepMeterRegistry {
   private lazy val threadFactory = new NamedThreadFactory("mongodb-metrics-publisher")
 
   def apply(mongoDAO: MongoDAO[Document], configurationMap: Map[String, String] = Map()): MongoStepMeterRegistry = {
-    new MongoStepMeterRegistry(MonitoringMongoConfig(mongoDAO, configurationMap))
+    new MongoStepMeterRegistry(MongoRegistryConfig(mongoDAO, configurationMap))
   }
+
 }

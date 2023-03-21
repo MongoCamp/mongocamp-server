@@ -11,7 +11,7 @@ class CollectionSuite extends BaseSuite {
   val databaseApi: DatabaseApi     = DatabaseApi()
 
   test("list all collections as admin") {
-    val response = executeRequestToResponse(collectionApi.listCollections("", adminBearerToken)())
+    val response = executeRequestToResponse(collectionApi.listCollections("", "", adminBearerToken, "")())
     assertEquals(
       response,
       List(
@@ -35,16 +35,16 @@ class CollectionSuite extends BaseSuite {
   }
 
   test("collection status accounts as admin") {
-    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", adminBearerToken)("accounts"))
+    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", "", adminBearerToken, "")("accounts"))
     assertEquals(response.size, 10105.0)
     assertEquals(response.count, 100)
   }
 
   test("delete collection infos as admin") {
     MongoDatabase.databaseProvider.dao("deleteTest").createIndexForField("index_for_test").result()
-    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", adminBearerToken)("deleteTest"))
+    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", "", adminBearerToken, "")("deleteTest"))
     assertEquals(response.ns, "test.deleteTest")
-    val deleteResponse = executeRequestToResponse(collectionApi.deleteCollection("", adminBearerToken)("deleteTest"))
+    val deleteResponse = executeRequestToResponse(collectionApi.deleteCollection("", "", adminBearerToken, "")("deleteTest"))
     assertEquals(deleteResponse.value, true)
   }
 
@@ -52,15 +52,15 @@ class CollectionSuite extends BaseSuite {
     val collection = MongoDatabase.databaseProvider.dao("otherDB:collectionName")
     collection.insertOne(Map("key" -> "value")).result()
     assertEquals(collection.count().result(), 1L)
-    val deleteResponseResult = executeRequestToResponse(collectionApi.clearCollection("", adminBearerToken)("otherDB:collectionName"))
+    val deleteResponseResult = executeRequestToResponse(collectionApi.clearCollection("", "", adminBearerToken, "")("otherDB:collectionName"))
     assertEquals(deleteResponseResult.value, true)
     assertEquals(collection.count().result(), 0L)
-    val databaseDelete = executeRequestToResponse(databaseApi.deleteDatabase("", adminBearerToken)("otherDB"))
+    val databaseDelete = executeRequestToResponse(databaseApi.deleteDatabase("", "", adminBearerToken, "")("otherDB"))
     assertEquals(databaseDelete.value, true)
   }
 
   test("distinct on collection as admin") {
-    val distinct = executeRequestToResponse(collectionApi.distinct("", adminBearerToken)("users", "numberrange"))
+    val distinct = executeRequestToResponse(collectionApi.distinct("", "", adminBearerToken, "")("users", "numberrange"))
     assertEquals(distinct.size, 11)
     assertEquals(distinct.sortBy(f => f.toString.toLong), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
   }
@@ -80,7 +80,7 @@ class CollectionSuite extends BaseSuite {
       ),
       allowDiskUse = true
     )
-    val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", adminBearerToken)("geodata:locations", aggregateRequest))
+    val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", "", adminBearerToken, "")("geodata:locations", aggregateRequest))
     assertEquals(aggreationResult.size, 1)
     val headResponse = aggreationResult.head
     assertEquals(headResponse("name").toString, "Mollis Dui Associates")
@@ -88,41 +88,41 @@ class CollectionSuite extends BaseSuite {
   }
 
   test("fields on collection as admin") {
-    val distinct = executeRequestToResponse(collectionApi.getCollectionFields("", adminBearerToken)("geodata:locations"))
+    val distinct = executeRequestToResponse(collectionApi.getCollectionFields("", "", adminBearerToken, "")("geodata:locations"))
     assertEquals(distinct.size, 5)
     assertEquals(distinct.sorted, List("_id", "checkedAt", "geodata", "name", "type"))
   }
 
   test("list all collections as user") {
-    val response = executeRequestToResponse(collectionApi.listCollections("", testUserBearerToken)())
+    val response = executeRequestToResponse(collectionApi.listCollections("", "", testUserBearerToken, "")())
     assertEquals(response.size, 3)
     assertEquals(response, List("accounts", "test", "users"))
   }
 
   test("collection status accounts as user") {
-    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", testUserBearerToken)("accounts"))
+    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", "", testUserBearerToken, "")("accounts"))
     assertEquals(response.size, 10105.0)
     assertEquals(response.count, 100)
   }
 
   test("collection status companies as user") {
-    val responseResult = executeRequest(collectionApi.getCollectionInformation("", testUserBearerToken)("companies"))
+    val responseResult = executeRequest(collectionApi.getCollectionInformation("", "", testUserBearerToken, "")("companies"))
     assertEquals(responseResult.code.code, 401)
     assertEquals(responseResult.header("x-error-message").isDefined, true)
     assertEquals(responseResult.header("x-error-message").get, "user not authorized for collection")
   }
 
   test("distinct on collection as user") {
-    val distinct = executeRequestToResponse(collectionApi.distinct("", testUserBearerToken)("users", "numberrange"))
+    val distinct = executeRequestToResponse(collectionApi.distinct("", "", testUserBearerToken, "")("users", "numberrange"))
     assertEquals(distinct.size, 11)
     assertEquals(distinct.sortBy(f => f.toString.toLong), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
   }
 
   test("delete collection infos as user") {
     MongoDatabase.databaseProvider.dao("deleteTest").createIndexForField("index_for_test").result()
-    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", testUserBearerToken)("deleteTest"))
+    val response = executeRequestToResponse(collectionApi.getCollectionInformation("", "", testUserBearerToken, "")("deleteTest"))
     assertEquals(response.ns, "test.deleteTest")
-    val deleteResponseResult = executeRequest(collectionApi.deleteCollection("", testUserBearerToken)("deleteTest"))
+    val deleteResponseResult = executeRequest(collectionApi.deleteCollection("", "", testUserBearerToken, "")("deleteTest"))
     assertEquals(deleteResponseResult.code.code, 401)
     assertEquals(deleteResponseResult.header("x-error-message").isDefined, true)
     assertEquals(deleteResponseResult.header("x-error-message").get, "user not authorized for collection")
@@ -143,7 +143,7 @@ class CollectionSuite extends BaseSuite {
       ),
       allowDiskUse = true
     )
-    val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", testUserBearerToken)("geodata:locations", aggregateRequest))
+    val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", "", testUserBearerToken, "")("geodata:locations", aggregateRequest))
     assertEquals(aggreationResult.size, 1)
     val headResponse = aggreationResult.head
     assertEquals(headResponse("name").toString, "Mollis Dui Associates")
@@ -151,7 +151,7 @@ class CollectionSuite extends BaseSuite {
   }
 
   test("check schema of `users` collection") {
-    val schemaAnalysis = executeRequestToResponse(collectionApi.getSchemaAnalysis("", adminBearerToken)("users"))
+    val schemaAnalysis = executeRequestToResponse(collectionApi.getSchemaAnalysis("", "", adminBearerToken, "")("users"))
     assertEquals(schemaAnalysis.count, 1000L)
     assertEquals(schemaAnalysis.sample, 1000L)
     assertEquals(schemaAnalysis.percentageOfAnalysed, 1.0)
@@ -161,7 +161,7 @@ class CollectionSuite extends BaseSuite {
   }
 
   test("check schema of `pokemon` collection") {
-    val jsonSchema = executeRequestToResponse(collectionApi.getJsonSchema("", adminBearerToken)("pokemon"))
+    val jsonSchema = executeRequestToResponse(collectionApi.getJsonSchema("", "", adminBearerToken, "")("pokemon"))
     assertEquals(jsonSchema.$schema, "https://json-schema.org/draft/2020-12/schema")
     ""
   }

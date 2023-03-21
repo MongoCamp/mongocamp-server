@@ -158,19 +158,37 @@ class ConfigSuite extends munit.FunSuite with LazyLogging {
 
   test("register and test option string configuration without setting") {
     val testConfig = "test.config.for.me"
-    registerNonPersistentConfig(testConfig, s"Option[${MongoCampConfiguration.confTypeString}]")
+    registerNonPersistentConfig(testConfig, MongoCampConfiguration.confTypeStringOption)
     val config = getConfig(testConfig)
-    assertEquals(config.get.configType, s"Option[${MongoCampConfiguration.confTypeString}]")
+    assertEquals(config.get.configType, MongoCampConfiguration.confTypeStringOption)
     assertEquals(config.get.value, None)
   }
 
   test("register and test option string configuration with setting") {
     val testConfig2 = "TEST_CONFIG_FOR_YOU"
     System.setProperty(testConfig2, "hello world")
-    registerNonPersistentConfig(testConfig2, s"Option[${MongoCampConfiguration.confTypeString}]")
+    registerNonPersistentConfig(testConfig2, MongoCampConfiguration.confTypeStringOption)
     val config2 = getConfig(testConfig2)
-    assertEquals(config2.get.configType, s"Option[${MongoCampConfiguration.confTypeString}]")
+    assertEquals(config2.get.configType, MongoCampConfiguration.confTypeStringOption)
     assertEquals(config2.get.value, Some("hello world"))
+  }
+
+  test("register and test option long configuration without setting") {
+    val testConfig = "test.config.for.me.long"
+    registerNonPersistentConfig(testConfig, MongoCampConfiguration.confTypeLongOption)
+    val config = getConfig(testConfig)
+    assertEquals(config.get.configType, MongoCampConfiguration.confTypeLongOption)
+    assertEquals(config.get.value, None)
+  }
+
+  test("register and test option long configuration with setting") {
+    val testConfig2 = "TEST_CONFIG_FOR_YOU_LONG"
+    System.setProperty(testConfig2, "1")
+    registerNonPersistentConfig(testConfig2, MongoCampConfiguration.confTypeLongOption)
+    val config2 = getConfig(testConfig2)
+    assertEquals(config2.get.configType, MongoCampConfiguration.confTypeLongOption)
+    assertEquals(config2.get.value, Some(1))
+    assertEquals(config2.get.typedValue[Option[Long]](), Some(1L))
   }
 
 }

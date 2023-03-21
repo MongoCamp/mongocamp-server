@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
 trait DateSerializers {
-  import io.circe.{ Decoder, Encoder }
+  import io.circe.{Decoder, Encoder}
   implicit val dateTimeDecoder: Decoder[DateTime] = Decoder.decodeString.map(ISODateTimeFormat.dateOptionalTimeParser().parseDateTime(_))
   implicit val dateTimeEncoder: Encoder[DateTime] = Encoder.encodeString.contramap(ISODateTimeFormat.dateTime().print(_))
 

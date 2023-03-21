@@ -13,13 +13,13 @@ class BucketSuite extends BaseSuite {
   val databaseApi: DatabaseApi = DatabaseApi()
 
   test("list all buckets as admin") {
-    val response = executeRequestToResponse(api.listBuckets("", adminBearerToken)())
+    val response = executeRequestToResponse(api.listBuckets("", "", adminBearerToken, "")())
     assertEquals(response.size, 1)
     assertEquals(response, List("sample-files"))
   }
 
   test("buckets sample-files as admin") {
-    val response = executeRequestToResponse(api.getBucket("", adminBearerToken)("sample-files"))
+    val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")("sample-files"))
     assertEquals(response.files, 4L)
     val minSize = 400900
     val maxSize = 401100
@@ -37,9 +37,9 @@ class BucketSuite extends BaseSuite {
     val accountFile = File(getClass.getResource("/accounts.json").getPath)
     FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
 
-    val response = executeRequestToResponse(api.getBucket("", adminBearerToken)(bucketName))
+    val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")(bucketName))
     assertEquals(response.name, bucketName)
-    val deleteResponse = executeRequestToResponse(api.clearBucket("", adminBearerToken)(bucketName))
+    val deleteResponse = executeRequestToResponse(api.clearBucket("", "", adminBearerToken, "")(bucketName))
     assertEquals(deleteResponse.value, true)
   }
 
@@ -49,9 +49,9 @@ class BucketSuite extends BaseSuite {
     val accountFile = File(getClass.getResource("/accounts.json").getPath)
     FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
 
-    val response = executeRequestToResponse(api.getBucket("", adminBearerToken)(bucketName))
+    val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")(bucketName))
     assertEquals(response.name, bucketName)
-    val deleteResponse = executeRequestToResponse(api.deleteBucket("", adminBearerToken)(bucketName))
+    val deleteResponse = executeRequestToResponse(api.deleteBucket("", "", adminBearerToken, "")(bucketName))
     assertEquals(deleteResponse.value, true)
 
     val collectionNames = MongoDatabase.databaseProvider.collectionNames()
@@ -60,13 +60,13 @@ class BucketSuite extends BaseSuite {
   }
 
   test("list all buckets as user") {
-    val response = executeRequestToResponse(api.listBuckets("", testUserBearerToken)())
+    val response = executeRequestToResponse(api.listBuckets("", "", testUserBearerToken, "")())
     assertEquals(response.size, 0)
     assertEquals(response, List())
   }
 
   test("buckets sample-files as user") {
-    val response = executeRequest(api.getBucket("", testUserBearerToken)("sample-files"))
+    val response = executeRequest(api.getBucket("", "", testUserBearerToken, "")("sample-files"))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")
@@ -74,7 +74,7 @@ class BucketSuite extends BaseSuite {
 
   test("clear bucket as user") {
     val bucketName = "delete-files"
-    val response   = executeRequest(api.getBucket("", testUserBearerToken)(bucketName))
+    val response   = executeRequest(api.getBucket("", "", testUserBearerToken, "")(bucketName))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")
@@ -82,7 +82,7 @@ class BucketSuite extends BaseSuite {
 
   test("delete buckets as user") {
     val bucketName = "delete-files"
-    val response   = executeRequest(api.getBucket("", testUserBearerToken)(bucketName))
+    val response   = executeRequest(api.getBucket("", "", testUserBearerToken, "")(bucketName))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")

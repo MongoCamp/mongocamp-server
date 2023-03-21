@@ -2,48 +2,45 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**generateNewApiKey**](AuthApi.md#generateNewApiKey) | **PATCH** /auth/profile/apikey | Update ApiKey
-[**isAuthenticated**](AuthApi.md#isAuthenticated) | **GET** /auth/authenticated | Check Authentication
-[**login**](AuthApi.md#login) | **POST** /auth/login | Login User
-[**logout**](AuthApi.md#logout) | **POST** /auth/logout | Logout User
-[**logoutByDelete**](AuthApi.md#logoutByDelete) | **DELETE** /auth/logout | Logout User
-[**refreshToken**](AuthApi.md#refreshToken) | **GET** /auth/token/refresh | Refresh User
-[**updatePassword**](AuthApi.md#updatePassword) | **PATCH** /auth/profile/password | Update Password
-[**userProfile**](AuthApi.md#userProfile) | **GET** /auth/profile | User Profile
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**generateNewApiKey**](AuthApi.md#generateNewApiKey) | **PATCH** /auth/profile/apikey | Update ApiKey |
+| [**isAuthenticated**](AuthApi.md#isAuthenticated) | **GET** /auth/authenticated | Check Authentication |
+| [**login**](AuthApi.md#login) | **POST** /auth/login | Login User |
+| [**logout**](AuthApi.md#logout) | **POST** /auth/logout | Logout User |
+| [**logoutByDelete**](AuthApi.md#logoutByDelete) | **DELETE** /auth/logout | Logout User |
+| [**refreshToken**](AuthApi.md#refreshToken) | **GET** /auth/token/refresh | Refresh User |
+| [**updatePassword**](AuthApi.md#updatePassword) | **PATCH** /auth/profile/password | Update Password |
+| [**userProfile**](AuthApi.md#userProfile) | **GET** /auth/profile | User Profile |
 
 
 <a name="generateNewApiKey"></a>
 # **generateNewApiKey**
-> JsonResult_String generateNewApiKey(userid)
+> JsonValue_String generateNewApiKey()
 
 Update ApiKey
 
     Generate new ApiKey of logged in User
 
 ### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userid** | **String**| UserId to update or create the ApiKey | [optional] [default to null]
+This endpoint does not need any parameter.
 
 ### Return type
 
-[**JsonResult_String**](../Models/JsonResult_String.md)
+[**JsonValue_String**](../Models/JsonValue_String.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json, text/plain
+- **Accept**: application/json
 
 <a name="isAuthenticated"></a>
 # **isAuthenticated**
-> JsonResult_Boolean isAuthenticated()
+> JsonValue_Boolean isAuthenticated()
 
 Check Authentication
 
@@ -54,11 +51,11 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -75,9 +72,9 @@ Login User
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **Login** | [**Login**](../Models/Login.md)| Login Information for your Users |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **Login** | [**Login**](../Models/Login.md)| Login Information for your Users | |
 
 ### Return type
 
@@ -94,7 +91,7 @@ No authorization required
 
 <a name="logout"></a>
 # **logout**
-> JsonResult_Boolean logout()
+> JsonValue_Boolean logout()
 
 Logout User
 
@@ -105,11 +102,11 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -118,7 +115,7 @@ This endpoint does not need any parameter.
 
 <a name="logoutByDelete"></a>
 # **logoutByDelete**
-> JsonResult_Boolean logoutByDelete()
+> JsonValue_Boolean logoutByDelete()
 
 Logout User
 
@@ -129,11 +126,11 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -157,7 +154,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -166,7 +163,7 @@ This endpoint does not need any parameter.
 
 <a name="updatePassword"></a>
 # **updatePassword**
-> JsonResult_Boolean updatePassword(PasswordUpdateRequest)
+> JsonValue_Boolean updatePassword(PasswordUpdateRequest)
 
 Update Password
 
@@ -174,17 +171,17 @@ Update Password
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **PasswordUpdateRequest** | [**PasswordUpdateRequest**](../Models/PasswordUpdateRequest.md)|  | |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -208,7 +205,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

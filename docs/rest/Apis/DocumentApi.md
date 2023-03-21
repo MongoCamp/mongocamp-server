@@ -2,23 +2,23 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**deleteDocument**](DocumentApi.md#deleteDocument) | **DELETE** /mongodb/collections/{collectionName}/documents/{documentId} | Delete Document from Collection
-[**deleteMany**](DocumentApi.md#deleteMany) | **DELETE** /mongodb/collections/{collectionName}/documents/many/delete | Delete Many in Collection
-[**find**](DocumentApi.md#find) | **POST** /mongodb/collections/{collectionName}/documents | Documents in Collection
-[**getDocument**](DocumentApi.md#getDocument) | **GET** /mongodb/collections/{collectionName}/documents/{documentId} | Document from Collection
-[**insert**](DocumentApi.md#insert) | **PUT** /mongodb/collections/{collectionName}/documents | Insert Document
-[**insertMany**](DocumentApi.md#insertMany) | **PUT** /mongodb/collections/{collectionName}/documents/many/insert | Insert many Documents
-[**listDocuments**](DocumentApi.md#listDocuments) | **GET** /mongodb/collections/{collectionName}/documents | Documents in Collection
-[**updateDocument**](DocumentApi.md#updateDocument) | **PATCH** /mongodb/collections/{collectionName}/documents/{documentId} | Update Document in Collection
-[**updateDocumentPartial**](DocumentApi.md#updateDocumentPartial) | **PATCH** /mongodb/collections/{collectionName}/documents/{documentId}/partial | Update Document Parts in Collection
-[**updateMany**](DocumentApi.md#updateMany) | **PATCH** /mongodb/collections/{collectionName}/documents/many/update | Update many in Collection
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**delete**](DocumentApi.md#delete) | **DELETE** /mongodb/collections/{collectionName}/documents/{documentId} | Delete Document from Collection |
+| [**deleteMany**](DocumentApi.md#deleteMany) | **DELETE** /mongodb/collections/{collectionName}/documents/many/delete | Delete Many in Collection |
+| [**find**](DocumentApi.md#find) | **POST** /mongodb/collections/{collectionName}/documents | Documents in Collection |
+| [**getDocument**](DocumentApi.md#getDocument) | **GET** /mongodb/collections/{collectionName}/documents/{documentId} | Document from Collection |
+| [**insert**](DocumentApi.md#insert) | **PUT** /mongodb/collections/{collectionName}/documents | Insert Document |
+| [**insertMany**](DocumentApi.md#insertMany) | **PUT** /mongodb/collections/{collectionName}/documents/many/insert | Insert many Documents |
+| [**listDocuments**](DocumentApi.md#listDocuments) | **GET** /mongodb/collections/{collectionName}/documents | Documents in Collection |
+| [**update**](DocumentApi.md#update) | **PATCH** /mongodb/collections/{collectionName}/documents/{documentId} | Update Document in Collection |
+| [**updateDocumentPartial**](DocumentApi.md#updateDocumentPartial) | **PATCH** /mongodb/collections/{collectionName}/documents/{documentId}/partial | Update Document Parts in Collection |
+| [**updateMany**](DocumentApi.md#updateMany) | **PATCH** /mongodb/collections/{collectionName}/documents/many/update | Update many in Collection |
 
 
-<a name="deleteDocument"></a>
-# **deleteDocument**
-> DeleteResponse deleteDocument(collectionName, documentId)
+<a name="delete"></a>
+# **delete**
+> DeleteResponse delete(collectionName, documentId)
 
 Delete Document from Collection
 
@@ -26,10 +26,10 @@ Delete Document from Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to delete | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **documentId** | **String**| DocumentId to delete | [default to null] |
 
 ### Return type
 
@@ -37,7 +37,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -54,10 +54,10 @@ Delete Many in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **request\_body** | [**Map**](../Models/string.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **request\_body** | [**Map**](../Models/string.md)|  | |
 
 ### Return type
 
@@ -65,7 +65,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -82,12 +82,12 @@ Documents in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **MongoFindRequest** | [**MongoFindRequest**](../Models/MongoFindRequest.md)|  |
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **MongoFindRequest** | [**MongoFindRequest**](../Models/MongoFindRequest.md)|  | |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -95,7 +95,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -112,10 +112,10 @@ Document from Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to read | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **documentId** | **String**| DocumentId to read | [default to null] |
 
 ### Return type
 
@@ -123,7 +123,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -140,10 +140,10 @@ Insert Document
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **request\_body** | [**Map**](../Models/string.md)| JSON Representation for your Document. |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **request\_body** | [**Map**](../Models/string.md)| JSON Representation for your Document. | |
 
 ### Return type
 
@@ -151,7 +151,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -168,10 +168,10 @@ Insert many Documents
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **request\_body** | [**List**](../Models/map.md)|  | [optional]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **request\_body** | [**List**](../Models/map.md)|  | [optional] |
 
 ### Return type
 
@@ -179,7 +179,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -196,14 +196,14 @@ Documents in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **filter** | **String**| MongoDB Filter Query by Default all filter | [optional] [default to null]
- **sort** | **String**| MongoDB sorting | [optional] [default to null]
- **projection** | **String**| MongoDB projection | [optional] [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **filter** | **String**| MongoDB Filter Query by Default all filter | [optional] [default to null] |
+| **sort** | **String**| MongoDB sorting | [optional] [default to null] |
+| **projection** | **String**| MongoDB projection | [optional] [default to null] |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -211,16 +211,16 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
 - **Accept**: application/json, text/plain
 
-<a name="updateDocument"></a>
-# **updateDocument**
-> UpdateResponse updateDocument(collectionName, documentId, request\_body)
+<a name="update"></a>
+# **update**
+> UpdateResponse update(collectionName, documentId, request\_body)
 
 Update Document in Collection
 
@@ -228,11 +228,11 @@ Update Document in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to update | [default to null]
- **request\_body** | [**Map**](../Models/string.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **documentId** | **String**| DocumentId to update | [default to null] |
+| **request\_body** | [**Map**](../Models/string.md)|  | |
 
 ### Return type
 
@@ -240,7 +240,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -257,11 +257,11 @@ Update Document Parts in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **documentId** | **String**| DocumentId to update | [default to null]
- **request\_body** | [**Map**](../Models/string.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **documentId** | **String**| DocumentId to update | [default to null] |
+| **request\_body** | [**Map**](../Models/string.md)|  | |
 
 ### Return type
 
@@ -269,7 +269,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -286,10 +286,10 @@ Update many in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **UpdateRequest** | [**UpdateRequest**](../Models/UpdateRequest.md)|  |
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **UpdateRequest** | [**UpdateRequest**](../Models/UpdateRequest.md)|  | |
 
 ### Return type
 
@@ -297,7 +297,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

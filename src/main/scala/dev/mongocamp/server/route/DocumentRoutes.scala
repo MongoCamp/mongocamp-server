@@ -163,7 +163,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .description("Delete one Document from given Collection")
     .tag(apiName)
     .method(Method.DELETE)
-    .name("deleteDocument")
+    .name("delete")
     .serverLogic(collectionRequest => parameter => deleteById(collectionRequest, parameter))
 
   def deleteById(
@@ -191,7 +191,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .description("'Replace' one Document with the new document from Request in Collection")
     .tag(apiName)
     .method(Method.PATCH)
-    .name("updateDocument")
+    .name("update")
     .serverLogic(collectionRequest => parameter => replaceInCollection(collectionRequest, parameter))
 
   def replaceInCollection(

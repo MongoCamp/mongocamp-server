@@ -2,18 +2,18 @@
 
 All URIs are relative to *http://localhost*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**aggregate**](CollectionApi.md#aggregate) | **POST** /mongodb/collections/{collectionName}/aggregate | Aggregate in Collection
-[**clearCollection**](CollectionApi.md#clearCollection) | **DELETE** /mongodb/collections/{collectionName}/clear | Clear Collection
-[**deleteCollection**](CollectionApi.md#deleteCollection) | **DELETE** /mongodb/collections/{collectionName} | Delete Collection
-[**distinct**](CollectionApi.md#distinct) | **POST** /mongodb/collections/{collectionName}/distinct/{field} | Distinct in Collection
-[**getCollectionFields**](CollectionApi.md#getCollectionFields) | **GET** /mongodb/collections/{collectionName}/fields | Collection Fields
-[**getCollectionInformation**](CollectionApi.md#getCollectionInformation) | **GET** /mongodb/collections/{collectionName} | Collection Information
-[**getJsonSchema**](CollectionApi.md#getJsonSchema) | **GET** /mongodb/collections/{collectionName}/schema | Collection Fields
-[**getSchemaAnalysis**](CollectionApi.md#getSchemaAnalysis) | **GET** /mongodb/collections/{collectionName}/schema/analysis | Collection Fields
-[**listCollections**](CollectionApi.md#listCollections) | **GET** /mongodb/collections | List of Collections
-[**listCollectionsByDatabase**](CollectionApi.md#listCollectionsByDatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**aggregate**](CollectionApi.md#aggregate) | **POST** /mongodb/collections/{collectionName}/aggregate | Aggregate in Collection |
+| [**clearCollection**](CollectionApi.md#clearCollection) | **DELETE** /mongodb/collections/{collectionName}/clear | Clear Collection |
+| [**deleteCollection**](CollectionApi.md#deleteCollection) | **DELETE** /mongodb/collections/{collectionName} | Delete Collection |
+| [**distinct**](CollectionApi.md#distinct) | **POST** /mongodb/collections/{collectionName}/distinct/{field} | Distinct in Collection |
+| [**getCollectionFields**](CollectionApi.md#getCollectionFields) | **GET** /mongodb/collections/{collectionName}/fields | Collection Fields |
+| [**getCollectionInformation**](CollectionApi.md#getCollectionInformation) | **GET** /mongodb/collections/{collectionName} | Collection Information |
+| [**getJsonSchema**](CollectionApi.md#getJsonSchema) | **GET** /mongodb/collections/{collectionName}/schema | Collection Fields |
+| [**getSchemaAnalysis**](CollectionApi.md#getSchemaAnalysis) | **GET** /mongodb/collections/{collectionName}/schema/analysis | Collection Fields |
+| [**listCollections**](CollectionApi.md#listCollections) | **GET** /mongodb/collections | List of Collections |
+| [**listCollectionsByDatabase**](CollectionApi.md#listCollectionsByDatabase) | **GET** /mongodb/databases/{databaseName}/collections | List of Collections |
 
 
 <a name="aggregate"></a>
@@ -26,12 +26,12 @@ Aggregate in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **MongoAggregateRequest** | [**MongoAggregateRequest**](../Models/MongoAggregateRequest.md)|  |
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **MongoAggregateRequest** | [**MongoAggregateRequest**](../Models/MongoAggregateRequest.md)|  | |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -39,7 +39,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -48,7 +48,7 @@ Name | Type | Description  | Notes
 
 <a name="clearCollection"></a>
 # **clearCollection**
-> JsonResult_Boolean clearCollection(collectionName)
+> JsonValue_Boolean clearCollection(collectionName)
 
 Clear Collection
 
@@ -56,17 +56,17 @@ Clear Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -75,7 +75,7 @@ Name | Type | Description  | Notes
 
 <a name="deleteCollection"></a>
 # **deleteCollection**
-> JsonResult_Boolean deleteCollection(collectionName)
+> JsonValue_Boolean deleteCollection(collectionName)
 
 Delete Collection
 
@@ -83,17 +83,17 @@ Delete Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
 
 ### Return type
 
-[**JsonResult_Boolean**](../Models/JsonResult_Boolean.md)
+[**JsonValue_Boolean**](../Models/JsonValue_Boolean.md)
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -110,12 +110,12 @@ Distinct in Collection
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **field** | **String**| The field for your distinct Request. | [default to null]
- **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null]
- **page** | **Long**| Requested page of the ResultSets | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **field** | **String**| The field for your distinct Request. | [default to null] |
+| **rowsPerPage** | **Long**| Count elements per page | [optional] [default to null] |
+| **page** | **Long**| Requested page of the ResultSets | [optional] [default to null] |
 
 ### Return type
 
@@ -123,7 +123,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -140,10 +140,10 @@ Collection Fields
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **sample size** | **Integer**| Use sample size greater 0 (e.g. 1000) for better performance on big collections | [optional] [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **sample size** | **Integer**| Use sample size greater 0 (e.g. 1000) for better performance on big collections | [optional] [default to null] |
 
 ### Return type
 
@@ -151,7 +151,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -168,10 +168,10 @@ Collection Information
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **includeDetails** | **Boolean**| Include all details for the Collection | [optional] [default to false]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **includeDetails** | **Boolean**| Include all details for the Collection | [optional] [default to false] |
 
 ### Return type
 
@@ -179,7 +179,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -196,11 +196,11 @@ Collection Fields
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **sampleSize** | **Integer**| Use sample size greater 0 (e.g. 5000) for better performance on big collections | [optional] [default to null]
- **deepth** | **Integer**| How deep should the objects extracted | [optional] [default to 3]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **sampleSize** | **Integer**| Use sample size greater 0 (e.g. 5000) for better performance on big collections | [optional] [default to null] |
+| **deepth** | **Integer**| How deep should the objects extracted | [optional] [default to 3] |
 
 ### Return type
 
@@ -208,7 +208,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -225,11 +225,11 @@ Collection Fields
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **collectionName** | **String**| The name of your MongoDb Collection | [default to null]
- **sampleSize** | **Integer**| Use sample size greater 0 (e.g. 5000) for better performance on big collections | [optional] [default to null]
- **deepth** | **Integer**| How deep should the objects extracted | [optional] [default to 3]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **collectionName** | **String**| The name of your MongoDb Collection | [default to null] |
+| **sampleSize** | **Integer**| Use sample size greater 0 (e.g. 5000) for better performance on big collections | [optional] [default to null] |
+| **deepth** | **Integer**| How deep should the objects extracted | [optional] [default to 3] |
 
 ### Return type
 
@@ -237,7 +237,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -261,7 +261,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 
@@ -278,9 +278,9 @@ List of Collections
 
 ### Parameters
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **databaseName** | **String**| Name of your Database | [default to null]
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **databaseName** | **String**| Name of your Database | [default to null] |
 
 ### Return type
 
@@ -288,7 +288,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[apiKeyAuth](../README.md#apiKeyAuth), [httpAuth](../README.md#httpAuth), [httpAuth1](../README.md#httpAuth1)
+[httpAuth1](../README.md#httpAuth1), [httpAuth](../README.md#httpAuth), [apiKeyAuth](../README.md#apiKeyAuth)
 
 ### HTTP request headers
 

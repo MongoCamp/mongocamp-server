@@ -1,19 +1,26 @@
 package dev.mongocamp.micrometer.mongodb.registry
 
 import better.files.File
-import com.typesafe.config.{ Config, ConfigFactory }
+import com.typesafe.config.{Config, ConfigFactory}
 import dev.mongocamp.driver.mongodb.MongoDAO
+import dev.mongocamp.micrometer.mongodb.MetricsCache
 import io.micrometer.core.instrument.step.StepRegistryConfig
 import org.mongodb.scala.Document
 
-case class MonitoringMongoConfig(mongoDAO: MongoDAO[Document], configurationMap: Map[String, String] = Map()) extends StepRegistryConfig {
+import java.time
+
+case class MongoRegistryConfig(mongoDAO: MongoDAO[Document], configurationMap: Map[String, String] = Map()) extends StepRegistryConfig {
 
   private lazy val conf: Config = ConfigFactory.load()
 
   override def prefix(): String = "dev.mongocamp.micrometer.mongodb"
 
   override def get(key: String): String = {
-    loadConfigValue(key).orNull
+    val value = loadConfigValue(key).orNull
+    if (key.equalsIgnoreCase(s"${prefix()}.step") && value != null) {
+      MetricsCache.updateCacheTime(time.Duration.parse(value))
+    }
+    value
   }
 
   private def loadConfigValue(key: String): Option[String] = {

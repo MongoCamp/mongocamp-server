@@ -32,7 +32,7 @@ export default defineConfig({
 
         footer: {
             message: 'Released under the Apache License 2.0.',
-            copyright: 'Copyright © 2022 - MongoCamp Team'
+            copyright: 'Copyright © 2023 - MongoCamp Team'
         },
 
     },
@@ -100,7 +100,28 @@ function sidebarPlugins() {
             items: [
                 {text: 'Introduction', link: '/plugins/'},
                 {text: 'List of Plugins', link: '/plugins/list'},
-                {text: 'Development', link: '/plugins/development'},
+                {
+                    text: 'Development',
+                    link: '/plugins/development/',
+                    items: [
+                        {
+                            text: 'Server Plugin',
+                            link: '/plugins/development/plugin-server'
+                        },
+                        {
+                            text: 'Routes Plugin',
+                            link: '/plugins/development/plugin-routes'
+                        },
+                        {
+                            text: 'Files Plugin',
+                            link: '/plugins/development/plugin-files'
+                        },
+                        {
+                            text: 'Events',
+                            link: '/plugins/events/'
+                        },
+                    ],
+                },
             ]
         }
     ]

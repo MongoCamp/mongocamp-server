@@ -42,6 +42,9 @@ The configurations can also change by using the configuration routes.
 | FILE_CACHE_AGE | Used at File Header `cache-control` with value `max-age=`        | 7776000 |
 
 ## Plugins
+::: info
+All plugins in Folder and Modules will be activated automatically. If your want to exclude one of this plugins use `PLUGINS_IGNORED`, for example if you don't want to expose Metrics you can add `dev.mongocamp.server.route.MetricsRoutes$` to ignored plugins. 
+:::
 
 | Configuration                                           | Description                                             |         Default          |
 |---------------------------------------------------------|---------------------------------------------------------|:------------------------:|

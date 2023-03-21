@@ -2,32 +2,26 @@ package dev.mongocamp.server.server
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import de.flapdoodle.embed.mongo.config._
+import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
-import de.flapdoodle.embed.mongo.packageresolver.Command
-import de.flapdoodle.embed.mongo.{MongodExecutable, MongodStarter}
-import de.flapdoodle.embed.process.config.process.ProcessOutput
-import de.flapdoodle.embed.process.io.{Processors, Slf4jLevel}
-import de.flapdoodle.embed.process.runtime.Network
-import sttp.client3.basicRequest
-import sttp.model.Method
-
-import scala.util.Random
-import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model._
-import dev.mongocamp.server.converter.CirceSchema
-import dev.mongocamp.server.server.TestServer
+import de.flapdoodle.embed.mongo.transitions.{Mongod, RunningMongodProcess}
+import de.flapdoodle.embed.mongo.types.DatabaseDir
+import de.flapdoodle.embed.process.io.ProcessOutput
+import de.flapdoodle.reverse.TransitionWalker
+import de.flapdoodle.reverse.transitions.Start
 import sttp.client3._
-import sttp.client3.circe.asJson
 import sttp.model.Method
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
+import scala.util.Random
 
 object MongoTestServer extends LazyLogging {
   private var running: Boolean = false
 
   var mongoPort: Int = setPort()
+
+  var process : TransitionWalker.ReachedState[RunningMongodProcess] = null
 
   def setPort(): Int = {
     val port = Random.nextInt(10000) + TestAdditions.minPort
@@ -36,30 +30,17 @@ object MongoTestServer extends LazyLogging {
     mongoPort
   }
 
-  private var mongodExecutable: MongodExecutable = initMonoExecutable
+  private var mongodExecutable: Mongod = initMonoExecutable
 
   private var tempDir = File.newTemporaryDirectory()
 
-  private def initMonoExecutable: MongodExecutable = {
-    val processOutput = ProcessOutput
-      .builder()
-      .output(Processors.logTo(logger.underlying, Slf4jLevel.INFO))
-      .error(Processors.logTo(logger.underlying, Slf4jLevel.ERROR))
-      .commands(Processors.named("[console>]", Processors.logTo(logger.underlying, Slf4jLevel.DEBUG)))
-      .build();
-
-    tempDir = File.newTemporaryDirectory()
-
-    MongodStarter
-      .getInstance(Defaults.runtimeConfigFor(Command.MongoD, logger.underlying).processOutput(processOutput).build())
-      .prepare(
-        ImmutableMongodConfig
-          .builder()
-          .version(Version.Main.PRODUCTION)
-          .net(new Net("localhost", mongoPort, Network.localhostIsIPv6()))
-          .replication(new Storage(tempDir.pathAsString, null, 0))
-          .build()
-      )
+  private def initMonoExecutable: Mongod = {
+    val mongod  = Mongod.builder()
+      .net(Start.to(classOf[Net]).providedBy(() => Net.builder().port(mongoPort).bindIp(Net.defaults().getBindIp).isIpv6(true).build()))
+      .databaseDir(Start.to(classOf[DatabaseDir]).providedBy(() => DatabaseDir.of(tempDir.path)))
+      .processOutput(Start.to(classOf[ProcessOutput]).providedBy(() => ProcessOutput.silent()))
+      .build()
+    mongod
   }
 
   def isRunning: Boolean = running
@@ -76,8 +57,8 @@ object MongoTestServer extends LazyLogging {
           running = true
         }
       } catch {
-        case _: Exception =>
-          ""
+        case e: Exception =>
+          e.getMessage
       }
     }
 
@@ -86,7 +67,7 @@ object MongoTestServer extends LazyLogging {
   def startMongoDatabase(): Unit = {
     checkForLocalRunningMongoDb()
     if (!running) {
-      mongodExecutable.start()
+      process = mongodExecutable.start(Version.V6_0_5)
       running = true
       sys.addShutdownHook({
         println("Shutdown for MongoDB Server triggered.")
@@ -97,9 +78,11 @@ object MongoTestServer extends LazyLogging {
 
   def stopMongoDatabase(): Unit = {
     if (running) {
-      mongodExecutable.stop()
+      process.current().stop()
+      process = null
       running = false
       tempDir.delete()
+      tempDir = File.newTemporaryDirectory()
       mongodExecutable = initMonoExecutable
     }
   }

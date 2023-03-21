@@ -190,7 +190,7 @@ object ConfigurationService {
     }
     else {
       if (configType.equalsIgnoreCase(invalidConfListInt)) {
-        internalValueType = s"List[${MongoCampConfiguration.confTypeLong}]"
+        internalValueType = MongoCampConfiguration.confTypeLongList
       }
     }
     val isIntType = configType.equalsIgnoreCase(invalidConfInt) || configType.toLowerCase.contains(invalidConfInt.toLowerCase)
@@ -203,59 +203,59 @@ object ConfigurationService {
       value.get match {
         case l: List[_] =>
           if (l.isEmpty) {
-            internalValueType = s"List[${MongoCampConfiguration.confTypeString}]"
+            internalValueType = MongoCampConfiguration.confTypeStringList
           }
           else {
             l.head match {
               case s: String =>
-                internalValueType = s"List[${MongoCampConfiguration.confTypeString}]"
+                internalValueType = MongoCampConfiguration.confTypeStringList
                 if (isIntType || isLongType) {
                   configValue = Some(l.map(_.toString.toLong))
-                  internalValueType = s"List[${MongoCampConfiguration.confTypeLong}]"
+                  internalValueType = MongoCampConfiguration.confTypeLongList
                 }
                 if (isDoubleType) {
                   configValue = Some(l.map(_.toString.toDouble))
-                  internalValueType = s"List[${MongoCampConfiguration.confTypeDouble}]"
+                  internalValueType = MongoCampConfiguration.confTypeDoubleList
                 }
               case _: Boolean =>
-                internalValueType = s"List[${MongoCampConfiguration.confTypeBoolean}]"
+                internalValueType = MongoCampConfiguration.confTypeBooleanList
               case _: Double =>
-                internalValueType = s"List[${MongoCampConfiguration.confTypeDouble}]"
+                internalValueType = MongoCampConfiguration.confTypeDoubleList
               case _: Long =>
-                internalValueType = s"List[${MongoCampConfiguration.confTypeLong}]"
+                internalValueType = MongoCampConfiguration.confTypeLongList
               case _: Int =>
-                internalValueType = s"List[${MongoCampConfiguration.confTypeLong}]"
+                internalValueType = MongoCampConfiguration.confTypeLongList
               case _: Duration =>
-                internalValueType = s"List[${MongoCampConfiguration.confTypeDuration}]"
+                internalValueType = MongoCampConfiguration.confTypeDurationList
                 configValue = Some(l.map(_.asInstanceOf[Duration].toString))
             }
           }
         case o: Option[_] =>
           if (o.isEmpty) {
-            internalValueType = s"Option[${MongoCampConfiguration.confTypeString}]"
+            internalValueType = MongoCampConfiguration.confTypeStringOption
           }
           else {
             o.head match {
               case s: String =>
-                internalValueType = s"Option[${MongoCampConfiguration.confTypeString}]"
+                internalValueType = MongoCampConfiguration.confTypeStringOption
                 if (isIntType || isLongType) {
                   configValue = Some(o.map(_.toString.toLong))
-                  internalValueType = s"Option[${MongoCampConfiguration.confTypeLong}]"
+                  internalValueType = MongoCampConfiguration.confTypeLongOption
                 }
                 if (isDoubleType) {
                   configValue = Some(o.map(_.toString.toDouble))
-                  internalValueType = s"Option[${MongoCampConfiguration.confTypeDouble}]"
+                  internalValueType = MongoCampConfiguration.confTypeDoubleOption
                 }
               case _: Boolean =>
-                internalValueType = s"Option[${MongoCampConfiguration.confTypeBoolean}]"
+                internalValueType = MongoCampConfiguration.confTypeBooleanOption
               case _: Double =>
-                internalValueType = s"Option[${MongoCampConfiguration.confTypeDouble}]"
+                internalValueType = MongoCampConfiguration.confTypeDoubleOption
               case _: Long =>
-                internalValueType = s"Option[${MongoCampConfiguration.confTypeLong}]"
+                internalValueType = MongoCampConfiguration.confTypeLongOption
               case _: Int =>
-                internalValueType = s"Option[${MongoCampConfiguration.confTypeLong}]"
+                internalValueType = MongoCampConfiguration.confTypeLongOption
               case _: Duration =>
-                internalValueType = s"Option[${MongoCampConfiguration.confTypeDuration}]"
+                internalValueType = MongoCampConfiguration.confTypeDurationOption
                 configValue = Some(o.map(_.asInstanceOf[Duration].toString))
             }
           }
@@ -332,11 +332,11 @@ object ConfigurationService {
   private[service] def convertStringToValue(stringValue: String, configType: String): Any = {
 
     configType match {
-      case s"List[${MongoCampConfiguration.confTypeString}]"  => decode[List[String]](stringValue).getOrElse(List())
-      case s"List[${MongoCampConfiguration.confTypeBoolean}]" => decode[List[Boolean]](stringValue).getOrElse(List())
-      case s"List[${MongoCampConfiguration.confTypeDouble}]"  => decode[List[Double]](stringValue).getOrElse(List())
-      case s"List[${MongoCampConfiguration.confTypeLong}]"    => decode[List[Long]](stringValue).getOrElse(List())
-      case s"List[${MongoCampConfiguration.confTypeDuration}]" =>
+      case MongoCampConfiguration.confTypeStringList  => decode[List[String]](stringValue).getOrElse(List())
+      case MongoCampConfiguration.confTypeBooleanList => decode[List[Boolean]](stringValue).getOrElse(List())
+      case MongoCampConfiguration.confTypeDoubleList  => decode[List[Double]](stringValue).getOrElse(List())
+      case MongoCampConfiguration.confTypeLongList    => decode[List[Long]](stringValue).getOrElse(List())
+      case MongoCampConfiguration.confTypeDurationList =>
         decode[List[String]](stringValue).getOrElse(List()).map(durationString => Duration(durationString))
       case MongoCampConfiguration.confTypeString   => stringValue
       case MongoCampConfiguration.confTypeBoolean  => stringValue.toBooleanOption.getOrElse(false)
