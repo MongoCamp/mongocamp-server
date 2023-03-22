@@ -7,7 +7,7 @@ If you need some extra features MongoCamp Server does not offer you, you can ext
 
 <<< @/external/files/sample-build.sbt{scala}
 
-You can add all your extra dependencies to your build.sbt. If you use the [preferred way](../config/properties/plugins-module.md) to import plugins all dependencies are resolved automatically.
+You can add all your extra dependencies to your build.sbt. If you use the [preferred way](../../config/properties/plugins-module.md) to import plugins all dependencies are resolved automatically.
 
 To make your own plugin functional and loaded you have to implement one of this Scala Traits:
 
