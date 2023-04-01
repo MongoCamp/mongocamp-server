@@ -18,6 +18,7 @@ Docker / daemonUser := mongoCampUser
 
 dockerCommands += Cmd("USER", "root")
 dockerCommands += Cmd("RUN", "apk add --update --no-cache snappy-dev zlib-dev bash;")
+dockerCommands += Cmd("RUN", "mkdir -p /opt/mongocamp/plugins; chmod -R 777 /opt/mongocamp/plugins;")
 dockerCommands += Cmd("USER", mongoCampUser)
 
 dockerExposedPorts := List(8080)

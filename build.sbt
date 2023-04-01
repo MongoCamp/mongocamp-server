@@ -8,9 +8,11 @@ organization := json.stringValue("organization")
 
 scalaVersion := "2.13.10"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.5.4"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.0"
 
-val TapirVersion = "1.2.10"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.5.0"
+
+val TapirVersion = "1.2.11"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % TapirVersion
@@ -20,7 +22,7 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
-val sttClientVersion = "3.8.13"
+val sttClientVersion = "3.8.14"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % sttClientVersion
 
@@ -28,7 +30,7 @@ libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.2.1"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.6"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.2"
+libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
 
 libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.2.0"
 

@@ -186,47 +186,41 @@ class DocumentApi(baseUrl: String) extends CirceSchema {
       .body(requestBody)
       .response(asJson[InsertResponse])
 
-  /** Get Documents paginated from given Collection
-    *
-    * Expected answers: code 200 : Seq[Map[String, Any]] () Headers : x-pagination-count-rows - count all elements x-pagination-rows-per-page - Count
-    * elements per page x-pagination-current-page - Current page x-pagination-count-pages - Count pages code 400 : String (Invalid value for: query parameter
-    * filter, Invalid value for: query parameter sort, Invalid value for: query parameter projection, Invalid value for: query parameter rowsPerPage, Invalid
-    * value for: query parameter page) code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the MongoCampException
-    * x-error-additional-info - Additional information for the MongoCampException
-    *
-    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
-    *
-    * @param collectionName
-    *   The name of your MongoDb Collection
-    * @param filter
-    *   MongoDB Filter Query by Default all filter
-    * @param sort
-    *   MongoDB sorting
-    * @param projection
-    *   MongoDB projection
-    * @param rowsPerPage
-    *   Count elements per page
-    * @param page
-    *   Requested page of the ResultSets
-    */
-  def listDocuments(username: String, password: String, bearerToken: String, apiKey: String)(
-      collectionName: String,
-      filter: Option[String] = None,
-      sort: Option[String] = None,
-      projection: Option[String] = None,
-      rowsPerPage: Option[Long] = None,
-      page: Option[Long] = None
-  ) =
+  /**
+   * Get Documents paginated from given Collection
+   *
+   * Expected answers:
+   * code 200 : Seq[Map[String, String]] ()
+   * Headers :
+   * x-pagination-count-rows - count all elements
+   * x-pagination-rows-per-page - Count elements per page
+   * x-pagination-current-page - Current page
+   * x-pagination-count-pages - Count pages
+   * code 400 : String (Invalid value for: query parameter filter, Invalid value for: query parameter sort, Invalid value for: query parameter projection, Invalid value for: query parameter rowsPerPage, Invalid value for: query parameter page)
+   * code 0 : ErrorDescription ()
+   * Headers :
+   * x-error-code - Error Code
+   * x-error-message - Message of the MongoCampException
+   * x-error-additional-info - Additional information for the MongoCampException
+   *
+   * Available security schemes:
+   * httpAuth1 (http)
+   * httpAuth (http)
+   * apiKeyAuth (apiKey)
+   *
+   * @param collectionName The name of your MongoDb Collection
+   * @param filter         MongoDB Filter Query by Default all filter
+   * @param sort           MongoDB sorting
+   * @param projection     MongoDB projection
+   * @param rowsPerPage    Count elements per page
+   * @param page           Requested page of the ResultSets
+   */
+  def listDocuments(username: String, password: String, bearerToken: String, apiKey: String)(collectionName: String, filter: Option[String] = None, sort: Seq[String], projection: Seq[String], rowsPerPage: Option[Long] = None, page: Option[Long] = None) =
     basicRequest
-      .method(
-        Method.GET,
-        uri"$baseUrl/mongodb/collections/${collectionName}/documents?filter=${filter}&sort=${sort}&projection=${projection}&rowsPerPage=${rowsPerPage}&page=${page}"
-      )
+      .method(Method.GET, uri"$baseUrl/mongodb/collections/${collectionName}/documents?filter=${filter}&sort=${sort}&projection=${projection}&rowsPerPage=${rowsPerPage}&page=${page}")
       .contentType("application/json")
-      .auth
-      .basic(username, password)
-      .auth
-      .bearer(bearerToken)
+      .auth.basic(username, password)
+      .auth.bearer(bearerToken)
       .header("X-AUTH-APIKEY", apiKey)
       .response(asJson[Seq[Map[String, Any]]])
 

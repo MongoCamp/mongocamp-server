@@ -25,11 +25,11 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list filtered documents as admin") {
-    val filter: String  = Map("iban" -> Map("$regex" -> "PL")).asJson.toString()
-    val sort: String    = Map("currency" -> -1).asJson.toString()
-    val project: String = Map("name" -> 1).asJson.toString()
+    val filter: String  = "iban: *PL*"
+    val sort: List[String]    = List("-currency")
+    val project: List[String] = List("name")
     val response =
-      executeRequest(documentsApi.listDocuments("", "", adminBearerToken, "")(collectionNameAccounts, Some(filter), Some(sort), Some(project), Some(2), Some(2)))
+      executeRequest(documentsApi.listDocuments("", "", adminBearerToken, "")(collectionNameAccounts, Some(filter), sort, project, Some(2), Some(2)))
     val responseBody = response.body.getOrElse(throw new Exception("error"))
     assertEquals(responseBody.size, 1)
     val fistDocument = responseBody.head
@@ -167,11 +167,11 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list filtered documents as user") {
-    val filter: String  = Map("iban" -> Map("$regex" -> "PL")).asJson.toString()
-    val sort: String    = Map("currency" -> -1).asJson.toString()
-    val project: String = Map("name" -> 1).asJson.toString()
+    val filter: String  = "iban: *PL*"
+    val sort: List[String]    = List("-currency")
+    val project: List[String] = List("name")
     val response =
-      executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")(collectionNameAccounts, Some(filter), Some(sort), Some(project), Some(2), Some(2)))
+      executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")(collectionNameAccounts, Some(filter), sort, project, Some(2), Some(2)))
     val responseBody = response.body.getOrElse(throw new Exception("error"))
     assertEquals(responseBody.size, 1)
     val fistDocument = responseBody.head
@@ -306,11 +306,11 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list filtered documents as user not allowed") {
-    val filter: String  = Map("iban" -> Map("$regex" -> "PL")).asJson.toString()
-    val sort: String    = Map("currency" -> -1).asJson.toString()
-    val project: String = Map("name" -> 1).asJson.toString()
+    val filter: String  = "iban: *PL*"
+    val sort: List[String]    = List("-currency")
+    val project: List[String] = List("name")
     val response =
-      executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")(notAllowedCollectionName, Some(filter), Some(sort), Some(project), Some(2), Some(2)))
+      executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")(notAllowedCollectionName, Some(filter), sort, project, Some(2), Some(2)))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
