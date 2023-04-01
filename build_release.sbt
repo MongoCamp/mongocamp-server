@@ -76,6 +76,7 @@ releaseProcess := {
     commitReleaseVersion,
     tagRelease,
     releaseStepCommandAndRemaining("+publishSigned"),
+    releaseStepCommand("ci-deploy-docs"),
     releaseStepCommand("sonatypeBundleRelease"),
     setToMyNextVersion,
     gitAddAllTask,
