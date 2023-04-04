@@ -14,7 +14,7 @@ class DocumentSuite extends BaseSuite {
   var idsForTest: List[String]  = List()
 
   test("list all documents as admin") {
-    val response = executeRequestToResponse(documentsApi.listDocuments("", "", adminBearerToken, "")(collectionNameAccounts))
+    val response = executeRequestToResponse(documentsApi.listDocuments("", "", adminBearerToken, "")(collectionNameAccounts, None, Seq.empty, Seq.empty))
     assertEquals(response.size, 100)
     val fistDocument = response.head
     assertEquals(fistDocument.size, 4)
@@ -156,7 +156,7 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list all documents as user") {
-    val response = executeRequestToResponse(documentsApi.listDocuments("", "", testUserBearerToken, "")(collectionNameAccounts))
+    val response = executeRequestToResponse(documentsApi.listDocuments("", "", testUserBearerToken, "")(collectionNameAccounts, None, Seq.empty, Seq.empty))
     assertEquals(response.size, 100)
     val fistDocument = response.head
     assertEquals(fistDocument.size, 4)
@@ -299,7 +299,7 @@ class DocumentSuite extends BaseSuite {
 
   val notAllowedCollectionName = "notAllowedCollection"
   test("list all documents as user not allowed") {
-    val response = executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")(notAllowedCollectionName))
+    val response = executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")(notAllowedCollectionName, None, Seq.empty, Seq.empty))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")

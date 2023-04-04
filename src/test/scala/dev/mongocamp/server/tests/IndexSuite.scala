@@ -11,7 +11,7 @@ class IndexSuite extends BaseSuite {
   test("create complex index as admin") {
     val request = IndexCreateRequest(
       Map("fullIndex" -> -1, "secondParamIndex" -> -1),
-      IndexOptionsRequest(Some("complexIndex"), background = Some(false), unique = Some(true))
+      Some(IndexOptionsRequest(Some("complexIndex"), background = Some(false), unique = Some(true)))
     )
     val createResult = executeRequestToResponse(adminApi.createIndex("", "", adminBearerToken, "")(indexCollection, request))
     assertEquals(createResult.name, "complexIndex")
@@ -54,7 +54,7 @@ class IndexSuite extends BaseSuite {
   test("create complex index as user") {
     val request = IndexCreateRequest(
       Map("fullIndex" -> -1, "secondParamIndex" -> -1),
-      IndexOptionsRequest(Some("complexIndex"), background = Some(false), unique = Some(true))
+      Some(IndexOptionsRequest(Some("complexIndex"), background = Some(false), unique = Some(true)))
     )
     val response = executeRequest(adminApi.createIndex("", "", testUserBearerToken, "")(indexCollection, request))
     assertEquals(response.code.code, 401)
