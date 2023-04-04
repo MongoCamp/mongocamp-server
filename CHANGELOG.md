@@ -1,3 +1,19 @@
+## [1.4.0]() (2023-04-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **document:** Filter Query, Sort and Paging Parameter has changed from Json String to Lucene Style
+
+### Features
+
+* **document:** Use Lucene Query for Get List of Documents ([45d6dce](https://github.com/MongoCamp/mongocamp-server/commit/45d6dce0c6bb73d912f26d4d8493f5393b8509bb))
+
+
+### Maintenance
+
+* **dependencies:** dependency updates ([8bdaea9](https://github.com/MongoCamp/mongocamp-server/commit/8bdaea9f5402955ca61582941942da5e80f4fd99))
+
 ## [1.3.4]() (2023-03-21)
 
 

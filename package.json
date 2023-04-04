@@ -7,12 +7,12 @@
     "doc" : "docs"
   },
   "scripts" : {
-    "api-docs-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
-    "api-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.client,jsonLibrary=circe,dateLibrary=joda",
     "docs:serve" : "vitepress serve docs --port 5555",
+    "api-docs-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
     "docs:build" : "pnpm docs:external; vitepress build docs",
     "docs:external" : "sh docs/external/fileloader.sh",
-    "docs:dev" : "pnpm docs:external; vitepress dev docs"
+    "docs:dev" : "pnpm docs:external; vitepress dev docs",
+    "api-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.client,jsonLibrary=circe,dateLibrary=joda"
   },
   "repository" : {
     "type" : "git",
