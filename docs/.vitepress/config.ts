@@ -6,7 +6,7 @@ import {SearchPlugin} from 'vitepress-plugin-search'
 export default defineConfig({
     lang: 'en-US',
     title: 'MongoCamp Server',
-    description: 'Vite & Vue powered static site generator.',
+    description: 'MongoCamp Server - Easy REST Connector for your MongoDB based App.',
 
     lastUpdated: true,
 

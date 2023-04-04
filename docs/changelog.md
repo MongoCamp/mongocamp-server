@@ -1,3 +1,3 @@
-# This is the Changelog
+# Changelog
 
 <!--@include: ../CHANGELOG.md-->
