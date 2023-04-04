@@ -12,8 +12,8 @@ addDependencyTreePlugin
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.1")
 
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.15")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.18")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1")
 
-addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.6.3")
+addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.6.5")
