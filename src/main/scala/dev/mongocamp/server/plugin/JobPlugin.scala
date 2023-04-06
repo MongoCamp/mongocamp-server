@@ -27,7 +27,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   override def activate(): Unit = {
     scheduler.start()
     MongoDatabase.jobDao.createIndex(Map("group" -> 1, "name" -> 1), IndexOptions().unique(true)).toFuture()
-    loadJobs()
+    reloadJobs()
     sys.addShutdownHook({
       logger.info("Shutdown for Job Scheduler triggered. Wait fore Jobs to be completed")
       scheduler.shutdown(true)
