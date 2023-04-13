@@ -19,7 +19,7 @@ object MongoDatabase {
 
   private lazy val collectionPrefix = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
   private lazy val connectionPoolListener: ArrayBuffer[ConnectionPoolListener] = ArrayBuffer()
-  private lazy val commandListener: ArrayBuffer[CommandListener] = ArrayBuffer()
+  private lazy val commandListener: ArrayBuffer[CommandListener]               = ArrayBuffer()
 
   private[database] lazy val CollectionNameConfiguration = s"${collectionPrefix}configuration"
   private[database] lazy val CollectionNameUsers         = s"${collectionPrefix}users"
@@ -28,12 +28,11 @@ object MongoDatabase {
   private[database] lazy val CollectionNameTokenCache    = s"${collectionPrefix}token_cache"
   private[database] lazy val CollectionNameJobs          = s"${collectionPrefix}jobs"
 
-  lazy val userDao: UserDao                                            = UserDao()
-  lazy val rolesDao: RolesDao                                          = RolesDao()
-  lazy val requestLoggingDao: RequestLoggingDao                        = RequestLoggingDao()
-  lazy val tokenCacheDao: TokenCacheDao                                = TokenCacheDao()
-  lazy val jobDao: JobDao                                              = JobDao()
-
+  lazy val userDao: UserDao                     = UserDao()
+  lazy val rolesDao: RolesDao                   = RolesDao()
+  lazy val requestLoggingDao: RequestLoggingDao = RequestLoggingDao()
+  lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
+  lazy val jobDao: JobDao                       = JobDao()
 
   private var _databaseProvider: DatabaseProvider = null
 

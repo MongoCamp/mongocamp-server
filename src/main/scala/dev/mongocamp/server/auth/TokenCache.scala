@@ -7,13 +7,13 @@ import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
 import dev.mongocamp.server.jobs.CleanUpTokenJob
 import dev.mongocamp.server.model.JobConfig
-import dev.mongocamp.server.model.auth.{TokenCacheElement, UserInformation}
+import dev.mongocamp.server.model.auth.{ TokenCacheElement, UserInformation }
 import dev.mongocamp.server.plugin.JobPlugin
 import dev.mongocamp.server.service.ConfigurationService
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.concurrent.duration.{ Duration, DurationInt, FiniteDuration }
 import scala.util.Try
 
 object TokenCache {

@@ -5,7 +5,7 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.Version
 import io.circe.generic.auto._
 import org.joda.time.DateTime
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 

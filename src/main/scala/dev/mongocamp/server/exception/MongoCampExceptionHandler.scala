@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.exception.ErrorDefinition.errorEndpointDefinition
 import sttp.model.StatusCode
 import sttp.monad.MonadError
-import sttp.tapir.server.interceptor.exception.{ExceptionContext, ExceptionHandler}
+import sttp.tapir.server.interceptor.exception.{ ExceptionContext, ExceptionHandler }
 import sttp.tapir.server.model.ValuedEndpointOutput
 
 import scala.concurrent.Future

@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.config.{ConfigRegisterEvent, ConfigUpdateEvent}
+import dev.mongocamp.server.event.config.{ ConfigRegisterEvent, ConfigUpdateEvent }
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._

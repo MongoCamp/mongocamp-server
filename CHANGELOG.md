@@ -1,3 +1,18 @@
+## [1.4.1]() (2023-04-13)
+
+
+### Bug Fixes
+
+* date converter for update requests ([1d3754b](https://github.com/MongoCamp/mongocamp-server/commit/1d3754be61200cf68fff05cf4e54c68825561f68))
+* **jobs:** activate JobPlugin needs to clear jobs if one job is added from other plugins ([4fcd545](https://github.com/MongoCamp/mongocamp-server/commit/4fcd545af9665039e4da34b4deb1cd3919d6f74c))
+
+
+### Code Refactoring
+
+* disabled and removed github packages release ([ee6f2c4](https://github.com/MongoCamp/mongocamp-server/commit/ee6f2c444af01577bc07c1882160298b17c43487))
+* extracted metrics to own plugin [mongocamp-micrometer-plugin](https://github.com/MongoCamp/mongocamp-micrometer-plugin) ([a6a2eea](https://github.com/MongoCamp/mongocamp-server/commit/a6a2eead0616b69bb59c6c2d3a71db21fecd57c1))
+* extracted metrics to own plugin [mongocamp-micrometer-plugin](https://github.com/MongoCamp/mongocamp-micrometer-plugin) ([c20d227](https://github.com/MongoCamp/mongocamp-server/commit/c20d2276a3efee3c20692c84134dbbd43e62dc9c))
+
 ## [1.4.0]() (2023-04-04)
 
 
