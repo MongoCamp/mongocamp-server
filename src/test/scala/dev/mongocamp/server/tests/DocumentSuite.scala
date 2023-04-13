@@ -1,10 +1,10 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.server.client.api.DocumentApi
-import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateRequest}
+import dev.mongocamp.server.client.model.{ MongoFindRequest, UpdateRequest }
 import dev.mongocamp.server.database.MongoDatabase
-import io.circe.syntax.EncoderOps
 
 import java.util.UUID
+import scala.collection.mutable
 import scala.util.Random
 
 class DocumentSuite extends BaseSuite {
@@ -25,7 +25,7 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list filtered documents as admin") {
-    val filter: String  = "iban: *PL*"
+    val filter: String        = "iban: *PL*"
     val sort: List[String]    = List("-currency")
     val project: List[String] = List("name")
     val response =
@@ -51,10 +51,11 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("find filtered documents as admin") {
-    val filter   = Map("iban" -> Map("$regex" -> "PL"))
-    val sort     = Map("currency" -> -1)
-    val project  = Map("name" -> 1)
-    val response = executeRequest(documentsApi.find("", "", adminBearerToken, "")(collectionNameAccounts, MongoFindRequest(filter, sort, project), Some(2), Some(2)))
+    val filter  = Map("iban" -> Map("$regex" -> "PL"))
+    val sort    = Map("currency" -> -1)
+    val project = Map("name" -> 1)
+    val response =
+      executeRequest(documentsApi.find("", "", adminBearerToken, "")(collectionNameAccounts, MongoFindRequest(filter, sort, project), Some(2), Some(2)))
     val responseBody = response.body.getOrElse(throw new Exception("error"))
     assertEquals(responseBody.size, 1)
     val fistDocument = responseBody.head
@@ -101,7 +102,7 @@ class DocumentSuite extends BaseSuite {
 
   test("partial update documents from database as admin") {
     val request: Map[String, Any] = Map("hello" -> "you", "welcome" -> "world")
-    val response                  = executeRequestToResponse(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collectionNameTest, idForTest, request))
+    val response = executeRequestToResponse(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collectionNameTest, idForTest, request))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.upsertedIds, List(idForTest))
     assertEquals(response.matchedCount, 1L)
@@ -167,7 +168,7 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list filtered documents as user") {
-    val filter: String  = "iban: *PL*"
+    val filter: String        = "iban: *PL*"
     val sort: List[String]    = List("-currency")
     val project: List[String] = List("name")
     val response =
@@ -193,10 +194,11 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("find filtered documents as user") {
-    val filter   = Map("iban" -> Map("$regex" -> "PL"))
-    val sort     = Map("currency" -> -1)
-    val project  = Map("name" -> 1)
-    val response = executeRequest(documentsApi.find("", "", testUserBearerToken, "")(collectionNameAccounts, MongoFindRequest(filter, sort, project), Some(2), Some(2)))
+    val filter  = Map("iban" -> Map("$regex" -> "PL"))
+    val sort    = Map("currency" -> -1)
+    val project = Map("name" -> 1)
+    val response =
+      executeRequest(documentsApi.find("", "", testUserBearerToken, "")(collectionNameAccounts, MongoFindRequest(filter, sort, project), Some(2), Some(2)))
     val responseBody = response.body.getOrElse(throw new Exception("error"))
     assertEquals(responseBody.size, 1)
     val fistDocument = responseBody.head
@@ -306,7 +308,7 @@ class DocumentSuite extends BaseSuite {
   }
 
   test("list filtered documents as user not allowed") {
-    val filter: String  = "iban: *PL*"
+    val filter: String        = "iban: *PL*"
     val sort: List[String]    = List("-currency")
     val project: List[String] = List("name")
     val response =
@@ -362,7 +364,7 @@ class DocumentSuite extends BaseSuite {
 
   test("partial update documents from database as user not allowed") {
     val request: Map[String, Any] = Map("hello" -> "you", "welcome" -> "world")
-    val response                  = executeRequest(documentsApi.updateDocumentPartial("", "", testUserBearerToken, "")(notAllowedCollectionName, idForTest, request))
+    val response = executeRequest(documentsApi.updateDocumentPartial("", "", testUserBearerToken, "")(notAllowedCollectionName, idForTest, request))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for collection")
@@ -415,5 +417,37 @@ class DocumentSuite extends BaseSuite {
       Map("name" -> "*", "read" -> true, "write" -> true, "administrate" -> true, "grantType" -> "BUCKET")
     )
     assertEquals(response.head("collectionGrants").asInstanceOf[List[Map[String, Any]]], grantsList)
+  }
+
+  test("create and update document with date") {
+    val collectionNameTest = "createAndUpdate"
+    val mapToInsert: mutable.Map[String, Any] = mutable.Map(
+      "number" -> 1234,
+      "metaData" -> Map(
+        "createdBy" -> "tom@sfxcode.com",
+        "updatedBy" -> "tom@sfxcode.com",
+        "created" -> "2023-04-12T16:32:01.452Z",
+        "updated" -> "2023-04-12T16:33:07.982Z"
+      ),
+      "name" -> "test1"
+    )
+    val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
+    val id             = insertResponse.insertedIds.head
+    assertEquals(insertResponse.insertedIds.nonEmpty, true)
+    assertEquals(insertResponse.insertedIds.size, 1)
+    assertEquals(insertResponse.wasAcknowledged, true)
+
+    val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterInsert("number"), 1234)
+    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    mapToInsert.put("number", 5678)
+    val updateResponse = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collectionNameTest, id, mapToInsert.toMap))
+    assertEquals(updateResponse.upsertedIds.nonEmpty, true)
+    assertEquals(updateResponse.upsertedIds.size, 1)
+    assertEquals(updateResponse.wasAcknowledged, true)
+
+    val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterUpdate("number"), 5678)
+    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
   }
 }

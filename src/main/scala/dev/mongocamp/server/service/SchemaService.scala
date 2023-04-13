@@ -2,6 +2,7 @@ package dev.mongocamp.server.service
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model
 import dev.mongocamp.server.model._
@@ -234,7 +235,7 @@ object SchemaService extends CirceSchema {
         .map(_.asInstanceOf[List[Map[String, Any]]])
         .getOrElse(List())
         .map(typeDocument => {
-          val doc                         = documentFromScalaMap(typeDocument)
+          val doc                         = documentFromScalaMap(convertFields(typeDocument))
           val count                       = doc.getLongValue("c")
           val fieldTypePercentage: Double = count.toDouble / parent.count.toDouble
           SchemaAnalysisFieldType(doc.getStringValue("t"), count, fieldTypePercentage)

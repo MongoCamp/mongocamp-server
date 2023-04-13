@@ -77,7 +77,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
           val documentMap = parameter.document
           val filter      = convertFields(parameter.filter)
           val oldValues   = dao.find(filter).resultList()
-          val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(documentMap))).result()
+          val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
           val updateResponse = UpdateResponse(
             result.wasAcknowledged(),
             Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,

@@ -136,7 +136,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
           val fileName                   = parameter._2.getOrElse(parameter._1.file.otherDispositionParams.getOrElse("filename", uploadedFile.name))
           if (FileAdapterHolder.isGridfsHolder) {
             object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, authorizedCollectionRequest.collection)
-            val result         = FilesDAO.uploadFile(fileName, uploadedFile, documentFromScalaMap(metadata)).result()
+            val result         = FilesDAO.uploadFile(fileName, uploadedFile, documentFromScalaMap(convertFields(metadata))).result()
             val insertedResult = InsertResponse(wasAcknowledged = true, List(result.toHexString))
             insertedResult
           }
@@ -144,7 +144,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
             val fileInformationDao = FileInformationDao(authorizedCollectionRequest.collection)
             val fileId             = new ObjectId()
             val insertResponse = fileInformationDao
-              .insertOne(DBFileInformation(fileId, fileName, uploadedFile.size(), 0, new Date(), Some(documentFromScalaMap(metadata))))
+              .insertOne(DBFileInformation(fileId, fileName, uploadedFile.size(), 0, new Date(), Some(documentFromScalaMap(convertFields(metadata)))))
               .result()
             if (insertResponse.wasAcknowledged() && insertResponse.getInsertedId.asArray().size() == 1) {
               FileAdapterHolder.handler.putFile(authorizedCollectionRequest.collection, fileId.toHexString, uploadedFile)

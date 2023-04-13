@@ -215,7 +215,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
           val originalDocumentId = convertIdField(parameter._1)
           val filter             = Map[String, Any]("_id" -> originalDocumentId)
           val oldValues          = dao.find(filter).resultList()
-          val result             = dao.replaceOne(filter, documentFromScalaMap(documentMap)).result()
+          val result             = dao.replaceOne(filter, documentFromScalaMap(convertFields(documentMap))).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)
           }
@@ -257,12 +257,10 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
         {
           val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
 
-          val document = convertToOperationMap(parameter._2)
-
           val originalDocumentId = convertIdField(parameter._1)
           val filter             = Map[String, Any]("_id" -> originalDocumentId)
           val oldValues          = dao.find(filter).resultList()
-          val result             = dao.updateOne(filter, documentFromScalaMap(document)).result()
+          val result             = dao.updateOne(filter, documentFromScalaMap(convertToOperationMap(convertFields(parameter._2)))).result()
           val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
             Some(originalDocumentId)
           }
