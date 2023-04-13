@@ -1,27 +1,24 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
-import dev.mongocamp.server.converter.{ LuceneQueryTools, MongoCampBsonConverter }
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertIdField, convertToOperationMap }
+import dev.mongocamp.server.converter.MongoCampBsonConverter.{convertFields, convertIdField, convertToOperationMap}
+import dev.mongocamp.server.converter.{LuceneQueryTools, MongoCampBsonConverter}
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
+import dev.mongocamp.server.database.paging.{MongoPaginatedFilter, PaginationInfo}
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.document.{ CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent }
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.event.document.{CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent}
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.{ DeleteResponse, InsertResponse, MongoFindRequest, UpdateResponse }
+import dev.mongocamp.server.model.{DeleteResponse, InsertResponse, MongoFindRequest, UpdateResponse}
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import io.circe.generic.auto._
-import io.circe.parser.decode
 import org.apache.lucene.search.Query
 import org.bson.types.ObjectId
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
-import sttp.tapir.CodecFormat.TextPlain
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint

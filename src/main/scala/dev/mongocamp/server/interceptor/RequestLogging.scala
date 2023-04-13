@@ -1,12 +1,12 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.auth.{ AuthHolder, TokenCache }
+import dev.mongocamp.server.auth.{AuthHolder, TokenCache}
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
+import dev.mongocamp.server.event.http.{HttpRequestCompletedEvent, HttpRequestStartEvent}
 import dev.mongocamp.server.exception.MongoCampException
 import org.joda.time.DateTime
 import sttp.model.HeaderNames
-import sttp.tapir.server.metrics.{ EndpointMetric, Metric, MetricLabels }
+import sttp.tapir.server.metrics.{EndpointMetric, Metric, MetricLabels}
 
 import java.util.Date
 

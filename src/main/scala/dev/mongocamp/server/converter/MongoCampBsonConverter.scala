@@ -1,10 +1,8 @@
 package dev.mongocamp.server.converter
 
-import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.Document
-import org.mongodb.scala.bson.conversions.Bson
 
 import scala.collection.mutable
 

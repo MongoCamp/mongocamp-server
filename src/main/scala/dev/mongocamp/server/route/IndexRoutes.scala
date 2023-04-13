@@ -5,12 +5,12 @@ import dev.mongocamp.driver.mongodb.database.MongoIndex
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.index.{ IndexCreateRequest, IndexCreateResponse, IndexDropResponse, IndexOptionsRequest }
+import dev.mongocamp.server.model.index.{IndexCreateRequest, IndexCreateResponse, IndexDropResponse, IndexOptionsRequest}
 import io.circe.generic.auto._
 import org.mongodb.scala.model.IndexOptions
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint

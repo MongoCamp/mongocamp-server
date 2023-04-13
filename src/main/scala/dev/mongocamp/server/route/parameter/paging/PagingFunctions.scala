@@ -1,6 +1,6 @@
 package dev.mongocamp.server.route.parameter.paging
 import dev.mongocamp.server.database.paging.PaginationInfo
-import sttp.tapir.{ header, query }
+import sttp.tapir.{header, query}
 
 object PagingFunctions {
 

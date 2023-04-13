@@ -1,6 +1,6 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.client.api.{ AdminApi, AuthApi }
+import dev.mongocamp.server.client.api.{AdminApi, AuthApi}
 import dev.mongocamp.server.client.model._
 import sttp.model.StatusCode
 

@@ -2,7 +2,7 @@ package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.client.api.AuthApi
 import dev.mongocamp.server.client.model
-import dev.mongocamp.server.client.model.{ Grant, Login, PasswordUpdateRequest }
+import dev.mongocamp.server.client.model.{Grant, Login, PasswordUpdateRequest}
 import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
 import dev.mongocamp.server.model.auth
 import dev.mongocamp.server.server.TestAdditions

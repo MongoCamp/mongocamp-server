@@ -2,17 +2,10 @@ package dev.mongocamp.server.service
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import coursier.core.Authentication
-import coursier.params.ResolutionParams
-import coursier.util.StringInterpolators
-import coursier.{ Dependency, _ }
-import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.service.ReflectionService.registerClassLoaders
 import org.reflections.vfs.Vfs
-import io.circe.generic.auto._
-import io.circe.parser._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.internal.util.ScalaClassLoader.URLClassLoader

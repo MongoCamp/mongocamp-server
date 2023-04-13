@@ -9,7 +9,6 @@ package dev.mongocamp.server.client.api
 import dev.mongocamp.server.client.core.JsonSupport._
 import dev.mongocamp.server.client.model._
 import dev.mongocamp.server.converter.CirceSchema
-import dev.mongocamp.server.monitoring.Metric
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
 import sttp.model.Method
@@ -23,23 +22,6 @@ object ApplicationApi {
 
 class ApplicationApi(baseUrl: String) extends CirceSchema {
 
-  /** Returns the Metrics of events of the running MongoCamp Application.
-    *
-    * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
-    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
-    *
-    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
-    */
-  def eventMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
-    basicRequest
-      .method(Method.GET, uri"$baseUrl/system/monitoring/events")
-      .contentType("application/json")
-      .auth
-      .basic(username, password)
-      .auth
-      .bearer(bearerToken)
-      .header("X-AUTH-APIKEY", apiKey)
-      .response(asJson[Seq[Metric]])
 
   /** Get Configuration for key
     *
@@ -62,24 +44,6 @@ class ApplicationApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .response(asJson[MongoCampConfiguration])
 
-  /** Returns the JVM Metrics of the running MongoCamp Application
-    *
-    * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
-    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
-    *
-    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
-    */
-  def jvmMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
-    basicRequest
-      .method(Method.GET, uri"$baseUrl/system/monitoring/jvm")
-      .contentType("application/json")
-      .auth
-      .basic(username, password)
-      .auth
-      .bearer(bearerToken)
-      .header("X-AUTH-APIKEY", apiKey)
-      .response(asJson[Seq[Metric]])
-
   /** List all Configurations or filtered
     *
     * Expected answers: code 200 : Seq[MongoCampConfiguration] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of
@@ -98,23 +62,6 @@ class ApplicationApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .response(asJson[Seq[MongoCampConfiguration]])
 
-  /** Returns the MongoDB Metrics of the running MongoCamp Application
-    *
-    * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
-    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
-    *
-    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
-    */
-  def mongoDbMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
-    basicRequest
-      .method(Method.GET, uri"$baseUrl/system/monitoring/mongodb")
-      .contentType("application/json")
-      .auth
-      .basic(username, password)
-      .auth
-      .bearer(bearerToken)
-      .header("X-AUTH-APIKEY", apiKey)
-      .response(asJson[Seq[Metric]])
 
   /** Returns the Settings of the running MongoCamp Application.
     *
@@ -134,23 +81,6 @@ class ApplicationApi(baseUrl: String) extends CirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .response(asJson[SettingsResponse])
 
-  /** Returns the Metrics of the MongoCamp System
-    *
-    * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
-    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
-    *
-    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
-    */
-  def systemMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
-    basicRequest
-      .method(Method.GET, uri"$baseUrl/system/monitoring/system")
-      .contentType("application/json")
-      .auth
-      .basic(username, password)
-      .auth
-      .bearer(bearerToken)
-      .header("X-AUTH-APIKEY", apiKey)
-      .response(asJson[Seq[Metric]])
 
   /** Update Configuration with the value
     *
@@ -176,4 +106,78 @@ class ApplicationApi(baseUrl: String) extends CirceSchema {
       .response(asJson[JsonValueBoolean])
   }
 
+
+
+  //  /** Returns the JVM Metrics of the running MongoCamp Application
+  //    *
+  //    * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
+  //    * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+  //    *
+  //    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
+  //    */
+  //  def jvmMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
+  //    basicRequest
+  //      .method(Method.GET, uri"$baseUrl/system/monitoring/jvm")
+  //      .contentType("application/json")
+  //      .auth
+  //      .basic(username, password)
+  //      .auth
+  //      .bearer(bearerToken)
+  //      .header("X-AUTH-APIKEY", apiKey)
+  //      .response(asJson[Seq[Metric]])
+//
+//  /** Returns the Metrics of events of the running MongoCamp Application.
+//   *
+//   * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
+//   * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+//   *
+//   * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
+//   */
+//  def eventMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
+//    basicRequest
+//      .method(Method.GET, uri"$baseUrl/system/monitoring/events")
+//      .contentType("application/json")
+//      .auth
+//      .basic(username, password)
+//      .auth
+//      .bearer(bearerToken)
+//      .header("X-AUTH-APIKEY", apiKey)
+//      .response(asJson[Seq[Metric]])
+
+//
+//  /** Returns the MongoDB Metrics of the running MongoCamp Application
+//   *
+//   * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
+//   * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+//   *
+//   * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
+//   */
+//  def mongoDbMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
+//    basicRequest
+//      .method(Method.GET, uri"$baseUrl/system/monitoring/mongodb")
+//      .contentType("application/json")
+//      .auth
+//      .basic(username, password)
+//      .auth
+//      .bearer(bearerToken)
+//      .header("X-AUTH-APIKEY", apiKey)
+//      .response(asJson[Seq[Metric]])
+//
+//  /** Returns the Metrics of the MongoCamp System
+//   *
+//   * Expected answers: code 200 : Seq[Metric] () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
+//   * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+//   *
+//   * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
+//   */
+//  def systemMetrics(username: String, password: String, bearerToken: String, apiKey: String)() =
+//    basicRequest
+//      .method(Method.GET, uri"$baseUrl/system/monitoring/system")
+//      .contentType("application/json")
+//      .auth
+//      .basic(username, password)
+//      .auth
+//      .bearer(bearerToken)
+//      .header("X-AUTH-APIKEY", apiKey)
+//      .response(asJson[Seq[Metric]])
 }

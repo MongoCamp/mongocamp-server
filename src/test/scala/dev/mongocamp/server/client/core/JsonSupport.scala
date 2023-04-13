@@ -11,8 +11,6 @@
  */
 package dev.mongocamp.server.client.core
 
-import dev.mongocamp.server.client.model._
-import io.circe.{Decoder, Encoder}
 import io.circe.generic.AutoDerivation
 import sttp.client3.circe.SttpCirceApi
 

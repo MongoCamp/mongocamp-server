@@ -2,13 +2,13 @@ package dev.mongocamp.server.auth
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.database.MongoDatabase.{ rolesDao, userDao }
-import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
+import dev.mongocamp.server.database.MongoDatabase.{rolesDao, userDao}
+import dev.mongocamp.server.database.paging.{MongoPaginatedFilter, PaginationInfo}
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userOrPasswordException }
+import dev.mongocamp.server.exception.MongoCampException.{apiKeyException, userOrPasswordException}
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest.all
-import dev.mongocamp.server.model.auth.{ Grant, Role, UpdateRoleRequest, UserInformation }
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.model.auth.{Grant, Role, UpdateRoleRequest, UserInformation}
+import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import dev.mongocamp.server.service.ConfigurationService
 import org.mongodb.scala.model.Filters
 import sttp.model.StatusCode

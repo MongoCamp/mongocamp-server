@@ -1,7 +1,7 @@
 package dev.mongocamp.server.file
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.{ GenericObservable, _ }
+import dev.mongocamp.driver.mongodb.{GenericObservable, _}
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdField
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.GridFsBucketChunksSuffix

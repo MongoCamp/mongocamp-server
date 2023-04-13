@@ -1,9 +1,9 @@
 package dev.mongocamp.server.auth
 
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.database.paging.{ PaginationInfo, PaginationResult }
+import dev.mongocamp.server.database.paging.{PaginationInfo, PaginationResult}
 import dev.mongocamp.server.exception.MongoCampException.userOrPasswordException
-import dev.mongocamp.server.model.auth.{ Role, UserInformation }
+import dev.mongocamp.server.model.auth.{Role, UserInformation}
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._

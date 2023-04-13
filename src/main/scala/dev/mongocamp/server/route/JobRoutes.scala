@@ -3,14 +3,14 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JobConfig, JobInformation, JsonValue }
-import dev.mongocamp.server.plugin.{ JobPlugin, RoutesPlugin }
+import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonValue}
+import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint

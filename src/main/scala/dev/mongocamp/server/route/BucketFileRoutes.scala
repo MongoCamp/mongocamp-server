@@ -2,25 +2,25 @@ package dev.mongocamp.server.route
 
 import better.files.File
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertIdField }
-import dev.mongocamp.server.database.paging.{ MongoPaginatedFilter, PaginationInfo }
-import dev.mongocamp.server.database.{ FileInformationDao, MongoDatabase }
+import dev.mongocamp.server.converter.MongoCampBsonConverter.{convertFields, convertIdField}
+import dev.mongocamp.server.database.paging.{MongoPaginatedFilter, PaginationInfo}
+import dev.mongocamp.server.database.{FileInformationDao, MongoDatabase}
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.file.{ CreateFileEvent, DeleteFileEvent, UpdateFileEvent }
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.event.file.{CreateFileEvent, DeleteFileEvent, UpdateFileEvent}
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model._
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.route.file.FileFunctions.fileResult
 import dev.mongocamp.server.route.file.FileResult
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.bson.types.ObjectId
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, Part, StatusCode }
+import sttp.model.{Method, Part, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint

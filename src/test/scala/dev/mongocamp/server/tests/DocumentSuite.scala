@@ -1,6 +1,6 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.server.client.api.DocumentApi
-import dev.mongocamp.server.client.model.{ MongoFindRequest, UpdateRequest }
+import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateRequest}
 import dev.mongocamp.server.database.MongoDatabase
 
 import java.util.UUID

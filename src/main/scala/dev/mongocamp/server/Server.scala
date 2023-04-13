@@ -4,7 +4,7 @@ import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.server.PluginLoadedEvent
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.route._
-import dev.mongocamp.server.service.{ ConfigurationService, ReflectionService }
+import dev.mongocamp.server.service.{ConfigurationService, ReflectionService}
 
 import scala.concurrent.ExecutionContext
 

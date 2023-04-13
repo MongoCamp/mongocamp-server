@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
+import dev.mongocamp.server.event.http.{HttpRequestCompletedEvent, HttpRequestStartEvent}
 import dev.mongocamp.server.interceptor.RequestLogging
 
 import java.net.InetAddress

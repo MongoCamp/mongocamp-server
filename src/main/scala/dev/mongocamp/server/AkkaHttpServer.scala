@@ -4,10 +4,10 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.exception.MongoCampExceptionHandler
 import dev.mongocamp.server.interceptor._
 import dev.mongocamp.server.interceptor.cors.CorsInterceptor
-import sttp.tapir.server.akkahttp.{ AkkaHttpServerInterpreter, AkkaHttpServerOptions }
+import sttp.tapir.server.akkahttp.{AkkaHttpServerInterpreter, AkkaHttpServerOptions}
 import sttp.tapir.server.interceptor.metrics.MetricsRequestInterceptor
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 object AkkaHttpServer extends LazyLogging {
   implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext

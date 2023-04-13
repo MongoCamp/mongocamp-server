@@ -3,7 +3,7 @@ package dev.mongocamp.server.tests
 import better.files.File
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.client.api.FileApi
-import dev.mongocamp.server.client.model.{ MongoFindRequest, UpdateFileInformationRequest }
+import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateFileInformationRequest}
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.server.TestAdditions

@@ -7,7 +7,7 @@
 package dev.mongocamp.server.client.api
 
 import dev.mongocamp.server.client.core.JsonSupport._
-import dev.mongocamp.server.client.model.{JsonValueBoolean, JsonValueString, PasswordUpdateRequest, Role, UpdateRoleRequest, UserInformation, UserProfile}
+import dev.mongocamp.server.client.model._
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.server.TestServer
 import sttp.client3._
