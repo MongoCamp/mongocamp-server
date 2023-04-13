@@ -37,8 +37,6 @@ dependencyOverrides += "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0
 
 libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 
-libraryDependencies += "io.micrometer" % "micrometer-core" % "1.10.5"
-
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 
 libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.0"

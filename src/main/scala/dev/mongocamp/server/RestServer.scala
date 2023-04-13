@@ -17,7 +17,6 @@ import dev.mongocamp.server.event.listener.RequestLoggingActor
 import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
 import dev.mongocamp.server.interceptor.cors.Cors
 import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
-import dev.mongocamp.server.monitoring.MetricsConfiguration
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.{ConfigurationService, PluginService, ReflectionService}
@@ -113,8 +112,14 @@ trait RestServer extends LazyLogging with RouteConcatenation {
     activateServerPlugins()
   }
 
+  private lazy val afterServerStartCallBacks : ArrayBuffer[() => Unit] = ArrayBuffer()
+
+  def registerAfterStartCallBack(f : () => Unit): Unit = {
+    afterServerStartCallBacks.addOne(f)
+  }
+
   def doAfterServerStartUp(): Unit = {
-    MetricsConfiguration.bindAll()
+    afterServerStartCallBacks.foreach(f => f())
   }
 
 }
