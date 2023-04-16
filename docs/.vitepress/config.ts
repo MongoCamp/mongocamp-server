@@ -1,7 +1,6 @@
 import Unocss from 'unocss/vite'
 import {defineConfig} from 'vitepress'
 import {version} from '../../package.json'
-import {SearchPlugin} from 'vitepress-plugin-search'
 
 export default defineConfig({
     lang: 'en-US',
@@ -11,37 +10,33 @@ export default defineConfig({
     lastUpdated: true,
 
     themeConfig: {
+        editLink: {
+            pattern: 'https://github.com/MongoCamp/mongocamp-server/edit/main/docs/:path',
+            text: 'Edit this page on GitHub'
+        },
+        footer: {
+            message: 'Released under the Apache License 2.0.',
+            copyright: 'Copyright © 2023 - MongoCamp Team'
+        },
         logo: '/logo_without_text.png',
-
         nav: nav(),
-
+        search: {
+            provider: 'local'
+        },
         sidebar: {
             '/guide/': sidebarGuide(),
             '/config/': sidebarConfig(),
             '/plugins/': sidebarPlugins()
         },
-
-        editLink: {
-            pattern: 'https://github.com/MongoCamp/mongocamp-server/edit/main/docs/:path',
-            text: 'Edit this page on GitHub'
-        },
-
         socialLinks: [
-            { icon: 'github', link: 'https://github.com/MongoCamp/mongocamp-server' }
+            {icon: 'github', link: 'https://github.com/MongoCamp/mongocamp-server'}
         ],
-
-        footer: {
-            message: 'Released under the Apache License 2.0.',
-            copyright: 'Copyright © 2023 - MongoCamp Team'
-        },
-
     },
     vite: {
         plugins: [
             Unocss({
                 configFile: '../../unocss.config.ts',
-            }),
-            SearchPlugin(),
+            })
         ],
     },
 
