@@ -7,7 +7,7 @@
     "doc" : "docs"
   },
   "scripts" : {
-    "api-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.client,jsonLibrary=circe,dateLibrary=joda",
+    "api-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.test.client,jsonLibrary=circe,dateLibrary=joda",
     "api-docs-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
     "docs:build": "pnpm docs:external; vitepress build docs",
     "docs:dev": "pnpm docs:external; vitepress dev docs",

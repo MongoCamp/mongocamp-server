@@ -1,8 +1,8 @@
 package dev.mongocamp.server.service
 
-import dev.mongocamp.server.tests.BaseSuite
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 
-class CoursierModuleSuite extends BaseSuite {
+class CoursierModuleSuite extends MongoCampBaseServerSuite {
 
   test("fetch dependencies for mongocamp driver") {
     val mavenFiles = CoursierModuleService.loadMavenConfiguredDependencies(List("dev.mongocamp:mongodb-driver_2.13:2.5.3"))

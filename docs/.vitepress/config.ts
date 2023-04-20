@@ -44,10 +44,10 @@ export default defineConfig({
 
 function nav() {
     return [
-        { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
-        { text: 'Config', link: '/config/', activeMatch: '/config/' },
-        { text: 'Plugins', link: '/plugins/', activeMatch: '/plugins/' },
-        { text: 'REST API', link: '/rest/README', activeMatch: '/rest/' },
+        {text: 'Guide', link: '/guide/', activeMatch: '/guide/'},
+        {text: 'Config', link: '/config/', activeMatch: '/config/'},
+        {text: 'Plugins', link: '/plugins/', activeMatch: '/plugins/'},
+        {text: 'REST API', link: '/rest/README', activeMatch: '/rest/'},
         {
             text: version,
             items: [
@@ -67,8 +67,8 @@ function sidebarGuide() {
             text: 'Introduction',
             collapsible: true,
             items: [
-                { text: 'About', link: '/guide/' },
-                { text: 'Getting Started', link: '/guide/getting-started' },
+                {text: 'About', link: '/guide/'},
+                {text: 'Getting Started', link: '/guide/getting-started'},
                 // { text: 'Configuration', link: '/guide/configuration' },
             ]
         },
@@ -88,6 +88,7 @@ function sidebarConfig() {
         }
     ]
 }
+
 function sidebarPlugins() {
     return [
         {

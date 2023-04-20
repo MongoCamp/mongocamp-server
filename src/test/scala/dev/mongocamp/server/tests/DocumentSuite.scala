@@ -1,13 +1,14 @@
 package dev.mongocamp.server.tests
-import dev.mongocamp.server.client.api.DocumentApi
-import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateRequest}
+import dev.mongocamp.server.test.client.api.DocumentApi
+import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateRequest}
 import dev.mongocamp.server.database.MongoDatabase
 
 import java.util.UUID
 import scala.collection.mutable
 import scala.util.Random
+import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
-class DocumentSuite extends BaseSuite {
+class DocumentSuite extends MongoCampBaseServerSuite {
 
   val documentsApi: DocumentApi = DocumentApi()
   var idForTest: String         = ""

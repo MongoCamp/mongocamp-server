@@ -1,13 +1,16 @@
 package dev.mongocamp.server.tests
 
-import better.files.File
+import better.files.{File, Resource}
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.client.api.{BucketApi, DatabaseApi}
+import dev.mongocamp.server.test.client.api.{BucketApi, DatabaseApi}
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
+import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
+import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 import scala.util.Random
 
-class BucketSuite extends BaseSuite {
+class BucketSuite extends MongoCampBaseServerSuite {
 
   val api: BucketApi           = BucketApi()
   val databaseApi: DatabaseApi = DatabaseApi()
@@ -34,7 +37,8 @@ class BucketSuite extends BaseSuite {
   test("clear bucket as admin") {
     val bucketName = "delete-files"
     object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, bucketName)
-    val accountFile = File(getClass.getResource("/accounts.json").getPath)
+    val accountFile = File.newTemporaryFile()
+    accountFile.append(Resource.asString("accounts.json").getOrElse(""))
     FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
 
     val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")(bucketName))
@@ -46,7 +50,7 @@ class BucketSuite extends BaseSuite {
   test("delete buckets as admin") {
     val bucketName = "delete-files"
     object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, bucketName)
-    val accountFile = File(getClass.getResource("/accounts.json").getPath)
+    val accountFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "accounts.json")
     FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
 
     val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")(bucketName))
