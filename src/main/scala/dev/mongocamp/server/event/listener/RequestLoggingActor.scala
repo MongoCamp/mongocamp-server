@@ -4,10 +4,12 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
-import dev.mongocamp.server.interceptor.RequestLogging
+import dev.mongocamp.server.event.http.{HttpRequestCompletedEvent, HttpRequestStartEvent}
 
 import java.net.InetAddress
+import java.util.Date
+
+
 
 class RequestLoggingActor extends Actor with LazyLogging {
   def receive: Receive = {
@@ -21,7 +23,7 @@ class RequestLoggingActor extends Actor with LazyLogging {
       updateResponse
 
     case event: HttpRequestStartEvent =>
-      val requestLogging = RequestLogging(
+      val requestLogging = DatabaseRequestLoggingElement(
         event.eventDate,
         BuildInfo.name,
         BuildInfo.version,

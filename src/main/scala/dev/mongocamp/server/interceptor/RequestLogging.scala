@@ -1,32 +1,13 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.auth.{ AuthHolder, TokenCache }
+import dev.mongocamp.server.auth.{AuthHolder, TokenCache}
 import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.event.http.{HttpRequestCompletedEvent, HttpRequestStartEvent}
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.interceptor.RequestFunctions.{ requestHeaderKeyRealIp, requestHeaderKeyRemoteAddress }
+import dev.mongocamp.server.interceptor.RequestFunctions.{requestHeaderKeyRealIp, requestHeaderKeyRemoteAddress}
 import org.joda.time.DateTime
 import sttp.model.HeaderNames
-import sttp.tapir.server.metrics.{ EndpointMetric, Metric, MetricLabels }
-
-import java.util.Date
-
-case class RequestLogging(
-    date: Date,
-    applicationName: String,
-    version: String,
-    containerName: String,
-    requestId: Int,
-    httpMethod: String,
-    methodName: String,
-    uri: String,
-    remoteAddress: String,
-    userId: String,
-    duration: Long,
-    responseCode: Int,
-    controller: String,
-    controllerMethod: String,
-    comment: String
-)
+import sttp.tapir.server.metrics.{EndpointMetric, Metric, MetricLabels}
 
 object RequestLogging {
   def responsesDuration[F[_]](labels: MetricLabels = MetricLabels.Default): Metric[F, _] =
@@ -34,7 +15,7 @@ object RequestLogging {
       RequestLogging,
       onRequest = { (request, histogram, m) =>
         m.unit {
-          val requestId    = RequestFunctions.getRequestIdOption(request).getOrElse(request.hashCode())
+          val requestId    = RequestFunctions.getRequestIdOption(request).getOrElse(request.hashCode().toString)
           val requestStart = new DateTime()
           val remoteAddress: Option[String] = request
             .header(HeaderNames.XForwardedFor)
