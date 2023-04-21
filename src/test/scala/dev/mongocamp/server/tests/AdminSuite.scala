@@ -1,9 +1,9 @@
 package dev.mongocamp.server.tests
 
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.{AdminApi, AuthApi}
 import dev.mongocamp.server.test.client.model._
 import sttp.model.StatusCode
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 class AdminSuite extends MongoCampBaseServerSuite {
 

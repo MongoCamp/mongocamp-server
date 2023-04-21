@@ -1,12 +1,11 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
+import dev.mongocamp.server.model.auth
+import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 import dev.mongocamp.server.test.client.api.AuthApi
 import dev.mongocamp.server.test.client.model
 import dev.mongocamp.server.test.client.model.{Grant, Login, PasswordUpdateRequest}
-import dev.mongocamp.server.database.MongoDatabase.tokenCacheDao
-import dev.mongocamp.server.model.auth
-import dev.mongocamp.server.test.TestAdditions
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 import scala.concurrent.duration.DurationInt
 

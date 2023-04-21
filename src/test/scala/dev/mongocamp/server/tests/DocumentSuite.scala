@@ -1,12 +1,12 @@
 package dev.mongocamp.server.tests
+import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.DocumentApi
 import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateRequest}
-import dev.mongocamp.server.database.MongoDatabase
 
 import java.util.UUID
 import scala.collection.mutable
 import scala.util.Random
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 class DocumentSuite extends MongoCampBaseServerSuite {
 
@@ -427,8 +427,8 @@ class DocumentSuite extends MongoCampBaseServerSuite {
       "metaData" -> Map(
         "createdBy" -> "tom@sfxcode.com",
         "updatedBy" -> "tom@sfxcode.com",
-        "created" -> "2023-04-12T16:32:01.452Z",
-        "updated" -> "2023-04-12T16:33:07.982Z"
+        "created"   -> "2023-04-12T16:32:01.452Z",
+        "updated"   -> "2023-04-12T16:33:07.982Z"
       ),
       "name" -> "test1"
     )

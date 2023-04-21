@@ -2,10 +2,9 @@ package dev.mongocamp.server.tests
 
 import better.files.{File, Resource}
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.test.client.api.{BucketApi, DatabaseApi}
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
+import dev.mongocamp.server.test.client.api.{BucketApi, DatabaseApi}
 import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 import scala.util.Random

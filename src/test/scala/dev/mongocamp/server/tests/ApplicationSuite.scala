@@ -1,8 +1,8 @@
 package dev.mongocamp.server.tests
 
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.ApplicationApi
 import dev.mongocamp.server.test.client.model.JsonValueAny
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 class ApplicationSuite extends MongoCampBaseServerSuite {
 
@@ -36,8 +36,8 @@ class ApplicationSuite extends MongoCampBaseServerSuite {
   }
 
   test("Edit Configuration for Key") {
-    val eventMetrics = executeRequestToResponse(applicationApi.updateConfiguration("", "", adminBearerToken, "")("SERVER_INTERFACE",  JsonValueAny("localhost")))
-    val config = executeRequestToResponse(applicationApi.getConfig("", "", adminBearerToken, "")("SERVER_INTERFACE"))
+    val eventMetrics = executeRequestToResponse(applicationApi.updateConfiguration("", "", adminBearerToken, "")("SERVER_INTERFACE", JsonValueAny("localhost")))
+    val config       = executeRequestToResponse(applicationApi.getConfig("", "", adminBearerToken, "")("SERVER_INTERFACE"))
     assertEquals(config.configType, "String")
     assertEquals(config.key, "SERVER_INTERFACE")
     assertEquals(config.value, "localhost")

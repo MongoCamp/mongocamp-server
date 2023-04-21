@@ -1,10 +1,10 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.{CollectionApi, DatabaseApi}
 import dev.mongocamp.server.test.client.model.{MongoAggregateRequest, PipelineStage}
-import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 class CollectionSuite extends MongoCampBaseServerSuite {
 

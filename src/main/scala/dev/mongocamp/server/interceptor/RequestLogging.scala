@@ -2,8 +2,8 @@ package dev.mongocamp.server.interceptor
 
 import dev.mongocamp.server.auth.{ AuthHolder, TokenCache }
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.interceptor.RequestFunctions.{ requestHeaderKeyRealIp, requestHeaderKeyRemoteAddress }
 import org.joda.time.DateTime
 import sttp.model.HeaderNames
 import sttp.tapir.server.metrics.{ EndpointMetric, Metric, MetricLabels }
@@ -34,13 +34,13 @@ object RequestLogging {
       RequestLogging,
       onRequest = { (request, histogram, m) =>
         m.unit {
-          val requestId    = request.hashCode()
+          val requestId    = RequestFunctions.getRequestIdOption(request).getOrElse(request.hashCode())
           val requestStart = new DateTime()
           val remoteAddress: Option[String] = request
             .header(HeaderNames.XForwardedFor)
             .flatMap(_.split(",").headOption)
-            .orElse(request.header("Remote-Address"))
-            .orElse(request.header("X-Real-Ip"))
+            .orElse(request.header(requestHeaderKeyRemoteAddress))
+            .orElse(request.header(requestHeaderKeyRealIp))
             .orElse(request.connectionInfo.remote.flatMap(a => Option(a.getAddress.getHostAddress)))
 
           val user: String = request

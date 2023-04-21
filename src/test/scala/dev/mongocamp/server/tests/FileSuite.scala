@@ -2,14 +2,13 @@ package dev.mongocamp.server.tests
 
 import better.files.File
 import dev.mongocamp.driver.mongodb.GenericObservable
-import dev.mongocamp.server.test.client.api.FileApi
-import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateFileInformationRequest}
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.test.TestAdditions
-import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
-import io.circe.syntax.EncoderOps
 import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
+import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
+import dev.mongocamp.server.test.client.api.FileApi
+import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateFileInformationRequest}
+import io.circe.syntax.EncoderOps
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
@@ -114,9 +113,11 @@ class FileSuite extends MongoCampBaseServerSuite {
 
   test("update file information just filename of fileId as admin") {
     val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
-    val newFileName = "myNewFileName.json"
+    val newFileName   = "myNewFileName.json"
     val response =
-      executeRequestToResponse(api.updateFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId, UpdateFileInformationRequest(Some(newFileName), None)))
+      executeRequestToResponse(
+        api.updateFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId, UpdateFileInformationRequest(Some(newFileName), None))
+      )
     assertEquals(response.matchedCount, 1L)
     assertEquals(response.modifiedCount, 1L)
     assertEquals(response.wasAcknowledged, true)

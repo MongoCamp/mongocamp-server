@@ -1,9 +1,9 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb.GenericObservable
+import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.IndexApi
 import dev.mongocamp.server.test.client.model.{IndexCreateRequest, IndexOptionsRequest}
-import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
 
 class IndexSuite extends MongoCampBaseServerSuite {
 
