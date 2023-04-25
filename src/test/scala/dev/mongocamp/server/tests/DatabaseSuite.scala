@@ -4,7 +4,7 @@ import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.DatabaseApi
 
-class DataMongoCampBaseServerSuite extends MongoCampBaseServerSuite {
+class DatabaseSuite extends MongoCampBaseServerSuite {
 
   val databaseApi: DatabaseApi = DatabaseApi()
 
