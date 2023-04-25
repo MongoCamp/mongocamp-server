@@ -9,6 +9,12 @@ on:
       - 'main'
 
 jobs:
+  quality:
+    steps:
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@main
+        env:
+           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
   test:
     runs-on: ${{ matrix.os }}
     strategy:
