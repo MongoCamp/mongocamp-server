@@ -1,19 +1,21 @@
 package dev.mongocamp.server.database
 
-import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
+import com.mongodb.event.{CommandListener, ConnectionPoolListener}
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
+import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.interceptor.RequestLogging
-import dev.mongocamp.server.model.auth.{ Grant, Role, TokenCacheElement, UserInformation }
-import dev.mongocamp.server.model.{ DBFileInformation, JobConfig }
+import dev.mongocamp.server.event.listener.DatabaseRequestLoggingElement
+import dev.mongocamp.server.model.auth.{Grant, Role, TokenCacheElement, UserInformation}
+import dev.mongocamp.server.model.{DBFileInformation, JobConfig}
 import dev.mongocamp.server.service.ConfigurationService
+import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
 
 import scala.collection.mutable.ArrayBuffer
+import scala.jdk.CollectionConverters._
 
 object MongoDatabase {
 
@@ -67,15 +69,19 @@ object MongoDatabase {
     dbProvider
   }
 
-  private val providerRegistry = fromProviders(
+  val userProviders: ArrayBuffer[CodecProvider] = ArrayBuffer(
     classOf[UserInformation],
     classOf[Role],
     classOf[Grant],
-    classOf[RequestLogging],
+    classOf[DatabaseRequestLoggingElement],
     classOf[TokenCacheElement],
     classOf[DBFileInformation],
-    classOf[JobConfig],
-    CustomCodecProvider()
+    classOf[JobConfig],CustomCodecProvider()
   )
+
+
+  def addToProvider(provider: CodecProvider): Unit = userProviders += provider
+
+  private lazy val providerRegistry = fromProviders(userProviders.asJava)
 
 }
