@@ -1,8 +1,8 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
 import dev.mongocamp.server.test.client.api.JobsApi
 import dev.mongocamp.server.test.client.model.JobConfig
+import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
 
 class JobSuite extends MongoCampBaseServerSuite {
 
@@ -10,7 +10,7 @@ class JobSuite extends MongoCampBaseServerSuite {
 
   test("check pre triggered job was running") {
     // test fails sometime if only JobSuite is running
-    val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
+    executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
     assertEquals(CountingTestJob.counter > 0, true)
   }
 
