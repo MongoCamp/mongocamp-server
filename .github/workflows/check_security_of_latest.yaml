@@ -1,0 +1,33 @@
+name: Check Security of latest image on Docker Hub
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+env:
+  build_latest: auto
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@main
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+  vulnerability_scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Trivy vulnerability scanner
+        if: ${{ env.build_latest == 'auto' }}
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'mongocamp/mongocamp-server:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          ignore-unfixed: true
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: ${{ env.build_latest == 'auto' }}
+        uses: github/codeql-action/upload-sarif@main
+        with:
+          sarif_file: 'trivy-results.sarif'

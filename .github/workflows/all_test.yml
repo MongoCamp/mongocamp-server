@@ -9,7 +9,8 @@ on:
       - 'main'
 
 jobs:
-  quality:
+  code_quality:
+    runs-on: ubuntu-latest
     steps:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@main
