@@ -8,7 +8,7 @@ organization := json.stringValue("organization")
 
 scalaVersion := "2.13.10"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.1"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.2"
 
 val TapirVersion = "1.3.0"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
