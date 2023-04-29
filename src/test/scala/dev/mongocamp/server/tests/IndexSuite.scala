@@ -1,11 +1,10 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.IndexApi
 import dev.mongocamp.server.test.client.model.{IndexCreateRequest, IndexOptionsRequest}
 
-class IndexSuite extends MongoCampBaseServerSuite {
+class IndexSuite extends BaseServerSuite {
 
   val adminApi: IndexApi = IndexApi()
 

@@ -1,10 +1,9 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.ApplicationApi
 import dev.mongocamp.server.test.client.model.JsonValueAny
 
-class ApplicationSuite extends MongoCampBaseServerSuite {
+class ApplicationSuite extends BaseServerSuite {
 
   val applicationApi: ApplicationApi = ApplicationApi()
 

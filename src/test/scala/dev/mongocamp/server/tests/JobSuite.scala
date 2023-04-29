@@ -1,10 +1,10 @@
 package dev.mongocamp.server.tests
 
+import dev.mongocamp.server.test.CountingTestJob
 import dev.mongocamp.server.test.client.api.JobsApi
 import dev.mongocamp.server.test.client.model.JobConfig
-import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
 
-class JobSuite extends MongoCampBaseServerSuite {
+class JobSuite extends BaseServerSuite {
 
   val jobsApi: JobsApi = JobsApi()
 

@@ -4,7 +4,7 @@ import better.files.File
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.test.{MongoCampBaseServerSuite, TestAdditions}
+import dev.mongocamp.server.test.TestAdditions
 import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
 import dev.mongocamp.server.test.client.api.FileApi
 import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateFileInformationRequest}
@@ -14,7 +14,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
 
-class FileSuite extends MongoCampBaseServerSuite {
+class FileSuite extends BaseServerSuite {
 
   val api: FileApi = FileApi()
 

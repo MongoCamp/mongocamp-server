@@ -2,11 +2,10 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.{CollectionApi, DatabaseApi}
 import dev.mongocamp.server.test.client.model.{MongoAggregateRequest, PipelineStage}
 
-class CollectionSuite extends MongoCampBaseServerSuite {
+class CollectionSuite extends BaseServerSuite {
 
   val collectionApi: CollectionApi = CollectionApi()
   val databaseApi: DatabaseApi     = DatabaseApi()
