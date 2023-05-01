@@ -1,12 +1,12 @@
 {
-  "name" : "mongocamp-server",
-  "organization" : "dev.mongocamp",
-  "version" : "1.4.2.snapshot",
-  "description" : "",
-  "directories" : {
-    "doc" : "docs"
+  "name": "mongocamp-server",
+  "organization": "dev.mongocamp",
+  "version": "1.4.2.snapshot",
+  "description": "",
+  "directories": {
+    "doc": "docs"
   },
-  "scripts" : {
+  "scripts": {
     "api-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.test.client,jsonLibrary=circe,dateLibrary=joda",
     "api-docs-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
     "docs:build": "pnpm docs:external; vitepress build docs",
@@ -14,40 +14,40 @@
     "docs:external": "sh docs/external/fileloader.sh",
     "docs:serve": "vitepress serve docs --port 5555"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "git+https://github.com/MongoCamp/mongocamp-server.git"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MongoCamp/mongocamp-server.git"
   },
-  "author" : "info@mongocamp.dev",
-  "license" : "Apache-2.0",
-  "bugs" : {
-    "url" : "https://github.com/MongoCamp/mongocamp-server/issues"
+  "author": "info@mongocamp.dev",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/MongoCamp/mongocamp-server/issues"
   },
-  "homepage" : "https://mongodb-server.mongocamp.dev",
-  "devDependencies" : {
-    "@antfu/eslint-config": "^0.38.4",
+  "homepage": "https://mongodb-server.mongocamp.dev",
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.38.5",
     "@anu-vue/preset-theme-default": "^0.13.1",
     "@iconify-json/bx": "^1.1.6",
     "@iconify-json/fluent-emoji": "^1.1.13",
     "@iconify-json/heroicons-outline": "^1.1.6",
-    "@iconify-json/logos": "^1.1.24",
+    "@iconify-json/logos": "^1.1.25",
     "@iconify-json/mdi": "^1.1.50",
     "@openapitools/openapi-generator-cli": "^2.6.0",
-    "@types/node": "^18.15.11",
-    "@unocss/preset-icons": "^0.51.4",
-    "@unocss/preset-uno": "0.51.4",
-    "@vueuse/core": "^10.0.2",
+    "@types/node": "^18.16.3",
+    "@unocss/preset-icons": "^0.51.8",
+    "@unocss/preset-uno": "0.51.8",
+    "@vueuse/core": "^10.1.0",
     "anu-vue": "^0.13.1",
     "conventional-changelog-cli": "^2.2.2",
-    "date-fns": "^2.29.3",
-    "eslint": "^8.38.0",
+    "date-fns": "^2.30.0",
+    "eslint": "^8.39.0",
     "flexsearch": "^0.7.31",
     "fs-extra": "^11.1.1",
     "gray-matter": "^4.0.3",
     "markdown-it": "^13.0.1",
     "typescript": "^5.0.4",
-    "unocss": "^0.51.4",
-    "vitepress": "1.0.0-alpha.70",
+    "unocss": "^0.51.8",
+    "vitepress": "1.0.0-alpha.75",
     "vue": "^3.2.47"
   }
 }
