@@ -162,6 +162,8 @@ class ConfigSuite extends munit.FunSuite with LazyLogging {
     val config = getConfig(testConfig)
     assertEquals(config.get.configType, MongoCampConfiguration.confTypeStringOption)
     assertEquals(config.get.value, None)
+    val delete = ConfigurationService.removeConfig(testConfig)
+    assertEquals(delete, true)
   }
 
   test("register and test option string configuration with setting") {
@@ -171,6 +173,8 @@ class ConfigSuite extends munit.FunSuite with LazyLogging {
     val config2 = getConfig(testConfig2)
     assertEquals(config2.get.configType, MongoCampConfiguration.confTypeStringOption)
     assertEquals(config2.get.value, Some("hello world"))
+    val delete = ConfigurationService.removeConfig(testConfig2)
+    assertEquals(delete, true)
   }
 
   test("register and test option long configuration without setting") {
@@ -179,6 +183,8 @@ class ConfigSuite extends munit.FunSuite with LazyLogging {
     val config = getConfig(testConfig)
     assertEquals(config.get.configType, MongoCampConfiguration.confTypeLongOption)
     assertEquals(config.get.value, None)
+    val delete = ConfigurationService.removeConfig(testConfig)
+    assertEquals(delete, true)
   }
 
   test("register and test option long configuration with setting") {
@@ -189,6 +195,8 @@ class ConfigSuite extends munit.FunSuite with LazyLogging {
     assertEquals(config2.get.configType, MongoCampConfiguration.confTypeLongOption)
     assertEquals(config2.get.value, Some(1))
     assertEquals(config2.get.typedValue[Option[Long]](), Some(1L))
+    val delete = ConfigurationService.removeConfig(testConfig2)
+    assertEquals(delete, true)
   }
 
 }
