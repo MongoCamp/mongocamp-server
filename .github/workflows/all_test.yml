@@ -26,6 +26,12 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v3.0.0
+      - name: Setup TimeZone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "Europe/Berlin"
+          timezoneMacos: "Europe/Berlin"
+          timezoneWindows: "W. Europe Standard Time"
       - name: Cache SBT ivy cache
         uses: actions/cache@v2
         with:
