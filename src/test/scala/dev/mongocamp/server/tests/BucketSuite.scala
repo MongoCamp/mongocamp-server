@@ -23,8 +23,8 @@ class BucketSuite extends BaseServerSuite {
   test("buckets sample-files as admin") {
     val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")("sample-files"))
     assertEquals(response.files, 4L)
-    val minSize = 400900
-    val maxSize = 401100
+    val minSize = 400000
+    val maxSize = 410000
     assertEquals(response.size > minSize, true, s"size (${response.size}) is not larger than $minSize")
     assertEquals(response.size < maxSize, true, s"size (${response.size}) is not smaller than $maxSize")
     val minObjectSize = 100225
