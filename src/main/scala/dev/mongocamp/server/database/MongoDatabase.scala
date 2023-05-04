@@ -5,7 +5,6 @@ import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
 import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.event.listener.DatabaseRequestLoggingElement
 import dev.mongocamp.server.model.auth.{Grant, Role, TokenCacheElement, UserInformation}
 import dev.mongocamp.server.model.{DBFileInformation, JobConfig}
 import dev.mongocamp.server.service.ConfigurationService
@@ -26,13 +25,11 @@ object MongoDatabase {
   private[database] lazy val CollectionNameConfiguration = s"${collectionPrefix}configuration"
   private[database] lazy val CollectionNameUsers         = s"${collectionPrefix}users"
   private[database] lazy val CollectionNameRoles         = s"${collectionPrefix}roles"
-  private[database] lazy val CollectionNameRequestLog    = s"${collectionPrefix}request_logging"
   private[database] lazy val CollectionNameTokenCache    = s"${collectionPrefix}token_cache"
   private[database] lazy val CollectionNameJobs          = s"${collectionPrefix}jobs"
 
   lazy val userDao: UserDao                     = UserDao()
   lazy val rolesDao: RolesDao                   = RolesDao()
-  lazy val requestLoggingDao: RequestLoggingDao = RequestLoggingDao()
   lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
   lazy val jobDao: JobDao                       = JobDao()
 
@@ -73,15 +70,21 @@ object MongoDatabase {
     classOf[UserInformation],
     classOf[Role],
     classOf[Grant],
-    classOf[DatabaseRequestLoggingElement],
     classOf[TokenCacheElement],
     classOf[DBFileInformation],
-    classOf[JobConfig],CustomCodecProvider()
+    classOf[JobConfig],
+    CustomCodecProvider()
   )
 
 
-  def addToProvider(provider: CodecProvider): Unit = userProviders += provider
+  def addToProvider(provider: CodecProvider): Unit = {
+    userProviders += provider
+    providerRegistry = fromProviders(userProviders.asJava)
+    if (_databaseProvider != null) {
+      createNewDatabaseProvider()
+    }
+  }
 
-  private lazy val providerRegistry = fromProviders(userProviders.asJava)
+  private var providerRegistry = fromProviders(userProviders.asJava)
 
 }

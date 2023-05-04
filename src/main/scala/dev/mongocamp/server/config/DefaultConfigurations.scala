@@ -10,7 +10,6 @@ import scala.util.Random
 object DefaultConfigurations {
   lazy val ConfigKeyServerInterface          = "SERVER_INTERFACE"
   lazy val ConfigKeyServerPort               = "SERVER_PORT"
-  lazy val ConfigKeyRequestLogging           = "REQUESTLOGGING_ENABLED"
   lazy val ConfigKeyPluginsIgnored           = "PLUGINS_IGNORED"
   lazy val ConfigKeyPluginsDirectory         = "PLUGINS_DIRECTORY"
   lazy val ConfigKeyPluginsUrls              = "PLUGINS_URLS"
@@ -57,7 +56,6 @@ object DefaultConfigurations {
 
     registerConfig(ConfigKeyServerInterface, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
-    registerConfig(ConfigKeyRequestLogging, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
 
     registerConfig(ConfigKeyPluginsIgnored, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsUrls, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)

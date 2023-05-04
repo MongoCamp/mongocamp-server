@@ -1,31 +1,29 @@
 package dev.mongocamp.server
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`
-import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
-import akka.http.scaladsl.server.{ Route, RouteConcatenation }
+import akka.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
+import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.http.HttpRequestEvent
-import dev.mongocamp.server.event.listener.RequestLoggingActor
-import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
+import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
+import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ ConfigurationService, PluginService, ReflectionService }
+import dev.mongocamp.server.service.{ConfigurationService, PluginService, ReflectionService}
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 trait RestServer extends LazyLogging with RouteConcatenation {
 
@@ -95,11 +93,6 @@ trait RestServer extends LazyLogging with RouteConcatenation {
 
         if (ApiDocsRoutes.isSwaggerEnabled) {
           println("For Swagger go to: http://%s:%s/docs".format(interface, port))
-        }
-
-        if (ConfigurationService.getConfigValue(DefaultConfigurations.ConfigKeyRequestLogging)) {
-          val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
-          EventSystem.eventStream.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
         }
 
         EventSystem.eventStream.publish(ServerStartedEvent())

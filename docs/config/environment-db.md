@@ -24,7 +24,6 @@ The configurations can also change by using the configuration routes.
 |------------------------|-------------|:-------:|
 | SERVER_INTERFACE       |             | 0.0.0.0 |
 | SERVER_PORT            |             |  8080   |
-| REQUESTLOGGING_ENABLED |             |  true   |
 
 ## CORS
 
