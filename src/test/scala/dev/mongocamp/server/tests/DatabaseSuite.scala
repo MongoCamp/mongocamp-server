@@ -41,7 +41,6 @@ class DatabaseSuite extends BaseServerSuite {
         "admin-test",
         "mc_configuration",
         "mc_jobs",
-        "mc_request_logging",
         "mc_roles",
         "mc_token_cache",
         "mc_users",
