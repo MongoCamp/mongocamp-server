@@ -51,7 +51,7 @@ class DatabaseSuite extends BaseServerSuite {
         "users"
       )
     )
-    assertEquals(response.size, 13)
+    assertEquals(response.size, 12)
   }
 
   test("list all collections for database geodata as admin") {
