@@ -1,5 +1,5 @@
 package dev.mongocamp.server.service
-import better.files.{File, Resource}
+import better.files.{ File, Resource }
 import dev.mongocamp.server.converter.CirceSchema
 import io.circe.parser.decode
 

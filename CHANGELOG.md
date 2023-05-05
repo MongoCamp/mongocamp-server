@@ -1,3 +1,30 @@
+## [1.4.2]() (2023-05-05)
+
+
+### Bug Fixes
+
+* **converter:** Fix Issue with Not Map Sublist in Body ([ca59285](https://github.com/MongoCamp/mongocamp-server/commit/ca59285ee43cda8da27c9f0fda3eba2dd55cbe52)), closes [#45](https://github.com/MongoCamp/mongocamp-server/issues/45)
+* extracted metrics to own plugin [mongocamp-micrometer-plugin](https://github.com/MongoCamp/mongocamp-micrometer-plugin) ([531f4af](https://github.com/MongoCamp/mongocamp-server/commit/531f4af4134442cfc566e0115d59dba372657ecc))
+* test file name ([b77c178](https://github.com/MongoCamp/mongocamp-server/commit/b77c178faac7181cb2ac4ced12a5a7a3cd0e9c57))
+* **Tests:** fix configuration size ([6e788a9](https://github.com/MongoCamp/mongocamp-server/commit/6e788a9da2bb19146580efc45fcdfec49dfef9b3))
+
+
+### Features
+
+* added remove configuration for deleting ([5d244df](https://github.com/MongoCamp/mongocamp-server/commit/5d244dfd50fa6afbd08a6db812ae8c528852c0b5))
+* Changed RequestId to String ([e2a6137](https://github.com/MongoCamp/mongocamp-server/commit/e2a6137a8528df9d82ac07c4faf8fbfade79a6c6))
+* extracted metrics to own plugin [mongocamp-requestlogging-plugin](https://github.com/MongoCamp/mongocamp-requestlogging-plugin) ([8bd8318](https://github.com/MongoCamp/mongocamp-server/commit/8bd8318e5c97faaa61461c7c1d166cfd8901227c))
+* extracted to [test package](https://github.com/MongoCamp/mongocamp-test-server) for usage in plugins ([c715864](https://github.com/MongoCamp/mongocamp-server/commit/c71586401079f9923800983ae376e93e7d0136a6))
+* RequestId added to Request for using and output as header ([41989fd](https://github.com/MongoCamp/mongocamp-server/commit/41989fd95e4c132b288b224ecee66950ea4359ac))
+
+
+### Maintenance
+
+* **dependencies:** 4 dependency updates for mongocamp-server ([9c3a861](https://github.com/MongoCamp/mongocamp-server/commit/9c3a861f13316dcba955d452d897e8a7cd5aab01))
+* **dependencies:** update to mongo-driver 2.6.2 ([29ea28d](https://github.com/MongoCamp/mongocamp-server/commit/29ea28df21c41ddf44c0b2162ff0b9ab8ca18633))
+* **dependencies:** update to tapir 1.3.0 ([c6d4ac5](https://github.com/MongoCamp/mongocamp-server/commit/c6d4ac537301063f2d41457d5a5363cb9cf6eab6))
+* **dependencies:** update vitepress and npm deps ([f0eaeb6](https://github.com/MongoCamp/mongocamp-server/commit/f0eaeb6388258f7a9f94f275d5215f6e23dc2437))
+
 ## [1.4.1]() (2023-04-13)
 
 
@@ -302,7 +329,7 @@
 ### Reverts
 
 * CollectionSuite reverted ([68f0e3e](https://github.com/MongoCamp/mongocamp-server/commit/68f0e3e38295e5a81fd7317fad41335db236373e))
-* DataMongoCampBaseServerSuite reverted ([21fece2](https://github.com/MongoCamp/mongocamp-server/commit/21fece2bf33aca61bd1895fdd97b0a0a5ecc4d3a))
+* DatabaseSuite reverted ([21fece2](https://github.com/MongoCamp/mongocamp-server/commit/21fece2bf33aca61bd1895fdd97b0a0a5ecc4d3a))
 
 ## [0.3.4]() (2022-02-26)
 

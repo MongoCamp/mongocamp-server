@@ -1,12 +1,12 @@
 package dev.mongocamp.server.database
 
-import com.mongodb.event.{CommandListener, ConnectionPoolListener}
+import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
+import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.model.auth.{Grant, Role, TokenCacheElement, UserInformation}
-import dev.mongocamp.server.model.{DBFileInformation, JobConfig}
+import dev.mongocamp.server.model.auth.{ Grant, Role, TokenCacheElement, UserInformation }
+import dev.mongocamp.server.model.{ DBFileInformation, JobConfig }
 import dev.mongocamp.server.service.ConfigurationService
 import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistries._
@@ -28,10 +28,10 @@ object MongoDatabase {
   private[database] lazy val CollectionNameTokenCache    = s"${collectionPrefix}token_cache"
   private[database] lazy val CollectionNameJobs          = s"${collectionPrefix}jobs"
 
-  lazy val userDao: UserDao                     = UserDao()
-  lazy val rolesDao: RolesDao                   = RolesDao()
-  lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
-  lazy val jobDao: JobDao                       = JobDao()
+  lazy val userDao: UserDao             = UserDao()
+  lazy val rolesDao: RolesDao           = RolesDao()
+  lazy val tokenCacheDao: TokenCacheDao = TokenCacheDao()
+  lazy val jobDao: JobDao               = JobDao()
 
   private var _databaseProvider: DatabaseProvider = null
 
@@ -75,7 +75,6 @@ object MongoDatabase {
     classOf[JobConfig],
     CustomCodecProvider()
   )
-
 
   def addToProvider(provider: CodecProvider): Unit = {
     userProviders += provider
