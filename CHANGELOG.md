@@ -302,7 +302,7 @@
 ### Reverts
 
 * CollectionSuite reverted ([68f0e3e](https://github.com/MongoCamp/mongocamp-server/commit/68f0e3e38295e5a81fd7317fad41335db236373e))
-* DatabaseSuite reverted ([21fece2](https://github.com/MongoCamp/mongocamp-server/commit/21fece2bf33aca61bd1895fdd97b0a0a5ecc4d3a))
+* DataMongoCampBaseServerSuite reverted ([21fece2](https://github.com/MongoCamp/mongocamp-server/commit/21fece2bf33aca61bd1895fdd97b0a0a5ecc4d3a))
 
 ## [0.3.4]() (2022-02-26)
 

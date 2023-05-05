@@ -81,7 +81,7 @@ object MongoCampBsonConverter {
         element._2 match {
           case value: Map[String, Any] =>
             mutableMap.put(element._1, convertFields(value))
-          case value: Iterable[Map[String, Any]] =>
+          case value: Iterable[Map[String, Any]] if(value.nonEmpty && value.head.isInstanceOf[Map[String, Any]]) =>
             mutableMap.put(element._1, value.map(e => convertFields(e)))
           case d: DateTime => mutableMap.put(element._1, d.toDate)
           case _ =>

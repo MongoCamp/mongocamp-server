@@ -2,18 +2,19 @@ package dev.mongocamp.server.tests
 
 import better.files.File
 import dev.mongocamp.driver.mongodb.GenericObservable
-import dev.mongocamp.server.client.api.FileApi
-import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateFileInformationRequest}
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.server.TestAdditions
+import dev.mongocamp.server.test.TestAdditions
+import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
+import dev.mongocamp.server.test.client.api.FileApi
+import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateFileInformationRequest}
 import io.circe.syntax.EncoderOps
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
 
-class FileSuite extends BaseSuite {
+class FileSuite extends BaseServerSuite {
 
   val api: FileApi = FileApi()
 
@@ -70,7 +71,8 @@ class FileSuite extends BaseSuite {
   }
 
   test("upload a new file as admin") {
-    val geoFile = File(getClass.getResource("/geodata.json").getPath)
+    val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
+
     val response =
       executeRequestToResponse(
         api.insertFile("", "", adminBearerToken, "")(
@@ -86,7 +88,7 @@ class FileSuite extends BaseSuite {
   }
 
   test("get file information of fileId as admin") {
-    val geoFile = File(getClass.getResource("/geodata.json").getPath)
+    val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
 
     val response =
       executeRequestToResponse(
@@ -98,7 +100,7 @@ class FileSuite extends BaseSuite {
   }
 
   test("get file of fileId as admin") {
-    val geoFile = File(getClass.getResource("/geodata.json").getPath)
+    val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
 
     val request        = api.getFile("", "", adminBearerToken, "")(BucketNameSample, fileId, File.newTemporaryFile().toJava)
     val resultFuture   = TestAdditions.backend.send(request)
@@ -110,10 +112,12 @@ class FileSuite extends BaseSuite {
   }
 
   test("update file information just filename of fileId as admin") {
-    val geoFile     = File(getClass.getResource("/geodata.json").getPath)
-    val newFileName = "myNewFileName.json"
+    val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
+    val newFileName   = "myNewFileName.json"
     val response =
-      executeRequestToResponse(api.updateFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId, UpdateFileInformationRequest(Some(newFileName), None)))
+      executeRequestToResponse(
+        api.updateFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId, UpdateFileInformationRequest(Some(newFileName), None))
+      )
     assertEquals(response.matchedCount, 1L)
     assertEquals(response.modifiedCount, 1L)
     assertEquals(response.wasAcknowledged, true)
@@ -216,7 +220,7 @@ class FileSuite extends BaseSuite {
   }
 
   test("upload a new file as user") {
-    val geoFile = File(getClass.getResource("/geodata.json").getPath)
+    val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
     val response =
       executeRequest(
         api.insertFile("", "", testUserBearerToken, "")(

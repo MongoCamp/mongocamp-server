@@ -9,7 +9,7 @@
         "output": "./src/test/scala/dev/mongocamp/server/client-project",
         "inputSpec": "http://0.0.0.0:8080/docs/docs.yaml",
         "additionalProperties": {
-          "mainPackage": "dev.mongocamp.server.client",
+          "mainPackage": "dev.mongocamp.server.test.client",
           "artifactId": "client",
           "groupId": "dev.mongocamp.server.rest.api",
           "jsonLibrary": "circe",

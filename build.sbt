@@ -8,26 +8,25 @@ organization := json.stringValue("organization")
 
 scalaVersion := "2.13.10"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.1"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.2"
 
-
-val TapirVersion = "1.2.12"
-libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"   % TapirVersion
-libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"       % TapirVersion
-libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"         % TapirVersion
-libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle"  % TapirVersion
-libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"        % TapirVersion
+val TapirVersion = "1.3.0"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % TapirVersion
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-redoc-bundle"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
-val sttClientVersion = "3.8.14"
+val sttClientVersion = "3.8.15"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % sttClientVersion
 
 libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.2.1"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.6"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.7"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
 
@@ -39,4 +38,4 @@ libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 
-libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.0"
+libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.2"

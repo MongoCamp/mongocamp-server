@@ -1,7 +1,7 @@
 package dev.mongocamp.server.event.http
 
 case class HttpRequestStartEvent(
-    requestId: Int,
+    requestId: String,
     httpMethod: String,
     methodName: String,
     uri: String,

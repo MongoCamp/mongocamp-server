@@ -1,13 +1,13 @@
 package dev.mongocamp.server.tests
-import dev.mongocamp.server.client.api.DocumentApi
-import dev.mongocamp.server.client.model.{MongoFindRequest, UpdateRequest}
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.client.api.DocumentApi
+import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateRequest}
 
 import java.util.UUID
 import scala.collection.mutable
 import scala.util.Random
 
-class DocumentSuite extends BaseSuite {
+class DocumentSuite extends BaseServerSuite {
 
   val documentsApi: DocumentApi = DocumentApi()
   var idForTest: String         = ""
@@ -426,8 +426,8 @@ class DocumentSuite extends BaseSuite {
       "metaData" -> Map(
         "createdBy" -> "tom@sfxcode.com",
         "updatedBy" -> "tom@sfxcode.com",
-        "created" -> "2023-04-12T16:32:01.452Z",
-        "updated" -> "2023-04-12T16:33:07.982Z"
+        "created"   -> "2023-04-12T16:32:01.452Z",
+        "updated"   -> "2023-04-12T16:33:07.982Z"
       ),
       "name" -> "test1"
     )
@@ -449,5 +449,120 @@ class DocumentSuite extends BaseSuite {
     val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterUpdate("number"), 5678)
     assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+  }
+
+  test("create or update a document with a sublist of type string") {
+    val collectionNameTest = "createAndUpdate"
+    val mapToInsert: mutable.Map[String, Any] = mutable.Map(
+      "number" -> 1234,
+      "metaData" -> Map(
+        "createdBy" -> "tom@sfxcode.com",
+        "updatedBy" -> "tom@sfxcode.com",
+        "created" -> "2023-04-12T16:32:01.452Z",
+        "updated" -> "2023-04-12T16:33:07.982Z"
+      ),
+      "name" -> "test1",
+      "list" -> List("hello", "men")
+    )
+    val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
+    val id = insertResponse.insertedIds.head
+    assertEquals(insertResponse.insertedIds.nonEmpty, true)
+    assertEquals(insertResponse.insertedIds.size, 1)
+    assertEquals(insertResponse.wasAcknowledged, true)
+
+    val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterInsert("number"), 1234)
+    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(checkAfterInsert("list"), List("hello", "men"))
+    mapToInsert.put("number", 5678)
+    mapToInsert.put("list", List("hello", "world"))
+
+    val updateResponse = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collectionNameTest, id, mapToInsert.toMap))
+    assertEquals(updateResponse.upsertedIds.nonEmpty, true)
+    assertEquals(updateResponse.upsertedIds.size, 1)
+    assertEquals(updateResponse.wasAcknowledged, true)
+
+    val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterUpdate("number"), 5678)
+    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(checkAfterUpdate("list"), List("hello", "world"))
+
+  }
+
+
+  test("create or update a document with a sublist of type number") {
+    val collectionNameTest = "createAndUpdate"
+    val mapToInsert: mutable.Map[String, Any] = mutable.Map(
+      "number" -> 1234,
+      "metaData" -> Map(
+        "createdBy" -> "tom@sfxcode.com",
+        "updatedBy" -> "tom@sfxcode.com",
+        "created" -> "2023-04-12T16:32:01.452Z",
+        "updated" -> "2023-04-12T16:33:07.982Z"
+      ),
+      "name" -> "test1",
+      "list" -> List(123, 456)
+    )
+    val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
+    val id = insertResponse.insertedIds.head
+    assertEquals(insertResponse.insertedIds.nonEmpty, true)
+    assertEquals(insertResponse.insertedIds.size, 1)
+    assertEquals(insertResponse.wasAcknowledged, true)
+
+    val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterInsert("number"), 1234)
+    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(checkAfterInsert("list"), List(123, 456))
+    mapToInsert.put("number", 5678)
+    mapToInsert.put("list", List(789, 987))
+
+    val updateResponse = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collectionNameTest, id, mapToInsert.toMap))
+    assertEquals(updateResponse.upsertedIds.nonEmpty, true)
+    assertEquals(updateResponse.upsertedIds.size, 1)
+    assertEquals(updateResponse.wasAcknowledged, true)
+
+    val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterUpdate("number"), 5678)
+    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(checkAfterUpdate("list"), List(789, 987))
+
+  }
+
+  test("create or update a document with a sublist of type map") {
+    val collectionNameTest = "createAndUpdate"
+    val mapToInsert: mutable.Map[String, Any] = mutable.Map(
+      "number" -> 1234,
+      "metaData" -> Map(
+        "createdBy" -> "tom@sfxcode.com",
+        "updatedBy" -> "tom@sfxcode.com",
+        "created" -> "2023-04-12T16:32:01.452Z",
+        "updated" -> "2023-04-12T16:33:07.982Z"
+      ),
+      "name" -> "test1",
+      "list" -> List(Map("a" -> "A"), Map("b" -> "B"))
+    )
+    val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
+    val id = insertResponse.insertedIds.head
+    assertEquals(insertResponse.insertedIds.nonEmpty, true)
+    assertEquals(insertResponse.insertedIds.size, 1)
+    assertEquals(insertResponse.wasAcknowledged, true)
+
+    val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterInsert("number"), 1234)
+    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(checkAfterInsert("list"), List(Map("a" -> "A"), Map("b" -> "B")))
+    mapToInsert.put("number", 5678)
+    mapToInsert.put("list", List(Map("c" -> "C"), Map("d" -> "D")))
+
+    val updateResponse = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collectionNameTest, id, mapToInsert.toMap))
+    assertEquals(updateResponse.upsertedIds.nonEmpty, true)
+    assertEquals(updateResponse.upsertedIds.size, 1)
+    assertEquals(updateResponse.wasAcknowledged, true)
+
+    val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
+    assertEquals(checkAfterUpdate("number"), 5678)
+    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(checkAfterUpdate("list"), List(Map("c" -> "C"), Map("d" -> "D")))
+
   }
 }

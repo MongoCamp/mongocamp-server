@@ -1,10 +1,10 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.client.api.InformationApi
+import dev.mongocamp.server.test.client.api.InformationApi
 import org.joda.time.DateTime
 
-class InformationSuite extends BaseSuite {
+class InformationSuite extends BaseServerSuite {
 
   val informationApi: InformationApi = InformationApi()
 

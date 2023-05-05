@@ -12,7 +12,9 @@ maintainer := "QuadStingray, sfxcode"
 
 val mongoCampUser = "mongocamp-server"
 
-dockerRepository := Some("ghcr.io/mongocamp")
+dockerRepository := Some("mongocamp")
+
+dockerUpdateLatest := true
 
 Docker / daemonUser := mongoCampUser
 
@@ -30,17 +32,6 @@ commands += Command.command("ci-docker")((state: State) => {
   }
   else {
     Command.process("docker:publish", state)
-    val dockerHubRepository = "mongocamp"
-    val originalContainerName = s"${dockerRepository.value.get}/${name.value}:${version.value}"
-    val newContainerName = originalContainerName.replace(dockerRepository.value.get, dockerHubRepository)
-
-    val dockerTagCommand = s"docker tag $originalContainerName $newContainerName"
-    val tagResponse = dockerTagCommand.!!
-
-    val dockerPushCommand = s"docker push $newContainerName"
-    val pushResponse = dockerPushCommand.!!
-    state.log.warn("Tag Container <pushResponse>" + pushResponse + "</pushResponse>")
-
     state
   }
 })

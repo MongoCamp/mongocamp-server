@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.config.{ ConfigRegisterEvent, ConfigUpdateEvent }
+import dev.mongocamp.server.event.config.{ConfigRegisterEvent, ConfigUpdateEvent}
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
@@ -53,6 +53,17 @@ object ConfigurationService {
       nonPersistentConfigs.put(configKey, config)
       EventSystem.eventStream.publish(ConfigRegisterEvent(persistent = false, configKey, configType, value, comment, config.needsRestartForActivation))
       true
+    }
+  }
+
+  def removeConfig(configKey: String): Boolean = {
+    val nonPersistentRemove = nonPersistentConfigs.remove(configKey)
+    if (nonPersistentRemove.isEmpty) {
+      configCache.invalidate(configKey)
+      val deleteResult = ConfigDao().deleteOne(Map("key" -> configKey)).result()
+      deleteResult.wasAcknowledged()
+    } else {
+      nonPersistentRemove.nonEmpty
     }
   }
 

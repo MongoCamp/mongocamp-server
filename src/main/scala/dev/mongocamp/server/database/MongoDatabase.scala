@@ -1,19 +1,20 @@
 package dev.mongocamp.server.database
 
-import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
+import com.mongodb.event.{CommandListener, ConnectionPoolListener}
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
+import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.interceptor.RequestLogging
-import dev.mongocamp.server.model.auth.{ Grant, Role, TokenCacheElement, UserInformation }
-import dev.mongocamp.server.model.{ DBFileInformation, JobConfig }
+import dev.mongocamp.server.model.auth.{Grant, Role, TokenCacheElement, UserInformation}
+import dev.mongocamp.server.model.{DBFileInformation, JobConfig}
 import dev.mongocamp.server.service.ConfigurationService
+import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
 
 import scala.collection.mutable.ArrayBuffer
+import scala.jdk.CollectionConverters._
 
 object MongoDatabase {
 
@@ -24,13 +25,11 @@ object MongoDatabase {
   private[database] lazy val CollectionNameConfiguration = s"${collectionPrefix}configuration"
   private[database] lazy val CollectionNameUsers         = s"${collectionPrefix}users"
   private[database] lazy val CollectionNameRoles         = s"${collectionPrefix}roles"
-  private[database] lazy val CollectionNameRequestLog    = s"${collectionPrefix}request_logging"
   private[database] lazy val CollectionNameTokenCache    = s"${collectionPrefix}token_cache"
   private[database] lazy val CollectionNameJobs          = s"${collectionPrefix}jobs"
 
   lazy val userDao: UserDao                     = UserDao()
   lazy val rolesDao: RolesDao                   = RolesDao()
-  lazy val requestLoggingDao: RequestLoggingDao = RequestLoggingDao()
   lazy val tokenCacheDao: TokenCacheDao         = TokenCacheDao()
   lazy val jobDao: JobDao                       = JobDao()
 
@@ -67,15 +66,25 @@ object MongoDatabase {
     dbProvider
   }
 
-  private val providerRegistry = fromProviders(
+  val userProviders: ArrayBuffer[CodecProvider] = ArrayBuffer(
     classOf[UserInformation],
     classOf[Role],
     classOf[Grant],
-    classOf[RequestLogging],
     classOf[TokenCacheElement],
     classOf[DBFileInformation],
     classOf[JobConfig],
     CustomCodecProvider()
   )
+
+
+  def addToProvider(provider: CodecProvider): Unit = {
+    userProviders += provider
+    providerRegistry = fromProviders(userProviders.asJava)
+    if (_databaseProvider != null) {
+      createNewDatabaseProvider()
+    }
+  }
+
+  private var providerRegistry = fromProviders(userProviders.asJava)
 
 }

@@ -1,9 +1,9 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.client.api.DatabaseApi
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.client.api.DatabaseApi
 
-class DatabaseSuite extends BaseSuite {
+class DatabaseSuite extends BaseServerSuite {
 
   val databaseApi: DatabaseApi = DatabaseApi()
 
@@ -41,7 +41,6 @@ class DatabaseSuite extends BaseSuite {
         "admin-test",
         "mc_configuration",
         "mc_jobs",
-        "mc_request_logging",
         "mc_roles",
         "mc_token_cache",
         "mc_users",
@@ -52,7 +51,7 @@ class DatabaseSuite extends BaseSuite {
         "users"
       )
     )
-    assertEquals(response.size, 13)
+    assertEquals(response.size, 12)
   }
 
   test("list all collections for database geodata as admin") {

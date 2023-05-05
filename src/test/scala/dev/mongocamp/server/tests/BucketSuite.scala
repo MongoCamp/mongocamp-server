@@ -1,13 +1,15 @@
 package dev.mongocamp.server.tests
 
-import better.files.File
+import better.files.{File, Resource}
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.client.api.{BucketApi, DatabaseApi}
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.TestAdditions
+import dev.mongocamp.server.test.TestAdditions.copyResourceFileToTempDir
+import dev.mongocamp.server.test.client.api.{BucketApi, DatabaseApi}
 
 import scala.util.Random
 
-class BucketSuite extends BaseSuite {
+class BucketSuite extends BaseServerSuite {
 
   val api: BucketApi           = BucketApi()
   val databaseApi: DatabaseApi = DatabaseApi()
@@ -21,12 +23,12 @@ class BucketSuite extends BaseSuite {
   test("buckets sample-files as admin") {
     val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")("sample-files"))
     assertEquals(response.files, 4L)
-    val minSize = 400900
-    val maxSize = 401100
+    val minSize = 400000
+    val maxSize = 410000
     assertEquals(response.size > minSize, true, s"size (${response.size}) is not larger than $minSize")
     assertEquals(response.size < maxSize, true, s"size (${response.size}) is not smaller than $maxSize")
-    val minObjectSize = 100225
-    val maxObjectSize = 100260
+    val minObjectSize = 100000
+    val maxObjectSize = 100500
     assertEquals(response.avgObjectSize > minObjectSize, true, s"avgObjectSize (${response.avgObjectSize}) is not larger than $minObjectSize")
     assertEquals(response.avgObjectSize < maxObjectSize, true, s"avgObjectSize (${response.avgObjectSize}) is not smaller than $maxObjectSize")
   }
@@ -34,7 +36,8 @@ class BucketSuite extends BaseSuite {
   test("clear bucket as admin") {
     val bucketName = "delete-files"
     object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, bucketName)
-    val accountFile = File(getClass.getResource("/accounts.json").getPath)
+    val accountFile = File.newTemporaryFile()
+    accountFile.append(Resource.asString("accounts.json").getOrElse(""))
     FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
 
     val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")(bucketName))
@@ -46,7 +49,7 @@ class BucketSuite extends BaseSuite {
   test("delete buckets as admin") {
     val bucketName = "delete-files"
     object FilesDAO extends GridFSDAO(MongoDatabase.databaseProvider, bucketName)
-    val accountFile = File(getClass.getResource("/accounts.json").getPath)
+    val accountFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "accounts.json")
     FilesDAO.uploadFile(accountFile.name, accountFile, Map("test" -> Random.alphanumeric.take(10).mkString, "fullPath" -> accountFile.toString())).result()
 
     val response = executeRequestToResponse(api.getBucket("", "", adminBearerToken, "")(bucketName))

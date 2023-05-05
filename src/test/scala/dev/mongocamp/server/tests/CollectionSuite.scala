@@ -1,11 +1,11 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.client.api.{CollectionApi, DatabaseApi}
-import dev.mongocamp.server.client.model.{MongoAggregateRequest, PipelineStage}
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.client.api.{CollectionApi, DatabaseApi}
+import dev.mongocamp.server.test.client.model.{MongoAggregateRequest, PipelineStage}
 
-class CollectionSuite extends BaseSuite {
+class CollectionSuite extends BaseServerSuite {
 
   val collectionApi: CollectionApi = CollectionApi()
   val databaseApi: DatabaseApi     = DatabaseApi()
@@ -19,7 +19,6 @@ class CollectionSuite extends BaseSuite {
         "admin-test",
         "mc_configuration",
         "mc_jobs",
-        "mc_request_logging",
         "mc_roles",
         "mc_token_cache",
         "mc_users",
@@ -30,7 +29,7 @@ class CollectionSuite extends BaseSuite {
         "users"
       )
     )
-    assertEquals(response.size, 13)
+    assertEquals(response.size, 12)
 
   }
 

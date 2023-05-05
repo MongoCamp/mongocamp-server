@@ -1,23 +1,23 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.client.api.JobsApi
-import dev.mongocamp.server.client.model.JobConfig
-import dev.mongocamp.server.server.CountingTestJob
+import dev.mongocamp.server.test.CountingTestJob
+import dev.mongocamp.server.test.client.api.JobsApi
+import dev.mongocamp.server.test.client.model.JobConfig
 
-class JobSuite extends BaseSuite {
+class JobSuite extends BaseServerSuite {
 
   val jobsApi: JobsApi = JobsApi()
 
   test("check pre triggered job was running") {
     // test fails sometime if only JobSuite is running
-    val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
+    executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
     assertEquals(CountingTestJob.counter > 0, true)
   }
 
   test("check possible jobs as admin") {
     val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
-    assertEquals(jobsList.head, "dev.mongocamp.server.server.CountingTestJob")
+    assertEquals(jobsList.head, "dev.mongocamp.server.test.CountingTestJob")
     assertEquals(jobsList.last, "dev.mongocamp.server.jobs.CleanUpTokenJob")
   }
 
@@ -32,7 +32,7 @@ class JobSuite extends BaseSuite {
     val jobsList = executeRequestToResponse(jobsApi.jobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
     val fistJob = jobsList.head
-    assertEquals(fistJob.jobClassName, "dev.mongocamp.server.server.CountingTestJob")
+    assertEquals(fistJob.jobClassName, "dev.mongocamp.server.test.CountingTestJob")
     assertEquals(fistJob.name, "CountingTestJob")
     assertEquals(fistJob.group, "Default")
     assertEquals(fistJob.description, "")
@@ -63,18 +63,18 @@ class JobSuite extends BaseSuite {
   }
 
   test("register job as admin") {
-    val config = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
+    val config      = JobConfig("RandomNewJobName", "dev.mongocamp.server.test.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
     val executedJob = executeRequestToResponse(jobsApi.registerJob("", "", adminBearerToken, "")(config))
     assertEquals(executedJob.name, config.name)
     assertEquals(executedJob.group, config.group)
     assertEquals(executedJob.jobClassName, config.className)
     assertEquals(executedJob.cronExpression, config.cronExpression)
     assertEquals(executedJob.description, config.description)
-    assertEquals(executedJob.nextScheduledFireTime.isDefined, true )
+    assertEquals(executedJob.nextScheduledFireTime.isDefined, true)
   }
 
   test("register job as user") {
-    val config = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
+    val config   = JobConfig("RandomNewJobName", "dev.mongocamp.server.test.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
     val response = executeRequest(jobsApi.registerJob("", "", testUserBearerToken, "")(config))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
@@ -82,27 +82,28 @@ class JobSuite extends BaseSuite {
   }
 
   test("update job as admin") {
-    val config = JobConfig("RandomNewJobNameChanged", "dev.mongocamp.server.server.CountingTestJob", "Changed Description", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val executedJob = executeRequestToResponse(jobsApi.updateJob("", "", adminBearerToken, "")("NewGroup" ,"RandomNewJobName", config))
+    val config =
+      JobConfig("RandomNewJobNameChanged", "dev.mongocamp.server.test.CountingTestJob", "Changed Description", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
+    val executedJob = executeRequestToResponse(jobsApi.updateJob("", "", adminBearerToken, "")("NewGroup", "RandomNewJobName", config))
     assertEquals(executedJob.name, config.name)
     assertEquals(executedJob.group, config.group)
     assertEquals(executedJob.jobClassName, config.className)
     assertEquals(executedJob.cronExpression, config.cronExpression)
     assertEquals(executedJob.description, config.description)
-    assertEquals(executedJob.nextScheduledFireTime.isDefined, true )
+    assertEquals(executedJob.nextScheduledFireTime.isDefined, true)
   }
 
   test("update not existing job as admin") {
-    val config = JobConfig("RandomNewJobNameChanged", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val response = executeRequest(jobsApi.updateJob("", "", adminBearerToken, "")("NewGroup" ,"FreakyName", config))
+    val config   = JobConfig("RandomNewJobNameChanged", "dev.mongocamp.server.test.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
+    val response = executeRequest(jobsApi.updateJob("", "", adminBearerToken, "")("NewGroup", "FreakyName", config))
     assertEquals(response.code.code, 404)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "FreakyName with group NewGroup does not exists.")
   }
 
   test("update job as user") {
-    val config = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
-    val response = executeRequest(jobsApi.updateJob("", "", testUserBearerToken, "")("NewGroup" ,"RandomNewJobName", config))
+    val config   = JobConfig("RandomNewJobName", "dev.mongocamp.server.server.CountingTestJob", "registeredJob", "34 34 0 1 1/7 ? 2022/7", "NewGroup", 1)
+    val response = executeRequest(jobsApi.updateJob("", "", testUserBearerToken, "")("NewGroup", "RandomNewJobName", config))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for request")
