@@ -8,7 +8,7 @@ organization := json.stringValue("organization")
 
 scalaVersion := "2.13.10"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.2"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.3"
 
 val TapirVersion = "1.3.0"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
@@ -38,4 +38,4 @@ libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 
-libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.2"
+libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.3"

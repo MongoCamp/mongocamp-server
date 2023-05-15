@@ -6,4 +6,4 @@ IntegrationTest / parallelExecution := false
 
 Test / scalacOptions ++= Seq("-Yrangepos")
 
-libraryDependencies += "dev.mongocamp" %% "mongocamp-test-server" % "0.5.0" % Test
+libraryDependencies += "dev.mongocamp" %% "mongocamp-test-server" % "0.5.1" % Test
