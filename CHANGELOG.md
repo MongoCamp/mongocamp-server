@@ -1,3 +1,10 @@
+## [1.4.3]() (2023-05-15)
+
+
+### Maintenance
+
+* **dependencies:** Fix empty aggregation response with 3 dependency updates for mongocamp-server ([ea129e0](https://github.com/MongoCamp/mongocamp-server/commit/ea129e070c016377db3de5f94f3ab7c5b7a77fc6))
+
 ## [1.4.2]() (2023-05-05)
 
 
