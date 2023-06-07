@@ -1,3 +1,10 @@
+## [1.4.4]() (2023-06-07)
+
+
+### Maintenance
+
+* **dependencies:** 8 dependency updates for mongocamp-server ([6271721](https://github.com/MongoCamp/mongocamp-server/commit/6271721ec0675b75f5798ef13c73e9cc34d50dbf))
+
 ## [1.4.3]() (2023-05-15)
 
 
