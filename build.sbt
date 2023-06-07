@@ -6,11 +6,11 @@ name := json.stringValue("name")
 
 organization := json.stringValue("organization")
 
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.11"
 
 libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.3"
 
-val TapirVersion = "1.3.0"
+val TapirVersion = "1.5.1"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
@@ -30,7 +30,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.7"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
 
-libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.2.0"
+libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.3.0"
 
 dependencyOverrides += "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.0"
 
@@ -38,4 +38,4 @@ libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 
-libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.3"
+libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.4"

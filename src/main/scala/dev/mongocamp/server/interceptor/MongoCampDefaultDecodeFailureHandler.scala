@@ -1,13 +1,13 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.exception.ErrorDefinition.{ HeaderErrorAdditionalInfo, HeaderErrorCode, HeaderErrorMessage }
+import dev.mongocamp.server.exception.ErrorDefinition.{HeaderErrorAdditionalInfo, HeaderErrorCode, HeaderErrorMessage}
 import dev.mongocamp.server.exception.ErrorDescription
 import io.circe.generic.auto._
 import io.circe.syntax.EncoderOps
-import sttp.model.{ Header, StatusCode }
+import sttp.model.{Header, StatusCode}
 import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.interceptor.decodefailure.DecodeFailureHandler
-import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.{ failureResponse, respond, FailureMessages }
+import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.{FailureMessages, failureResponse, respond}
 import sttp.tapir.server.model.ValuedEndpointOutput
 
 case class MongoCampDefaultDecodeFailureHandler(
@@ -39,7 +39,7 @@ case class MongoCampDefaultDecodeFailureHandler(
 
 object MongoCampDefaultDecodeFailureHandler {
   def handler: MongoCampDefaultDecodeFailureHandler = MongoCampDefaultDecodeFailureHandler(
-    respond(_, badRequestOnPathErrorIfPathShapeMatches = false, badRequestOnPathInvalidIfPathShapeMatches = true),
+    respond,
     FailureMessages.failureMessage,
     failureResponse
   )
