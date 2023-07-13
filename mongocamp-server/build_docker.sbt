@@ -1,4 +1,5 @@
 import com.typesafe.sbt.packager.docker.Cmd
+import com.vdurmont.semver4j.Semver
 
 enablePlugins(JavaAppPackaging)
 
@@ -24,12 +25,11 @@ dockerCommands += Cmd("USER", mongoCampUser)
 dockerExposedPorts := List(8080)
 
 commands += Command.command("ci-docker")((state: State) => {
-  val lowerCaseVersion = version.value.toLowerCase
-  if (lowerCaseVersion.contains("snapshot")) {
-    state
+  val semVersion = new Semver(version.value)
+  if (semVersion.isStable) {
+    Command.process("docker:publish", state)
   }
   else {
-    Command.process("docker:publish", state)
     state
   }
 })
