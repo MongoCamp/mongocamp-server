@@ -46,7 +46,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   lazy val serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] =
     InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ listOfRoutePlugins.flatMap(_.endpoints) ++ IndexRoutes.endpoints
 
-  registerMongoCampServerDefaultConfigs
+  ConfigurationService.registerMongoCampServerDefaultConfigs()
 
   def routes(implicit ex: ExecutionContext): Route = {
     val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
@@ -91,8 +91,9 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
-    PluginService.downloadPlugins()
-    PluginService.loadPlugins()
+    val pluginService = new PluginService()
+    pluginService.downloadPlugins()
+    pluginService.loadPlugins()
     ReflectionService.registerClassLoaders(getClass)
     doBeforeServerStartUp()
     Http()

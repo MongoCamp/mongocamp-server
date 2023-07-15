@@ -9,6 +9,8 @@ val json = JsonFile(file("package.json"))
 
 ThisBuild / organization := json.stringValue("organization")
 
+publish / skip := true
+
 lazy val mcLibrary = mongoCampProject("library")
 
 lazy val mcTest = mongoCampProject("test-server").dependsOn(mcLibrary).enablePlugins(BuildInfoPlugin)

@@ -68,10 +68,7 @@ trait MongoCampBaseServerSuite extends munit.FunSuite {
           MongoDatabase.databaseProvider
             .collectionNames(db)
             .foreach(collection => {
-              val configRead = new ConfigurationRead {
-                override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
-              }
-              if (!collection.startsWith(configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix))) {
+              if (!collection.startsWith(ConfigurationRead.noPublishReader.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix))) {
                 MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
               }
             })

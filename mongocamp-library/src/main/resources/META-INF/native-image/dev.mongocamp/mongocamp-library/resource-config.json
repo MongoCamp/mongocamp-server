@@ -1,0 +1,14 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": ".*/*.xml$"},
+      {"pattern": ".*/*.properties$"},
+      {"pattern": ".*/*.conf$"},
+      {"pattern": ".*/*.json$"}
+    ],
+    "excludes": [
+    ]
+  },
+  "bundles" : [
+  ]
+}

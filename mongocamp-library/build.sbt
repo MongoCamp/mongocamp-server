@@ -1,3 +1,5 @@
+import dev.quadstingray.sbt.json.JsonFile
+
 name := "mongocamp-library"
 
 libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.5"
@@ -17,8 +19,12 @@ libraryDependencies += "com.softwaremill.sttp.model" %% "core" % "1.7.0"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
 
+libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
+
 enablePlugins(BuildInfoPlugin)
 
 buildInfoPackage := "dev.mongocamp.server.library"
 
 buildInfoOptions += BuildInfoOption.BuildTime
+
+buildInfoKeys ++= Seq[BuildInfoKey]("organization" -> organization.value, "mainClass" -> "dev.mongocamp.server.Server")

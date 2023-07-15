@@ -16,9 +16,7 @@ import scala.jdk.CollectionConverters._
 object MongoDatabase {
 
   private lazy val collectionPrefix = {
-    val configRead = new ConfigurationRead {
-      override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
-    }
+    val configRead = ConfigurationRead.noPublishReader
     configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
   }
   private lazy val connectionPoolListener: ArrayBuffer[ConnectionPoolListener] = ArrayBuffer()
@@ -47,9 +45,7 @@ object MongoDatabase {
   }
 
   def createNewDatabaseProvider(): DatabaseProvider = {
-    val configRead = new ConfigurationRead {
-      override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
-    }
+    val configRead = ConfigurationRead.noPublishReader
     val connection = MongoConfig(
       configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase),
       configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost),

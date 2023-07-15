@@ -2,6 +2,7 @@ package dev.mongocamp.server.service
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
+import com.vdurmont.semver4j.Semver
 import coursier._
 import coursier.core.Configuration
 import coursier.params.ResolutionParams
@@ -35,10 +36,8 @@ object CoursierModuleService extends LazyLogging {
   }
 
   def loadMavenConfiguredDependencies(): List[File] = {
-    val configRead = new ConfigurationRead {
-      override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
-    }
-    loadMavenConfiguredDependencies(configRead.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsModules))
+    val modules = ConfigurationRead.noPublishReader.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsModules)
+    loadMavenConfiguredDependencies(modules)
   }
 
   def loadMavenConfiguredDependencies(dependencyStrings: List[String]): List[File] = {
@@ -47,30 +46,38 @@ object CoursierModuleService extends LazyLogging {
         .dependency(s, scala.util.Properties.versionNumberString, Configuration.empty)
         .getOrElse(throw new Exception(s"$s is not a right configured maven dependency"))
     )
-    fetchMavenDependencies(dependencies)
+    fetchMavenDependencies(dependencies, Some(resolutionParams), true)
   }
 
-  private def fetchMavenDependencies(dependencies: List[Dependency]): List[File] = {
+  def loadServerWithAllDependencies(): List[File] = {
+    val scalaVersion = new Semver(BuildInfo.scalaVersion)
+    val scalaShort   = s"${scalaVersion.getMajor}.${scalaVersion.getMinor}"
+    val dependency   = Dependency(Module(Organization(BuildInfo.organization), ModuleName(s"mongocamp-server_$scalaShort")), BuildInfo.version)
+    CoursierModuleService.fetchMavenDependencies(List(dependency), None, false)
+  }
+
+  private def fetchMavenDependencies(dependencies: List[Dependency], resolutionParams: Option[ResolutionParams], useCustomMavenRepos: Boolean): List[File] = {
     try {
-      val mvnRepository: List[coursier.MavenRepository] = getConfiguredMavenRepositories
-      val resolution = Fetch()
-        .withDependencies(dependencies)
-        .addRepositories(mvnRepository: _*)
-        .addRepositories(defaultRepositories: _*)
-        .withResolutionParams(resolutionParams)
-        .run()
+      var fetchCommand = Fetch().withDependencies(dependencies).addRepositories(defaultRepositories: _*)
+
+      resolutionParams.foreach(params => fetchCommand = fetchCommand.withResolutionParams(params))
+
+      if (useCustomMavenRepos) {
+        val mvnRepository: List[coursier.MavenRepository] = getConfiguredMavenRepositories
+        fetchCommand = fetchCommand.addRepositories(mvnRepository: _*)
+      }
+
+      val resolution = fetchCommand.run()
       resolution.toList.map(jFile => File(jFile.toURI))
     }
     catch {
-      case e: Exception =>
-        fetchMavenDependencies(checkMavenDependencies(dependencies))
+      case _: Exception =>
+        fetchMavenDependencies(checkMavenDependencies(dependencies), resolutionParams, useCustomMavenRepos)
     }
   }
 
   private def getConfiguredMavenRepositories: List[MavenRepository] = {
-    val configRead = new ConfigurationRead {
-      override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
-    }
+    val configRead = ConfigurationRead.noPublishReader
     val mvnRepository: List[MavenRepository] = configRead
       .getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsMavenRepositories)
       .map(string => dev.mongocamp.server.plugin.coursier.Repository.mvn(string))

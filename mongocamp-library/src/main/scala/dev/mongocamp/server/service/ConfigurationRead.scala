@@ -4,6 +4,7 @@ import com.github.blemale.scaffeine.Scaffeine
 import com.typesafe.config
 import com.typesafe.config.ConfigFactory
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.config.DefaultConfigurations._
 import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
@@ -15,7 +16,10 @@ import sttp.model.StatusCode
 
 import scala.collection.mutable
 import scala.concurrent.duration._
+import scala.util.Random
 trait ConfigurationRead {
+
+  lazy val conf: config.Config = ConfigFactory.load()
 
   def getConfigValue[A <: Any](key: String): A = {
     getConfig(key).map(_.typedValue[A]()).getOrElse(throw MongoCampException(s"configuration for key $key not found", StatusCode.NotFound))
@@ -46,6 +50,112 @@ trait ConfigurationRead {
     response.sortBy(_.key)
   }
 
+  def registerMongoCampServerDefaultConfigs(): Unit = {
+    registerNonPersistentConfig(ConfigKeyConnectionHost, MongoCampConfiguration.confTypeString)
+    registerNonPersistentConfig(ConfigKeyConnectionPort, MongoCampConfiguration.confTypeLong)
+    registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString)
+    registerNonPersistentConfig(ConfigKeyConnectionUsername, MongoCampConfiguration.confTypeStringOption)
+    registerNonPersistentConfig(ConfigKeyConnectionPassword, MongoCampConfiguration.confTypeStringOption)
+    registerNonPersistentConfig(ConfigKeyConnectionAuthDb, MongoCampConfiguration.confTypeString, Some("admin"))
+    registerNonPersistentConfig(ConfigKeyAuthPrefix, MongoCampConfiguration.confTypeString, Some("mc_"))
+    registerNonPersistentConfig(ConfigKeyAuthUsers, MongoCampConfiguration.confTypeStringList)
+    registerNonPersistentConfig(ConfigKeyAuthRoles, MongoCampConfiguration.confTypeStringList)
+
+    ConfigDao().createUniqueIndexForField("key").result()
+
+    registerConfig(ConfigKeyServerInterface, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
+    registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
+
+    registerConfig(ConfigKeyPluginsIgnored, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsUrls, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsDirectory, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsModules, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
+    registerConfig(ConfigKeyPluginsMavenRepositories, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
+
+    registerConfig(ConfigKeyHttpClientHeaders, MongoCampConfiguration.confTypeString)
+
+    registerConfig(ConfigKeyAuthHandler, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
+    registerConfig(ConfigKeyAuthSecret, MongoCampConfiguration.confTypeString, Some(Random.alphanumeric.take(32).mkString))
+    registerConfig(ConfigKeyAuthApiKeyLength, MongoCampConfiguration.confTypeLong)
+    registerConfig(ConfigKeyAuthCacheDb, MongoCampConfiguration.confTypeBoolean)
+    registerConfig(ConfigKeyAuthExpiringDuration, MongoCampConfiguration.confTypeDuration)
+
+    registerConfig(ConfigKeyAuthBearer, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+    registerConfig(ConfigKeyAuthBasic, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+    registerConfig(ConfigKeyAuthToken, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+
+    registerConfig(ConfigKeyFileHandler, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
+    registerConfig(ConfigKeyFileCache, MongoCampConfiguration.confTypeString)
+
+    registerConfig(ConfigKeyCorsHeadersAllowed, MongoCampConfiguration.confTypeStringList)
+    registerConfig(ConfigKeyCorsHeadersExposed, MongoCampConfiguration.confTypeStringList)
+    registerConfig(ConfigKeyCorsOriginsAllowed, MongoCampConfiguration.confTypeStringList)
+
+    registerConfig(ConfigKeyDocsSwagger, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+    registerConfig(ConfigKeyOpenApi, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+  }
+
+  def registerNonPersistentConfig(configKey: String, configType: String, value: Option[Any] = None, comment: String = ""): Boolean = {
+    val internalValue = if (value.isDefined) {
+      value.get
+    }
+    else {
+      val envValue = loadEnvValue(configKey)
+      if (envValue.isDefined) {
+        envValue.get
+      }
+      else {
+        try {
+          val key = configKey.toLowerCase().replace("_", ".")
+          val scalaConfigValue = conf.getValue(key)
+          scalaConfigValue.unwrapped()
+        }
+        catch {
+          case _: Exception =>
+            null
+        }
+      }
+    }
+    val config = convertToDbConfiguration(configKey, configType, Option(internalValue).filterNot(_.toString.isEmpty), comment, needsRestartForActivation = true)
+    if (nonPersistentConfigs.keys.toList.contains(configKey)) {
+      false
+    }
+    else {
+      nonPersistentConfigs.put(configKey, config)
+      publishConfigRegisterEvent(persistent = false, configKey, configType, value, comment, config.needsRestartForActivation)
+      true
+    }
+  }
+
+  def registerConfig(configKey: String, configType: String, value: Option[Any] = None, comment: String = "", needsRestartForActivation: Boolean = false): Boolean = {
+    if (getConfigFromDatabase(configKey).isEmpty) {
+      val dbConfiguration: MongoCampConfiguration = convertToDbConfiguration(configKey, configType, value, comment, needsRestartForActivation)
+      val configToInsert: MongoCampConfiguration = {
+        try {
+          if (value.isEmpty) {
+            val key = configKey.toLowerCase().replace("_", ".")
+            val scalaConfigValue = conf.getValue(key)
+            dbConfiguration.copy(value = scalaConfigValue.unwrapped())
+          }
+          else {
+            dbConfiguration
+          }
+        }
+        catch {
+          case _: Exception =>
+            dbConfiguration
+        }
+      }
+      val insertResponse = ConfigDao().insertOne(Converter.toDocument(configToInsert)).result()
+      publishConfigRegisterEvent(true, configKey, configType, value, comment, needsRestartForActivation = needsRestartForActivation)
+      checkAndUpdateWithEnv(configKey)
+      insertResponse.wasAcknowledged()
+    }
+    else {
+      false
+    }
+  }
+
   private[service] def checkAndUpdateWithEnv(key: String): Unit = {
     getConfigFromDatabase(key).foreach(dbConfig => {
       loadEnvValue(key)
@@ -61,8 +171,6 @@ trait ConfigurationRead {
         })
     })
   }
-
-  protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit
 
   private[service] def getConfigFromDatabase(key: String): Option[MongoCampConfiguration] = {
     ConfigDao()
@@ -81,13 +189,7 @@ trait ConfigurationRead {
     )
   }
 
-  private[service] def convertToDbConfiguration(
-      configKey: String,
-      configType: String,
-      value: Option[Any] = None,
-      comment: String = "",
-      needsRestartForActivation: Boolean = false
-  ): MongoCampConfiguration = {
+  private[service] def convertToDbConfiguration(configKey: String, configType: String, value: Option[Any] = None, comment: String = "", needsRestartForActivation: Boolean = false): MongoCampConfiguration = {
     val invalidConfListInt = "List[Int]"
     val invalidConfInt     = "Int"
 
@@ -270,11 +372,18 @@ trait ConfigurationRead {
     }
   }
 
+  protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit
+  protected def publishConfigRegisterEvent(persistent: Boolean, configKey: String, configType: String, value: Option[Any], comment: String, needsRestartForActivation: Boolean): Unit
+
 }
 
 object ConfigurationRead {
 
-  private[service] lazy val conf: config.Config = ConfigFactory.load()
+  def noPublishReader = new ConfigurationRead {
+    override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
+
+    override protected def publishConfigRegisterEvent(persistent: Boolean, configKey: String, configType: String, value: Option[Any], comment: String, needsRestartForActivation: Boolean): Unit = {}
+  }
 
   private[service] lazy val nonPersistentConfigs: mutable.Map[String, MongoCampConfiguration] = mutable.Map[String, MongoCampConfiguration]()
 

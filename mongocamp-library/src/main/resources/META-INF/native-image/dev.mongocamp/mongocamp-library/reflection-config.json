@@ -1,0 +1,24 @@
+[
+  {
+    "name": "dev.mongocamp.server.service.ConfigurationRead",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "dev.mongocamp.server.service.ConfigurationRead$",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  }
+]
