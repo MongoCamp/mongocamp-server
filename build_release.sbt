@@ -77,6 +77,7 @@ releaseProcess := {
     releaseStepCommand("mongocamp-library/sonatypeBundleRelease"),
     releaseStepCommand("mongocamp-server/sonatypeBundleRelease"),
     releaseStepCommand("mongocamp-test-server/sonatypeBundleRelease"),
+    releaseStepCommand("ci-docker"),
     releaseStepCommand("ci-deploy-docs"),
     setToMyNextVersion,
     gitAddAllTask,

@@ -11,6 +11,6 @@ FROM debian:bookworm-slim
 COPY --from=build /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli /opt/bin/mongocamp-cli
 ENV MODE="default"
 WORKDIR /opt/bin/
-RUN chmod +x /opt/bin/mongocamp-cli
+RUN mkdir -p /opt/mongocamp/plugins; chmod -R 777 /opt/mongocamp/plugins; chmod +x /opt/bin/mongocamp-cli;
 RUN ./mongocamp-cli prepare
 ENTRYPOINT ./mongocamp-cli run $MODE

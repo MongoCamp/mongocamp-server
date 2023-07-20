@@ -2,7 +2,7 @@ name: Run Build and Release Process
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, native_image ]
   repository_dispatch:
     types: [build]
 
