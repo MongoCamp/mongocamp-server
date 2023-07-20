@@ -64,7 +64,7 @@ jobs:
           docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          sbt mongocamp-server/ci-docker
+          sbt ci-docker
   sync-readme:
     needs: build-docker
     runs-on: ubuntu-latest
