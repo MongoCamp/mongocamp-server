@@ -52,10 +52,10 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v3.0.0
       - name: Set up JDK
-        uses: actions/setup-java@v3.3.0
+        uses: coursier/setup-action@v1
         with:
-          distribution: 'corretto'
-          java-version: '17'
+          jvm: graalvm-java17:22.3.2
+          apps: sbt scala scalac
       - name: Build Docker Container for GitHub Registry
         env:
           DOCKER_GIT_USERNAME: ${{ github.actor }}
