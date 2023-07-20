@@ -1,7 +1,7 @@
 package dev.mongocamp.server.cli.prepare
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.service.CoursierModuleService
+import dev.mongocamp.server.cli.service.JvmService
 import lukfor.progress.Components.{SPINNER, TASK_NAME}
 import lukfor.progress.TaskService
 import lukfor.progress.tasks.ITaskRunnable
@@ -10,18 +10,17 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.Help.Ansi
 
 @Command(
-  name = "cache",
-  description = Array("Download Server Jars to local Server")
+  name = "jvm",
+  description = Array("Check or Install GraalVM for build and run Commands")
 )
-class CacheCommand extends Runnable with LazyLogging {
+class InstallJVMCommand extends Runnable with LazyLogging {
 
   def run(): Unit = {
     val task = new ITaskRunnable() {
       def run(monitor: ITaskMonitor): Unit = {
-        monitor.begin("Download Server Jars from Maven Central")
+        monitor.begin("Install JVM")
         try {
-          val files = CoursierModuleService.loadServerWithAllDependencies()
-          monitor.update(s"${files.size} Jars from Maven Central downloaded")
+          monitor.update(s"Java Home: ${JvmService.javaHome}")
         } catch {
           case e: Exception =>
             monitor.failed(e)

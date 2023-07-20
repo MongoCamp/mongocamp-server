@@ -4,9 +4,7 @@ libraryDependencies += "org.scalameta" %% "munit" % "0.7.29"
 
 libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "4.6.3"
 
-val sttClientVersion = "3.8.15"
-
-libraryDependencies += "com.softwaremill.sttp.client3" %% "circe"             % sttClientVersion
+libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.8.15"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2" % Provided
 

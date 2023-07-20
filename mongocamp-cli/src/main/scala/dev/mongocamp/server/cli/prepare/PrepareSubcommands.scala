@@ -1,5 +1,6 @@
 package dev.mongocamp.server.cli.prepare
 
+import dev.mongocamp.server.cli.Main
 import picocli.CommandLine
 import picocli.CommandLine.{Command, HelpCommand}
 
@@ -15,7 +16,9 @@ class PrepareSubcommands extends Runnable {
   val spec: CommandLine.Model.CommandSpec = null
 
   def run(): Unit = {
-    throw new CommandLine.ParameterException(spec.commandLine(), "Specify a subcommand")
+    Main.commandLine.execute(List("prepare", "jvm"): _*)
+    Main.commandLine.execute(List("prepare", "cache"): _*)
+    Main.commandLine.execute(List("prepare", "native"): _*)
   }
 
 }

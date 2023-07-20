@@ -1,5 +1,3 @@
-import dev.quadstingray.sbt.json.JsonFile
-
 name := "mongocamp-library"
 
 libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.5"

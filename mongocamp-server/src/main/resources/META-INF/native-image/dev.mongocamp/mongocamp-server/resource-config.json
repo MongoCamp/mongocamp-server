@@ -11,15 +11,6 @@
       "pattern":"\\QMETA-INF/resources/webjars/swagger-ui/5.1.0/swagger-initializer.js\\E"
     }, 
     {
-      "pattern":"\\QMETA-INF/resources/webjars/swagger-ui/5.1.0/swagger-ui-bundle.js\\E"
-    }, 
-    {
-      "pattern":"\\QMETA-INF/resources/webjars/swagger-ui/5.1.0/swagger-ui-standalone-preset.js\\E"
-    }, 
-    {
-      "pattern":"\\QMETA-INF/resources/webjars/swagger-ui/5.1.0/swagger-ui.css\\E"
-    }, 
-    {
       "pattern":"\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
     }, 
     {
@@ -39,9 +30,6 @@
     }, 
     {
       "pattern":"\\Qlogback.xml\\E"
-    }, 
-    {
-      "pattern":"\\QmimeByExtensions.txt\\E"
     }, 
     {
       "pattern":"\\Qorg/joda/time/tz/data/Europe/Berlin\\E"

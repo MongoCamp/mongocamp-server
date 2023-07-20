@@ -17,7 +17,7 @@ import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsH
 import dev.mongocamp.server.plugin.{RoutesPlugin, ServerPlugin}
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ConfigurationService, PluginService, ReflectionService}
+import dev.mongocamp.server.service.{ConfigurationService, PluginDownloadService, PluginService, ReflectionService}
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
@@ -91,8 +91,9 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
+    val pluginDownloadService = new PluginDownloadService()
+    pluginDownloadService.downloadPlugins()
     val pluginService = new PluginService()
-    pluginService.downloadPlugins()
     pluginService.loadPlugins()
     ReflectionService.registerClassLoaders(getClass)
     doBeforeServerStartUp()

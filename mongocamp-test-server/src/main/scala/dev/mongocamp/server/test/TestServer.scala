@@ -61,6 +61,7 @@ object TestServer extends LazyLogging {
 
   def serverBaseUrl: String = {
     "http://%s:%s".format(server.interface, server.port)
+//    "http://%s:%s".format(server.interface, 8080)
   }
 
   def setPort(): Unit = {

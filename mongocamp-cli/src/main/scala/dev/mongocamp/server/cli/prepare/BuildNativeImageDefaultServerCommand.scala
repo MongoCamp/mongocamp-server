@@ -34,13 +34,13 @@ class BuildNativeImageDefaultServerCommand extends Runnable with LazyLogging {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Building Native Image")
         try {
-          val runnablePath = NativeImageBuildService.buildNativeImage(CoursierModuleService.loadServerWithAllDependencies(), "server-raw")
-          println(runnablePath)
-          //          monitor.update(s"${files.size} Jars from Maven Central downloaded")
+          NativeImageBuildService.buildNativeImage(CoursierModuleService.loadServerWithAllDependencies(), "server-raw")
         }
         catch {
           case e: Exception =>
             monitor.failed(e)
+            println(Ansi.AUTO.string(s"@|bold,underline,red Build Error:|@"))
+            println(Ansi.AUTO.string(s"@|red ${e.getMessage}|@"))
           case e: NativeBuildException =>
             monitor.failed(e)
             println(Ansi.AUTO.string(s"@|bold,underline,red Build Error:|@"))

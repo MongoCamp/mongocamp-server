@@ -4,10 +4,9 @@ import better.files.File
 import dev.mongocamp.server.cli.exception.NativeBuildException
 import dev.mongocamp.server.library.BuildInfo
 object NativeImageBuildService {
-  private val javaHome = System.getProperty("java.home")
 
   def installNativeImageExecutable(): Unit = {
-    val installCommand = s"$javaHome/bin/gu install native-image"
+    val installCommand = s"${JvmService.javaHome}/bin/gu install native-image"
     ProcessExecutorService.executeToString(installCommand)
   }
 
@@ -20,7 +19,7 @@ object NativeImageBuildService {
       "-H:+ReportExceptionStackTraces",
       "--report-unsupported-elements-at-runtime"
     )
-    val generateCommand = s"$javaHome/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
+    val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
     val result         =     ProcessExecutorService.executeToString(generateCommand)
     if (result.contains(s"Failed generating '${imageName}'")) {
       throw NativeBuildException(result)

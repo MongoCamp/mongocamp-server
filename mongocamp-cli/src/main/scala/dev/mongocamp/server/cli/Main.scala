@@ -1,13 +1,10 @@
 package dev.mongocamp.server.cli
 
 import dev.mongocamp.server.library.BuildInfo
-import dev.mongocamp.server.service.ConfigurationRead
 import lukfor.progress.TaskService
 import picocli.CommandLine
 import picocli.CommandLine.Help.Ansi.Style
 import picocli.CommandLine.Help.ColorScheme
-
-import scala.util.Random
 
 object Main {
 
@@ -26,12 +23,8 @@ object Main {
   def main(args: Array[String]): Unit = {
     System.setProperty("NAME", BuildInfo.name)
     System.setProperty("VERSION", BuildInfo.version)
-    System.setProperty("ALL_MARKER", allMarker)
     TaskService.setAnsiSupport(true)
-    ConfigurationRead.noPublishReader.registerMongoCampServerDefaultConfigs()
     System.exit(commandLine.execute(args: _*))
   }
-
-  lazy val allMarker = Random.nextString(10)
 
 }

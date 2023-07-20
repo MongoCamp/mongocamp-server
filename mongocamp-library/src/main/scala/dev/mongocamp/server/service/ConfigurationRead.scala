@@ -9,7 +9,7 @@ import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationRead.{configCache, nonPersistentConfigs}
+import dev.mongocamp.server.service.ConfigurationRead.{configCache, isDefaultConfigsRegistered, nonPersistentConfigs}
 import io.circe.parser.decode
 import org.mongodb.scala.bson.Document
 import sttp.model.StatusCode
@@ -19,13 +19,16 @@ import scala.concurrent.duration._
 import scala.util.Random
 trait ConfigurationRead {
 
-  lazy val conf: config.Config = ConfigFactory.load()
+  private lazy val conf: config.Config = ConfigFactory.load()
 
   def getConfigValue[A <: Any](key: String): A = {
     getConfig(key).map(_.typedValue[A]()).getOrElse(throw MongoCampException(s"configuration for key $key not found", StatusCode.NotFound))
   }
 
   def getConfig(key: String): Option[MongoCampConfiguration] = {
+    if (!isDefaultConfigsRegistered) {
+      registerMongoCampServerDefaultConfigs()
+    }
     if (nonPersistentConfigs.contains(key)) {
       nonPersistentConfigs.get(key)
     }
@@ -51,6 +54,8 @@ trait ConfigurationRead {
   }
 
   def registerMongoCampServerDefaultConfigs(): Unit = {
+    isDefaultConfigsRegistered = true
+
     registerNonPersistentConfig(ConfigKeyConnectionHost, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyConnectionPort, MongoCampConfiguration.confTypeLong)
     registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString)
@@ -60,8 +65,6 @@ trait ConfigurationRead {
     registerNonPersistentConfig(ConfigKeyAuthPrefix, MongoCampConfiguration.confTypeString, Some("mc_"))
     registerNonPersistentConfig(ConfigKeyAuthUsers, MongoCampConfiguration.confTypeStringList)
     registerNonPersistentConfig(ConfigKeyAuthRoles, MongoCampConfiguration.confTypeStringList)
-
-    ConfigDao().createUniqueIndexForField("key").result()
 
     registerConfig(ConfigKeyServerInterface, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
@@ -93,6 +96,9 @@ trait ConfigurationRead {
 
     registerConfig(ConfigKeyDocsSwagger, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
     registerConfig(ConfigKeyOpenApi, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
+
+    ConfigDao().createUniqueIndexForField("key").result()
+
   }
 
   def registerNonPersistentConfig(configKey: String, configType: String, value: Option[Any] = None, comment: String = ""): Boolean = {
@@ -385,8 +391,10 @@ object ConfigurationRead {
     override protected def publishConfigRegisterEvent(persistent: Boolean, configKey: String, configType: String, value: Option[Any], comment: String, needsRestartForActivation: Boolean): Unit = {}
   }
 
-  private[service] lazy val nonPersistentConfigs: mutable.Map[String, MongoCampConfiguration] = mutable.Map[String, MongoCampConfiguration]()
+  private[service] val nonPersistentConfigs: mutable.Map[String, MongoCampConfiguration] = mutable.Map[String, MongoCampConfiguration]()
 
-  private[service] lazy val configCache = Scaffeine().recordStats().expireAfterWrite(15.minutes).build[String, MongoCampConfiguration]()
+  private[service] val configCache = Scaffeine().recordStats().expireAfterWrite(15.minutes).build[String, MongoCampConfiguration]()
+
+  private var isDefaultConfigsRegistered: Boolean = false
 
 }
