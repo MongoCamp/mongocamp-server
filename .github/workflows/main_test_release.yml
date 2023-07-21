@@ -45,44 +45,9 @@ jobs:
           mongodb-port: 4711
       - name: Run tests
         run: sbt test
-  build-docker:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v3.0.0
-      - name: Set up JDK
-        uses: coursier/setup-action@v1
-        with:
-          jvm: graalvm-java17:22.3.2
-          apps: sbt scala scalac
-      - name: Build Docker Container for GitHub Registry
-        env:
-          DOCKER_GIT_USERNAME: ${{ github.actor }}
-          DOCKER_GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-          docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          sbt ci-docker
-  sync-readme:
-    needs: build-docker
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v3.0.0
-        with:
-          fetch-depth: 0
-      - name: Check out the repo
-        uses: meeDamian/sync-readme@v1.0.6
-        with:
-          user: ${{ secrets.DOCKERHUB_USER }}
-          pass: ${{ secrets.DOCKERHUB_PASSWORD }}
-          slug: mongocamp/mongocamp-server
-          readme: README.md
-          description: true
+
   release:
-    needs: build-docker
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
@@ -115,12 +80,31 @@ jobs:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSWORD }}
           PGP_SECRET: ${{ secrets.PGP_SECRET_KEY }}
         run: |
+          docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+          docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
           sbt ci-release
 
+  sync-readme:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
+        with:
+          fetch-depth: 0
+      - name: Check out the repo
+        uses: meeDamian/sync-readme@v1.0.6
+        with:
+          user: ${{ secrets.DOCKERHUB_USER }}
+          pass: ${{ secrets.DOCKERHUB_PASSWORD }}
+          slug: mongocamp/mongocamp-server
+          readme: README.md
+          description: true
   vulnerability_scanner:
-    needs: build-docker
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - name: Run Trivy vulnerability scanner
