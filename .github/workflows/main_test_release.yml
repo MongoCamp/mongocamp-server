@@ -2,28 +2,28 @@ name: Run Build and Release Process
 
 on:
   push:
-    branches: [ main, native_image ]
+    branches: [ main ]
   repository_dispatch:
-    types: [build]
+    types: [ build ]
 
 env:
   build_latest: auto
 
 jobs:
-#  code_quality:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: 'Qodana Scan'
-#        uses: JetBrains/qodana-action@main
-#        env:
-#          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+  #  code_quality:
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: 'Qodana Scan'
+  #        uses: JetBrains/qodana-action@main
+  #        env:
+  #          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       matrix:
         mongodb-version: [ '4.4', '5.0', '6.0' ]
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
     steps:
       - name: Git Checkout
         uses: actions/checkout@v3.0.0
