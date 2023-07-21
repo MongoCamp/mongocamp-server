@@ -1,7 +1,7 @@
 package dev.mongocamp.server.service
 
 import org.reflections.Reflections
-import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
+import org.reflections.util.{ ClasspathHelper, ConfigurationBuilder }
 
 import java.net.URL
 import scala.collection.mutable.ArrayBuffer

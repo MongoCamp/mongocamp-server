@@ -1,7 +1,7 @@
 package dev.mongocamp.server.plugin.coursier
 
 import coursier.core.Authentication
-import dev.mongocamp.server.exception.{ErrorCodes, MongoCampException}
+import dev.mongocamp.server.exception.{ ErrorCodes, MongoCampException }
 import sttp.model.StatusCode
 
 import scala.collection.mutable.ArrayBuffer

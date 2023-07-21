@@ -2,10 +2,10 @@ package dev.mongocamp.server.cli
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.cli.service.{JvmStartService, ProcessExecutorService}
+import dev.mongocamp.server.cli.service.{ JvmStartService, ProcessExecutorService }
 import dev.mongocamp.server.service.PluginService
 import picocli.CommandLine.Help.Ansi
-import picocli.CommandLine.{Command, Parameters}
+import picocli.CommandLine.{ Command, Parameters }
 
 @Command(
   name = "run",

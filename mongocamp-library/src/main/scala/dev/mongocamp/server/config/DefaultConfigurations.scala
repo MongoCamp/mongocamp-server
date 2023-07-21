@@ -1,6 +1,5 @@
 package dev.mongocamp.server.config
 
-
 object DefaultConfigurations {
   lazy val ConfigKeyServerInterface          = "SERVER_INTERFACE"
   lazy val ConfigKeyServerPort               = "SERVER_PORT"

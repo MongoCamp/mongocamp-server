@@ -1,6 +1,6 @@
 package dev.mongocamp.server.model
 
-import org.mongodb.scala.bson.{Document, ObjectId}
+import org.mongodb.scala.bson.{ Document, ObjectId }
 
 import java.util.Date
 

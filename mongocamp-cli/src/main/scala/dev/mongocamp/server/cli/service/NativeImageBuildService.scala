@@ -20,7 +20,7 @@ object NativeImageBuildService {
       "--report-unsupported-elements-at-runtime"
     )
     val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
-    val result         =     ProcessExecutorService.executeToString(generateCommand)
+    val result          = ProcessExecutorService.executeToString(generateCommand)
     if (result.contains(s"Failed generating '${imageName}'")) {
       throw NativeBuildException(result)
     }

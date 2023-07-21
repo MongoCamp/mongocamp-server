@@ -5,16 +5,16 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDaoHolder
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.job._
-import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated}
+import dev.mongocamp.server.exception.ErrorCodes.{ jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated }
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{JobConfig, JobInformation}
+import dev.mongocamp.server.model.{ JobConfig, JobInformation }
 import dev.mongocamp.server.service.ReflectionService
 import org.mongodb.scala.model.IndexOptions
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
 import org.quartz.impl.StdSchedulerFactory
-import org.quartz.{CronScheduleBuilder, Job, JobKey, Trigger}
+import org.quartz.{ CronScheduleBuilder, Job, JobKey, Trigger }
 import sttp.model.StatusCode
 
 import java.util.Date

@@ -1,6 +1,6 @@
 package dev.mongocamp.server.database.paging
 
-import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
+import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
 
 case class PaginationResult[A <: Any](databaseObjects: List[A], paginationInfo: PaginationInfo)
 

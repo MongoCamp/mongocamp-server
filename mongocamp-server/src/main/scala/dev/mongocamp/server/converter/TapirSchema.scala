@@ -1,7 +1,7 @@
 package dev.mongocamp.server.converter
 
 import org.bson.types.ObjectId
-import sttp.tapir.{Schema, SchemaType}
+import sttp.tapir.{ Schema, SchemaType }
 
 trait TapirSchema extends CirceSchema {
 

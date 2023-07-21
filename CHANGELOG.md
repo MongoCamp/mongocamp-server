@@ -1,3 +1,21 @@
+## [1.5.0]() (2023-07-21)
+
+
+### Code Refactoring
+
+* Split to multi project to prepare build native image with own cli ([fbf89a8](https://github.com/MongoCamp/mongocamp-server/commit/fbf89a82634e4e0d7c61c9433c83c51b5befe4fb))
+
+
+### Features
+
+* building native image ([9030678](https://github.com/MongoCamp/mongocamp-server/commit/9030678abf4049f03ebb9608c5c8686be43b64eb))
+* cli for generating native images and start server ([3c41140](https://github.com/MongoCamp/mongocamp-server/commit/3c41140d31aa3c01d4329a2dce382dbb0e81deb3))
+
+
+### Maintenance
+
+* Found 11 dependency updates ([fbec087](https://github.com/MongoCamp/mongocamp-server/commit/fbec087cde522fffe5eb87374509783943a41dba))
+
 ## [1.4.4]() (2023-06-07)
 
 

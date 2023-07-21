@@ -2,7 +2,7 @@ package dev.mongocamp.server.cli.prepare
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.service.JvmStartService
-import picocli.CommandLine.{Command, Parameters}
+import picocli.CommandLine.{ Command, Parameters }
 
 @Command(
   name = "runAgent",

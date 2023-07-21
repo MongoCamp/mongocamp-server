@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.exception.NativeBuildException
 import dev.mongocamp.server.cli.service.NativeImageBuildService
 import dev.mongocamp.server.service.CoursierModuleService
-import lukfor.progress.Components.{SPINNER, TASK_NAME}
+import lukfor.progress.Components.{ SPINNER, TASK_NAME }
 import lukfor.progress.TaskService
 import lukfor.progress.tasks.ITaskRunnable
 import lukfor.progress.tasks.monitors.ITaskMonitor
@@ -21,9 +21,8 @@ class BuildNativeImageDefaultServerCommand extends Runnable with LazyLogging {
     val installNativeImage = new ITaskRunnable() {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Install Native Image")
-        try {
+        try
           NativeImageBuildService.installNativeImageExecutable()
-        }
         catch {
           case e: Exception =>
             monitor.failed(e)
@@ -33,9 +32,8 @@ class BuildNativeImageDefaultServerCommand extends Runnable with LazyLogging {
     val buildNativeImage = new ITaskRunnable() {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Building Native Image")
-        try {
+        try
           NativeImageBuildService.buildNativeImage(CoursierModuleService.loadServerWithAllDependencies(), "server-raw")
-        }
         catch {
           case e: Exception =>
             monitor.failed(e)

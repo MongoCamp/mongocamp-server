@@ -2,7 +2,7 @@ package dev.mongocamp.server.cli.prepare
 
 import dev.mongocamp.server.cli.Main
 import picocli.CommandLine
-import picocli.CommandLine.{Command, HelpCommand}
+import picocli.CommandLine.{ Command, HelpCommand }
 
 @Command(
   name = "prepare",

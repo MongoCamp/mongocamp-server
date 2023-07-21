@@ -23,7 +23,9 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
   }
 
   def getBucketGrants: List[Grant] = {
-    getGrants.filter(grant => grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta) || grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucket))
+    getGrants.filter(grant =>
+      grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta) || grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucket)
+    )
   }
 
   def isAdmin: Boolean = {

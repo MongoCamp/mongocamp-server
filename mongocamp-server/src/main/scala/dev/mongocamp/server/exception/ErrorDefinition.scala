@@ -4,7 +4,7 @@ import dev.mongocamp.server.converter.TapirSchema
 import io.circe.generic.auto._
 import sttp.tapir.generic.auto._
 import sttp.tapir.json.circe.jsonBody
-import sttp.tapir.{header, statusCode}
+import sttp.tapir.{ header, statusCode }
 
 object ErrorDefinition extends TapirSchema {
 

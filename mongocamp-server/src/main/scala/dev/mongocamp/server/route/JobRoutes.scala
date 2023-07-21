@@ -3,14 +3,14 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDaoHolder
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonValue, ModelConstants}
-import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
+import dev.mongocamp.server.model.{ JobConfig, JobInformation, JsonValue, ModelConstants }
+import dev.mongocamp.server.plugin.{ JobPlugin, RoutesPlugin }
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -59,7 +59,10 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
   }
 
   lazy val jobGroupParameter =
-    path[String]("jobGroup").description("Group Name of the Job").default(ModelConstants.jobDefaultGroup).and(path[String]("jobName").description("Name of the Job"))
+    path[String]("jobGroup")
+      .description("Group Name of the Job")
+      .default(ModelConstants.jobDefaultGroup)
+      .and(path[String]("jobName").description("Name of the Job"))
 
   // https://www.freeformatter.com/cron-expression-generator-quartz.html
   val updateJobRoutes = jobApiBaseEndpoint

@@ -2,7 +2,7 @@ package dev.mongocamp.server
 
 import com.typesafe.scalalogging.LazyLogging
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 trait RestServer extends LazyLogging {
 

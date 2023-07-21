@@ -1,8 +1,8 @@
 package dev.mongocamp.server.database
 
-import com.mongodb.event.{CommandListener, ConnectionPoolListener}
+import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
+import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.service.ConfigurationRead
@@ -49,7 +49,8 @@ object MongoDatabase {
     val connection = MongoConfig(
       configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase),
       configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost),
-      configRead.getConfigValue[Long](DefaultConfigurations.ConfigKeyConnectionPort).toInt, s"${BuildInfo.name}/${BuildInfo.version}",
+      configRead.getConfigValue[Long](DefaultConfigurations.ConfigKeyConnectionPort).toInt,
+      s"${BuildInfo.name}/${BuildInfo.version}",
       configRead.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionUsername),
       configRead.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionPassword),
       configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionAuthDb),

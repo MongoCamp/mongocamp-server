@@ -9,7 +9,7 @@ import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationRead.{configCache, isDefaultConfigsRegistered, nonPersistentConfigs}
+import dev.mongocamp.server.service.ConfigurationRead.{ configCache, isDefaultConfigsRegistered, nonPersistentConfigs }
 import io.circe.parser.decode
 import org.mongodb.scala.bson.Document
 import sttp.model.StatusCode
@@ -112,7 +112,7 @@ trait ConfigurationRead {
       }
       else {
         try {
-          val key = configKey.toLowerCase().replace("_", ".")
+          val key              = configKey.toLowerCase().replace("_", ".")
           val scalaConfigValue = conf.getValue(key)
           scalaConfigValue.unwrapped()
         }
@@ -133,13 +133,19 @@ trait ConfigurationRead {
     }
   }
 
-  def registerConfig(configKey: String, configType: String, value: Option[Any] = None, comment: String = "", needsRestartForActivation: Boolean = false): Boolean = {
+  def registerConfig(
+      configKey: String,
+      configType: String,
+      value: Option[Any] = None,
+      comment: String = "",
+      needsRestartForActivation: Boolean = false
+  ): Boolean = {
     if (getConfigFromDatabase(configKey).isEmpty) {
       val dbConfiguration: MongoCampConfiguration = convertToDbConfiguration(configKey, configType, value, comment, needsRestartForActivation)
       val configToInsert: MongoCampConfiguration = {
         try {
           if (value.isEmpty) {
-            val key = configKey.toLowerCase().replace("_", ".")
+            val key              = configKey.toLowerCase().replace("_", ".")
             val scalaConfigValue = conf.getValue(key)
             dbConfiguration.copy(value = scalaConfigValue.unwrapped())
           }
@@ -195,7 +201,13 @@ trait ConfigurationRead {
     )
   }
 
-  private[service] def convertToDbConfiguration(configKey: String, configType: String, value: Option[Any] = None, comment: String = "", needsRestartForActivation: Boolean = false): MongoCampConfiguration = {
+  private[service] def convertToDbConfiguration(
+      configKey: String,
+      configType: String,
+      value: Option[Any] = None,
+      comment: String = "",
+      needsRestartForActivation: Boolean = false
+  ): MongoCampConfiguration = {
     val invalidConfListInt = "List[Int]"
     val invalidConfInt     = "Int"
 
@@ -379,7 +391,14 @@ trait ConfigurationRead {
   }
 
   protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit
-  protected def publishConfigRegisterEvent(persistent: Boolean, configKey: String, configType: String, value: Option[Any], comment: String, needsRestartForActivation: Boolean): Unit
+  protected def publishConfigRegisterEvent(
+      persistent: Boolean,
+      configKey: String,
+      configType: String,
+      value: Option[Any],
+      comment: String,
+      needsRestartForActivation: Boolean
+  ): Unit
 
 }
 
@@ -388,7 +407,14 @@ object ConfigurationRead {
   def noPublishReader = new ConfigurationRead {
     override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
 
-    override protected def publishConfigRegisterEvent(persistent: Boolean, configKey: String, configType: String, value: Option[Any], comment: String, needsRestartForActivation: Boolean): Unit = {}
+    override protected def publishConfigRegisterEvent(
+        persistent: Boolean,
+        configKey: String,
+        configType: String,
+        value: Option[Any],
+        comment: String,
+        needsRestartForActivation: Boolean
+    ): Unit = {}
   }
 
   private[service] val nonPersistentConfigs: mutable.Map[String, MongoCampConfiguration] = mutable.Map[String, MongoCampConfiguration]()

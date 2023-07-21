@@ -4,34 +4,34 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
-import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
-import akka.http.scaladsl.server.{Route, RouteConcatenation}
+import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
+import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
+import akka.http.scaladsl.server.{ Route, RouteConcatenation }
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
+import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
-import dev.mongocamp.server.plugin.{RoutesPlugin, ServerPlugin}
+import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
+import dev.mongocamp.server.plugin.{ RoutesPlugin, ServerPlugin }
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ConfigurationService, PluginDownloadService, PluginService, ReflectionService}
+import dev.mongocamp.server.service.{ ConfigurationService, PluginDownloadService, PluginService, ReflectionService }
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 object Server extends App with LazyLogging with RouteConcatenation with RestServer {
 
   implicit lazy val actorSystem: ActorSystem = ActorHandler.requestActorSystem
-  implicit lazy val ex: ExecutionContext = ActorHandler.requestExecutionContext
+  implicit lazy val ex: ExecutionContext     = ActorHandler.requestExecutionContext
 
   lazy val interface: String = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
-  lazy val port: Int = ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
+  lazy val port: Int         = ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
 
   lazy val listOfRoutePlugins: List[RoutesPlugin] = {
     ReflectionService

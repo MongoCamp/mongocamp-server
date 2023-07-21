@@ -13,7 +13,7 @@ import dev.mongocamp.server.service.ConfigurationService
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import scala.concurrent.duration.{ Duration, DurationInt, FiniteDuration }
 import scala.util.Try
 
 object TokenCache {

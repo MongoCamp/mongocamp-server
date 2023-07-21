@@ -3,17 +3,17 @@ package dev.mongocamp.server.route
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.bucket.{ClearBucketEvent, DropBucketEvent}
+import dev.mongocamp.server.event.bucket.{ ClearBucketEvent, DropBucketEvent }
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{AuthorizedCollectionRequest, UserInformation}
-import dev.mongocamp.server.model.{BucketInformation, JsonValue, ModelConstants}
+import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
+import dev.mongocamp.server.model.{ BucketInformation, JsonValue, ModelConstants }
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
 import sttp.capabilities
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -37,8 +37,9 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
 
   def bucketsList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
-      val result       = MongoDatabase.databaseProvider.collectionNames().filter(_.endsWith(BucketCollectionSuffix)).map(_.replace(BucketCollectionSuffix, ""))
-      val bucketGrants = userInformation.getGrants.filter(g => g.grantType.equals(ModelConstants.grantTypeBucket) || g.grantType.equals(ModelConstants.grantTypeBucketMeta))
+      val result = MongoDatabase.databaseProvider.collectionNames().filter(_.endsWith(BucketCollectionSuffix)).map(_.replace(BucketCollectionSuffix, ""))
+      val bucketGrants =
+        userInformation.getGrants.filter(g => g.grantType.equals(ModelConstants.grantTypeBucket) || g.grantType.equals(ModelConstants.grantTypeBucketMeta))
       result.filter(collection => {
         val readBuckets = bucketGrants.filter(_.read).map(_.name)
         userInformation.isAdmin || readBuckets.contains(AuthorizedCollectionRequest.all) || readBuckets.contains(collection)

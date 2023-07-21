@@ -8,11 +8,11 @@ import dev.mongocamp.server.service.ConfigurationService
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.swagger.{SwaggerUI, SwaggerUIOptions}
+import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future

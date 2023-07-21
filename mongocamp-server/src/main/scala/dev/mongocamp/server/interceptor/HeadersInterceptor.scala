@@ -1,7 +1,7 @@
 package dev.mongocamp.server.interceptor
 
 import dev.mongocamp.server.interceptor.RequestFunctions.mongoCampRequestIdKey
-import dev.mongocamp.server.{ActorHandler, BuildInfo}
+import dev.mongocamp.server.{ ActorHandler, BuildInfo }
 import sttp.model.Header
 import sttp.monad.MonadError
 import sttp.tapir.model.ServerRequest
@@ -9,7 +9,7 @@ import sttp.tapir.server.interceptor._
 import sttp.tapir.server.interpreter.BodyListener
 import sttp.tapir.server.model.ServerResponse
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 class HeadersInterceptor extends EndpointInterceptor[Future] {
 

@@ -1,9 +1,9 @@
 package dev.mongocamp.server.route
 
-import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder, TokenCache}
+import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.user.{LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent}
+import dev.mongocamp.server.event.user.{ LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent }
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
@@ -11,7 +11,7 @@ import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
