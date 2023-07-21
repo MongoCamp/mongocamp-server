@@ -1,6 +1,6 @@
 name := "mongocamp-server"
 
-val TapirVersion = "1.6.1"
+val TapirVersion = "1.6.2"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
@@ -16,7 +16,7 @@ libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % 
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.8"
 
-libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.4.0"
+libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.4.3"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 
