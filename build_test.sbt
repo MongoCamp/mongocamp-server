@@ -1,9 +1,7 @@
 Defaults.itSettings
 
-Test / parallelExecution := false
+ThisBuild / Test / parallelExecution := false
 
-IntegrationTest / parallelExecution := false
+ThisBuild / IntegrationTest / parallelExecution := false
 
-Test / scalacOptions ++= Seq("-Yrangepos")
-
-libraryDependencies += "dev.mongocamp" %% "mongocamp-test-server" % "0.5.1" % Test
+ThisBuild / Test / scalacOptions ++= Seq("-Yrangepos")

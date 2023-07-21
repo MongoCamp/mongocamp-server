@@ -1,17 +1,13 @@
 import scala.sys.process._
+import com.vdurmont.semver4j.Semver
 
 commands += Command.command("ci-deploy-docs")((state: State) => {
-  val lowerCaseVersion = version.value.toLowerCase
-  if (
-    (lowerCaseVersion.contains("snapshot") ||
-    lowerCaseVersion.contains("beta") ||
-    lowerCaseVersion.contains("rc") ||
-    lowerCaseVersion.contains("m"))
-  ) {
+  val semVersion = new Semver(version.value)
+  if (semVersion.isStable) {
+    "sh ./deploy_ghpages.sh".!
     state
   }
   else {
-    "sh ./deploy_ghpages.sh".!
     state
   }
 })

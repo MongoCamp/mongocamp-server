@@ -1,0 +1,231 @@
+[
+  {
+    "name": "ch.qos.logback.classic.AsyncAppender",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.encoder.PatternLayoutEncoder",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.DateConverter",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.LevelConverter",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.LineSeparatorConverter",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.LoggerConverter",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.MessageConverter",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.classic.pattern.ThreadConverter",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.core.ConsoleAppender",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.core.FileAppender",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "ch.qos.logback.core.status.NopStatusListener",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.AccessOrderDeque$AccessOrder"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.AsyncCache"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.AsyncCacheLoader"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BBHeader$PadReadCounter"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BLCHeader$DrainStatusRef",
+    "fields":[{"name":"drainStatus"}]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BLCHeader$PadDrainStatus"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BaseMpscLinkedArrayQueueColdProducerFields",
+    "fields":[{"name":"producerLimit"}]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BaseMpscLinkedArrayQueueConsumerFields",
+    "fields":[{"name":"consumerIndex"}]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BaseMpscLinkedArrayQueueProducerFields",
+    "fields":[{"name":"producerIndex"}]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.BoundedLocalCache",
+    "fields":[{"name":"refreshes"}]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Buffer"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Cache"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Expiry"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Interner"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.NodeFactory"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.PS",
+    "fields":[
+      {"name":"key"},
+      {"name":"value"}
+    ]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.PSW",
+    "fields":[{"name":"writeTime"}],
+    "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Policy"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Policy$Eviction"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Policy$FixedExpiration"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Policy$FixedRefresh"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Policy$VarExpiration"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.References$InternalReference"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.RemovalListener"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.SSSW",
+    "methods":[{"name":"<init>","parameterTypes":["com.github.benmanes.caffeine.cache.Caffeine","com.github.benmanes.caffeine.cache.AsyncCacheLoader","boolean"] }]
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Scheduler"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Ticker"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.Weigher"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.WriteOrderDeque$WriteOrder"
+  },
+  {
+    "name":"com.github.benmanes.caffeine.cache.stats.StatsCounter"
+  },
+  {
+    "name":"com.github.blemale.scaffeine.AsyncCache"
+  },
+  {
+    "name":"com.github.blemale.scaffeine.Cache"
+  }
+]

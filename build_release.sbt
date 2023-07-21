@@ -2,6 +2,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseKeys.versions
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.runtimeVersion
 import dev.quadstingray.sbt.json.JsonFile
+import com.vdurmont.semver4j.Semver
 
 import scala.sys.process._
 
@@ -51,17 +52,12 @@ releaseNextCommitMessage := s"ci: update version after release"
 releaseCommitMessage     := s"ci: prepare release of version ${runtimeVersion.value}"
 
 commands += Command.command("ci-release")((state: State) => {
-  val lowerCaseVersion = version.value.toLowerCase
-  if (
-    (lowerCaseVersion.contains("snapshot") ||
-    lowerCaseVersion.contains("beta") ||
-    lowerCaseVersion.contains("rc") ||
-    lowerCaseVersion.contains("m"))
-  ) {
-    state
+  val semVersion = new Semver(version.value)
+  if (semVersion.isStable) {
+    Command.process("release with-defaults", state)
   }
   else {
-    Command.process("release with-defaults", state)
+    state
   }
 })
 
@@ -75,9 +71,14 @@ releaseProcess := {
     gitAddAllTask,
     commitReleaseVersion,
     tagRelease,
-    releaseStepCommandAndRemaining("+publishSigned"),
+    releaseStepCommandAndRemaining("mongocamp-library/+publishSigned"),
+    releaseStepCommandAndRemaining("mongocamp-server/+publishSigned"),
+    releaseStepCommandAndRemaining("mongocamp-test-server/+publishSigned"),
+    releaseStepCommand("mongocamp-library/sonatypeBundleRelease"),
+    releaseStepCommand("mongocamp-server/sonatypeBundleRelease"),
+    releaseStepCommand("mongocamp-test-server/sonatypeBundleRelease"),
+    releaseStepCommand("ci-docker"),
     releaseStepCommand("ci-deploy-docs"),
-    releaseStepCommand("sonatypeBundleRelease"),
     setToMyNextVersion,
     gitAddAllTask,
     commitNextVersion,
