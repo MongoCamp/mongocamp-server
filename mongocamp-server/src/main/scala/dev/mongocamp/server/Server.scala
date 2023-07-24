@@ -4,51 +4,56 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpHeader.ParsingResult
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import akka.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
-import akka.http.scaladsl.server.{ Route, RouteConcatenation }
+import akka.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
+import akka.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
+import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
-import dev.mongocamp.server.plugin.{ RoutesPlugin, ServerPlugin }
+import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
+import dev.mongocamp.server.plugin.{RoutesPlugin, ServerPlugin}
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ ConfigurationService, PluginDownloadService, PluginService, ReflectionService }
+import dev.mongocamp.server.service.{ConfigurationService, PluginDownloadService, PluginService, ReflectionService}
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 object Server extends App with LazyLogging with RouteConcatenation with RestServer {
 
-  implicit lazy val actorSystem: ActorSystem = ActorHandler.requestActorSystem
-  implicit lazy val ex: ExecutionContext     = ActorHandler.requestExecutionContext
+  private implicit lazy val actorSystem: ActorSystem = ActorHandler.requestActorSystem
+  private implicit lazy val ex: ExecutionContext     = ActorHandler.requestExecutionContext
 
   lazy val interface: String = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
   lazy val port: Int         = ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
 
-  lazy val listOfRoutePlugins: List[RoutesPlugin] = {
-    ReflectionService
+  private def inizializeRoutesPlugin: List[RoutesPlugin] = {
+    val pluginList = ReflectionService
       .instancesForType(classOf[RoutesPlugin])
       .filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
       .map(plugin => {
         EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
         plugin
       })
+    routesPluginList = pluginList
+    pluginList
   }
 
-  lazy val serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] =
-    InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ listOfRoutePlugins.flatMap(_.endpoints) ++ IndexRoutes.endpoints
+  private var routesPluginList : List[RoutesPlugin] = List()
 
-  ConfigurationService.registerMongoCampServerDefaultConfigs()
+  def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList
 
-  def routes(implicit ex: ExecutionContext): Route = {
+  private def serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+    InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ inizializeRoutesPlugin.flatMap(_.endpoints) ++ IndexRoutes.endpoints
+  }
+
+  private def routes(implicit ex: ExecutionContext): Route = {
     val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
     val allEndpoints      = internalEndPoints.map(ep => AkkaHttpServer.akkaHttpServerInterpreter.toRoute(ep))
     concat(allEndpoints: _*)
@@ -75,7 +80,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     }
   }
 
-  def routeHandler(r: Route): Route = {
+  private def routeHandler(r: Route): Route = {
     preflightRequestHandler ~ r
   }
 
@@ -91,6 +96,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
+    ConfigurationService.registerMongoCampServerDefaultConfigs()
     val pluginDownloadService = new PluginDownloadService()
     pluginDownloadService.downloadPlugins()
     val pluginService = new PluginService()
@@ -115,7 +121,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
       })
   }
 
-  def doBeforeServerStartUp(): Unit = {
+  private def doBeforeServerStartUp(): Unit = {
     activateServerPlugins()
   }
 
