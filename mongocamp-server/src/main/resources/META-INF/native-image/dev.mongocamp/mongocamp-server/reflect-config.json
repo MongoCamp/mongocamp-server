@@ -2119,10 +2119,6 @@
   "name":"akka.util.WallClock"
 },
 {
-  "name":"apple.security.AppleProvider",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"better.files.Disposable"
 },
 {
@@ -4159,18 +4155,6 @@
 },
 {
   "name":"dev.mongocamp.driver.mongodb.relation.Relationship"
-},
-{
-  "name":"dev.mongocamp.requestlogging.plugin.RequestLoggingPlugin"
-},
-{
-  "name":"dev.mongocamp.requestlogging.plugin.RequestLoggingPlugin$",
-  "fields":[{"name":"MODULE$"}],
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"dev.mongocamp.requestlogging.plugin.listener.RequestLoggingActor",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"dev.mongocamp.server.auth.AuthHolder"

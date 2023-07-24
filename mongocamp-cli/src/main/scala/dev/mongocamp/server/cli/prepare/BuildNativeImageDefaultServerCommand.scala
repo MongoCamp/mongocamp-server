@@ -4,20 +4,22 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.exception.NativeBuildException
 import dev.mongocamp.server.cli.service.NativeImageBuildService
 import dev.mongocamp.server.service.CoursierModuleService
-import lukfor.progress.Components.{ SPINNER, TASK_NAME }
+import lukfor.progress.Components.{SPINNER, TASK_NAME}
 import lukfor.progress.TaskService
 import lukfor.progress.tasks.ITaskRunnable
 import lukfor.progress.tasks.monitors.ITaskMonitor
 import picocli.CommandLine.Command
 import picocli.CommandLine.Help.Ansi
 
+import java.util.concurrent.Callable
 @Command(
   name = "native",
   description = Array("Build native Image from Server Instance")
 )
-class BuildNativeImageDefaultServerCommand extends Runnable with LazyLogging {
+class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLogging {
 
-  def run(): Unit = {
+  def call(): Integer = {
+    var response = 0
     val installNativeImage = new ITaskRunnable() {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Install Native Image")
@@ -26,6 +28,7 @@ class BuildNativeImageDefaultServerCommand extends Runnable with LazyLogging {
         catch {
           case e: Exception =>
             monitor.failed(e)
+            response += 1
         }
       }
     }
@@ -39,14 +42,17 @@ class BuildNativeImageDefaultServerCommand extends Runnable with LazyLogging {
             monitor.failed(e)
             println(Ansi.AUTO.string(s"@|bold,underline,red Build Error:|@"))
             println(Ansi.AUTO.string(s"@|red ${e.getMessage}|@"))
+            response += 1
           case e: NativeBuildException =>
             monitor.failed(e)
             println(Ansi.AUTO.string(s"@|bold,underline,red Build Error:|@"))
             println(Ansi.AUTO.string(s"@|red ${e.buildMessage}|@"))
+            response += 1
         }
       }
     }
     TaskService.monitor(SPINNER, TASK_NAME).run(installNativeImage, buildNativeImage)
+    response
   }
 
 }

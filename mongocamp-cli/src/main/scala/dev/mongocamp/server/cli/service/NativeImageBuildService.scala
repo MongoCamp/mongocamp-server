@@ -31,6 +31,7 @@ object NativeImageBuildService {
       runnableResponse = runnableResponse.trim
       runnableResponse = runnableResponse.trim
     }
+    println(s"Runnable Path after build: ${runnableResponse}")
     runnableResponse
   }
 
