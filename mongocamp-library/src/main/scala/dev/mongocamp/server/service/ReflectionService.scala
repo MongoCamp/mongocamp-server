@@ -1,72 +1,61 @@
 package dev.mongocamp.server.service
 
-import org.reflections.Reflections
-import org.reflections.util.{ ClasspathHelper, ConfigurationBuilder }
+import io.github.classgraph.{ClassGraph, ScanResult}
 
-import java.net.URL
-import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
-import scala.reflect.internal.util.ScalaClassLoader.URLClassLoader
-import scala.reflect.runtime.universe.runtimeMirror
 import scala.util.Try
 
-object ReflectionService {
-  private val reflectionConfigurationBuilder: ConfigurationBuilder = new ConfigurationBuilder().forPackages("")
+// todo https://github.com/classgraph/classgraph/wiki/Code-examples
+// https://github.com/SoftInstigate/classgraph-on-graalvm
+// dev.mongocamp.server.service.ReflectionService$
+class ReflectionService {
+  private val classGraph: ClassGraph = inizializeClassGraph()
+  private var scanResult: ScanResult = scan()
+
+  def inizializeClassGraph(): ClassGraph = {
+    new ClassGraph().enableAllInfo().addClassLoader(ClassLoader.getSystemClassLoader)
+  }
+
+  def scan(): ScanResult = {
+    classGraph.scan()
+  }
 
   def instancesForType[T <: Any](clazz: Class[T]): List[T] = {
     val reflected = getSubClassesList(clazz).flatMap(foundClazz => {
-      lazy val mirror   = runtimeMirror(foundClazz.getClassLoader)
-      val instance      = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
       val clazzInstance = Try(foundClazz.getDeclaredConstructor().newInstance()).toOption
       if (clazzInstance.isDefined) {
         clazzInstance.map(_.asInstanceOf[T])
       }
       else {
-        instance.map(_.asInstanceOf[T])
+        // todo: chekc if this is needed
+//      lazy val mirror   = runtimeMirror(foundClazz.getClassLoader)
+//      val instance      = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
+//        instance.map(_.asInstanceOf[T])
+        List.empty
       }
     })
     reflected
   }
 
   def getSubClassesList[T <: Any](clazz: Class[T]): List[Class[_ <: T]] = {
-    val urls: ArrayBuffer[URL] = ArrayBuffer[URL]()
-    urls.++=(ClasspathHelper.forJavaClassPath().asScala)
-    Option(reflectionConfigurationBuilder.getClassLoaders).foreach(_.foreach(classLoader => {
-      classLoader match {
-        case loader: URLClassLoader => urls.++=(loader.getURLs)
-        case _                      => classLoader.getDefinedPackages.foreach(p => urls.++=(ClasspathHelper.forPackage(p.toString, classLoader).asScala))
-      }
-      ""
-    }))
-    reflectionConfigurationBuilder.addUrls(urls.asJava)
-    val reflected = new Reflections(reflectionConfigurationBuilder)
-      .getSubTypesOf(clazz)
-      .asScala
-
-    reflected.toList
+    val subClasses = scanResult.getClassesImplementing(clazz).asScala.toList ++ scanResult.getSubclasses(clazz).asScala.toList
+    subClasses.map(_.loadClass().asInstanceOf[Class[_ <: T]])
   }
 
   def registerClassLoaders[T <: Any](clazz: Class[T]): Unit = {
-    val classLoader = clazz.getClassLoader
-    registerClassLoaders(classLoader)
+    registerClassLoaders(clazz.getClassLoader)
   }
 
-  def registerClassLoaders[T <: Any](classLoader: ClassLoader): Unit = {
-    reflectionConfigurationBuilder.addClassLoaders(classLoader)
+  def registerClassLoaders(classLoader: ClassLoader): Unit = {
+    classGraph.addClassLoader(classLoader)
     if (classLoader.getParent != null) {
       registerClassLoaders(classLoader.getParent)
+      scanResult = scan()
     }
   }
 
   def getClassListByName(className: String): List[Class[_]] = {
-    val arrayBuffer = ArrayBuffer[Class[_]]()
-    reflectionConfigurationBuilder.getClassLoaders.foreach(cl =>
-      Try {
-        val clazz = cl.loadClass(className)
-        arrayBuffer.+=(clazz)
-      }
-    )
-    arrayBuffer.toList
+    scanResult.getClassesImplementing(className).asScala.toList.map(_.loadClass())
   }
 
   def getClassByName(className: String): Class[_] = {
@@ -74,4 +63,26 @@ object ReflectionService {
     classList.headOption.getOrElse(throw new ClassNotFoundException())
   }
 
+}
+
+object ReflectionService {
+  private val reflectionService = new ReflectionService()
+  def instancesForType[T <: Any](clazz: Class[T]): List[T] = {
+    reflectionService.instancesForType(clazz)
+  }
+  def getSubClassesList[T <: Any](clazz: Class[T]): List[Class[_ <: T]] = {
+    reflectionService.getSubClassesList(clazz)
+  }
+  def registerClassLoaders[T <: Any](clazz: Class[T]): Unit = {
+    reflectionService.registerClassLoaders(clazz)
+  }
+  def registerClassLoaders(classLoader: ClassLoader): Unit = {
+    reflectionService.registerClassLoaders(classLoader)
+  }
+  def getClassListByName(className: String): List[Class[_]] = {
+    reflectionService.getClassListByName(className)
+  }
+  def getClassByName(className: String): Class[_] = {
+    reflectionService.getClassByName(className)
+  }
 }

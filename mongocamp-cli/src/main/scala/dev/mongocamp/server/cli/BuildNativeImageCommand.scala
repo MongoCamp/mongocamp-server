@@ -21,6 +21,18 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
 
   def call(): Integer = {
     var response = 0
+    val prepareSystem = new ITaskRunnable() {
+      def run(monitor: ITaskMonitor): Unit = {
+        monitor.begin("Prepare System for using Build")
+        try
+          NativeImageBuildService.prepareSystemForBuildingNativeImage()
+        catch {
+          case e: Exception =>
+            monitor.failed(e)
+            response += 1
+        }
+      }
+    }
     val installNativeImage = new ITaskRunnable() {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Install Native Image")
@@ -37,8 +49,7 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Building Native Image")
         try {
-          val pluginService = new PluginService()
-          val pluginUrls    = pluginService.listOfReadableUrls().map(url => File(url))
+          val pluginUrls = PluginService.listOfReadableUrls().map(url => File(url))
           if (pluginUrls.nonEmpty) {
             val serverUrls = CoursierModuleService.loadServerWithAllDependencies()
             NativeImageBuildService.buildNativeImage(pluginUrls ++ serverUrls, "server-with-plugins")
@@ -59,7 +70,7 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
         }
       }
     }
-    TaskService.monitor(SPINNER, TASK_NAME).run(installNativeImage, buildNativeImage)
+    TaskService.monitor(SPINNER, TASK_NAME).run(prepareSystem, installNativeImage, buildNativeImage)
     response
   }
 

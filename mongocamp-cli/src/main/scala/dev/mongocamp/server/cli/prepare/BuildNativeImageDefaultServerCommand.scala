@@ -20,6 +20,18 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
 
   def call(): Integer = {
     var response = 0
+    val prepareSystem = new ITaskRunnable() {
+      def run(monitor: ITaskMonitor): Unit = {
+        monitor.begin("Prepare System for using Build")
+        try
+          NativeImageBuildService.prepareSystemForBuildingNativeImage()
+        catch {
+          case e: Exception =>
+            monitor.failed(e)
+            response += 1
+        }
+      }
+    }
     val installNativeImage = new ITaskRunnable() {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Install Native Image")
@@ -45,13 +57,13 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
             response += 1
           case e: NativeBuildException =>
             monitor.failed(e)
-            println(Ansi.AUTO.string(s"@|bold,underline,red Build Error:|@"))
+            println(Ansi.AUTO.string(s"@|bold,underline,red Native Image Build Error:|@"))
             println(Ansi.AUTO.string(s"@|red ${e.buildMessage}|@"))
             response += 1
         }
       }
     }
-    TaskService.monitor(SPINNER, TASK_NAME).run(installNativeImage, buildNativeImage)
+    TaskService.monitor(SPINNER, TASK_NAME).run(prepareSystem, installNativeImage, buildNativeImage)
     response
   }
 

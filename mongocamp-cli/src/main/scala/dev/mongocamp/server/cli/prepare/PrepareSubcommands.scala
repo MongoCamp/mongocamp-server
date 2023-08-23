@@ -8,7 +8,7 @@ import java.util.concurrent.Callable
 @Command(
   name = "prepare",
   mixinStandardHelpOptions = true,
-  subcommands = Array(classOf[CacheCommand], classOf[BuildNativeImageDefaultServerCommand], classOf[RunAgentCommand], classOf[HelpCommand]),
+  subcommands = Array(classOf[InstallJVMCommand], classOf[CacheCommand], classOf[BuildNativeImageDefaultServerCommand], classOf[RunAgentCommand], classOf[HelpCommand]),
   description = Array("Commands to prepare Application")
 )
 class PrepareSubcommands extends Callable[Integer] {

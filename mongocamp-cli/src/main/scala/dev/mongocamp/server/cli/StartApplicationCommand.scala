@@ -24,8 +24,7 @@ class StartApplicationCommand extends Callable[Integer] with LazyLogging {
       case s: String if s.equalsIgnoreCase("jvm") => JvmStartService.startServer()
 
       case s: String if s.equalsIgnoreCase("native") =>
-        val pluginService = new PluginService()
-        val pluginUrls    = pluginService.listOfReadableUrls().map(url => File(url))
+        val pluginUrls = PluginService.listOfReadableUrls().map(url => File(url))
         if (pluginUrls.nonEmpty) {
           var response = Main.commandLine.execute(List("buildNative"): _*).abs
           response += ProcessExecutorService.executeToStout("./server-with-plugins").abs
@@ -36,8 +35,7 @@ class StartApplicationCommand extends Callable[Integer] with LazyLogging {
         }
 
       case s: String if s.equalsIgnoreCase("default") =>
-        val pluginService = new PluginService()
-        val pluginUrls    = pluginService.listOfReadableUrls().map(url => File(url))
+        val pluginUrls    = PluginService.listOfReadableUrls().map(url => File(url))
         if (pluginUrls.nonEmpty) {
           JvmStartService.startServer()
         }

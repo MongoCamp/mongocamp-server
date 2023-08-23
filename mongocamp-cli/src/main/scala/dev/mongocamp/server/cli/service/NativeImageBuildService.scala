@@ -3,7 +3,16 @@ package dev.mongocamp.server.cli.service
 import better.files.File
 import dev.mongocamp.server.cli.exception.NativeBuildException
 import dev.mongocamp.server.library.BuildInfo
+
 object NativeImageBuildService {
+
+  def prepareSystemForBuildingNativeImage(): Unit = {
+    if (System.getProperty("os.name").toLowerCase.contains("linux")) {
+      val installCommand = s"apt-get -y install build-essential libz-dev zlib1g-dev;"
+      ProcessExecutorService.executeToStout(installCommand)
+      installNativeImageExecutable()
+    }
+  }
 
   def installNativeImageExecutable(): Unit = {
     val installCommand = s"${JvmService.javaHome}/bin/gu install native-image"
@@ -14,10 +23,13 @@ object NativeImageBuildService {
     val buildOptions = List(
       "--no-fallback",
       "--verbose",
+      "-H:+DumpOnError",
       "-H:+ReportExceptionStackTraces",
       "-H:+ReportUnsupportedElementsAtRuntime",
       "-H:+ReportExceptionStackTraces",
-      "--report-unsupported-elements-at-runtime"
+      "--report-unsupported-elements-at-runtime",
+      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile",
+      "-J-Xmx16g"
     )
     val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
     val result          = ProcessExecutorService.executeToString(generateCommand)

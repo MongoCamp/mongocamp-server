@@ -11,7 +11,7 @@ RUN chmod +x coursier
 RUN eval "$(./coursier setup --env --jvm $GRAAL_VERSION --apps scala,sbt,scalac)";  \
     cd /mongocamp-cli/;  \
     gu install native-image;  \
-    sbt clean mongocamp-cli/graalvm-native-image:packageBin; \
+    sbt clean publishLocal mongocamp-cli/graalvm-native-image:packageBin; \
     /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli prepare native
 
 
@@ -20,7 +20,7 @@ COPY --from=build /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongo
 COPY --from=build /mongocamp-cli/server-raw /opt/bin/server-raw
 ENV MODE="default"
 WORKDIR /opt/bin/
-RUN mkdir -p /opt/mongocamp/plugins; chmod -R 777 /opt/mongocamp/plugins; chmod +x /opt/bin/mongocamp-cli; chmod +x /opt/bin/server-raw; apt-get update; apt-get -y install build-essential libz-dev zlib1g-dev;
+RUN mkdir -p /opt/mongocamp/plugins; chmod -R 777 /opt/mongocamp/plugins; chmod +x /opt/bin/mongocamp-cli; chmod +x /opt/bin/server-raw; apt-get update;
 ENTRYPOINT ./mongocamp-cli run $MODE
 
 #FROM mongocamp-build-base as full-build

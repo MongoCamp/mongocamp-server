@@ -1,4 +1,4 @@
 ARG MONGOCAMPVERSION=NOT_SET
 FROM mongocamp-server:${MONGOCAMPVERSION}
 
-RUN ./mongocamp-cli prepare jvm
+RUN ./mongocamp-cli prepare cache

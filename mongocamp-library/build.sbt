@@ -4,7 +4,7 @@ libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.5"
 
 libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.3"
 
-libraryDependencies += "org.reflections" % "reflections" % "0.10.2"
+libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.161"
 
 libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.2.1" exclude("org.scala-lang.modules", "scala-java8-compat_2.12")
 
