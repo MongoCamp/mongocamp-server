@@ -23,6 +23,7 @@ object NativeImageBuildService {
     val buildOptions = List(
       "--no-fallback",
       "--verbose",
+      "--native-image-info",
       "-H:+DumpOnError",
       "-H:+ReportExceptionStackTraces",
       "-H:+ReportUnsupportedElementsAtRuntime",

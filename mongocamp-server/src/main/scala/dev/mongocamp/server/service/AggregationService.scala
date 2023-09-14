@@ -2,9 +2,9 @@ package dev.mongocamp.server.service
 import dev.mongocamp.driver.mongodb.mapToBson
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
+import dev.mongocamp.server.database.paging.{MongoPaginatedAggregation, PaginationInfo}
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.{ MongoAggregateRequest, PipelineStage }
+import dev.mongocamp.server.model.{MongoAggregateRequest, PipelineStage}
 import org.bson.conversions.Bson
 
 object AggregationService {

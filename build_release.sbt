@@ -1,10 +1,10 @@
-import sbtrelease.ReleasePlugin.autoImport.ReleaseKeys.versions
-import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
-import sbtrelease.ReleasePlugin.runtimeVersion
-import dev.quadstingray.sbt.json.JsonFile
 import com.vdurmont.semver4j.Semver
+import dev.quadstingray.sbt.json.JsonFile
+import sbtrelease.ReleasePlugin.autoImport.ReleaseKeys.versions
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations.*
+import sbtrelease.ReleasePlugin.runtimeVersion
 
-import scala.sys.process._
+import scala.sys.process.*
 
 val gitAddAllTask = ReleaseStep(action = st => {
   "git add .".!

@@ -34,7 +34,7 @@ def recursiveFileSearch(file: File): Array[File] = {
 }
 
 def failIfNonZeroExitStatus(command: String, message: => String, log: Logger) = {
-  import scala.sys.process._
+  import scala.sys.process.*
   val result = command !
 
   if (result != 0) {

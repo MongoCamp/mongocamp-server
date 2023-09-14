@@ -1,9 +1,9 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{ AuthInput, AuthorizedCollectionRequest }
+import dev.mongocamp.server.model.auth.{AuthInput, AuthorizedCollectionRequest}
 import sttp.model.StatusCode
 import sttp.tapir._
 

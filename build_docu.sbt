@@ -1,5 +1,6 @@
-import scala.sys.process._
 import com.vdurmont.semver4j.Semver
+
+import scala.sys.process.*
 
 commands += Command.command("ci-deploy-docs")((state: State) => {
   val semVersion = new Semver(version.value)

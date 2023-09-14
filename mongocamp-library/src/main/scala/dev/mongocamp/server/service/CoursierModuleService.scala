@@ -8,7 +8,6 @@ import coursier.core.Configuration
 import coursier.params.ResolutionParams
 import coursier.parse.DependencyParser
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.library.BuildInfo
 
 object CoursierModuleService extends LazyLogging {
 

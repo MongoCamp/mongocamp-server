@@ -9,7 +9,7 @@ import dev.mongocamp.server.database.MongoDaoHolder.tokenCacheDao
 import dev.mongocamp.server.service.ConfigurationService
 import org.joda.time.DateTime
 import org.mongodb.scala.model.Filters.lte
-import org.quartz.{ Job, JobExecutionContext }
+import org.quartz.{Job, JobExecutionContext}
 
 class CleanUpTokenJob extends Job with LazyLogging {
 

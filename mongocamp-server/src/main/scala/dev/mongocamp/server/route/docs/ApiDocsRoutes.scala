@@ -1,18 +1,16 @@
 package dev.mongocamp.server.route.docs
 
-import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.route.BaseRoute
 import dev.mongocamp.server.service.ConfigurationService
-import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
 import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
+import sttp.tapir.swagger.{SwaggerUI, SwaggerUIOptions}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
