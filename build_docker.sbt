@@ -1,5 +1,6 @@
 import com.vdurmont.semver4j.Semver
-import scala.sys.process._
+
+import scala.sys.process.*
 
 commands += Command.command("ci-docker")((state: State) => {
   val semVersion = new Semver(version.value)
