@@ -3,7 +3,7 @@ import dev.quadstingray.sbt.json.JsonFile
 
 lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer)
 
-ThisBuild / scalaVersion := "2.13.11"
+ThisBuild / scalaVersion := "2.13.12"
 
 val json = JsonFile(file("package.json"))
 
