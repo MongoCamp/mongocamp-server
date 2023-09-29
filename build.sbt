@@ -1,4 +1,4 @@
-import common.*
+import common.mongoCampProject
 import dev.quadstingray.sbt.json.JsonFile
 
 lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer)

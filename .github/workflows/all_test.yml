@@ -44,3 +44,5 @@ jobs:
           mongodb-port: 4711
       - name: Run tests
         run: sbt test
+      - name: Build Docker Container for test
+        run: docker buildx build --platform=linux/amd64,linux/arm64/v8 . --tag mongocamp-server:test
