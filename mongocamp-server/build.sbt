@@ -1,6 +1,6 @@
 name := "mongocamp-server"
 
-val TapirVersion = "1.7.5"
+val TapirVersion = "1.7.6"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
