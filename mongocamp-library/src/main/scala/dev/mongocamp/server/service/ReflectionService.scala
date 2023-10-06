@@ -53,13 +53,12 @@ class ReflectionService {
     }
   }
 
-  def getClassListByName(className: String): List[Class[_]] = {
+  def getClassListByInterfaceName(className: String): List[Class[_]] = {
     scanResult.getClassesImplementing(className).asScala.toList.map(_.loadClass())
   }
 
   def getClassByName(className: String): Class[_] = {
-    val classList = getClassListByName(className)
-    classList.headOption.getOrElse(throw new ClassNotFoundException())
+    Try(scanResult.getClassInfo(className).loadClass()).toOption.getOrElse(throw new ClassNotFoundException())
   }
 
 }
@@ -78,8 +77,8 @@ object ReflectionService {
   def registerClassLoaders(classLoader: ClassLoader): Unit = {
     reflectionService.registerClassLoaders(classLoader)
   }
-  def getClassListByName(className: String): List[Class[_]] = {
-    reflectionService.getClassListByName(className)
+  def getClassListByInterfaceName(className: String): List[Class[_]] = {
+    reflectionService.getClassListByInterfaceName(className)
   }
   def getClassByName(className: String): Class[_] = {
     reflectionService.getClassByName(className)

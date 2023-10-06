@@ -117,7 +117,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
 
   def jobClassesList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
-      ReflectionService.getSubClassesList(classOf[Job]).map(_.getName).filterNot(_.startsWith("org.quartz"))
+      ReflectionService.getSubClassesList(classOf[Job]).map(_.getName).filterNot(_.startsWith("org.quartz")).sorted
     }))
   }
 

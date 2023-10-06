@@ -9,16 +9,15 @@ final class ReflectionServiceSubstitutions {
 
   @Substitute
   def inizializeClassGraph(): ClassGraph = {
-//    val classGraph = new ClassGraph()
-//      .enableAllInfo()
-//      .addClassLoader(ClassLoader.getSystemClassLoader)
-//      .disableNestedJarScanning()
-//      .disableModuleScanning()
-//      .disableDirScanning()
-//      .disableRuntimeInvisibleAnnotations()
-//      .initializeLoadedClasses()
-//    classGraph
-    null
+    val classGraph = new ClassGraph()
+      .enableAllInfo()
+      .addClassLoader(ClassLoader.getSystemClassLoader)
+      .disableNestedJarScanning()
+      .disableModuleScanning()
+      .disableDirScanning()
+      .disableRuntimeInvisibleAnnotations()
+      .initializeLoadedClasses()
+    classGraph
   }
 
   @Substitute
@@ -30,7 +29,6 @@ final class ReflectionServiceSubstitutions {
   def registerClassLoaders[T <: Any](clazz: Class[T]): Unit = {
     println("Register Class Loader is not supported at native image")
   }
-
 
   @Substitute
   def scan(): ScanResult = {
