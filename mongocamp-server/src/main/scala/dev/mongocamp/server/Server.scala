@@ -33,7 +33,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   lazy val interface: String = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
   lazy val port: Int         = ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
 
-  private def inizializeRoutesPlugin: List[RoutesPlugin] = {
+  private def initializeRoutesPlugin: List[RoutesPlugin] = {
     val pluginList = ReflectionService
       .instancesForType(classOf[RoutesPlugin])
       .filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
@@ -50,7 +50,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList
 
   private def serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ inizializeRoutesPlugin.flatMap(_.endpoints) ++ IndexRoutes.endpoints
+    InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ initializeRoutesPlugin.flatMap(_.endpoints) ++ IndexRoutes.endpoints
   }
 
   private def routes(implicit ex: ExecutionContext): Route = {
@@ -136,5 +136,5 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
 
   startServer()
 
-  override def registerMongoCampServerDefaultConfigs: Unit = ConfigurationService.registerMongoCampServerDefaultConfigs()
+  override def registerMongoCampServerDefaultConfigs(): Unit = ConfigurationService.registerMongoCampServerDefaultConfigs()
 }
