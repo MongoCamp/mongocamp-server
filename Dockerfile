@@ -3,7 +3,7 @@ ARG GRAAL_VERSION="graalvm-java17:22.3.2"
 ENV PATH="$PATH:/opt/coursier/bin"
 COPY . /mongocamp-cli/
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; apt-get update; apt-get install -y curl gcc bash zlib1g-dev libc6 build-essential libz-dev zlib1g-dev; apt-get -y upgrade;
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; apt-get update; apt-get install -y apt-utils; apt-get install -y curl gcc bash zlib1g-dev libc6 build-essential libz-dev zlib1g-dev; apt-get -y upgrade;
 RUN chmod +x /mongocamp-cli/prepare-build.sh;
 RUN /mongocamp-cli/prepare-build.sh;
 WORKDIR /mongocamp-cli/

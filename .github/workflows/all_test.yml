@@ -44,9 +44,9 @@ jobs:
           mongodb-port: 4711
       - name: Run tests
         run: sbt test
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Build Docker Container for test
-        run: docker buildx build --platform=linux/amd64,linux/arm64/v8 . --tag mongocamp-server:test
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v2
+#      - name: Build Docker Container for test
+#        run: docker buildx build --platform=linux/amd64,linux/arm64/v8 . --tag mongocamp-server:test
