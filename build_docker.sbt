@@ -8,7 +8,7 @@ commands += Command.command("ci-docker")((state: State) => {
     val listOfPlatforms = List("linux/amd64", "linux/arm64/v8", "linux/arm64")
 
     val containerName = s"mongocamp-server:${version.value}"
-    val buildCommand = s"docker buildx build --platform=${listOfPlatforms.mkString(",")} --tag $containerName --push ."
+    val buildCommand = s"docker buildx build --memory=\"16g\" --platform=${listOfPlatforms.mkString(",")} --tag $containerName --push ."
     if (buildCommand.!(ProcessLogger(stout => state.log.info(stout), sterr => state.log.info(sterr))) != 0) {
       throw new Exception(s"Not zero exit code for build base image: ${containerName}")
     }
