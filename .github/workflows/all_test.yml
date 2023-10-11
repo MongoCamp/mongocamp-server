@@ -54,4 +54,4 @@ jobs:
       - name: Docker Info
         run: docker info
       - name: Build Docker Container on ${{ matrix.docker-platform }}
-        run: docker buildx build --memory=16g --platform=${{ matrix.docker-platform }} . --tag mongocamp-server:test
+        run: docker buildx build --platform=${{ matrix.docker-platform }} . --tag mongocamp-server:test

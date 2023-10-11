@@ -7,7 +7,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN chmod +x /mongocamp-cli/prepare-build.sh;
 RUN /mongocamp-cli/prepare-build.sh;
 WORKDIR /mongocamp-cli/
-RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; $JAVA_HOME/bin/gu install native-image; env JAVA_OPTS="-Xmx10G -XX:-UseParallelGC" sbt clean publishLocal mongocamp-cli/graalvm-native-image:packageBin;
+RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; $JAVA_HOME/bin/gu install native-image; sbt clean publishLocal mongocamp-cli/graalvm-native-image:packageBin;
 # todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
 #RUN /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli prepare native
 RUN /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli prepare cache;

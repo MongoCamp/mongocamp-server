@@ -20,8 +20,8 @@ graalVMNativeImageOptions ++= Seq(
   "-H:+ReportUnsupportedElementsAtRuntime",
   "-H:+ReportExceptionStackTraces",
   "--report-unsupported-elements-at-runtime",
-  "--trace-object-instantiation=java.io.File,java.util.jar.JarFile",
-  "-J-Xmx16g"
+  "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
+//  "-J-Xmx16g"
 )
 
 enablePlugins(BuildInfoPlugin)
