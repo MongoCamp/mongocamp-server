@@ -9,13 +9,6 @@ on:
       - 'main'
 
 jobs:
-  #  code_quality:
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: 'Qodana Scan'
-  #        uses: JetBrains/qodana-action@main
-  #        env:
-  #           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -35,7 +28,7 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@v1
         with:
-          jvm: graalvm-java17:22.3.2
+          jvm: graalvm-java17:22.3.3
           apps: sbt scala scalac
       - name: Start MongoDB ${{ matrix.mongodb-version }}
         uses: MongoCamp/mongodb-github-action@1.2.0
@@ -61,4 +54,4 @@ jobs:
       - name: Docker Info
         run: docker info
       - name: Build Docker Container on ${{ matrix.docker-platform }}
-        run: docker buildx build --memory="16g" --platform=${{ matrix.docker-platform }} . --tag mongocamp-server:test
+        run: docker buildx build --memory=16g --platform=${{ matrix.docker-platform }} . --tag mongocamp-server:test
