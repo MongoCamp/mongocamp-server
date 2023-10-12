@@ -12,7 +12,7 @@ import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{Method, StatusCode}
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -271,8 +271,8 @@ object AdminRoutes extends BaseRoute {
     }
   }
 
-  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    val routesByHolder: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
+    val routesByHolder: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
       if (AuthHolder.isMongoDbAuthHolder) {
         List(
           addUsersEndpoint,

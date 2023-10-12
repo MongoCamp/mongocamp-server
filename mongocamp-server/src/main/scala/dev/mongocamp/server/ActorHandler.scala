@@ -1,5 +1,5 @@
 package dev.mongocamp.server
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 
 import scala.concurrent.ExecutionContextExecutor
 

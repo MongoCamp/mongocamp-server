@@ -1,18 +1,17 @@
 name := "mongocamp-server"
 
-val TapirVersion = "1.8.0"
-libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"  % TapirVersion
+val TapirVersion = "1.8.1"
+libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-pekko-http-server" % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"       % TapirVersion
-//libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-redoc-bundle"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
 val sttClientVersion = "3.9.0"
-libraryDependencies += "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttClientVersion
-libraryDependencies += "com.softwaremill.sttp.client3" %% "core"              % sttClientVersion
+libraryDependencies += "com.softwaremill.sttp.client3" %% "pekko-http-backend" % sttClientVersion
+libraryDependencies += "com.softwaremill.sttp.client3" %% "core"               % sttClientVersion
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.11"
 

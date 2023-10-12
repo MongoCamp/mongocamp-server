@@ -6,7 +6,7 @@ import sttp.tapir.server.interceptor.log.DefaultServerLog
 
 import scala.concurrent.Future
 
-object MongoCampAkkaHttpServerLog extends LazyLogging {
+object MongoCampHttpServerLog extends LazyLogging {
 
   def serverLog(): DefaultServerLog[Future] = {
 

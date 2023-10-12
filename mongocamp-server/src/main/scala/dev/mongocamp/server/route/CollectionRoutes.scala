@@ -17,7 +17,7 @@ import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import dev.mongocamp.server.service.{AggregationService, SchemaService}
 import io.circe.generic.auto._
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -294,7 +294,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
   }
 
-  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(
       collectionsEndpoint,
       getCollectionStatusEndpoint,

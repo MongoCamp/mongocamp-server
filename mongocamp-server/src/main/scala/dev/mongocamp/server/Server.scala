@@ -1,12 +1,12 @@
 package dev.mongocamp.server
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpHeader.ParsingResult
-import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
-import akka.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
-import akka.http.scaladsl.server.{Route, RouteConcatenation}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.HttpHeader.ParsingResult
+import org.apache.pekko.http.scaladsl.model.HttpMethods._
+import org.apache.pekko.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
+import org.apache.pekko.http.scaladsl.server.Directives.{complete, extractRequestContext, options}
+import org.apache.pekko.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
@@ -19,7 +19,7 @@ import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.{ConfigurationService, PluginDownloadService, PluginService, ReflectionService}
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
@@ -49,13 +49,13 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
 
   def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList
 
-  private def serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  private def serverEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
     InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ initializeRoutesPlugin.flatMap(_.endpoints) ++ IndexRoutes.endpoints
   }
 
   private def routes(implicit ex: ExecutionContext): Route = {
     val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
-    val allEndpoints      = internalEndPoints.map(ep => AkkaHttpServer.akkaHttpServerInterpreter.toRoute(ep))
+    val allEndpoints      = internalEndPoints.map(ep => HttpServer.httpServerInterpreter.toRoute(ep))
     concat(allEndpoints: _*)
   }
 
@@ -73,7 +73,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
           val corsHeaders                      = Cors.corsHeadersFromOrigin((originHeader ++ refererHeader).headOption)
           val headers: ArrayBuffer[HttpHeader] = ArrayBuffer()
           corsHeaders.foreach(header => headers += HttpHeader.parse(header.name, header.value).asInstanceOf[ParsingResult.Ok].header)
-          headers += akka.http.scaladsl.model.headers.`Access-Control-Allow-Methods`(Seq(OPTIONS, POST, PUT, PATCH, GET, DELETE))
+          headers += org.apache.pekko.http.scaladsl.model.headers.`Access-Control-Allow-Methods`(Seq(OPTIONS, POST, PUT, PATCH, GET, DELETE))
           HttpResponse(StatusCodes.OK).withHeaders(headers.toList)
         })
       }

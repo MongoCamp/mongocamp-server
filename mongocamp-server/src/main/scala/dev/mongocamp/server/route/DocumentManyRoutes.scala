@@ -10,7 +10,7 @@ import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.{ DeleteResponse, InsertResponse, UpdateRequest, UpdateResponse }
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -122,5 +122,5 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     )
   }
 
-  def listOfManyEndpoints(): List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(insertManyEndpoint, updateManyEndpoint, deleteManyEndpoint)
+  def listOfManyEndpoints(): List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(insertManyEndpoint, updateManyEndpoint, deleteManyEndpoint)
 }

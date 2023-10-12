@@ -3,10 +3,10 @@
     "name": "[B"
   },
   {
-    "name": "[Lakka.actor.LightArrayRevolverScheduler$TaskQueue;"
+    "name": "[Lorg.apache.pekko.actor.LightArrayRevolverScheduler$TaskQueue;"
   },
   {
-    "name": "[Lakka.stream.stage.GraphStageLogic;"
+    "name": "[Lorg.apache.pekko.stream.stage.GraphStageLogic;"
   },
   {
     "name": "[Ljava.lang.Class;"
@@ -21,45 +21,33 @@
     "name": "[Ljava.nio.file.LinkOption;"
   },
   {
-    "name": "[Ljava.nio.file.attribute.FileAttribute;"
-  },
-  {
     "name": "[Lscala.Function2;"
   },
   {
     "name": "[Lscala.Option;"
   },
   {
-    "name": "[Lscala.reflect.internal.Symbols$Symbol;"
-  },
-  {
-    "name": "[Lscala.reflect.internal.Types$Type;"
-  },
-  {
-    "name": "[Lscala.reflect.runtime.JavaMirrors$JavaMirror$JavaAnnotationProxy;"
-  },
-  {
     "name": "[Lsttp.model.UriInterpolator$Token;"
   },
   {
-    "name": "akka.actor.ActorCell",
+    "name": "org.apache.pekko.actor.ActorCell",
     "fields": [
       {
-        "name": "akka$actor$dungeon$Children$$_childrenRefsDoNotCallMeDirectly"
+        "name": "org$apache$pekko$actor$dungeon$Children$$_childrenRefsDoNotCallMeDirectly"
       },
       {
-        "name": "akka$actor$dungeon$Children$$_functionRefsDoNotCallMeDirectly"
+        "name": "org$apache$pekko$actor$dungeon$Children$$_functionRefsDoNotCallMeDirectly"
       },
       {
-        "name": "akka$actor$dungeon$Children$$_nextNameDoNotCallMeDirectly"
+        "name": "org$apache$pekko$actor$dungeon$Children$$_nextNameDoNotCallMeDirectly"
       },
       {
-        "name": "akka$actor$dungeon$Dispatch$$_mailboxDoNotCallMeDirectly"
+        "name": "org$apache$pekko$actor$dungeon$Dispatch$$_mailboxDoNotCallMeDirectly"
       }
     ]
   },
   {
-    "name": "akka.actor.DefaultSupervisorStrategy",
+    "name": "org.apache.pekko.actor.DefaultSupervisorStrategy",
     "methods": [
       {
         "name": "<init>",
@@ -68,20 +56,20 @@
     ]
   },
   {
-    "name": "akka.actor.LightArrayRevolverScheduler",
+    "name": "org.apache.pekko.actor.LightArrayRevolverScheduler",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
           "com.typesafe.config.Config",
-          "akka.event.LoggingAdapter",
+          "org.apache.pekko.event.LoggingAdapter",
           "java.util.concurrent.ThreadFactory"
         ]
       }
     ]
   },
   {
-    "name": "akka.actor.LightArrayRevolverScheduler$TaskHolder",
+    "name": "org.apache.pekko.actor.LightArrayRevolverScheduler$TaskHolder",
     "fields": [
       {
         "name": "task"
@@ -89,46 +77,46 @@
     ]
   },
   {
-    "name": "akka.actor.LocalActorRefProvider",
+    "name": "org.apache.pekko.actor.LocalActorRefProvider",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
           "java.lang.String",
-          "akka.actor.ActorSystem$Settings",
-          "akka.event.EventStream",
-          "akka.actor.DynamicAccess"
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "org.apache.pekko.event.EventStream",
+          "org.apache.pekko.actor.DynamicAccess"
         ]
       }
     ]
   },
   {
-    "name": "akka.actor.LocalActorRefProvider$Guardian",
+    "name": "org.apache.pekko.actor.LocalActorRefProvider$Guardian",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.SupervisorStrategy"
+          "org.apache.pekko.actor.SupervisorStrategy"
         ]
       }
     ]
   },
   {
-    "name": "akka.actor.LocalActorRefProvider$SystemGuardian",
+    "name": "org.apache.pekko.actor.LocalActorRefProvider$SystemGuardian",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.SupervisorStrategy",
-          "akka.actor.ActorRef"
+          "org.apache.pekko.actor.SupervisorStrategy",
+          "org.apache.pekko.actor.ActorRef"
         ]
       }
     ]
   },
   {
-    "name": "akka.actor.Props$EmptyActor",
+    "name": "org.apache.pekko.actor.Props$EmptyActor",
     "methods": [
       {
         "name": "<init>",
@@ -137,7 +125,7 @@
     ]
   },
   {
-    "name": "akka.actor.RepointableActorRef",
+    "name": "org.apache.pekko.actor.RepointableActorRef",
     "fields": [
       {
         "name": "_cellDoNotCallMeDirectly"
@@ -148,7 +136,7 @@
     ]
   },
   {
-    "name": "akka.dispatch.AbstractNodeQueue",
+    "name": "org.apache.pekko.dispatch.AbstractNodeQueue",
     "fields": [
       {
         "name": "_tailDoNotCallMeDirectly"
@@ -156,7 +144,7 @@
     ]
   },
   {
-    "name": "akka.dispatch.AbstractNodeQueue$Node",
+    "name": "org.apache.pekko.dispatch.AbstractNodeQueue$Node",
     "fields": [
       {
         "name": "_nextDoNotCallMeDirectly"
@@ -164,22 +152,22 @@
     ]
   },
   {
-    "name": "akka.dispatch.BoundedControlAwareMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.BoundedControlAwareMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.BoundedDequeBasedMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.BoundedDequeBasedMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.BoundedMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.BoundedMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.ControlAwareMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.ControlAwareMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.DequeBasedMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.DequeBasedMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.Mailbox",
+    "name": "org.apache.pekko.dispatch.Mailbox",
     "fields": [
       {
         "name": "_statusDoNotCallMeDirectly"
@@ -190,7 +178,7 @@
     ]
   },
   {
-    "name": "akka.dispatch.MessageDispatcher",
+    "name": "org.apache.pekko.dispatch.MessageDispatcher",
     "fields": [
       {
         "name": "_inhabitantsDoNotCallMeDirectly"
@@ -201,31 +189,31 @@
     ]
   },
   {
-    "name": "akka.dispatch.MultipleConsumerSemantics"
+    "name": "org.apache.pekko.dispatch.MultipleConsumerSemantics"
   },
   {
-    "name": "akka.dispatch.UnboundedControlAwareMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.UnboundedControlAwareMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.UnboundedDequeBasedMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.UnboundedDequeBasedMessageQueueSemantics"
   },
   {
-    "name": "akka.dispatch.UnboundedMailbox",
+    "name": "org.apache.pekko.dispatch.UnboundedMailbox",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ActorSystem$Settings",
+          "org.apache.pekko.actor.ActorSystem$Settings",
           "com.typesafe.config.Config"
         ]
       }
     ]
   },
   {
-    "name": "akka.dispatch.UnboundedMessageQueueSemantics"
+    "name": "org.apache.pekko.dispatch.UnboundedMessageQueueSemantics"
   },
   {
-    "name": "akka.event.DeadLetterListener",
+    "name": "org.apache.pekko.event.DeadLetterListener",
     "methods": [
       {
         "name": "<init>",
@@ -234,47 +222,47 @@
     ]
   },
   {
-    "name": "akka.event.DefaultLoggingFilter",
+    "name": "org.apache.pekko.event.DefaultLoggingFilter",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ActorSystem$Settings",
-          "akka.event.EventStream"
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "org.apache.pekko.event.EventStream"
         ]
       }
     ]
   },
   {
-    "name": "akka.event.EventStreamUnsubscriber",
+    "name": "org.apache.pekko.event.EventStreamUnsubscriber",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.event.EventStream",
+          "org.apache.pekko.event.EventStream",
           "boolean"
         ]
       }
     ]
   },
   {
-    "name": "akka.event.LoggerMailboxType",
+    "name": "org.apache.pekko.event.LoggerMailboxType",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ActorSystem$Settings",
+          "org.apache.pekko.actor.ActorSystem$Settings",
           "com.typesafe.config.Config"
         ]
       }
     ]
   },
   {
-    "name": "akka.event.LoggerMessageQueueSemantics"
+    "name": "org.apache.pekko.event.LoggerMessageQueueSemantics"
   },
   {
-    "name": "akka.event.Logging$DefaultLogger",
+    "name": "org.apache.pekko.event.Logging$DefaultLogger",
     "methods": [
       {
         "name": "<init>",
@@ -283,7 +271,7 @@
     ]
   },
   {
-    "name": "akka.http.DefaultParsingErrorHandler$",
+    "name": "org.apache.pekko.http.DefaultParsingErrorHandler$",
     "methods": [
       {
         "name": "<init>",
@@ -292,7 +280,7 @@
     ]
   },
   {
-    "name": "akka.http.impl.engine.client.PoolMasterActor",
+    "name": "org.apache.pekko.http.impl.engine.client.PoolMasterActor",
     "methods": [
       {
         "name": "<init>",
@@ -301,28 +289,28 @@
     ]
   },
   {
-    "name": "akka.io.SelectionHandler",
+    "name": "org.apache.pekko.io.SelectionHandler",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.io.SelectionHandlerSettings"
+          "org.apache.pekko.io.SelectionHandlerSettings"
         ]
       }
     ]
   },
   {
-    "name": "akka.io.TcpIncomingConnection",
+    "name": "org.apache.pekko.io.TcpIncomingConnection",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.io.TcpExt",
+          "org.apache.pekko.io.TcpExt",
           "java.nio.channels.SocketChannel",
-          "akka.io.ChannelRegistry",
-          "akka.actor.ActorRef",
+          "org.apache.pekko.io.ChannelRegistry",
+          "org.apache.pekko.actor.ActorRef",
           "scala.collection.immutable.Iterable",
           "boolean"
         ]
@@ -330,35 +318,35 @@
     ]
   },
   {
-    "name": "akka.io.TcpListener",
+    "name": "org.apache.pekko.io.TcpListener",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ActorRef",
-          "akka.io.TcpExt",
-          "akka.io.ChannelRegistry",
-          "akka.actor.ActorRef",
-          "akka.io.Tcp$Bind"
+          "org.apache.pekko.actor.ActorRef",
+          "org.apache.pekko.io.TcpExt",
+          "org.apache.pekko.io.ChannelRegistry",
+          "org.apache.pekko.actor.ActorRef",
+          "org.apache.pekko.io.Tcp$Bind"
         ]
       }
     ]
   },
   {
-    "name": "akka.io.TcpManager",
+    "name": "org.apache.pekko.io.TcpManager",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.io.TcpExt"
+          "org.apache.pekko.io.TcpExt"
         ]
       }
     ]
   },
   {
-    "name": "akka.pattern.PromiseActorRef",
+    "name": "org.apache.pekko.pattern.PromiseActorRef",
     "fields": [
       {
         "name": "_stateDoNotCallMeDirectly"
@@ -369,7 +357,7 @@
     ]
   },
   {
-    "name": "akka.routing.ConsistentHashingPool",
+    "name": "org.apache.pekko.routing.ConsistentHashingPool",
     "methods": [
       {
         "name": "<init>",
@@ -380,7 +368,7 @@
     ]
   },
   {
-    "name": "akka.routing.RoundRobinPool",
+    "name": "org.apache.pekko.routing.RoundRobinPool",
     "methods": [
       {
         "name": "<init>",
@@ -391,85 +379,85 @@
     ]
   },
   {
-    "name": "akka.routing.RoutedActorCell$RouterActorCreator",
+    "name": "org.apache.pekko.routing.RoutedActorCell$RouterActorCreator",
     "queryAllDeclaredConstructors": true,
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.routing.RouterConfig"
+          "org.apache.pekko.routing.RouterConfig"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.BooleanSerializer",
+    "name": "org.apache.pekko.serialization.BooleanSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.ByteArraySerializer",
+    "name": "org.apache.pekko.serialization.ByteArraySerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.ByteStringSerializer",
+    "name": "org.apache.pekko.serialization.ByteStringSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.DisabledJavaSerializer",
+    "name": "org.apache.pekko.serialization.DisabledJavaSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.IntSerializer",
+    "name": "org.apache.pekko.serialization.IntSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.LongSerializer",
+    "name": "org.apache.pekko.serialization.LongSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.serialization.SerializationExtension$",
+    "name": "org.apache.pekko.serialization.SerializationExtension$",
     "fields": [
       {
         "name": "MODULE$"
@@ -477,24 +465,24 @@
     ]
   },
   {
-    "name": "akka.serialization.StringSerializer",
+    "name": "org.apache.pekko.serialization.StringSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.stream.SinkRef"
+    "name": "org.apache.pekko.stream.SinkRef"
   },
   {
-    "name": "akka.stream.SourceRef"
+    "name": "org.apache.pekko.stream.SourceRef"
   },
   {
-    "name": "akka.stream.SystemMaterializer$",
+    "name": "org.apache.pekko.stream.SystemMaterializer$",
     "fields": [
       {
         "name": "MODULE$"
@@ -502,27 +490,27 @@
     ]
   },
   {
-    "name": "akka.stream.impl.streamref.StreamRefsProtocol"
+    "name": "org.apache.pekko.stream.impl.streamref.StreamRefsProtocol"
   },
   {
-    "name": "akka.stream.serialization.StreamRefSerializer",
+    "name": "org.apache.pekko.stream.serialization.StreamRefSerializer",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": [
-          "akka.actor.ExtendedActorSystem"
+          "org.apache.pekko.actor.ExtendedActorSystem"
         ]
       }
     ]
   },
   {
-    "name": "akka.util.ByteString$ByteString1"
+    "name": "org.apache.pekko.util.ByteString$ByteString1"
   },
   {
-    "name": "akka.util.ByteString$ByteString1C"
+    "name": "org.apache.pekko.util.ByteString$ByteString1C"
   },
   {
-    "name": "akka.util.ByteString$ByteStrings"
+    "name": "org.apache.pekko.util.ByteString$ByteStrings"
   },
   {
     "name": "apple.security.AppleProvider",
@@ -545,6 +533,15 @@
   {
     "name": "ch.qos.logback.classic.encoder.PatternLayoutEncoder",
     "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.joran.SerializedModelConfigurator",
     "methods": [
       {
         "name": "<init>",
@@ -599,6 +596,15 @@
   },
   {
     "name": "ch.qos.logback.classic.pattern.ThreadConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.classic.util.DefaultJoranConfigurator",
     "methods": [
       {
         "name": "<init>",
@@ -822,143 +828,76 @@
     ]
   },
   {
-    "name": "dev.mongocamp.server.plugin.JobPlugin"
-  },
-  {
     "name": "dev.mongocamp.server.plugin.JobPlugin$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.BucketFileRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.BucketFileRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.BucketRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.BucketRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.CollectionRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.CollectionRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.ConfigurationRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.ConfigurationRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.DatabaseRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.DatabaseRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.DocumentRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.DocumentRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "dev.mongocamp.server.route.JobRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.JobRoutes$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "java.beans.PropertyVetoException"
   },
   {
     "name": "java.io.Closeable",
@@ -966,9 +905,6 @@
   },
   {
     "name": "java.io.FilePermission"
-  },
-  {
-    "name": "java.io.IOException"
   },
   {
     "name": "java.io.InputStream",
@@ -1006,35 +942,8 @@
     ]
   },
   {
-    "name": "java.io.ObjectInputStream"
-  },
-  {
-    "name": "java.io.ObjectOutputStream"
-  },
-  {
-    "name": "java.io.ObjectStreamField"
-  },
-  {
-    "name": "java.io.PrintStream"
-  },
-  {
-    "name": "java.io.PrintWriter"
-  },
-  {
     "name": "java.io.Serializable",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.io.UnsupportedEncodingException"
-  },
-  {
-    "name": "java.lang.AbstractStringBuilder"
-  },
-  {
-    "name": "java.lang.ArrayIndexOutOfBoundsException"
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "java.lang.AutoCloseable",
@@ -1042,15 +951,6 @@
   },
   {
     "name": "java.lang.Boolean"
-  },
-  {
-    "name": "java.lang.Byte"
-  },
-  {
-    "name": "java.lang.CharSequence"
-  },
-  {
-    "name": "java.lang.Character"
   },
   {
     "name": "java.lang.Class",
@@ -1064,41 +964,16 @@
     ]
   },
   {
-    "name": "java.lang.ClassCastException"
-  },
-  {
     "name": "java.lang.ClassLoader",
     "allDeclaredFields": true,
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "java.lang.ClassNotFoundException"
-  },
-  {
     "name": "java.lang.ClassValue"
   },
   {
-    "name": "java.lang.CloneNotSupportedException"
-  },
-  {
-    "name": "java.lang.Cloneable",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
     "name": "java.lang.Comparable",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.Deprecated"
-  },
-  {
-    "name": "java.lang.Double"
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "java.lang.Enum",
@@ -1113,38 +988,7 @@
     ]
   },
   {
-    "name": "java.lang.Exception",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.Float"
-  },
-  {
-    "name": "java.lang.FunctionalInterface"
-  },
-  {
-    "name": "java.lang.IllegalAccessException"
-  },
-  {
-    "name": "java.lang.IllegalArgumentException"
-  },
-  {
-    "name": "java.lang.IndexOutOfBoundsException"
-  },
-  {
     "name": "java.lang.Integer"
-  },
-  {
-    "name": "java.lang.InternalError"
-  },
-  {
-    "name": "java.lang.InterruptedException"
-  },
-  {
-    "name": "java.lang.Iterable"
   },
   {
     "name": "java.lang.Long"
@@ -1186,40 +1030,15 @@
     ]
   },
   {
-    "name": "java.lang.NullPointerException"
-  },
-  {
-    "name": "java.lang.Number"
-  },
-  {
     "name": "java.lang.Object",
     "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicMethods": true,
-    "queryAllPublicConstructors": true
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "java.lang.Record"
   },
   {
-    "name": "java.lang.ReflectiveOperationException"
-  },
-  {
-    "name": "java.lang.RuntimeException",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
     "name": "java.lang.RuntimePermission"
-  },
-  {
-    "name": "java.lang.Short"
-  },
-  {
-    "name": "java.lang.StackTraceElement"
   },
   {
     "name": "java.lang.StackWalker",
@@ -1252,16 +1071,11 @@
   },
   {
     "name": "java.lang.String",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.StringBuffer"
-  },
-  {
-    "name": "java.lang.StringBuilder"
+    "fields": [
+      {
+        "name": "value"
+      }
+    ]
   },
   {
     "name": "java.lang.System",
@@ -1273,87 +1087,8 @@
     ]
   },
   {
-    "name": "java.lang.Throwable",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.Void"
-  },
-  {
-    "name": "java.lang.annotation.Inherited"
-  },
-  {
-    "name": "java.lang.annotation.Repeatable"
-  },
-  {
-    "name": "java.lang.annotation.Retention"
-  },
-  {
-    "name": "java.lang.annotation.RetentionPolicy"
-  },
-  {
     "name": "java.lang.constant.Constable",
     "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.lang.constant.ConstantDesc"
-  },
-  {
-    "name": "java.lang.constant.MethodHandleDesc"
-  },
-  {
-    "name": "java.lang.invoke.BoundMethodHandle",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.invoke.LambdaForm",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.invoke.LambdaFormEditor"
-  },
-  {
-    "name": "java.lang.invoke.MemberName",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.invoke.MethodHandle",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.invoke.MethodHandleImpl",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.invoke.MethodHandles",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true
-  },
-  {
-    "name": "java.lang.invoke.MethodType"
-  },
-  {
-    "name": "java.lang.invoke.ResolvedMethodName"
   },
   {
     "name": "java.lang.invoke.TypeDescriptor",
@@ -1364,14 +1099,7 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "java.lang.invoke.VarForm"
-  },
-  {
     "name": "java.lang.invoke.VarHandle",
-    "allDeclaredFields": true,
-    "allDeclaredClasses": true,
-    "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
     "methods": [
       {
         "name": "releaseFence",
@@ -1456,9 +1184,6 @@
     ]
   },
   {
-    "name": "java.lang.ref.SoftReference"
-  },
-  {
     "name": "java.lang.reflect.AccessibleObject",
     "methods": [
       {
@@ -1488,23 +1213,8 @@
     "queryAllDeclaredMethods": true
   },
   {
-    "name": "java.lang.reflect.Constructor"
-  },
-  {
-    "name": "java.lang.reflect.Field"
-  },
-  {
     "name": "java.lang.reflect.GenericDeclaration",
     "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.lang.reflect.InvocationTargetException"
-  },
-  {
-    "name": "java.lang.reflect.Member"
-  },
-  {
-    "name": "java.lang.reflect.Method"
   },
   {
     "name": "java.lang.reflect.Type",
@@ -1529,18 +1239,6 @@
     ]
   },
   {
-    "name": "java.nio.ByteOrder"
-  },
-  {
-    "name": "java.nio.charset.CharacterCodingException"
-  },
-  {
-    "name": "java.nio.charset.Charset"
-  },
-  {
-    "name": "java.nio.charset.CharsetDecoder"
-  },
-  {
     "name": "java.security.AccessController",
     "allDeclaredFields": true,
     "queryAllDeclaredMethods": true,
@@ -1563,9 +1261,6 @@
     "name": "java.security.KeyStoreSpi"
   },
   {
-    "name": "java.security.Permission"
-  },
-  {
     "name": "java.security.PrivilegedAction"
   },
   {
@@ -1586,24 +1281,6 @@
     "name": "java.sql.Timestamp"
   },
   {
-    "name": "java.util.Comparator"
-  },
-  {
-    "name": "java.util.HashMap"
-  },
-  {
-    "name": "java.util.Iterator"
-  },
-  {
-    "name": "java.util.List"
-  },
-  {
-    "name": "java.util.Locale"
-  },
-  {
-    "name": "java.util.Map"
-  },
-  {
     "name": "java.util.Optional",
     "allDeclaredFields": true,
     "queryAllDeclaredMethods": true,
@@ -1622,16 +1299,7 @@
     "name": "java.util.PropertyPermission"
   },
   {
-    "name": "java.util.Set"
-  },
-  {
-    "name": "java.util.function.BiFunction"
-  },
-  {
     "name": "java.util.function.Consumer"
-  },
-  {
-    "name": "java.util.function.Function"
   },
   {
     "name": "java.util.stream.AbstractPipeline",
@@ -1655,9 +1323,6 @@
         "parameterTypes": []
       }
     ]
-  },
-  {
-    "name": "java.util.stream.IntStream"
   },
   {
     "name": "java.util.stream.PipelineHelper",
@@ -1703,9 +1368,6 @@
     ]
   },
   {
-    "name": "jdk.internal.ValueBased"
-  },
-  {
     "name": "jdk.internal.loader.BuiltinClassLoader",
     "allDeclaredFields": true,
     "queryAllDeclaredMethods": true
@@ -1729,27 +1391,6 @@
     "name": "jdk.internal.module.SystemModuleFinders$SystemModuleReader",
     "allDeclaredFields": true,
     "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "jdk.internal.perf.PerfCounter"
-  },
-  {
-    "name": "jdk.internal.reflect.CallerSensitive"
-  },
-  {
-    "name": "jdk.internal.vm.annotation.DontInline"
-  },
-  {
-    "name": "jdk.internal.vm.annotation.ForceInline"
-  },
-  {
-    "name": "jdk.internal.vm.annotation.Hidden"
-  },
-  {
-    "name": "jdk.internal.vm.annotation.IntrinsicCandidate"
-  },
-  {
-    "name": "jdk.internal.vm.annotation.Stable"
   },
   {
     "name": "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",
@@ -2339,285 +1980,16 @@
     "name": "org.bson.codecs.record.RecordCodecProvider"
   },
   {
-    "name": "org.quartz.simpl.CascadingClassLoadHelper",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.quartz.simpl.RAMJobStore",
-    "queryAllPublicMethods": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      },
-      {
-        "name": "setInstanceId",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "setInstanceName",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.quartz.simpl.SimpleThreadPool",
-    "queryAllPublicMethods": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      },
-      {
-        "name": "setInstanceId",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "setInstanceName",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "setThreadCount",
-        "parameterTypes": [
-          "int"
-        ]
-      }
-    ]
-  },
-  {
     "name": "org.slf4j.Logger"
   },
   {
-    "name": "scala.$eq$colon$eq"
-  },
-  {
-    "name": "scala.$less$colon$less"
-  },
-  {
-    "name": "scala.AnyVal"
-  },
-  {
-    "name": "scala.AnyValCompanion"
-  },
-  {
-    "name": "scala.Array"
-  },
-  {
     "name": "scala.Boolean"
-  },
-  {
-    "name": "scala.Byte"
-  },
-  {
-    "name": "scala.Char"
-  },
-  {
-    "name": "scala.DelayedInit"
-  },
-  {
-    "name": "scala.Double"
-  },
-  {
-    "name": "scala.DummyImplicit"
-  },
-  {
-    "name": "scala.Dynamic"
-  },
-  {
-    "name": "scala.Equals"
-  },
-  {
-    "name": "scala.Float"
-  },
-  {
-    "name": "scala.Function0"
-  },
-  {
-    "name": "scala.Function1"
-  },
-  {
-    "name": "scala.Function10"
-  },
-  {
-    "name": "scala.Function11"
-  },
-  {
-    "name": "scala.Function12"
-  },
-  {
-    "name": "scala.Function13"
-  },
-  {
-    "name": "scala.Function14"
-  },
-  {
-    "name": "scala.Function15"
-  },
-  {
-    "name": "scala.Function16"
-  },
-  {
-    "name": "scala.Function17"
-  },
-  {
-    "name": "scala.Function18"
-  },
-  {
-    "name": "scala.Function19"
-  },
-  {
-    "name": "scala.Function2"
-  },
-  {
-    "name": "scala.Function20"
-  },
-  {
-    "name": "scala.Function21"
-  },
-  {
-    "name": "scala.Function22"
-  },
-  {
-    "name": "scala.Function3"
-  },
-  {
-    "name": "scala.Function4"
-  },
-  {
-    "name": "scala.Function5"
-  },
-  {
-    "name": "scala.Function6"
-  },
-  {
-    "name": "scala.Function7"
-  },
-  {
-    "name": "scala.Function8"
-  },
-  {
-    "name": "scala.Function9"
   },
   {
     "name": "scala.Int"
   },
   {
     "name": "scala.Long"
-  },
-  {
-    "name": "scala.LowPriorityImplicits"
-  },
-  {
-    "name": "scala.MatchError"
-  },
-  {
-    "name": "scala.None"
-  },
-  {
-    "name": "scala.Option"
-  },
-  {
-    "name": "scala.PartialFunction"
-  },
-  {
-    "name": "scala.Predef"
-  },
-  {
-    "name": "scala.Product"
-  },
-  {
-    "name": "scala.Product1"
-  },
-  {
-    "name": "scala.Product10"
-  },
-  {
-    "name": "scala.Product11"
-  },
-  {
-    "name": "scala.Product12"
-  },
-  {
-    "name": "scala.Product13"
-  },
-  {
-    "name": "scala.Product14"
-  },
-  {
-    "name": "scala.Product15"
-  },
-  {
-    "name": "scala.Product16"
-  },
-  {
-    "name": "scala.Product17"
-  },
-  {
-    "name": "scala.Product18"
-  },
-  {
-    "name": "scala.Product19"
-  },
-  {
-    "name": "scala.Product2"
-  },
-  {
-    "name": "scala.Product20"
-  },
-  {
-    "name": "scala.Product21"
-  },
-  {
-    "name": "scala.Product22"
-  },
-  {
-    "name": "scala.Product3"
-  },
-  {
-    "name": "scala.Product4"
-  },
-  {
-    "name": "scala.Product5"
-  },
-  {
-    "name": "scala.Product6"
-  },
-  {
-    "name": "scala.Product7"
-  },
-  {
-    "name": "scala.Product8"
-  },
-  {
-    "name": "scala.Product9"
-  },
-  {
-    "name": "scala.SerialVersionUID"
-  },
-  {
-    "name": "scala.Short"
-  },
-  {
-    "name": "scala.Some"
-  },
-  {
-    "name": "scala.Specializable"
-  },
-  {
-    "name": "scala.StringContext"
   },
   {
     "name": "scala.Symbol",
@@ -2629,624 +2001,6 @@
         ]
       }
     ]
-  },
-  {
-    "name": "scala.Tuple1"
-  },
-  {
-    "name": "scala.Tuple10"
-  },
-  {
-    "name": "scala.Tuple11"
-  },
-  {
-    "name": "scala.Tuple12"
-  },
-  {
-    "name": "scala.Tuple13"
-  },
-  {
-    "name": "scala.Tuple14"
-  },
-  {
-    "name": "scala.Tuple15"
-  },
-  {
-    "name": "scala.Tuple16"
-  },
-  {
-    "name": "scala.Tuple17"
-  },
-  {
-    "name": "scala.Tuple18"
-  },
-  {
-    "name": "scala.Tuple19"
-  },
-  {
-    "name": "scala.Tuple2"
-  },
-  {
-    "name": "scala.Tuple20"
-  },
-  {
-    "name": "scala.Tuple21"
-  },
-  {
-    "name": "scala.Tuple22"
-  },
-  {
-    "name": "scala.Tuple3"
-  },
-  {
-    "name": "scala.Tuple4"
-  },
-  {
-    "name": "scala.Tuple5"
-  },
-  {
-    "name": "scala.Tuple6"
-  },
-  {
-    "name": "scala.Tuple7"
-  },
-  {
-    "name": "scala.Tuple8"
-  },
-  {
-    "name": "scala.Tuple9"
-  },
-  {
-    "name": "scala.UninitializedFieldError"
-  },
-  {
-    "name": "scala.Unit"
-  },
-  {
-    "name": "scala.ValueOf"
-  },
-  {
-    "name": "scala.annotation.Annotation"
-  },
-  {
-    "name": "scala.annotation.ConstantAnnotation"
-  },
-  {
-    "name": "scala.annotation.StaticAnnotation"
-  },
-  {
-    "name": "scala.annotation.TypeConstraint"
-  },
-  {
-    "name": "scala.annotation.compileTimeOnly"
-  },
-  {
-    "name": "scala.annotation.elidable"
-  },
-  {
-    "name": "scala.annotation.implicitAmbiguous"
-  },
-  {
-    "name": "scala.annotation.implicitNotFound"
-  },
-  {
-    "name": "scala.annotation.meta.beanGetter"
-  },
-  {
-    "name": "scala.annotation.meta.beanSetter"
-  },
-  {
-    "name": "scala.annotation.meta.companionClass"
-  },
-  {
-    "name": "scala.annotation.meta.companionMethod"
-  },
-  {
-    "name": "scala.annotation.meta.companionObject"
-  },
-  {
-    "name": "scala.annotation.meta.field"
-  },
-  {
-    "name": "scala.annotation.meta.getter"
-  },
-  {
-    "name": "scala.annotation.meta.languageFeature"
-  },
-  {
-    "name": "scala.annotation.meta.package"
-  },
-  {
-    "name": "scala.annotation.meta.param"
-  },
-  {
-    "name": "scala.annotation.meta.setter"
-  },
-  {
-    "name": "scala.annotation.migration"
-  },
-  {
-    "name": "scala.annotation.nowarn"
-  },
-  {
-    "name": "scala.annotation.showAsInfix"
-  },
-  {
-    "name": "scala.annotation.strictfp"
-  },
-  {
-    "name": "scala.annotation.switch"
-  },
-  {
-    "name": "scala.annotation.tailrec"
-  },
-  {
-    "name": "scala.annotation.unchecked.uncheckedStable"
-  },
-  {
-    "name": "scala.annotation.unchecked.uncheckedVariance"
-  },
-  {
-    "name": "scala.annotation.unspecialized"
-  },
-  {
-    "name": "scala.annotation.unused"
-  },
-  {
-    "name": "scala.annotation.varargs"
-  },
-  {
-    "name": "scala.beans.BeanProperty"
-  },
-  {
-    "name": "scala.beans.BooleanBeanProperty"
-  },
-  {
-    "name": "scala.collection.ArrayOps"
-  },
-  {
-    "name": "scala.collection.BufferedIterator"
-  },
-  {
-    "name": "scala.collection.Factory"
-  },
-  {
-    "name": "scala.collection.Iterable"
-  },
-  {
-    "name": "scala.collection.IterableFactory"
-  },
-  {
-    "name": "scala.collection.IterableFactoryDefaults"
-  },
-  {
-    "name": "scala.collection.IterableOnce"
-  },
-  {
-    "name": "scala.collection.IterableOnceExtensionMethods"
-  },
-  {
-    "name": "scala.collection.Iterator"
-  },
-  {
-    "name": "scala.collection.Map"
-  },
-  {
-    "name": "scala.collection.MapFactory"
-  },
-  {
-    "name": "scala.collection.Seq"
-  },
-  {
-    "name": "scala.collection.SeqFactory"
-  },
-  {
-    "name": "scala.collection.SeqOps"
-  },
-  {
-    "name": "scala.collection.Set"
-  },
-  {
-    "name": "scala.collection.StringOps"
-  },
-  {
-    "name": "scala.collection.immutable.$colon$colon"
-  },
-  {
-    "name": "scala.collection.immutable.AbstractSeq"
-  },
-  {
-    "name": "scala.collection.immutable.IndexedSeq"
-  },
-  {
-    "name": "scala.collection.immutable.Iterable"
-  },
-  {
-    "name": "scala.collection.immutable.LinearSeq"
-  },
-  {
-    "name": "scala.collection.immutable.LinearSeqOps"
-  },
-  {
-    "name": "scala.collection.immutable.List"
-  },
-  {
-    "name": "scala.collection.immutable.Map"
-  },
-  {
-    "name": "scala.collection.immutable.Nil"
-  },
-  {
-    "name": "scala.collection.immutable.Seq"
-  },
-  {
-    "name": "scala.collection.immutable.Stream"
-  },
-  {
-    "name": "scala.collection.immutable.package"
-  },
-  {
-    "name": "scala.collection.package"
-  },
-  {
-    "name": "scala.concurrent.Future"
-  },
-  {
-    "name": "scala.concurrent.Promise"
-  },
-  {
-    "name": "scala.concurrent.package"
-  },
-  {
-    "name": "scala.deprecated"
-  },
-  {
-    "name": "scala.deprecatedInheritance"
-  },
-  {
-    "name": "scala.deprecatedName"
-  },
-  {
-    "name": "scala.deprecatedOverriding"
-  },
-  {
-    "name": "scala.inline"
-  },
-  {
-    "name": "scala.languageFeature"
-  },
-  {
-    "name": "scala.math.ScalaNumber"
-  },
-  {
-    "name": "scala.math.package"
-  },
-  {
-    "name": "scala.native"
-  },
-  {
-    "name": "scala.noinline"
-  },
-  {
-    "name": "scala.package"
-  },
-  {
-    "name": "scala.reflect.ClassManifestFactory"
-  },
-  {
-    "name": "scala.reflect.ClassTag"
-  },
-  {
-    "name": "scala.reflect.Manifest"
-  },
-  {
-    "name": "scala.reflect.ManifestFactory"
-  },
-  {
-    "name": "scala.reflect.NoManifest"
-  },
-  {
-    "name": "scala.reflect.OptManifest"
-  },
-  {
-    "name": "scala.reflect.ScalaLongSignature"
-  },
-  {
-    "name": "scala.reflect.ScalaSignature",
-    "methods": [
-      {
-        "name": "bytes",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "scala.reflect.api.Exprs"
-  },
-  {
-    "name": "scala.reflect.api.JavaUniverse"
-  },
-  {
-    "name": "scala.reflect.api.Mirror"
-  },
-  {
-    "name": "scala.reflect.api.Quasiquotes"
-  },
-  {
-    "name": "scala.reflect.api.TreeCreator"
-  },
-  {
-    "name": "scala.reflect.api.Trees"
-  },
-  {
-    "name": "scala.reflect.api.TypeCreator"
-  },
-  {
-    "name": "scala.reflect.api.TypeTags"
-  },
-  {
-    "name": "scala.reflect.api.Universe"
-  },
-  {
-    "name": "scala.reflect.api.package"
-  },
-  {
-    "name": "scala.reflect.internal.annotations.package"
-  },
-  {
-    "name": "scala.reflect.internal.annotations.uncheckedBounds"
-  },
-  {
-    "name": "scala.reflect.macros.blackbox.Context"
-  },
-  {
-    "name": "scala.reflect.macros.internal.macroImpl"
-  },
-  {
-    "name": "scala.reflect.macros.package"
-  },
-  {
-    "name": "scala.reflect.macros.whitebox.Context"
-  },
-  {
-    "name": "scala.reflect.package"
-  },
-  {
-    "name": "scala.reflect.runtime.package"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction0"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction1"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction10"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction11"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction12"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction13"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction14"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction15"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction16"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction17"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction18"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction19"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction2"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction20"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction21"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction22"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction3"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction4"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction5"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction6"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction7"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction8"
-  },
-  {
-    "name": "scala.runtime.AbstractFunction9"
-  },
-  {
-    "name": "scala.runtime.AbstractPartialFunction"
-  },
-  {
-    "name": "scala.runtime.BooleanRef"
-  },
-  {
-    "name": "scala.runtime.BoxedUnit"
-  },
-  {
-    "name": "scala.runtime.BoxesRunTime"
-  },
-  {
-    "name": "scala.runtime.ByteRef"
-  },
-  {
-    "name": "scala.runtime.CharRef"
-  },
-  {
-    "name": "scala.runtime.DoubleRef"
-  },
-  {
-    "name": "scala.runtime.EmptyMethodCache"
-  },
-  {
-    "name": "scala.runtime.FloatRef"
-  },
-  {
-    "name": "scala.runtime.IntRef"
-  },
-  {
-    "name": "scala.runtime.LazyBoolean"
-  },
-  {
-    "name": "scala.runtime.LazyByte"
-  },
-  {
-    "name": "scala.runtime.LazyChar"
-  },
-  {
-    "name": "scala.runtime.LazyDouble"
-  },
-  {
-    "name": "scala.runtime.LazyFloat"
-  },
-  {
-    "name": "scala.runtime.LazyInt"
-  },
-  {
-    "name": "scala.runtime.LazyLong"
-  },
-  {
-    "name": "scala.runtime.LazyRef"
-  },
-  {
-    "name": "scala.runtime.LazyShort"
-  },
-  {
-    "name": "scala.runtime.LazyUnit"
-  },
-  {
-    "name": "scala.runtime.LongRef"
-  },
-  {
-    "name": "scala.runtime.MethodCache"
-  },
-  {
-    "name": "scala.runtime.ModuleSerializationProxy"
-  },
-  {
-    "name": "scala.runtime.NonLocalReturnControl"
-  },
-  {
-    "name": "scala.runtime.Nothing$"
-  },
-  {
-    "name": "scala.runtime.Null$"
-  },
-  {
-    "name": "scala.runtime.ObjectRef"
-  },
-  {
-    "name": "scala.runtime.ScalaRunTime"
-  },
-  {
-    "name": "scala.runtime.ShortRef"
-  },
-  {
-    "name": "scala.runtime.Statics"
-  },
-  {
-    "name": "scala.runtime.StructuralCallSite"
-  },
-  {
-    "name": "scala.runtime.SymbolLiteral"
-  },
-  {
-    "name": "scala.runtime.VolatileBooleanRef"
-  },
-  {
-    "name": "scala.runtime.VolatileByteRef"
-  },
-  {
-    "name": "scala.runtime.VolatileCharRef"
-  },
-  {
-    "name": "scala.runtime.VolatileDoubleRef"
-  },
-  {
-    "name": "scala.runtime.VolatileFloatRef"
-  },
-  {
-    "name": "scala.runtime.VolatileIntRef"
-  },
-  {
-    "name": "scala.runtime.VolatileLongRef"
-  },
-  {
-    "name": "scala.runtime.VolatileObjectRef"
-  },
-  {
-    "name": "scala.runtime.VolatileShortRef"
-  },
-  {
-    "name": "scala.specialized"
-  },
-  {
-    "name": "scala.throws"
-  },
-  {
-    "name": "scala.transient"
-  },
-  {
-    "name": "scala.unchecked"
-  },
-  {
-    "name": "scala.util.Failure"
-  },
-  {
-    "name": "scala.util.Success"
-  },
-  {
-    "name": "scala.util.Try"
-  },
-  {
-    "name": "scala.util.control.NonFatal$"
-  },
-  {
-    "name": "scala.util.package"
-  },
-  {
-    "name": "scala.volatile"
-  },
-  {
-    "name": "scala.xml.TopScope"
-  },
-  {
-    "name": "scala.xml.package"
-  },
-  {
-    "name": "sun.invoke.empty.Empty"
-  },
-  {
-    "name": "sun.invoke.util.Wrapper"
   },
   {
     "name": "sun.misc.Unsafe",
@@ -3298,15 +2052,6 @@
   },
   {
     "name": "sun.security.provider.JavaKeyStore$JKS",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "sun.security.provider.MD5",
     "methods": [
       {
         "name": "<init>",

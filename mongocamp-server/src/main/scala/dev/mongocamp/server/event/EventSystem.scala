@@ -1,7 +1,7 @@
 package dev.mongocamp.server.event
 
-import akka.actor.ActorSystem
-import akka.event.EventStream
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.event.EventStream
 
 object EventSystem {
 

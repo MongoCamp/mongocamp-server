@@ -12,7 +12,7 @@ import dev.mongocamp.server.model.auth.{AuthorizedCollectionRequest, UserInforma
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -119,7 +119,7 @@ object DatabaseRoutes extends RoutesPlugin {
     }))
   }
 
-  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(databaseEndpoint, databaseStatusEndpoint, databaseInfoEndpoint, deleteDatabaseEndpoint, collectionsEndpoint)
 
 }

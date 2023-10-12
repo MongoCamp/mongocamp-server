@@ -19,7 +19,7 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import org.bson.types.ObjectId
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{Method, Part, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -284,7 +284,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
     )
   }
 
-  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(findAllEndpoint, findPostEndpoint) ++
       List(insertEndpoint, updateFileInfosEndpoint, getFileInfosEndpoint, getFileEndpoint, deleteFileEndpoint)
 

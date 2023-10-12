@@ -17,7 +17,7 @@ import io.circe.generic.auto._
 import org.apache.lucene.search.Query
 import org.bson.types.ObjectId
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -278,7 +278,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
   }
 
-  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(findAllEndpoint, findPostEndpoint) ++
       DocumentManyRoutes.listOfManyEndpoints() ++
       List(insertEndpoint, getDocumentEndpoint, updateSingleDocumentEndpoint, updateDocumentFieldsEndpoint, deleteDocumentEndpoint)

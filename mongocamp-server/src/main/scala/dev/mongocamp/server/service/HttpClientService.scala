@@ -5,9 +5,9 @@ import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.MongoCampException
 import io.circe.parser.decode
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.client3._
-import sttp.client3.akkahttp.AkkaHttpBackend
+import sttp.client3.pekkohttp.PekkoHttpBackend
 import sttp.model.{ Method, StatusCode }
 
 import scala.concurrent.duration.DurationInt
@@ -15,7 +15,7 @@ import scala.concurrent.{ Await, Future }
 import scala.util.Random
 
 object HttpClientService {
-  private lazy val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] = AkkaHttpBackend()
+  private lazy val backend: SttpBackend[Future, PekkoStreams with capabilities.WebSockets] = PekkoHttpBackend()
 
   def additionalHeaderByHost(host: String): Map[String, String] = {
     val hostHeadersString                                = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyHttpClientHeaders)

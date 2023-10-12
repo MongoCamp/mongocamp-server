@@ -7,7 +7,7 @@ import dev.mongocamp.server.route.BaseRoute
 import dev.mongocamp.server.service.ConfigurationService
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
@@ -21,7 +21,7 @@ object ApiDocsRoutes extends BaseRoute {
   val nameAsyncApiDocsYamlName = "asyncapidocs.yaml"
   val nameOpenApiDocsYamlName  = "docs.yaml"
 
-  def docsYamlEndpoint(yamlName: String, content: String): ServerEndpoint[AkkaStreams with WebSockets, Future] = {
+  def docsYamlEndpoint(yamlName: String, content: String): ServerEndpoint[PekkoStreams with WebSockets, Future] = {
     def contentToResponse(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (String, Long)]] = {
       Future.successful(Right({
         (content, content.getBytes.length)
@@ -42,8 +42,8 @@ object ApiDocsRoutes extends BaseRoute {
     endpoint
   }
 
-  def addDocsRoutes(serverEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]]): List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    val docs = ArrayBuffer[ServerEndpoint[AkkaStreams with WebSockets, Future]]()
+  def addDocsRoutes(serverEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]]): List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
+    val docs = ArrayBuffer[ServerEndpoint[PekkoStreams with WebSockets, Future]]()
 
     val swaggerEnabled = isSwaggerEnabled
     if (swaggerEnabled || ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyOpenApi)) {
