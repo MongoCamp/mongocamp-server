@@ -17,6 +17,9 @@
         "pattern": "\\Qakka-http-version.conf\\E"
       },
       {
+        "pattern": "\\Qpekko-http-version.conf\\E"
+      },
+      {
         "pattern": "\\Qapplication.conf\\E"
       },
       {
