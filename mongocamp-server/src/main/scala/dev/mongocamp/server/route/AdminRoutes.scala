@@ -1,22 +1,22 @@
 package dev.mongocamp.server.route
 
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
+import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder}
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.role.{ CreateRoleEvent, DeleteRoleEvent, UpdateRoleEvent }
+import dev.mongocamp.server.event.role.{CreateRoleEvent, DeleteRoleEvent, UpdateRoleEvent}
 import dev.mongocamp.server.event.user._
 import dev.mongocamp.server.exception
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.{Paging, PagingFunctions}
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.model.{Method, StatusCode}
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{ path, query }
+import sttp.tapir.{path, query}
 
 import scala.concurrent.Future
 
@@ -271,8 +271,8 @@ object AdminRoutes extends BaseRoute {
     }
   }
 
-  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
-    val routesByHolder: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
+    val routesByHolder: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
       if (AuthHolder.isMongoDbAuthHolder) {
         List(
           addUsersEndpoint,

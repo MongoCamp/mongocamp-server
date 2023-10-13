@@ -9,7 +9,7 @@ import dev.mongocamp.server.model.index.{ IndexCreateRequest, IndexCreateRespons
 import io.circe.generic.auto._
 import org.mongodb.scala.model.IndexOptions
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -263,7 +263,7 @@ object IndexRoutes extends CollectionBaseRoute {
     indexOptions
   }
 
-  lazy val endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(
+  lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
     listIndexEndpoint,
     indexByNameEndpoint,
     createIndexEndpoint,

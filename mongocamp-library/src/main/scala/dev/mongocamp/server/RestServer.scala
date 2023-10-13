@@ -12,5 +12,5 @@ trait RestServer extends LazyLogging {
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit]
 
-  def registerMongoCampServerDefaultConfigs: Unit
+  def registerMongoCampServerDefaultConfigs(): Unit
 }

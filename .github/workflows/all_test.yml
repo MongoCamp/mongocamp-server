@@ -9,19 +9,12 @@ on:
       - 'main'
 
 jobs:
-  #  code_quality:
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: 'Qodana Scan'
-  #        uses: JetBrains/qodana-action@main
-  #        env:
-  #           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
   test:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        mongodb-version: [ '4.4', '5.0', '6.0' ]
+        mongodb-version: [ '4.4', '5.0', '6.0', '7.0' ]
         os: [ ubuntu-latest ]
     steps:
       - name: Git Checkout
@@ -35,7 +28,7 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@v1
         with:
-          jvm: graalvm-java17:22.3.2
+          jvm: graalvm-java17:22.3.3
           apps: sbt scala scalac
       - name: Start MongoDB ${{ matrix.mongodb-version }}
         uses: MongoCamp/mongodb-github-action@1.2.0
@@ -44,3 +37,21 @@ jobs:
           mongodb-port: 4711
       - name: Run tests
         run: sbt test
+  build-test-container:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-platform: [ "linux/amd64",  "linux/arm64/v8", "linux/arm64" ]
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Docker Info
+        run: docker info
+      - name: Build Docker Container on ${{ matrix.docker-platform }}
+        run: docker buildx build --platform=${{ matrix.docker-platform }} . --tag mongocamp-server:test

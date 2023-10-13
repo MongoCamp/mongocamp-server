@@ -1,7 +1,7 @@
 package dev.mongocamp.server.interceptor
 
-import akka.http.scaladsl.model.AttributeKey
-import akka.http.scaladsl.server.RequestContext
+import org.apache.pekko.http.scaladsl.model.AttributeKey
+import org.apache.pekko.http.scaladsl.server.RequestContext
 import sttp.tapir.model.ServerRequest
 
 import scala.jdk.OptionConverters._

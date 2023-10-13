@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        mongodb-version: [ '4.4', '5.0', '6.0' ]
+        mongodb-version: [ '4.4', '5.0', '6.0', '7.0' ]
         os: [ ubuntu-latest ]
     steps:
       - name: Git Checkout
@@ -36,7 +36,7 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@v1
         with:
-          jvm: graalvm-java17:22.3.2
+          jvm: graalvm-java17:22.3.3
           apps: sbt scala scalac
       - name: Start MongoDB ${{ matrix.mongodb-version }}
         uses: MongoCamp/mongodb-github-action@1.2.0
@@ -68,8 +68,12 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@v1
         with:
-          jvm: graalvm-java17:22.3.2
+          jvm: graalvm-java17:22.3.3
           apps: sbt scala scalac
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GITHUB_TOKEN }}

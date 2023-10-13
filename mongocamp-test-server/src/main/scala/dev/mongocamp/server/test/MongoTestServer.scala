@@ -36,7 +36,7 @@ object MongoTestServer extends LazyLogging {
   private def initMonoExecutable: Mongod = {
     val mongod = Mongod
       .builder()
-      .net(Start.to(classOf[Net]).providedBy(() => Net.builder().port(mongoPort).bindIp(Net.defaults().getBindIp).isIpv6(true).build()))
+      .net(Start.to(classOf[Net]).providedBy(() => Net.builder().port(mongoPort).bindIp(Net.defaults().getBindIp).isIpv6(false).build()))
       .databaseDir(Start.to(classOf[DatabaseDir]).providedBy(() => DatabaseDir.of(tempDir.path)))
       .processOutput(Start.to(classOf[ProcessOutput]).providedBy(() => ProcessOutput.silent()))
       .build()

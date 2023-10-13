@@ -5,7 +5,7 @@ import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.converter.TapirSchema
 import dev.mongocamp.server.exception
 import dev.mongocamp.server.exception.ErrorDefinition.errorEndpointDefinition
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.exception.{ErrorDescription, MongoCampException}
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.service.ConfigurationService
 import sttp.model.StatusCode

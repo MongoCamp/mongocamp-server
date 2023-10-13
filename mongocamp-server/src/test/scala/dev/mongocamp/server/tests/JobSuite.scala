@@ -17,8 +17,8 @@ class JobSuite extends BaseServerSuite {
   test("check possible jobs as admin") {
     val jobsList = executeRequestToResponse(jobsApi.possibleJobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
-    assertEquals(jobsList.head, "dev.mongocamp.server.test.CountingTestJob")
-    assertEquals(jobsList.last, "dev.mongocamp.server.jobs.CleanUpTokenJob")
+    assertEquals(jobsList.last, "dev.mongocamp.server.test.CountingTestJob")
+    assertEquals(jobsList.head, "dev.mongocamp.server.jobs.CleanUpTokenJob")
   }
 
   test("check possible jobs as user") {

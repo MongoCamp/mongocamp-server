@@ -3,17 +3,17 @@ package dev.mongocamp.server.route
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.bucket.{ ClearBucketEvent, DropBucketEvent }
+import dev.mongocamp.server.event.bucket.{ClearBucketEvent, DropBucketEvent}
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import dev.mongocamp.server.model.{ BucketInformation, JsonValue, ModelConstants }
+import dev.mongocamp.server.model.auth.{AuthorizedCollectionRequest, UserInformation}
+import dev.mongocamp.server.model.{BucketInformation, JsonValue, ModelConstants}
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -108,7 +108,7 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     }))
   }
 
-  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(
       bucketListEndpoint,
       bucketEndpoint,

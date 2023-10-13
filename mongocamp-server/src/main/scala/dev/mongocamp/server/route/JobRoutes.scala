@@ -9,7 +9,7 @@ import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
 import sttp.capabilities
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
@@ -117,7 +117,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
 
   def jobClassesList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
-      ReflectionService.getSubClassesList(classOf[Job]).map(_.getName).filterNot(_.startsWith("org.quartz"))
+      ReflectionService.getSubClassesList(classOf[Job]).map(_.getName).filterNot(_.startsWith("org.quartz")).sorted
     }))
   }
 
@@ -136,6 +136,6 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     }))
   }
 
-  override def endpoints: List[ServerEndpoint[AkkaStreams with capabilities.WebSockets, Future]] =
+  override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(jobsListRoutes, registerJobRoutes, updateJobRoutes, deleteJobRoutes, executeJobRoutes, jobClassesRoutes)
 }

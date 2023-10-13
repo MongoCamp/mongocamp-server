@@ -1,4 +1,4 @@
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.0")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
 
@@ -17,5 +17,7 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.21")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1")
 
 addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.6.5")
+
+dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
 
 libraryDependencies += ("com.vdurmont" % "semver4j" % "3.1.0")

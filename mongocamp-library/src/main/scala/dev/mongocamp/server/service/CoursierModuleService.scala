@@ -62,30 +62,32 @@ object CoursierModuleService extends LazyLogging {
 
       resolutionParams.foreach(params => fetchCommand = fetchCommand.withResolutionParams(params))
 
-      if (useCustomMavenRepos) {
-        val mvnRepository: List[coursier.MavenRepository] = getConfiguredMavenRepositories
-        fetchCommand = fetchCommand.addRepositories(mvnRepository: _*)
-      }
+      fetchCommand = fetchCommand.addRepositories(getConfiguredMavenRepositories(useCustomMavenRepos): _*)
 
       val resolution = fetchCommand.run()
       resolution.toList.map(jFile => File(jFile.toURI))
     }
     catch {
       case _: Exception =>
-        fetchMavenDependencies(checkMavenDependencies(dependencies), resolutionParams, useCustomMavenRepos)
+        fetchMavenDependencies(checkMavenDependencies(dependencies, useCustomMavenRepos), resolutionParams, useCustomMavenRepos)
     }
   }
 
-  private def getConfiguredMavenRepositories: List[MavenRepository] = {
-    val configRead = ConfigurationRead.noPublishReader
-    val mvnRepository: List[MavenRepository] = configRead
-      .getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsMavenRepositories)
-      .map(string => dev.mongocamp.server.plugin.coursier.Repository.mvn(string))
-    mvnRepository
+  private def getConfiguredMavenRepositories(useCustomMavenRepos: Boolean): List[MavenRepository] = {
+    if (useCustomMavenRepos) {
+      val configRead = ConfigurationRead.noPublishReader
+      val mvnRepository: List[MavenRepository] = configRead
+        .getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsMavenRepositories)
+        .map(string => dev.mongocamp.server.plugin.coursier.Repository.mvn(string))
+      mvnRepository
+    }
+    else {
+      List.empty
+    }
   }
 
-  private def checkMavenDependencies(dependencies: List[Dependency]): List[Dependency] = {
-    val mvnRepository: List[MavenRepository] = getConfiguredMavenRepositories
+  private def checkMavenDependencies(dependencies: List[Dependency], useCustomMavenRepos: Boolean): List[Dependency] = {
+    val mvnRepository: List[MavenRepository] = getConfiguredMavenRepositories(useCustomMavenRepos)
     dependencies.filter(dependency => {
       try {
         val resolution = Fetch()

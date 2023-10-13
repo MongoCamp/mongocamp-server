@@ -1,17 +1,17 @@
 package dev.mongocamp.server.route
 
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
+import dev.mongocamp.server.auth.{AuthHolder, MongoAuthHolder, TokenCache}
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.user.{ LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent }
+import dev.mongocamp.server.event.user.{LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent}
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.model.{Method, StatusCode}
 import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -155,7 +155,7 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  lazy val onlyMongoEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  lazy val onlyMongoEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
     if (AuthHolder.isMongoDbAuthHolder) {
       List(updatePasswordEndpoint, updateApiKeyEndpoint)
     }
@@ -164,7 +164,7 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  lazy val onlyBearerEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  lazy val onlyBearerEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
     if (ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthBearer)) {
       List(loginEndpoint, logoutEndpoint, logoutDeleteEndpoint, refreshTokenEndpoint)
     }
@@ -173,7 +173,7 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  lazy val authEndpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = {
+  lazy val authEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
     onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint, checkAuthEndpoint)
   }
 

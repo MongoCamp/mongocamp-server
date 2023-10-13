@@ -6,13 +6,13 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JsonValue, MongoCampConfiguration, SettingsResponse }
+import dev.mongocamp.server.model.{JsonValue, MongoCampConfiguration, SettingsResponse}
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
-import sttp.capabilities.akka.AkkaStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -106,7 +106,7 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
   }
 
   override def endpoints = {
-    var endpoints: List[ServerEndpoint[AkkaStreams with WebSockets, Future]] = List(
+    var endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
       settingsEndpoint,
       listConfigurationEndpoint,
       getConfigEndpoint,
