@@ -8,11 +8,11 @@ import dev.mongocamp.server.service.ConfigurationService
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
 import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.swagger.{SwaggerUI, SwaggerUIOptions}
+import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
@@ -56,7 +56,8 @@ object ApiDocsRoutes extends BaseRoute {
       val openApiYml: String = openApiDocs.toYaml
 
       if (swaggerEnabled) {
-        val swaggerUIRoute = SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List(), useRelativePaths = true, showExtensions = false))
+        val swaggerUIRoute =
+          SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List(), useRelativePaths = true, showExtensions = false))
         docs ++= swaggerUIRoute
       }
 

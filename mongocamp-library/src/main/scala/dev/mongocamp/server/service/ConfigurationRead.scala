@@ -9,7 +9,7 @@ import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationRead.{configCache, isDefaultConfigsRegistered, nonPersistentConfigs}
+import dev.mongocamp.server.service.ConfigurationRead.{ configCache, isDefaultConfigsRegistered, nonPersistentConfigs }
 import io.circe.parser.decode
 import org.mongodb.scala.bson.Document
 import sttp.model.StatusCode

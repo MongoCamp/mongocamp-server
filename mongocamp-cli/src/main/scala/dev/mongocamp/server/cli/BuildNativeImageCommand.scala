@@ -4,8 +4,8 @@ import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.exception.NativeBuildException
 import dev.mongocamp.server.cli.service.NativeImageBuildService
-import dev.mongocamp.server.service.{CoursierModuleService, PluginService}
-import lukfor.progress.Components.{SPINNER, TASK_NAME}
+import dev.mongocamp.server.service.{ CoursierModuleService, PluginService }
+import lukfor.progress.Components.{ SPINNER, TASK_NAME }
 import lukfor.progress.TaskService
 import lukfor.progress.tasks.ITaskRunnable
 import lukfor.progress.tasks.monitors.ITaskMonitor

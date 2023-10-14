@@ -2,7 +2,7 @@ package dev.mongocamp.server.cli.prepare
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.service.CoursierModuleService
-import lukfor.progress.Components.{SPINNER, TASK_NAME}
+import lukfor.progress.Components.{ SPINNER, TASK_NAME }
 import lukfor.progress.TaskService
 import lukfor.progress.tasks.ITaskRunnable
 import lukfor.progress.tasks.monitors.ITaskMonitor

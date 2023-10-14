@@ -1,6 +1,6 @@
 package dev.mongocamp.server.service
 
-import io.github.classgraph.{ClassGraph, ScanResult}
+import io.github.classgraph.{ ClassGraph, ScanResult }
 
 import scala.jdk.CollectionConverters._
 import scala.reflect.runtime.universe.runtimeMirror
@@ -28,8 +28,8 @@ class ReflectionService {
         clazzInstance.map(_.asInstanceOf[T])
       }
       else {
-      lazy val mirror   = runtimeMirror(foundClazz.getClassLoader)
-      val instance      = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
+        lazy val mirror = runtimeMirror(foundClazz.getClassLoader)
+        val instance    = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
         instance.map(_.asInstanceOf[T])
       }
     })

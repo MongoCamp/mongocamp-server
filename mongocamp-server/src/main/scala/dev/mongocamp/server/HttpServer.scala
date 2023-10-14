@@ -6,11 +6,11 @@ import dev.mongocamp.server.exception.MongoCampExceptionHandler
 import dev.mongocamp.server.interceptor.RequestFunctions.requestIdAttributeKey
 import dev.mongocamp.server.interceptor._
 import dev.mongocamp.server.interceptor.cors.CorsInterceptor
-import sttp.tapir.server.pekkohttp.{PekkoHttpServerInterpreter, PekkoHttpServerOptions}
+import sttp.tapir.server.pekkohttp.{ PekkoHttpServerInterpreter, PekkoHttpServerOptions }
 import sttp.tapir.server.interceptor.RequestInterceptor
 import sttp.tapir.server.interceptor.metrics.MetricsRequestInterceptor
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
 
 object HttpServer extends LazyLogging {

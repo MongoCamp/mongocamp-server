@@ -2,7 +2,7 @@ package dev.mongocamp.server.cli
 
 import dev.mongocamp.server.cli.prepare.PrepareSubcommands
 import picocli.CommandLine
-import picocli.CommandLine.{Command, HelpCommand}
+import picocli.CommandLine.{ Command, HelpCommand }
 
 import java.util.concurrent.Callable
 

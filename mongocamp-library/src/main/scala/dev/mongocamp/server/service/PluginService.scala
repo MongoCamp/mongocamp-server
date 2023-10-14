@@ -41,7 +41,7 @@ class PluginService extends LazyLogging {
   def listOfReadableUrls(): List[URL] = {
     val pluginDirectory = File(ConfigurationRead.noPublishReader.getConfigValue[String](DefaultConfigurations.ConfigKeyPluginsDirectory))
     val files = CoursierModuleService.loadMavenConfiguredDependencies() ++ (if (pluginDirectory.isDirectory) getChildFiles(pluginDirectory) else List.empty)
-    files.map(_.url) //.filter(validateFileForReflection)
+    files.map(_.url) // .filter(validateFileForReflection)
   }
 
 }
