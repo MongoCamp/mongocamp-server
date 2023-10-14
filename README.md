@@ -3,7 +3,7 @@
 
 ![](docs/public/logo_with_text_right.png)
 
-![Docker Pulls](https://img.shields.io/docker/pulls/mongocamp/mongocamp-server) ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/mongocamp/mongocamp-server?sort=semver) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/mongocamp/mongocamp-server?sort=semver)
+![Docker Pulls](https://img.shields.io/docker/pulls/mongocamp/mongocamp-server) ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/mongocamp/mongocamp-server?sort=semver) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/mongocamp/mongocamp-server?sort=semver)![Maven Central](https://img.shields.io/maven-central/v/dev.mongocamp/mongocamp-server_2.13)
 
 ## Introduction
 
