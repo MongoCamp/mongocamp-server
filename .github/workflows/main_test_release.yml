@@ -51,9 +51,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 0
+          token: ${{ secrets.GH_ADMIN_TOKEN }}
       - id: install-secret-key
         name: Install gpg secret key
         run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
@@ -76,8 +77,6 @@ jobs:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSWORD }}
           PGP_SECRET: ${{ secrets.PGP_SECRET_KEY }}
         run: |
-          docker login docker.pkg.github.com -u DOCKER_GIT_USERNAME -p DOCKER_GIT_PASSWORD
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"

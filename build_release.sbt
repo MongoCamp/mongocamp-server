@@ -47,8 +47,6 @@ releaseProcess := {
     checkSnapshotDependencies,
     inquireVersions,
     setToMyReleaseVersion,
-    releaseStepCommand("scalafmt"),
-    gitAddAllTask,
     commitReleaseVersion,
     tagRelease,
     releaseStepCommand("ci-docker"),
@@ -56,6 +54,7 @@ releaseProcess := {
     releaseStepCommand("sonatypeBundleRelease"),
     releaseStepCommand("ci-deploy-docs"),
     setToMyNextVersion,
+    releaseStepCommand("scalafmt"),
     gitAddAllTask,
     commitNextVersion,
     pushChanges
