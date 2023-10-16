@@ -6,11 +6,13 @@ commands += Command.command("ci-docker")((state: State) => {
   val semVersion = new Semver(version.value)
   if (semVersion.isStable) {
     val listOfPlatforms = List("linux/amd64", "linux/arm64/v8", "linux/arm64")
-
+    val listOfTags = List("latest", version.value, s"${semVersion.getMajor}.${semVersion.getMinor}", s"${semVersion.getMajor}")
+    val containerNameList = listOfTags.map(tag => s"mongocamp/mongocamp-server:$tag").mkString(" --tag ")
     val containerName = s"mongocamp/mongocamp-server:${version.value}"
-    val buildCommand = s"docker buildx build --platform=${listOfPlatforms.mkString(",")} --tag $containerName --push ."
+    val buildCommand = s"docker buildx build --platform=${listOfPlatforms.mkString(",")} --tag $containerNameList --push ."
+    state.log.error(s"BuildCommand: $buildCommand")
     if (buildCommand.!(ProcessLogger(stout => state.log.info(stout), sterr => state.log.info(sterr))) != 0) {
-      throw new Exception(s"Not zero exit code for build base image: ${containerName}")
+      throw new Exception(s"Not zero exit code for build base images: ${containerNameList}")
     }
 
     // todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
