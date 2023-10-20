@@ -53,7 +53,7 @@ object CoursierModuleService extends LazyLogging {
     val scalaVersion = new Semver(BuildInfo.scalaVersion)
     val scalaShort   = s"${scalaVersion.getMajor}.${scalaVersion.getMinor}"
     val dependency   = Dependency(Module(Organization(BuildInfo.organization), ModuleName(s"mongocamp-server_$scalaShort")), BuildInfo.version)
-    CoursierModuleService.fetchMavenDependencies(List(dependency), None, false)
+    CoursierModuleService.fetchMavenDependencies(List(dependency), None, useCustomMavenRepos = false)
   }
 
   private def fetchMavenDependencies(dependencies: List[Dependency], resolutionParams: Option[ResolutionParams], useCustomMavenRepos: Boolean): List[File] = {

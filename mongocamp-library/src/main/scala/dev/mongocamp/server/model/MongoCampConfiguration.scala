@@ -1,6 +1,6 @@
 package dev.mongocamp.server.model
 
-case class MongoCampConfiguration(key: String, value: Any, configType: String, comment: String, needsRestartForActivation: Boolean) {}
+case class MongoCampConfiguration(key: String, value: Any, configType: String, comment: String, needsRestartForActivation: Boolean)
 
 object MongoCampConfiguration {
   val confTypeBoolean                = "Boolean"

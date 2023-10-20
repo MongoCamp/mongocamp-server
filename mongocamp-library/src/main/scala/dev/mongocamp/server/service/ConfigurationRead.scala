@@ -3,6 +3,7 @@ package dev.mongocamp.server.service
 import com.github.blemale.scaffeine.Scaffeine
 import com.typesafe.config
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.config.DefaultConfigurations._
 import dev.mongocamp.server.database.ConfigDao
@@ -11,13 +12,14 @@ import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.service.ConfigurationRead.{ configCache, isDefaultConfigsRegistered, nonPersistentConfigs }
 import io.circe.parser.decode
+import org.bson.BsonDocument
 import org.mongodb.scala.bson.Document
 import sttp.model.StatusCode
 
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.util.Random
-trait ConfigurationRead {
+trait ConfigurationRead extends LazyLogging {
 
   private lazy val conf: config.Config = ConfigFactory.load()
 
@@ -27,6 +29,7 @@ trait ConfigurationRead {
 
   def getConfig(key: String): Option[MongoCampConfiguration] = {
     if (!isDefaultConfigsRegistered) {
+      println("configuration should registered")
       registerMongoCampServerDefaultConfigs()
     }
     if (nonPersistentConfigs.contains(key)) {
@@ -54,17 +57,19 @@ trait ConfigurationRead {
   }
 
   def registerMongoCampServerDefaultConfigs(): Unit = {
-    isDefaultConfigsRegistered = true
 
     registerNonPersistentConfig(ConfigKeyConnectionHost, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyConnectionPort, MongoCampConfiguration.confTypeLong)
-    registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString)
+    registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString, Some("mongocamp"))
     registerNonPersistentConfig(ConfigKeyConnectionUsername, MongoCampConfiguration.confTypeStringOption)
     registerNonPersistentConfig(ConfigKeyConnectionPassword, MongoCampConfiguration.confTypeStringOption)
     registerNonPersistentConfig(ConfigKeyConnectionAuthDb, MongoCampConfiguration.confTypeString, Some("admin"))
     registerNonPersistentConfig(ConfigKeyAuthPrefix, MongoCampConfiguration.confTypeString, Some("mc_"))
     registerNonPersistentConfig(ConfigKeyAuthUsers, MongoCampConfiguration.confTypeStringList)
     registerNonPersistentConfig(ConfigKeyAuthRoles, MongoCampConfiguration.confTypeStringList)
+
+    isDefaultConfigsRegistered = true
+    ConfigDao().createUniqueIndexForField("key").result()
 
     registerConfig(ConfigKeyServerInterface, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
@@ -96,8 +101,6 @@ trait ConfigurationRead {
 
     registerConfig(ConfigKeyDocsSwagger, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
     registerConfig(ConfigKeyOpenApi, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
-
-    ConfigDao().createUniqueIndexForField("key").result()
 
   }
 
@@ -158,14 +161,22 @@ trait ConfigurationRead {
             dbConfiguration
         }
       }
-      val insertResponse = ConfigDao().insertOne(Converter.toDocument(configToInsert)).result()
-      publishConfigRegisterEvent(true, configKey, configType, value, comment, needsRestartForActivation = needsRestartForActivation)
+      val document       = configurationToDocument(configToInsert)
+      val insertResponse = ConfigDao().insertOne(document).result()
+      publishConfigRegisterEvent(persistent = true, configKey, configType, value, comment, needsRestartForActivation = needsRestartForActivation)
       checkAndUpdateWithEnv(configKey)
       insertResponse.wasAcknowledged()
     }
     else {
       false
     }
+  }
+
+  private def configurationToDocument(configToInsert: MongoCampConfiguration): Document = {
+    val document = documentFromScalaMap(
+      Map("key" -> configToInsert.key, "value" -> configToInsert.value, "configType" -> configToInsert.configType, "comment" -> configToInsert.comment, "needsRestartForActivation" -> configToInsert.needsRestartForActivation)
+    )
+    document
   }
 
   private[service] def checkAndUpdateWithEnv(key: String): Unit = {
@@ -175,7 +186,7 @@ trait ConfigurationRead {
         .map(envConfigValue => {
           if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
             val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
-            val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
+            val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), configurationToDocument(mongoCampConfiguration)).result()
             configCache.invalidate(key)
             publishConfigUpdateEvent(key, envConfigValue, dbConfig.value, "checkAndUpdateWithEnv")
             replaceResult.wasAcknowledged()
