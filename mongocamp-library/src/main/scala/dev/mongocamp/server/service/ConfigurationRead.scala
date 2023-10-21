@@ -60,7 +60,7 @@ trait ConfigurationRead extends LazyLogging {
 
     registerNonPersistentConfig(ConfigKeyConnectionHost, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyConnectionPort, MongoCampConfiguration.confTypeLong)
-    registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString, Some("mongocamp"))
+    registerNonPersistentConfig(ConfigKeyConnectionDatabase, MongoCampConfiguration.confTypeString)
     registerNonPersistentConfig(ConfigKeyConnectionUsername, MongoCampConfiguration.confTypeStringOption)
     registerNonPersistentConfig(ConfigKeyConnectionPassword, MongoCampConfiguration.confTypeStringOption)
     registerNonPersistentConfig(ConfigKeyConnectionAuthDb, MongoCampConfiguration.confTypeString, Some("admin"))
