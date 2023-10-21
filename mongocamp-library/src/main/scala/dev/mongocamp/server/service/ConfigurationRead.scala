@@ -174,7 +174,13 @@ trait ConfigurationRead extends LazyLogging {
 
   private def configurationToDocument(configToInsert: MongoCampConfiguration): Document = {
     val document = documentFromScalaMap(
-      Map("key" -> configToInsert.key, "value" -> configToInsert.value, "configType" -> configToInsert.configType, "comment" -> configToInsert.comment, "needsRestartForActivation" -> configToInsert.needsRestartForActivation)
+      Map(
+        "key"                       -> configToInsert.key,
+        "value"                     -> configToInsert.value,
+        "configType"                -> configToInsert.configType,
+        "comment"                   -> configToInsert.comment,
+        "needsRestartForActivation" -> configToInsert.needsRestartForActivation
+      )
     )
     document
   }
