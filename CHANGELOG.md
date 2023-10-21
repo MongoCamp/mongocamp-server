@@ -1,3 +1,13 @@
+## [v1.5.6] - 2023-10-21
+### :bug: Bug Fixes
+- [`5efb246`](https://github.com/MongoCamp/mongocamp-server/commit/5efb246b1c8a93d1c13019124cc2d188aee1ab73) - startup on native image *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`489f2af`](https://github.com/MongoCamp/mongocamp-server/commit/489f2af2f697e5cc54790c9f156a2d973992cd84) - reflection service needs to many time for scan *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`aebe10f`](https://github.com/MongoCamp/mongocamp-server/commit/aebe10fdaf6641eeef681d20b3f6c4e16682755c) - dependency updates *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`7f2effe`](https://github.com/MongoCamp/mongocamp-server/commit/7f2effe387d898f1c4bf38adf65af5687a622cf0) - changed to stable version of mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v1.5.5] - 2023-10-16
 ### :bug: Bug Fixes
 - [`61fe23f`](https://github.com/MongoCamp/mongocamp-server/commit/61fe23f08cfae04ba9500344a51ebdb61353e2e1) - **docker**: jars not precached *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -278,3 +288,4 @@
 
 [v1.5.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.2...v1.5.4
 [v1.5.5]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.4...v1.5.5
+[v1.5.6]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.5...v1.5.6
