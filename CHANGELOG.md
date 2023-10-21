@@ -1,3 +1,8 @@
+## [v1.5.5] - 2023-10-16
+### :bug: Bug Fixes
+- [`61fe23f`](https://github.com/MongoCamp/mongocamp-server/commit/61fe23f08cfae04ba9500344a51ebdb61353e2e1) - **docker**: jars not precached *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v1.5.4] - 2023-10-14
 ### :sparkles: New Features
 - [`6528932`](https://github.com/MongoCamp/mongocamp-server/commit/652893262cd913e9b910281513a3ab14e407a999) - error codes for mongocamp-cli
@@ -272,3 +277,4 @@
 * **Config:** Change Docs Serve Port to 5555 ([4f8501b](https://github.com/MongoCamp/mongocamp-server/commit/4f8501b6d9f1472d7fb1847a5da6ff7f071b1245))* **Git:** Fix defected git files ([6193fb1](https://github.com/MongoCamp/mongocamp-server/commit/6193fb1809139b56db02ac1ee978a4d5735d59e5))
 
 [v1.5.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.2...v1.5.4
+[v1.5.5]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.4...v1.5.5
