@@ -14,7 +14,11 @@ class ReflectionService {
   private var scanResult: ScanResult = scan()
 
   def inizializeClassGraph(): ClassGraph = {
-    new ClassGraph().enableAllInfo().addClassLoader(ClassLoader.getSystemClassLoader)
+    new ClassGraph()
+      .enableClassInfo()
+//      .enableAllInfo()
+//      .enableRealtimeLogging()
+      .addClassLoader(ClassLoader.getSystemClassLoader)
   }
 
   def scan(): ScanResult = {
