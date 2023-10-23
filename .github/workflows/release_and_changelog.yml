@@ -32,5 +32,19 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           branch: main
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }}'
           file_pattern: CHANGELOG.md
+
+      - name: Set up JDK
+        uses: coursier/setup-action@v1
+        with:
+          jvm: graalvm-java17:22.3.3
+          apps: sbt scala scalac
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.0.2
+
+      - name: Build and deploy Docu
+        run: sbt ci-deploy-docs
