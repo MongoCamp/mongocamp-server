@@ -1,7 +1,7 @@
 import common.mongoCampProject
 import dev.quadstingray.sbt.json.JsonFile
 
-lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer)
+lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer, mcTest)
 
 ThisBuild / scalaVersion := "2.13.12"
 

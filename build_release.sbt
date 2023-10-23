@@ -52,7 +52,6 @@ releaseProcess := {
     releaseStepCommand("ci-docker"),
     releaseStepCommandAndRemaining("+publishSigned"),
     releaseStepCommand("sonatypeBundleRelease"),
-    releaseStepCommand("ci-deploy-docs"),
     setToMyNextVersion,
     releaseStepCommand("scalafmt"),
     gitAddAllTask,
