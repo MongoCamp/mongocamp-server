@@ -1,3 +1,9 @@
+## [v1.5.7] - 2023-10-23
+### :bug: Bug Fixes
+- [`4fc82cd`](https://github.com/MongoCamp/mongocamp-server/commit/4fc82cdad7479cebc69b09e8c3ce4a2bfd477276) - change deployment for docs *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`661553a`](https://github.com/MongoCamp/mongocamp-server/commit/661553ab9e91f013d0eda596d84ab08000720591) - test-server dependency not published *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v1.5.6] - 2023-10-21
 ### :bug: Bug Fixes
 - [`5efb246`](https://github.com/MongoCamp/mongocamp-server/commit/5efb246b1c8a93d1c13019124cc2d188aee1ab73) - startup on native image *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -270,3 +276,4 @@
 [v1.5.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.2...v1.5.4
 [v1.5.5]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.4...v1.5.5
 [v1.5.6]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.5...v1.5.6
+[v1.5.7]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.6...v1.5.7
