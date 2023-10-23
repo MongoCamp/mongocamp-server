@@ -46,25 +46,6 @@
 - [`1161c49`](https://github.com/MongoCamp/mongocamp-server/commit/1161c498eefaf037d3c80798bca5585b55fc48bd) - dependency updates on many dependencies
 - [`ae4369c`](https://github.com/MongoCamp/mongocamp-server/commit/ae4369c6f145e1700a63743006148d20a50b1ed6) - update tapir to 1.8.0
 
-
-## [1.5.4]() (2023-10-14)
-
-
-### Bug Fixes
-
-* containername ([b4fb724](https://github.com/MongoCamp/mongocamp-server/commit/b4fb7244aff3bdcd22cb11cdba008bcc367c35e4))* fix Dockerfile ([ad712a4](https://github.com/MongoCamp/mongocamp-server/commit/ad712a4b4a2c31bd4437dc6d2844c30a6f8a8b3b))* fix mongodb test server startup ([4bb1e57](https://github.com/MongoCamp/mongocamp-server/commit/4bb1e57b72a49e13f4d359206876311c1e660550))* fix mongodb test server startup ([3ed52e6](https://github.com/MongoCamp/mongocamp-server/commit/3ed52e606107c3a8c447c753a460748d912b0bec))* missing import ([cd14b09](https://github.com/MongoCamp/mongocamp-server/commit/cd14b0973fb10125138ec9889a8326acb60439d7))* missing import ([c70933f](https://github.com/MongoCamp/mongocamp-server/commit/c70933f68c0c77a758fefef207744a9227c5d265))* missing import ([3616723](https://github.com/MongoCamp/mongocamp-server/commit/36167236370bbaec1bd1c3590d8e40034607f8ca))* ReflectionService class initialization failed ([a445b04](https://github.com/MongoCamp/mongocamp-server/commit/a445b04ca89bce70532f96882a7fd77520df486a))* ReflectionService class search fixed ([795511f](https://github.com/MongoCamp/mongocamp-server/commit/795511f1ef34ddda43c3bd5530041c3ba380ba64))* searching for build failure in graalvm ([e324098](https://github.com/MongoCamp/mongocamp-server/commit/e324098d7fe6c2acc63ffcb44fa417bcda0753bf))* searching for build failure in graalvm ([2c90184](https://github.com/MongoCamp/mongocamp-server/commit/2c901845b43ec3b097f943350da8a20ffd6fd18c))* searching for build failure in graalvm ([995e216](https://github.com/MongoCamp/mongocamp-server/commit/995e216930d9f15761add996fc809328b01b0bed))
-
-### Code Refactoring
-
-* changed build settings ([21ae938](https://github.com/MongoCamp/mongocamp-server/commit/21ae93805c9bf4fc9d291c82343c8b94fbe1b159))
-
-### Features
-
-* Build Process for Docker ([123673d](https://github.com/MongoCamp/mongocamp-server/commit/123673d13e8a2beeda9021dcf5a55c59190fb1b1))* error codes for mongocamp-cli ([6528932](https://github.com/MongoCamp/mongocamp-server/commit/652893262cd913e9b910281513a3ab14e407a999))* replace akka with pekko ([31607cb](https://github.com/MongoCamp/mongocamp-server/commit/31607cbf81e1fe8e56cd263ad66a80fae6678919))* replace akka with pekko ([dbd042a](https://github.com/MongoCamp/mongocamp-server/commit/dbd042a538e737b192f60b6f9b5abfd6a51e7be8))
-
-### Maintenance
-
-* dependency updates on many dependencies ([1161c49](https://github.com/MongoCamp/mongocamp-server/commit/1161c498eefaf037d3c80798bca5585b55fc48bd))* update tapir to 1.8.0 ([ae4369c](https://github.com/MongoCamp/mongocamp-server/commit/ae4369c6f145e1700a63743006148d20a50b1ed6))
 ## [1.5.2]() (2023-07-22)
 
 ## [1.5.1]() (2023-07-22)
