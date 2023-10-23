@@ -7,7 +7,7 @@ import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.service.ReflectionService
 import dev.mongocamp.server.test.client.api.InformationApi
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
 
 object TestServer extends LazyLogging {
@@ -21,11 +21,12 @@ object TestServer extends LazyLogging {
 
   var retries = 0
 
-  lazy val server : RestServer = {
+  lazy val server: RestServer = {
     val servers = ReflectionService.instancesForType(classOf[RestServer])
     if (servers.size == 1) {
       servers.head
-    } else {
+    }
+    else {
       throw new Exception("more than one implementation for rest server found")
     }
   }
@@ -41,8 +42,8 @@ object TestServer extends LazyLogging {
         }
         mongoServerStarted = true
       }
-      val versionRequest  = InformationApi().version()
-      val versionFuture   = TestAdditions.backend.send(versionRequest)
+      val versionRequest = InformationApi().version()
+      val versionFuture  = TestAdditions.backend.send(versionRequest)
       versionFuture.body.getOrElse(throw new Exception("error"))
       serverRunning = true
     }

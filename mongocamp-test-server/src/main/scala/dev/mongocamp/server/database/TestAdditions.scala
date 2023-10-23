@@ -1,12 +1,12 @@
 package dev.mongocamp.server.database
 
-import better.files.{File, Resource}
+import better.files.{ File, Resource }
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.model.ModelConstants
 import dev.mongocamp.server.service.SystemFileService
 import dev.mongocamp.server.test.CountingTestJob
-import dev.mongocamp.server.test.client.api.{AdminApi, JobsApi}
+import dev.mongocamp.server.test.client.api.{ AdminApi, JobsApi }
 import dev.mongocamp.server.test.client.model._
 import org.joda.time.DateTime
 import sttp.client3.HttpClientSyncBackend
@@ -71,10 +71,10 @@ object TestAdditions extends CirceSchema {
 
   def insertUsersAndRoles() = {
     if (!dataImported) {
-      val userDao = MapCollectionDao(MongoDatabase.CollectionNameUsers)
-      val apiKey  = "special"
+      val userDao   = MapCollectionDao(MongoDatabase.CollectionNameUsers)
+      val apiKey    = "special"
       val apiUserID = "insertApiUser"
-      val apiUser = Map("userId" -> apiUserID, "password" -> "invalidPwd", "apiKey" -> apiKey, "roles" -> List("adminRole"))
+      val apiUser   = Map("userId" -> apiUserID, "password" -> "invalidPwd", "apiKey" -> apiKey, "roles" -> List("adminRole"))
       userDao.insertOne(apiUser).result()
       val addUserRequest  = AdminApi().addUser(null, null, null, apiKey)(UserInformation(testUser, testPassword, None, List("test")))
       val addUserResponse = backend.send(addUserRequest)
@@ -98,7 +98,16 @@ object TestAdditions extends CirceSchema {
       val updatePasswordResponse = backend.send(updatePasswordRequest)
 
       val registerJobRequest =
-        JobsApi().registerJob(null, null, null, apiKey)(JobConfig("CountingTestJob", classOf[CountingTestJob].getName, "", "0/5 * * ? * * *", ModelConstants.jobDefaultGroup, ModelConstants.jobDefaultPriority))
+        JobsApi().registerJob(null, null, null, apiKey)(
+          JobConfig(
+            "CountingTestJob",
+            classOf[CountingTestJob].getName,
+            "",
+            "0/5 * * ? * * *",
+            ModelConstants.jobDefaultGroup,
+            ModelConstants.jobDefaultPriority
+          )
+        )
       val registerJobResponse = backend.send(registerJobRequest)
 
       val deleteResult = userDao.deleteMany(Map("userId" -> apiUserID)).resultOption()

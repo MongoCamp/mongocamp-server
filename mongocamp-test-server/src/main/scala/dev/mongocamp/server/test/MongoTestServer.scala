@@ -4,7 +4,7 @@ import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import de.flapdoodle.embed.mongo.config.Net
 import de.flapdoodle.embed.mongo.distribution.Version
-import de.flapdoodle.embed.mongo.transitions.{Mongod, RunningMongodProcess}
+import de.flapdoodle.embed.mongo.transitions.{ Mongod, RunningMongodProcess }
 import de.flapdoodle.embed.mongo.types.DatabaseDir
 import de.flapdoodle.embed.process.io.ProcessOutput
 import de.flapdoodle.reverse.TransitionWalker
@@ -49,7 +49,7 @@ object MongoTestServer extends LazyLogging {
     if (!running) {
       try {
         val checkRequest   = basicRequest.method(Method.GET, uri"http://localhost:4711").response(asString)
-        val responseResult   = TestAdditions.backend.send(checkRequest).body.getOrElse("not found")
+        val responseResult = TestAdditions.backend.send(checkRequest).body.getOrElse("not found")
         if (responseResult.contains("HTTP on the native driver port.")) {
           println("Use local running MongoDb")
           System.setProperty("CONNECTION_PORT", "4711")

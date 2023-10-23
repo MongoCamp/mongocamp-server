@@ -1,6 +1,6 @@
 package dev.mongocamp.server.test.client.core
 
-import java.net.{URI, URISyntaxException}
+import java.net.{ URI, URISyntaxException }
 
 trait AdditionalTypeSerializers {
   import io.circe._

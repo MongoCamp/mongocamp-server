@@ -2,12 +2,12 @@ package dev.mongocamp.server.test
 
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.database.{MongoDatabase, TestAdditions}
+import dev.mongocamp.server.database.{ MongoDatabase, TestAdditions }
 import dev.mongocamp.server.service.ConfigurationRead
 import dev.mongocamp.server.test.client.api.AuthApi
-import dev.mongocamp.server.test.client.model.{Login, LoginResult}
+import dev.mongocamp.server.test.client.model.{ Login, LoginResult }
 import io.circe
-import sttp.client3.{Identity, RequestT, Response, ResponseException}
+import sttp.client3.{ Identity, RequestT, Response, ResponseException }
 
 trait MongoCampBaseServerSuite extends munit.FunSuite {
 
@@ -35,7 +35,7 @@ trait MongoCampBaseServerSuite extends munit.FunSuite {
   def executeRequest[R <: Any](
       request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]
   ): Response[Either[ResponseException[String, circe.Error], R]] = {
-    val resultFuture   = TestAdditions.backend.send(request)
+    val resultFuture = TestAdditions.backend.send(request)
     resultFuture
   }
 
