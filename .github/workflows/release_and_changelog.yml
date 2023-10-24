@@ -50,4 +50,7 @@ jobs:
         run: 'echo "{\"mongocamp\": \"${{ github.ref_name }}\"}" > ./docs/versions.json'
 
       - name: Build and deploy Docu
-        run: sh ./deploy_ghpages.sh
+        run: |
+          git config --global user.email "ci@mongocamp.dev"
+          git config --global user.name "MongoCamp CI"
+          sh ./deploy_ghpages.sh
