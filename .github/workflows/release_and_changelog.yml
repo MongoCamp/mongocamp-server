@@ -46,5 +46,8 @@ jobs:
         with:
           version: 6.0.2
 
+      - name: Update versions file
+        run: 'echo "{\"mongocamp\": \"${{ github.ref_name }}\"}" > ./docs/versions.json'
+
       - name: Build and deploy Docu
-        run: sbt ci-deploy-docs
+        run: sh ./deploy_ghpages.sh

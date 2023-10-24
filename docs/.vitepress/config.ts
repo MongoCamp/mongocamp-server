@@ -1,6 +1,6 @@
 import Unocss from 'unocss/vite'
 import {defineConfig} from 'vitepress'
-import {version} from '../../package.json'
+import fs from 'fs'
 
 export default defineConfig({
     lang: 'en-US',
@@ -43,13 +43,14 @@ export default defineConfig({
 })
 
 function nav() {
+    var versionInfos = JSON.parse(fs.readFileSync('docs/versions.json', 'utf-8'))
     return [
         {text: 'Guide', link: '/guide/', activeMatch: '/guide/'},
         {text: 'Config', link: '/config/', activeMatch: '/config/'},
         {text: 'Plugins', link: '/plugins/', activeMatch: '/plugins/'},
         {text: 'REST API', link: '/rest/README', activeMatch: '/rest/'},
         {
-            text: version,
+            text: versionInfos.mongocamp,
             items: [
                 {
                     text: 'Changelog',
