@@ -2,9 +2,9 @@ name := "mongocamp-library"
 
 libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.7"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.5"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.7"
 
-libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.163"
+libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.164"
 
 libraryDependencies += "com.github.blemale" %% "scaffeine" % "5.2.1" exclude("org.scala-lang.modules", "scala-java8-compat_2.12")
 
@@ -13,7 +13,7 @@ libraryDependencies += "io.circe"                      %% "circe-core"        % 
 libraryDependencies += "io.circe"                      %% "circe-generic"     % circeVersion
 libraryDependencies += "io.circe"                      %% "circe-parser"      % circeVersion
 
-libraryDependencies += "com.softwaremill.sttp.model" %% "core" % "1.7.4"
+libraryDependencies += "com.softwaremill.sttp.model" %% "core" % "1.7.6"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
 
