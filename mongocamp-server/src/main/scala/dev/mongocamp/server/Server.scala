@@ -50,7 +50,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList
 
   private def serverEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
-    InformationRoutes.routes ++ AuthRoutes.authEndpoints ++ AdminRoutes.endpoints ++ initializeRoutesPlugin.flatMap(_.endpoints) ++ IndexRoutes.endpoints
+    AuthRoutes.endpoints ++ initializeRoutesPlugin.flatMap(_.endpoints)
   }
 
   private def routes(implicit ex: ExecutionContext): Route = {

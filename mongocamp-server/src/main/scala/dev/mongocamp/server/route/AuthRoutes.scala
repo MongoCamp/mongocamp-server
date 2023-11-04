@@ -173,7 +173,7 @@ object AuthRoutes extends BaseRoute {
     }
   }
 
-  lazy val authEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
+  lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
     onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint, checkAuthEndpoint)
   }
 
