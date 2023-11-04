@@ -7,7 +7,6 @@ libraryDependencies += "info.picocli" % "picocli-codegen" % PicoliCliVersion % "
 libraryDependencies += "com.github.lukfor" % "magic-progress" % "0.3.2"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging"   % "3.9.5"
-libraryDependencies += "ch.qos.logback"              % "logback-classic" % "1.4.11"
 
 publish / skip := true
 

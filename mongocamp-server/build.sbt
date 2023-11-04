@@ -13,8 +13,6 @@ val sttClientVersion = "3.9.0"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "pekko-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"               % sttClientVersion
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.11"
-
 libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.4.4"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"

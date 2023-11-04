@@ -111,7 +111,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
         logger.warn("init server with interface: %s at port: %s".format(interface, port))
 
         if (ApiDocsRoutes.isSwaggerEnabled) {
-          println("For Swagger go to: http://%s:%s/docs".format(interface, port))
+          logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
         }
 
         EventSystem.eventStream.publish(ServerStartedEvent())

@@ -19,6 +19,8 @@ libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
+libraryDependencies += "ch.qos.logback"              % "logback-classic" % "1.4.11"
+
 enablePlugins(BuildInfoPlugin)
 
 buildInfoPackage := "dev.mongocamp.server.library"
