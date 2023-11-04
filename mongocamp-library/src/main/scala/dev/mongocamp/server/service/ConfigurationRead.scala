@@ -10,7 +10,7 @@ import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationRead.{ configCache, isDefaultConfigsRegistered, nonPersistentConfigs }
+import dev.mongocamp.server.service.ConfigurationRead.{configCache, isDefaultConfigsRegistered, nonPersistentConfigs}
 import io.circe.parser.decode
 import org.bson.BsonDocument
 import org.mongodb.scala.bson.Document
@@ -18,7 +18,7 @@ import sttp.model.StatusCode
 
 import scala.collection.mutable
 import scala.concurrent.duration._
-import scala.util.Random
+import scala.util.{Random, Try}
 trait ConfigurationRead extends LazyLogging {
 
   private lazy val conf: config.Config = ConfigFactory.load()
@@ -242,6 +242,8 @@ trait ConfigurationRead extends LazyLogging {
       configType.equalsIgnoreCase(MongoCampConfiguration.confTypeLong) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeLong.toLowerCase)
     val isDoubleType =
       configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDouble) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeDouble.toLowerCase)
+    val isDurationType =
+      configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDuration) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeDuration.toLowerCase)
     var configValue = value
     if (value.isDefined) {
       value.get match {
@@ -260,6 +262,10 @@ trait ConfigurationRead extends LazyLogging {
                 if (isDoubleType) {
                   configValue = Some(l.map(_.toString.toDouble))
                   internalValueType = MongoCampConfiguration.confTypeDoubleList
+                }
+                if (isDurationType) {
+                  configValue = Some(l.map(_.toString).map(Duration(_)))
+                  internalValueType = MongoCampConfiguration.confTypeDuration
                 }
               case _: Boolean =>
                 internalValueType = MongoCampConfiguration.confTypeBooleanList
@@ -312,6 +318,10 @@ trait ConfigurationRead extends LazyLogging {
           if (isDoubleType) {
             configValue = s.toDoubleOption
             internalValueType = MongoCampConfiguration.confTypeDouble
+          }
+          if (isDurationType) {
+            configValue = Try(Duration(s)).toOption
+            internalValueType = MongoCampConfiguration.confTypeDuration
           }
         case _: Boolean =>
           internalValueType = MongoCampConfiguration.confTypeBoolean

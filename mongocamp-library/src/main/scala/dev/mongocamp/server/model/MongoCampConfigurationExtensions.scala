@@ -12,18 +12,38 @@ object MongoCampConfigurationExtensions {
     def typedValue[A <: Any](): A = {
 
       val valueClass: Class[_] = {
-        if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeBoolean.toLowerCase())) classOf[java.lang.Boolean]
-        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeString.toLowerCase())) classOf[String]
-        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeDouble.toLowerCase())) classOf[java.lang.Double]
-        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeLong.toLowerCase())) classOf[java.lang.Long]
-        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeDuration.toLowerCase())) Duration.getClass
-        else throw MongoCampException(s"value class ${mongoCampConfiguration.configType} is not supported at this moment", StatusCode.NotImplemented)
+        if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeBoolean.toLowerCase())) {
+          classOf[java.lang.Boolean]
+        }
+        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeString.toLowerCase())) {
+          classOf[String]
+        }
+        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeDouble.toLowerCase())) {
+          classOf[java.lang.Double]
+        }
+        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeLong.toLowerCase())) {
+          classOf[java.lang.Long]
+        }
+        else if (mongoCampConfiguration.configType.toLowerCase().contains(confTypeDuration.toLowerCase())) {
+          Duration.getClass
+        }
+        else {
+          {
+            throw MongoCampException(s"value class ${mongoCampConfiguration.configType} is not supported at this moment", StatusCode.NotImplemented)
+          }
+        }
       }
 
       val resultClass: Class[_] =
-        if (mongoCampConfiguration.configType.toLowerCase().startsWith("option")) classOf[Option[valueClass.type]]
-        else if (mongoCampConfiguration.configType.toLowerCase().startsWith("list")) classOf[::[valueClass.type]]
-        else valueClass
+        if (mongoCampConfiguration.configType.toLowerCase().startsWith("option")) {
+          classOf[Option[valueClass.type]]
+        }
+        else if (mongoCampConfiguration.configType.toLowerCase().startsWith("list")) {
+          classOf[::[valueClass.type]]
+        }
+        else {
+          valueClass
+        }
 
       val response = if (mongoCampConfiguration.value.isInstanceOf[Option[valueClass.type]]) {
         val valueOption = mongoCampConfiguration.value.asInstanceOf[Option[A]]
@@ -45,7 +65,9 @@ object MongoCampConfigurationExtensions {
         }
       }
       else {
-        if (mongoCampConfiguration.configType.equalsIgnoreCase(confTypeDuration)) Duration(mongoCampConfiguration.value.toString)
+        if (mongoCampConfiguration.configType.equalsIgnoreCase(confTypeDuration)) {
+          Duration(mongoCampConfiguration.value.toString)
+        }
         else if (
           mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDurationList) && mongoCampConfiguration.value
             .isInstanceOf[List[String]]
