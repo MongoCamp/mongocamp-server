@@ -26,20 +26,20 @@ jobs:
         os: [ ubuntu-latest ]
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@main
       - name: Setup TimeZone
-        uses: szenius/set-timezone@v1.2
+        uses: szenius/set-timezone@master
         with:
           timezoneLinux: "Europe/Berlin"
           timezoneMacos: "Europe/Berlin"
           timezoneWindows: "W. Europe Standard Time"
       - name: Set up JDK
-        uses: coursier/setup-action@v1
+        uses: coursier/setup-action@main
         with:
           jvm: graalvm-java17:22.3.3
           apps: sbt scala scalac
       - name: Start MongoDB ${{ matrix.mongodb-version }}
-        uses: MongoCamp/mongodb-github-action@1.2.0
+        uses: MongoCamp/mongodb-github-action@main
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-port: 4711
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@main
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_ADMIN_TOKEN }}
@@ -59,14 +59,14 @@ jobs:
         name: Install gpg secret key
         run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
       - name: Set up JDK
-        uses: coursier/setup-action@v1
+        uses: coursier/setup-action@main
         with:
           jvm: graalvm-java17:22.3.3
           apps: sbt scala scalac
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@master
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@master
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -87,11 +87,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v3.0.0
+        uses: actions/checkout@main
         with:
           fetch-depth: 0
       - name: Check out the repo
-        uses: meeDamian/sync-readme@v1.0.6
+        uses: meeDamian/sync-readme@master
         with:
           user: ${{ secrets.DOCKERHUB_USER }}
           pass: ${{ secrets.DOCKERHUB_PASSWORD }}
