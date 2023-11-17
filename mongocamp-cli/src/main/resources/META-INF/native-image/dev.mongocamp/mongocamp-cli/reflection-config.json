@@ -271,9 +271,39 @@
     "name": "com.github.blemale.scaffeine.Cache"
   },
   {
-    "name": "dev.mongocamp.driver.mongodb.Converter"
+    "name": "dev.mongocamp.driver.mongodb.Converter",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true
   },
   {
-    "name": "dev.mongocamp.driver.mongodb.bson.BsonConverter"
+    "name": "dev.mongocamp.driver.mongodb.bson.BsonConverter",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name": "org.fusesource.jansi.AnsiConsole",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true
+  },
+  {
+    "name": "dev.mongocamp.server.logging.HighlightingColorConverter",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "allDeclaredFields" : true,
+    "allPublicFields" : true
   }
 ]

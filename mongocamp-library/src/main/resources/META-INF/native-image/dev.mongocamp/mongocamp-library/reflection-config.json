@@ -546,5 +546,8 @@
   {
     "name": "nonapi.io.github.classgraph.scanspec.ScanSpec",
     "allDeclaredFields": true
+  },
+  {
+    "name": "dev.mongocamp.server.logging.HighlightingColorConverter"
   }
 ]

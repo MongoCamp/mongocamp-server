@@ -29,8 +29,7 @@ object NativeImageBuildService {
       "-H:+ReportUnsupportedElementsAtRuntime",
       "-H:+ReportExceptionStackTraces",
       "--report-unsupported-elements-at-runtime",
-      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile",
-      "-J-Xmx16g"
+      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
     )
     val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
     val result          = ProcessExecutorService.executeToString(generateCommand)

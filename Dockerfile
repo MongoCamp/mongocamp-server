@@ -16,7 +16,7 @@ FROM debian:12.1-slim
 ENV PLUGINS_DIRECTORY="/opt/mongocamp/plugins"
 COPY --from=builder /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli /opt/bin/mongocamp-cli
 ## todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
-## COPY --from=builder /mongocamp-cli/server-raw /opt/bin/server-raw
+# COPY --from=builder /mongocamp-cli/server-raw /opt/bin/server-raw
 ENV MODE="default"
 WORKDIR /opt/bin/
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections; apt-get update; apt-get install -y snappy-dev zlib-dev bash; apt-get -y upgrade;
