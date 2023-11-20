@@ -4,26 +4,26 @@ import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.http.scaladsl.Http
 import org.apache.pekko.http.scaladsl.model.HttpHeader.ParsingResult
 import org.apache.pekko.http.scaladsl.model.HttpMethods._
-import org.apache.pekko.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import org.apache.pekko.http.scaladsl.server.Directives.{ complete, extractRequestContext, options }
-import org.apache.pekko.http.scaladsl.server.{ Route, RouteConcatenation }
+import org.apache.pekko.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
+import org.apache.pekko.http.scaladsl.server.Directives.{complete, extractRequestContext, options, reject}
+import org.apache.pekko.http.scaladsl.server.{Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
+import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
-import dev.mongocamp.server.plugin.{ RoutesPlugin, ServerPlugin }
+import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
+import dev.mongocamp.server.plugin.{RoutesPlugin, ServerPlugin}
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ ConfigurationService, PluginDownloadService, PluginService, ReflectionService }
+import dev.mongocamp.server.service.{ConfigurationService, PluginDownloadService, PluginService, ReflectionService}
 import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 object Server extends App with LazyLogging with RouteConcatenation with RestServer {
 
@@ -32,6 +32,11 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
 
   lazy val interface: String = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyServerInterface)
   lazy val port: Int         = ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyServerPort).toInt
+
+  private lazy val preLoadedRoutes: ArrayBuffer[Route] = ArrayBuffer()
+  private lazy val afterLoadedRoutes: ArrayBuffer[Route] = ArrayBuffer()
+  private lazy val afterServerStartCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
+  private var routesPluginList: List[RoutesPlugin] = List()
 
   private def initializeRoutesPlugin: List[RoutesPlugin] = {
     val pluginList = ReflectionService
@@ -45,15 +50,12 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     pluginList
   }
 
-  private var routesPluginList: List[RoutesPlugin] = List()
-
-  def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList
 
   private def serverEndpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
     AuthRoutes.endpoints ++ initializeRoutesPlugin.flatMap(_.endpoints)
   }
 
-  private def routes(implicit ex: ExecutionContext): Route = {
+  private def routes: Route = {
     val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
     val allEndpoints      = internalEndPoints.map(ep => HttpServer.httpServerInterpreter.toRoute(ep))
     concat(allEndpoints: _*)
@@ -81,7 +83,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   private def routeHandler(r: Route): Route = {
-    preflightRequestHandler ~ r
+    preflightRequestHandler ~ preLoadedRoutes.foldLeft[Route](reject)(_ ~ _) ~ r ~ afterLoadedRoutes.foldLeft[Route](reject)(_ ~ _)
   }
 
   private def activateServerPlugins(): Unit = {
@@ -124,14 +126,22 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     activateServerPlugins()
   }
 
-  private lazy val afterServerStartCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
+  private def doAfterServerStartUp(): Unit = {
+    afterServerStartCallBacks.foreach(f => f())
+  }
+
+  def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList
 
   def registerAfterStartCallBack(f: () => Unit): Unit = {
     afterServerStartCallBacks.addOne(f)
   }
 
-  def doAfterServerStartUp(): Unit = {
-    afterServerStartCallBacks.foreach(f => f())
+  def registerPreLoadedRoutes(r: Route): Unit = {
+    preLoadedRoutes.addOne(r)
+  }
+
+  def registerAfterLoadedRoutes(r: Route): Unit = {
+    afterLoadedRoutes.addOne(r)
   }
 
   startServer()
