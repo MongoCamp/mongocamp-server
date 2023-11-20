@@ -1,6 +1,6 @@
 name := "mongocamp-server"
 
-val TapirVersion = "1.8.5"
+val TapirVersion = "1.9.0"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-pekko-http-server" % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
@@ -9,7 +9,7 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
-val sttClientVersion = "3.9.0"
+val sttClientVersion = "3.9.1"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "pekko-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"               % sttClientVersion
 

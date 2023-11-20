@@ -4,7 +4,7 @@ val PicoliCliVersion = "4.7.5"
 libraryDependencies += "info.picocli" % "picocli"         % PicoliCliVersion
 libraryDependencies += "info.picocli" % "picocli-codegen" % PicoliCliVersion % "provided"
 libraryDependencies += "info.picocli" % "picocli-jansi-graalvm" % "1.2.0"
-libraryDependencies += "org.fusesource.jansi" % "jansi" % "1.18"
+libraryDependencies += "org.fusesource.jansi" % "jansi" % "2.4.1"
 
 libraryDependencies += "com.github.lukfor" % "magic-progress" % "0.3.2"
 
