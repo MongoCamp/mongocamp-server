@@ -10,7 +10,7 @@ import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationRead.{configCache, isDefaultConfigsRegistered, nonPersistentConfigs}
+import dev.mongocamp.server.service.ConfigurationRead.{ configCache, isDefaultConfigsRegistered, nonPersistentConfigs }
 import io.circe.parser.decode
 import org.bson.BsonDocument
 import org.mongodb.scala.bson.Document
@@ -18,7 +18,7 @@ import sttp.model.StatusCode
 
 import scala.collection.mutable
 import scala.concurrent.duration._
-import scala.util.{Random, Try}
+import scala.util.{ Random, Try }
 trait ConfigurationRead extends LazyLogging {
 
   private lazy val conf: config.Config = ConfigFactory.load()
@@ -243,7 +243,9 @@ trait ConfigurationRead extends LazyLogging {
     val isDoubleType =
       configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDouble) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeDouble.toLowerCase)
     val isDurationType =
-      configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDuration) || configType.toLowerCase.contains(MongoCampConfiguration.confTypeDuration.toLowerCase)
+      configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDuration) || configType.toLowerCase.contains(
+        MongoCampConfiguration.confTypeDuration.toLowerCase
+      )
     var configValue = value
     if (value.isDefined) {
       value.get match {

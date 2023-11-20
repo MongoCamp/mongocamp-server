@@ -28,9 +28,7 @@ object MongoCampConfigurationExtensions {
           Duration.getClass
         }
         else {
-          {
-            throw MongoCampException(s"value class ${mongoCampConfiguration.configType} is not supported at this moment", StatusCode.NotImplemented)
-          }
+          throw MongoCampException(s"value class ${mongoCampConfiguration.configType} is not supported at this moment", StatusCode.NotImplemented)
         }
       }
 

@@ -8,14 +8,14 @@ import io.circe.generic.auto._
 import org.joda.time.DateTime
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 
 import scala.concurrent.Future
 
-object InformationRoutes extends BaseRoute with RoutesPlugin{
+object InformationRoutes extends BaseRoute with RoutesPlugin {
 
   val version = baseEndpoint
     .in("version")
