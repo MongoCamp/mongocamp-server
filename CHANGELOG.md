@@ -1,3 +1,25 @@
+## [v1.5.8] - 2023-11-20
+### :sparkles: New Features
+- [`6bba071`](https://github.com/MongoCamp/mongocamp-server/commit/6bba0719a3950b31dafa34d1f1bee0a3d20e4e51) - allow registering of pre (and after) loaded routes outside of tapir *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`68c7641`](https://github.com/MongoCamp/mongocamp-server/commit/68c7641c4e2f6c34d85afb1a375cdecbbb6799a5) - duration handling for configurations not working *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`92228f1`](https://github.com/MongoCamp/mongocamp-server/commit/92228f12f36d089f3394ca503862fa579528dad7) - change Admin-, Index- and InformationRoutes to Plugins *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`ba5cb53`](https://github.com/MongoCamp/mongocamp-server/commit/ba5cb53d65ab073422fd2653cef381d9658e1ed3) - **logging**: with highlighting of output *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`20a3210`](https://github.com/MongoCamp/mongocamp-server/commit/20a3210dd5a30edfffbcfb87566f1b13affeba82) - **logging**: with highlighting of output *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`bc96613`](https://github.com/MongoCamp/mongocamp-server/commit/bc96613da3da8f9f08121fb80d9af4ba3ff715ba) - Fix tests for changing some hardcoded routes to plugins *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`2b3e43e`](https://github.com/MongoCamp/mongocamp-server/commit/2b3e43e084adac168796fac14167be410254a93a) - 2 dependency updates for mongocamp-test-server *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`6ee2dff`](https://github.com/MongoCamp/mongocamp-server/commit/6ee2dff56c3e9abe29435bd55d034185ccdab708) - 5 dependency updates for mongocamp-server *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`f0dd53b`](https://github.com/MongoCamp/mongocamp-server/commit/f0dd53b52aaea9319f3bba9f94d317cd3c0c2242) - 3 dependency updates for mongocamp-library *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`51d81cb`](https://github.com/MongoCamp/mongocamp-server/commit/51d81cb025c74ef2ce42f44a505a2f312009f858) - dependency updates and changes for tapir 1.9.0 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v1.5.7] - 2023-10-23
 ### :bug: Bug Fixes
 - [`4fc82cd`](https://github.com/MongoCamp/mongocamp-server/commit/4fc82cdad7479cebc69b09e8c3ce4a2bfd477276) - change deployment for docs *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -277,3 +299,4 @@
 [v1.5.5]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.4...v1.5.5
 [v1.5.6]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.5...v1.5.6
 [v1.5.7]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.6...v1.5.7
+[v1.5.8]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.7...v1.5.8
