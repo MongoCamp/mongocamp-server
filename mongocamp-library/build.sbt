@@ -1,8 +1,8 @@
 name := "mongocamp-library"
 
-libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.7"
+libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.9"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.7"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.6.8"
 
 libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.165"
 
@@ -15,11 +15,11 @@ libraryDependencies += "io.circe"                      %% "circe-parser"      % 
 
 libraryDependencies += "com.softwaremill.sttp.model" %% "core" % "1.7.6"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.5"
+libraryDependencies += "joda-time" % "joda-time" % "2.12.7"
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
-libraryDependencies += "ch.qos.logback"              % "logback-classic" % "1.4.11"
+libraryDependencies += "ch.qos.logback"              % "logback-classic" % "1.4.14"
 
 enablePlugins(BuildInfoPlugin)
 

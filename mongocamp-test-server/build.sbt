@@ -2,9 +2,9 @@ name := "mongocamp-test-server"
 
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29"
 
-libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "4.11.1"
+libraryDependencies += "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "4.12.2"
 
-libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.9.1"
+libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.9.3"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2" % Provided
 
