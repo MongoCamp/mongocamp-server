@@ -28,7 +28,7 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@main
         with:
-          jvm: graalvm-java17:22.3.3
+          jvm: graalvm-java21:21.0.2
           apps: sbt scala scalac
       - name: Start MongoDB ${{ matrix.mongodb-version }}
         uses: MongoCamp/mongodb-github-action@main

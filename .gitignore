@@ -28,5 +28,6 @@ sbt-cache/*
 /src/test/scala/dev/mongocamp/server/client-project/
 /docs/external/files
 /docs/.vitepress/cache
+/reports/
 
 env.development.list

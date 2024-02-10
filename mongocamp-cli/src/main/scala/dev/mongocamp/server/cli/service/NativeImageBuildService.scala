@@ -27,7 +27,7 @@ object NativeImageBuildService {
       "-H:+DumpOnError",
       "-H:+ReportExceptionStackTraces",
       "-H:+ReportUnsupportedElementsAtRuntime",
-      "-H:+ReportExceptionStackTraces",
+      "-H:+PrintAnalysisCallTree",
       "--report-unsupported-elements-at-runtime",
       "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
     )
