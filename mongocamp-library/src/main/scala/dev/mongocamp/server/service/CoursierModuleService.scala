@@ -37,7 +37,7 @@ object CoursierModuleService extends LazyLogging {
 
   def loadMavenConfiguredDependencies(): List[File] = {
     val modules = ConfigurationRead.noPublishReader.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsModules)
-    loadMavenConfiguredDependencies(modules)
+    loadMavenConfiguredDependencies(modules.map(mName => mName.replace("$$MC_VERSION$$", BuildInfo.version)))
   }
 
   def loadMavenConfiguredDependencies(dependencyStrings: List[String]): List[File] = {
