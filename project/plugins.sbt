@@ -12,11 +12,11 @@ addDependencyTreePlugin
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.1")
 
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.21")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.10.0")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1")
 
-addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.6.5")
+addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.7.1")
 
 dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
 
