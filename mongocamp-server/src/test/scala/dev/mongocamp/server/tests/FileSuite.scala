@@ -5,15 +5,16 @@ import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.database.TestAdditions.copyResourceFileToTempDir
 import dev.mongocamp.server.database.{MongoDatabase, TestAdditions}
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.FileApi
 import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateFileInformationRequest}
 import io.circe.syntax.EncoderOps
 
 import scala.util.Random
 
-class FileSuite extends BaseServerSuite {
+class FileSuite extends MongoCampBaseServerSuite {
 
-  val api: FileApi = FileApi()
+  lazy val api: FileApi = FileApi()
 
   var fileId: String = ""
 

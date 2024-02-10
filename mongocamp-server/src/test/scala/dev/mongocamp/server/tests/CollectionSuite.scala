@@ -2,13 +2,14 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.client.api.{CollectionApi, DatabaseApi}
-import dev.mongocamp.server.test.client.model.{MongoAggregateRequest, PipelineStage}
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
+import dev.mongocamp.server.test.client.api.{ CollectionApi, DatabaseApi }
+import dev.mongocamp.server.test.client.model.{ MongoAggregateRequest, PipelineStage }
 
-class CollectionSuite extends BaseServerSuite {
+class CollectionSuite extends MongoCampBaseServerSuite {
 
-  val collectionApi: CollectionApi = CollectionApi()
-  val databaseApi: DatabaseApi     = DatabaseApi()
+  lazy val collectionApi: CollectionApi = CollectionApi()
+  lazy val databaseApi: DatabaseApi     = DatabaseApi()
 
   test("list all collections as admin") {
     val response = executeRequestToResponse(collectionApi.listCollections("", "", adminBearerToken, "")())
@@ -61,7 +62,12 @@ class CollectionSuite extends BaseServerSuite {
   test("distinct on collection as admin") {
     val distinct = executeRequestToResponse(collectionApi.distinct("", "", adminBearerToken, "")("users", "numberrange"))
     assertEquals(distinct.size, 11)
-    assertEquals(distinct.sortBy(f => f.toString.toLong), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+    assertEquals(
+      distinct.sortBy(
+        f => f.toString.toLong
+      ),
+      List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    )
   }
 
   test("aggregation on collection as admin") {
@@ -114,7 +120,12 @@ class CollectionSuite extends BaseServerSuite {
   test("distinct on collection as user") {
     val distinct = executeRequestToResponse(collectionApi.distinct("", "", testUserBearerToken, "")("users", "numberrange"))
     assertEquals(distinct.size, 11)
-    assertEquals(distinct.sortBy(f => f.toString.toLong), List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+    assertEquals(
+      distinct.sortBy(
+        f => f.toString.toLong
+      ),
+      List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    )
   }
 
   test("delete collection infos as user") {
@@ -154,7 +165,9 @@ class CollectionSuite extends BaseServerSuite {
     assertEquals(schemaAnalysis.count, 1000L)
     assertEquals(schemaAnalysis.sample, 1000L)
     assertEquals(schemaAnalysis.percentageOfAnalysed, 1.0)
-    val emailField = schemaAnalysis.fields.get.filter(f => f.name.equalsIgnoreCase("email"))
+    val emailField = schemaAnalysis.fields.get.filter(
+      f => f.name.equalsIgnoreCase("email")
+    )
     assertEquals(emailField.nonEmpty, true)
     assertEquals(emailField.head.percentageOfParent, 1.0)
   }

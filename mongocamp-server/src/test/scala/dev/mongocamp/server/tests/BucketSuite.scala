@@ -1,17 +1,18 @@
 package dev.mongocamp.server.tests
 
-import better.files.{File, Resource}
+import better.files.{ File, Resource }
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.TestAdditions.copyResourceFileToTempDir
-import dev.mongocamp.server.database.{MongoDatabase, TestAdditions}
-import dev.mongocamp.server.test.client.api.{BucketApi, DatabaseApi}
+import dev.mongocamp.server.database.{ MongoDatabase, TestAdditions }
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
+import dev.mongocamp.server.test.client.api.{ BucketApi, DatabaseApi }
 
 import scala.util.Random
 
-class BucketSuite extends BaseServerSuite {
+class BucketSuite extends MongoCampBaseServerSuite {
 
-  val api: BucketApi           = BucketApi()
-  val databaseApi: DatabaseApi = DatabaseApi()
+  lazy val api: BucketApi           = BucketApi()
+  lazy val databaseApi: DatabaseApi = DatabaseApi()
 
   test("list all buckets as admin") {
     val response = executeRequestToResponse(api.listBuckets("", "", adminBearerToken, "")())

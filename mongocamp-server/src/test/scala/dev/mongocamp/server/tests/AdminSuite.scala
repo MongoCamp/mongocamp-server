@@ -1,13 +1,14 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.model.ModelConstants
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.{AdminApi, AuthApi}
 import dev.mongocamp.server.test.client.model._
 import sttp.model.StatusCode
 
-class AdminSuite extends BaseServerSuite {
+class AdminSuite extends MongoCampBaseServerSuite {
 
-  val adminApi: AdminApi = AdminApi()
+  lazy val adminApi: AdminApi = AdminApi()
 
   test("list users as admin") {
     val users = executeRequestToResponse(adminApi.listUsers("", "", adminBearerToken, "")())

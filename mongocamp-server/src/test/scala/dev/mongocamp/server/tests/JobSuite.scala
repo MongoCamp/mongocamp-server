@@ -1,12 +1,12 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.test.CountingTestJob
+import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
 import dev.mongocamp.server.test.client.api.JobsApi
 import dev.mongocamp.server.test.client.model.JobConfig
 
-class JobSuite extends BaseServerSuite {
+class JobSuite extends MongoCampBaseServerSuite {
 
-  val jobsApi: JobsApi = JobsApi()
+  lazy val jobsApi: JobsApi = JobsApi()
 
   test("check pre triggered job was running") {
     // test fails sometime if only JobSuite is running

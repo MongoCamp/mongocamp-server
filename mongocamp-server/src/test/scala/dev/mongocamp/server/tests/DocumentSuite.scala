@@ -1,17 +1,18 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.DocumentApi
-import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateRequest}
+import dev.mongocamp.server.test.client.model.{ MongoFindRequest, UpdateRequest }
 
 import java.util.UUID
 import scala.collection.mutable
 import scala.util.Random
 
-class DocumentSuite extends BaseServerSuite {
+class DocumentSuite extends MongoCampBaseServerSuite {
 
-  val documentsApi: DocumentApi = DocumentApi()
-  var idForTest: String         = ""
-  var idsForTest: List[String]  = List()
+  lazy val documentsApi: DocumentApi = DocumentApi()
+  var idForTest: String              = ""
+  var idsForTest: List[String]       = List()
 
   test("list all documents as admin") {
     val response = executeRequestToResponse(documentsApi.listDocuments("", "", adminBearerToken, "")(collectionNameAccounts, None, Seq.empty, Seq.empty))
@@ -81,7 +82,9 @@ class DocumentSuite extends BaseServerSuite {
 
   test("create new documents at database as admin") {
     val mapToInsert: List[Map[String, Any]] = (0 to 10)
-      .map(i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString))
+      .map(
+        i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString)
+      )
       .toList
     val response = executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collectionNameTest, mapToInsert))
     idsForTest = response.insertedIds.toList
@@ -140,7 +143,9 @@ class DocumentSuite extends BaseServerSuite {
     assertEquals(response.modifiedCount, 12L)
     assertEquals(response.matchedCount, 12L)
     val validation = executeRequestToResponse(documentsApi.find("", "", adminBearerToken, "")(collectionNameTest, MongoFindRequest(Map(), Map(), Map())))
-    validation.foreach(value => assertEquals(value.get("newField"), Some("value")))
+    validation.foreach(
+      value => assertEquals(value.get("newField"), Some("value"))
+    )
   }
 
   test("delete document from database as admin") {
@@ -150,7 +155,14 @@ class DocumentSuite extends BaseServerSuite {
   }
 
   test("delete documents from database as admin") {
-    val request  = Map("$or" -> idsForTest.splitAt(3)._1.map(value => Map("_id" -> value)))
+    val request = Map(
+      "$or" -> idsForTest
+        .splitAt(3)
+        ._1
+        .map(
+          value => Map("_id" -> value)
+        )
+    )
     val response = executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(collectionNameTest, request))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.deletedCount, 3L)
@@ -224,7 +236,9 @@ class DocumentSuite extends BaseServerSuite {
 
   test("create new documents at database as user") {
     val mapToInsert: List[Map[String, Any]] = (0 to 10)
-      .map(i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString))
+      .map(
+        i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString)
+      )
       .toList
     val response = executeRequestToResponse(documentsApi.insertMany("", "", testUserBearerToken, "")(collectionNameTest, mapToInsert))
     idsForTest = response.insertedIds.toList
@@ -283,7 +297,9 @@ class DocumentSuite extends BaseServerSuite {
     assertEquals(response.modifiedCount, 12L)
     assertEquals(response.matchedCount, 20L)
     val validation = executeRequestToResponse(documentsApi.find("", "", testUserBearerToken, "")(collectionNameTest, MongoFindRequest(Map(), Map(), Map())))
-    validation.foreach(value => assertEquals(value.get("newField"), Some("value")))
+    validation.foreach(
+      value => assertEquals(value.get("newField"), Some("value"))
+    )
   }
 
   test("delete document from database as user") {
@@ -293,7 +309,14 @@ class DocumentSuite extends BaseServerSuite {
   }
 
   test("delete documents from database as user") {
-    val request  = Map("$or" -> idsForTest.splitAt(3)._1.map(value => Map("_id" -> value)))
+    val request = Map(
+      "$or" -> idsForTest
+        .splitAt(3)
+        ._1
+        .map(
+          value => Map("_id" -> value)
+        )
+    )
     val response = executeRequestToResponse(documentsApi.deleteMany("", "", testUserBearerToken, "")(collectionNameTest, request))
     assertEquals(response.wasAcknowledged, true)
     assertEquals(response.deletedCount, 3L)
@@ -347,7 +370,9 @@ class DocumentSuite extends BaseServerSuite {
 
   test("create new documents at database as user not allowed") {
     val mapToInsert: List[Map[String, Any]] = (0 to 10)
-      .map(i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString))
+      .map(
+        i => Map("index" -> i, "hello" -> "world", "uuid" -> UUID.randomUUID().toString, "name" -> Random.alphanumeric.take(10).mkString)
+      )
       .toList
     val response = executeRequest(documentsApi.insertMany("", "", testUserBearerToken, "")(notAllowedCollectionName, mapToInsert))
     assertEquals(response.code.code, 401)
@@ -394,7 +419,14 @@ class DocumentSuite extends BaseServerSuite {
   }
 
   test("delete documents from database as user not allowed") {
-    val request  = Map("$or" -> idsForTest.splitAt(3)._1.map(value => Map("_id" -> value)))
+    val request = Map(
+      "$or" -> idsForTest
+        .splitAt(3)
+        ._1
+        .map(
+          value => Map("_id" -> value)
+        )
+    )
     val response = executeRequest(documentsApi.deleteMany("", "", testUserBearerToken, "")(notAllowedCollectionName, request))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
@@ -458,14 +490,14 @@ class DocumentSuite extends BaseServerSuite {
       "metaData" -> Map(
         "createdBy" -> "tom@sfxcode.com",
         "updatedBy" -> "tom@sfxcode.com",
-        "created" -> "2023-04-12T16:32:01.452Z",
-        "updated" -> "2023-04-12T16:33:07.982Z"
+        "created"   -> "2023-04-12T16:32:01.452Z",
+        "updated"   -> "2023-04-12T16:33:07.982Z"
       ),
       "name" -> "test1",
       "list" -> List("hello", "men")
     )
     val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
-    val id = insertResponse.insertedIds.head
+    val id             = insertResponse.insertedIds.head
     assertEquals(insertResponse.insertedIds.nonEmpty, true)
     assertEquals(insertResponse.insertedIds.size, 1)
     assertEquals(insertResponse.wasAcknowledged, true)
@@ -489,7 +521,6 @@ class DocumentSuite extends BaseServerSuite {
 
   }
 
-
   test("create or update a document with a sublist of type number") {
     val collectionNameTest = "createAndUpdate"
     val mapToInsert: mutable.Map[String, Any] = mutable.Map(
@@ -497,14 +528,14 @@ class DocumentSuite extends BaseServerSuite {
       "metaData" -> Map(
         "createdBy" -> "tom@sfxcode.com",
         "updatedBy" -> "tom@sfxcode.com",
-        "created" -> "2023-04-12T16:32:01.452Z",
-        "updated" -> "2023-04-12T16:33:07.982Z"
+        "created"   -> "2023-04-12T16:32:01.452Z",
+        "updated"   -> "2023-04-12T16:33:07.982Z"
       ),
       "name" -> "test1",
       "list" -> List(123, 456)
     )
     val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
-    val id = insertResponse.insertedIds.head
+    val id             = insertResponse.insertedIds.head
     assertEquals(insertResponse.insertedIds.nonEmpty, true)
     assertEquals(insertResponse.insertedIds.size, 1)
     assertEquals(insertResponse.wasAcknowledged, true)
@@ -535,14 +566,14 @@ class DocumentSuite extends BaseServerSuite {
       "metaData" -> Map(
         "createdBy" -> "tom@sfxcode.com",
         "updatedBy" -> "tom@sfxcode.com",
-        "created" -> "2023-04-12T16:32:01.452Z",
-        "updated" -> "2023-04-12T16:33:07.982Z"
+        "created"   -> "2023-04-12T16:32:01.452Z",
+        "updated"   -> "2023-04-12T16:33:07.982Z"
       ),
       "name" -> "test1",
       "list" -> List(Map("a" -> "A"), Map("b" -> "B"))
     )
     val insertResponse = executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collectionNameTest, mapToInsert.toMap))
-    val id = insertResponse.insertedIds.head
+    val id             = insertResponse.insertedIds.head
     assertEquals(insertResponse.insertedIds.nonEmpty, true)
     assertEquals(insertResponse.insertedIds.size, 1)
     assertEquals(insertResponse.wasAcknowledged, true)

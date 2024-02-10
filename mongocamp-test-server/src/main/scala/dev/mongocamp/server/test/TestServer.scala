@@ -12,7 +12,7 @@ import scala.util.Random
 
 object TestServer extends LazyLogging {
 
-  private var serverRunning      = false
+  private var _serverRunning      = false
   private var mongoServerStarted = false
 
   System.setProperty("CONNECTION_HOST", "localhost")
@@ -21,7 +21,7 @@ object TestServer extends LazyLogging {
 
   var retries = 0
 
-  lazy val server: RestServer = {
+  def server: RestServer = {
     val servers = ReflectionService.instancesForType(classOf[RestServer])
     if (servers.size == 1) {
       servers.head
@@ -31,39 +31,43 @@ object TestServer extends LazyLogging {
     }
   }
 
-  while (!serverRunning) {
-    try {
-      if (!mongoServerStarted) {
-        Future.successful {
-          MongoTestServer.startMongoDatabase()
-          setPort()
-          server.registerMongoCampServerDefaultConfigs
-          server.startServer()(ExecutionContext.global)
-        }
-        mongoServerStarted = true
-      }
-      val versionRequest = InformationApi().version()
-      val versionFuture  = TestAdditions.backend.send(versionRequest)
-      versionFuture.body.getOrElse(throw new Exception("error"))
-      serverRunning = true
-    }
-    catch {
-      case e: Exception =>
-        serverRunning = false
-        setPort()
-        if (retries > 60) {
-          logger.error(e.getMessage, e)
-          throw new Exception(s"could not start server in $retries seconds")
-        }
-        retries += 1
-    }
-  }
 
-  def isServerRunning(): Boolean = serverRunning
+  def isServerRunning(): Boolean = synchronized {
+    while (!_serverRunning) {
+      try {
+        if (!mongoServerStarted) {
+          Future.successful {
+            MongoTestServer.startMongoDatabase()
+            while (!MongoTestServer.isRunning) {
+              ""
+            }
+            setPort()
+            server.registerMongoCampServerDefaultConfigs()
+            server.startServer()(ExecutionContext.global)
+          }
+          mongoServerStarted = true
+        }
+        val versionRequest = InformationApi().version()
+        val versionFuture  = TestAdditions.backend.send(versionRequest)
+        versionFuture.body.getOrElse(throw new Exception("error"))
+        _serverRunning = true
+      }
+      catch {
+        case e: Exception =>
+          _serverRunning = false
+          setPort()
+          if (retries > 60) {
+            logger.error(e.getMessage, e)
+            throw new Exception(s"could not start server in $retries seconds")
+          }
+          retries += 1
+      }
+    }
+    _serverRunning
+  }
 
   def serverBaseUrl: String = {
     "http://%s:%s".format(server.interface, server.port)
-//    "http://%s:%s".format(server.interface, 8080)
   }
 
   def setPort(): Unit = {

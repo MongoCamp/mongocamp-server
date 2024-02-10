@@ -67,7 +67,7 @@ object MongoTestServer extends LazyLogging {
   def startMongoDatabase(): Unit = {
     checkForLocalRunningMongoDb()
     if (!running) {
-      process = mongodExecutable.start(Version.V6_0_5)
+      process = mongodExecutable.start(Version.V7_0_4)
       running = true
       sys.addShutdownHook({
         println("Shutdown for MongoDB Server triggered.")

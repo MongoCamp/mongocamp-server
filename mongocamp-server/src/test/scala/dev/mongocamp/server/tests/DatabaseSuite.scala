@@ -1,11 +1,12 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.DatabaseApi
 
-class DatabaseSuite extends BaseServerSuite {
+class DatabaseSuite extends MongoCampBaseServerSuite {
 
-  val databaseApi: DatabaseApi = DatabaseApi()
+  lazy val databaseApi: DatabaseApi = DatabaseApi()
 
   test("list all databases as admin") {
     val response = executeRequestToResponse(databaseApi.listDatabases("", "", adminBearerToken, "")())

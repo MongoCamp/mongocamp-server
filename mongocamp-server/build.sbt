@@ -8,7 +8,6 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
-enablePlugins(GraalVMNativeImagePlugin)
 
 val sttClientVersion = "3.9.3"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "pekko-http-backend" % sttClientVersion

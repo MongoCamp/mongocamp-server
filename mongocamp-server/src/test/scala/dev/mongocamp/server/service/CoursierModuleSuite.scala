@@ -1,8 +1,8 @@
 package dev.mongocamp.server.service
 
-import dev.mongocamp.server.tests.BaseServerSuite
+import com.typesafe.scalalogging.LazyLogging
 
-class CoursierModuleSuite extends BaseServerSuite {
+class CoursierModuleSuite extends munit.FunSuite with LazyLogging {
 
   test("fetch dependencies for mongocamp driver") {
     val mavenFiles = CoursierModuleService.loadMavenConfiguredDependencies(List("dev.mongocamp:mongodb-driver_2.13:2.5.3"))

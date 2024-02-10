@@ -32,7 +32,7 @@ object TestAdditions extends CirceSchema {
 
   case class MapCollectionDao(collectionName: String) extends MongoDAO[Map[String, Any]](MongoDatabase.databaseProvider, collectionName)
 
-  def importData(): Boolean = {
+  def importData(): Boolean = synchronized {
     MapCollectionDao("accounts").insertMany(SystemFileService.readJsonList("accounts.json")).result()
     MapCollectionDao("users").insertMany(SystemFileService.readJsonList("users.json")).result()
     MapCollectionDao("users").insertMany(SystemFileService.readJsonList("users.json")).result()
@@ -69,7 +69,7 @@ object TestAdditions extends CirceSchema {
     accountFile
   }
 
-  def insertUsersAndRoles() = {
+  def insertUsersAndRoles() = synchronized {
     if (!dataImported) {
       val userDao   = MapCollectionDao(MongoDatabase.CollectionNameUsers)
       val apiKey    = "special"

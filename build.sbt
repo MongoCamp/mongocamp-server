@@ -1,7 +1,7 @@
 import common.mongoCampProject
 import dev.quadstingray.sbt.json.JsonFile
 
-lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer, mcTest)
+lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer, mcTest, mcPluginRequestLogging)
 
 ThisBuild / scalaVersion := "2.13.12"
 
@@ -18,3 +18,5 @@ lazy val mcTest = mongoCampProject("test-server").dependsOn(mcLibrary).enablePlu
 lazy val mcCli = mongoCampProject("cli").dependsOn(mcLibrary).enablePlugins(BuildInfoPlugin)
 
 lazy val mcServer = mongoCampProject("server").enablePlugins(BuildInfoPlugin).dependsOn(mcLibrary, mcTest % Test)
+
+lazy val mcPluginRequestLogging = mongoCampProject("plugin-requestlogging").dependsOn(mcServer, mcTest % Test).enablePlugins(BuildInfoPlugin)

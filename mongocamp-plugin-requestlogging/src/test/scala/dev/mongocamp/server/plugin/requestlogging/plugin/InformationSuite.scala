@@ -1,4 +1,4 @@
-package dev.mongocamp.server.tests
+package dev.mongocamp.server.plugin.requestlogging.plugin
 
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.test.MongoCampBaseServerSuite

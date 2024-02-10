@@ -1,11 +1,12 @@
 package dev.mongocamp.server.tests
 
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.ApplicationApi
 import dev.mongocamp.server.test.client.model.JsonValueAny
 
-class ApplicationSuite extends BaseServerSuite {
+class ApplicationSuite extends MongoCampBaseServerSuite {
 
-  val applicationApi: ApplicationApi = ApplicationApi()
+  lazy val applicationApi: ApplicationApi = ApplicationApi()
 
   test("Show all System Settings") {
     val systemSettings = executeRequestToResponse(applicationApi.settings("", "", adminBearerToken, "")())
