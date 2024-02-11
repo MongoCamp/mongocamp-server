@@ -1,5 +1,5 @@
 import Unocss from 'unocss/vite'
-import {defineConfig} from 'vitepress'
+import { defineConfig } from 'vitepress'
 import fs from 'fs'
 
 export default defineConfig({
@@ -35,7 +35,7 @@ export default defineConfig({
     vite: {
         plugins: [
             Unocss({
-                configFile: '../../unocss.config.ts',
+                configFile: '../../unocss.config.mts',
             })
         ],
     },
