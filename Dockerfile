@@ -1,4 +1,4 @@
-FROM debian:12.1-slim AS builder
+FROM debian:12.4-slim AS builder
 ARG GRAAL_VERSION="graalvm-java21:21.0.2"
 ENV COURSIER_FOLDER="/opt/coursier/bin"
 ENV PATH="$PATH:$COURSIER_FOLDER"
@@ -11,7 +11,7 @@ RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; $JAVA_HOME/bin/gu install nati
 # todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
 # RUN /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli prepare native
 
-FROM debian:12.1-slim
+FROM debian:12.4-slim
 ENV PLUGINS_DIRECTORY="/opt/mongocamp/plugins"
 COPY --from=builder /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli /opt/bin/mongocamp-cli
 ## todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
