@@ -1,3 +1,16 @@
+## [v1.5.9] - 2024-02-12
+### :sparkles: New Features
+- [`dd609cc`](https://github.com/MongoCamp/mongocamp-server/commit/dd609ccd7487380275e5cca61e4dd6c01c475946) - RequestLogging Plugin as sbt submodul *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`0abfb9d`](https://github.com/MongoCamp/mongocamp-server/commit/0abfb9dc650a717eeb02dad854bc2eea489c7500) - Possibility to use MongoCampServer Version in PluginModule Definition `"$$MC_VERSION$$"` *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`138ea9a`](https://github.com/MongoCamp/mongocamp-server/commit/138ea9a3461f9f3ec4800fa8bf93d73564eb0c8a) - Possibility to use MongoCampServer Version in PluginModule Definition `"$$MC_VERSION$$"` QuadStingray Yesterday 23:18 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`c9225d9`](https://github.com/MongoCamp/mongocamp-server/commit/c9225d9e80aa3785e2516c61284ce53f7d5a6ed1) - 14 dependency updates *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`92af6ed`](https://github.com/MongoCamp/mongocamp-server/commit/92af6eddacdd2b282d98fbbb3889365ec3394c34) - 2 plugins updates *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`dd572e3`](https://github.com/MongoCamp/mongocamp-server/commit/dd572e380aeb43f18a12ccaf732260e8d0bf1e05) - update to java21 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`940bb81`](https://github.com/MongoCamp/mongocamp-server/commit/940bb81f24ff94ae8b0390467c50d15c8e4341a6) - dependency update `debian:12.1-slim` => `debian:12.4-slim` *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v1.5.8] - 2023-11-20
 ### :sparkles: New Features
 - [`6bba071`](https://github.com/MongoCamp/mongocamp-server/commit/6bba0719a3950b31dafa34d1f1bee0a3d20e4e51) - allow registering of pre (and after) loaded routes outside of tapir *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -300,3 +313,4 @@
 [v1.5.6]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.5...v1.5.6
 [v1.5.7]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.6...v1.5.7
 [v1.5.8]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.7...v1.5.8
+[v1.5.9]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.8...v1.5.9
