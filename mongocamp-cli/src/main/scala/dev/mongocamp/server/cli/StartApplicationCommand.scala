@@ -24,7 +24,11 @@ class StartApplicationCommand extends Callable[Integer] with LazyLogging {
       case s: String if s.equalsIgnoreCase("jvm") => JvmStartService.startServer()
 
       case s: String if s.equalsIgnoreCase("native") =>
-        val pluginUrls = PluginService.listOfReadableUrls().map(url => File(url))
+        val pluginUrls = PluginService
+          .listOfReadableUrls()
+          .map(
+            url => File(url)
+          )
         if (pluginUrls.nonEmpty) {
           var response = Main.commandLine.execute(List("buildNative"): _*).abs
           response += ProcessExecutorService.executeToStout("./server-with-plugins").abs
@@ -35,7 +39,11 @@ class StartApplicationCommand extends Callable[Integer] with LazyLogging {
         }
 
       case s: String if s.equalsIgnoreCase("default") =>
-        val pluginUrls = PluginService.listOfReadableUrls().map(url => File(url))
+        val pluginUrls = PluginService
+          .listOfReadableUrls()
+          .map(
+            url => File(url)
+          )
         // todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
         if (pluginUrls.nonEmpty || true) {
           JvmStartService.startServer()

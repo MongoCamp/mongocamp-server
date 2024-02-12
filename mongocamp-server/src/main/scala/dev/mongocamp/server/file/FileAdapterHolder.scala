@@ -14,11 +14,15 @@ object FileAdapterHolder {
 
   lazy val listOfFilePlugins: List[FilePlugin] = ReflectionService
     .instancesForType(classOf[FilePlugin])
-    .filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
-    .map(plugin => {
-      EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "FilePlugin"))
-      plugin
-    })
+    .filterNot(
+      plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
+    )
+    .map(
+      plugin => {
+        EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "FilePlugin"))
+        plugin
+      }
+    )
 
   lazy val handler: FilePlugin = {
     listOfFilePlugins

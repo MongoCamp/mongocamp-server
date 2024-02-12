@@ -3,14 +3,16 @@ package dev.mongocamp.server.service
 object JvmService {
 
   def runntimeJavaHome: Option[String] = {
-    Option(System.getProperty("java.home")).map(jHome => {
-      var javaHome = jHome
-      while (javaHome.startsWith(" ") || javaHome.endsWith(" ")) {
-        javaHome = javaHome.trim
-        javaHome = javaHome.trim
+    Option(System.getProperty("java.home")).map(
+      jHome => {
+        var javaHome = jHome
+        while (javaHome.startsWith(" ") || javaHome.endsWith(" ")) {
+          javaHome = javaHome.trim
+          javaHome = javaHome.trim
+        }
+        javaHome
       }
-      javaHome
-    })
+    )
   }
 
   def javaHome: String = {

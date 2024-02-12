@@ -41,11 +41,15 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   private def initializeRoutesPlugin: List[RoutesPlugin] = {
     val pluginList = ReflectionService
       .instancesForType(classOf[RoutesPlugin])
-      .filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
-      .map(plugin => {
-        EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
-        plugin
-      })
+      .filterNot(
+        plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
+      )
+      .map(
+        plugin => {
+          EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
+          plugin
+        }
+      )
     routesPluginList = pluginList
     pluginList
   }
@@ -56,28 +60,35 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
 
   private def routes: Route = {
     val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
-    val allEndpoints      = internalEndPoints.map(ep => HttpServer.httpServerInterpreter.toRoute(ep))
+    val allEndpoints = internalEndPoints.map(
+      ep => HttpServer.httpServerInterpreter.toRoute(ep)
+    )
     concat(allEndpoints: _*)
   }
 
   private def preflightRequestHandler: Route = {
-    extractRequestContext { ctx =>
-      options {
-        complete({
-          val requestHeaders = ctx.request.headers
-          val originHeader   = requestHeaders.find(_.is(KeyCorsHeaderOrigin.toLowerCase())).map(_.value())
-          val refererHeader = requestHeaders
-            .find(_.is(KeyCorsHeaderReferer.toLowerCase()))
-            .map(_.value())
-            .map(string => if (string.endsWith("/")) string.replaceAll("/$", "") else string)
+    extractRequestContext {
+      ctx =>
+        options {
+          complete({
+            val requestHeaders = ctx.request.headers
+            val originHeader   = requestHeaders.find(_.is(KeyCorsHeaderOrigin.toLowerCase())).map(_.value())
+            val refererHeader = requestHeaders
+              .find(_.is(KeyCorsHeaderReferer.toLowerCase()))
+              .map(_.value())
+              .map(
+                string => if (string.endsWith("/")) string.replaceAll("/$", "") else string
+              )
 
-          val corsHeaders                      = Cors.corsHeadersFromOrigin((originHeader ++ refererHeader).headOption)
-          val headers: ArrayBuffer[HttpHeader] = ArrayBuffer()
-          corsHeaders.foreach(header => headers += HttpHeader.parse(header.name, header.value).asInstanceOf[ParsingResult.Ok].header)
-          headers += org.apache.pekko.http.scaladsl.model.headers.`Access-Control-Allow-Methods`(Seq(OPTIONS, POST, PUT, PATCH, GET, DELETE))
-          HttpResponse(StatusCodes.OK).withHeaders(headers.toList)
-        })
-      }
+            val corsHeaders                      = Cors.corsHeadersFromOrigin((originHeader ++ refererHeader).headOption)
+            val headers: ArrayBuffer[HttpHeader] = ArrayBuffer()
+            corsHeaders.foreach(
+              header => headers += HttpHeader.parse(header.name, header.value).asInstanceOf[ParsingResult.Ok].header
+            )
+            headers += org.apache.pekko.http.scaladsl.model.headers.`Access-Control-Allow-Methods`(Seq(OPTIONS, POST, PUT, PATCH, GET, DELETE))
+            HttpResponse(StatusCodes.OK).withHeaders(headers.toList)
+          })
+        }
     }
   }
 
@@ -88,12 +99,16 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   private def activateServerPlugins(): Unit = {
     ReflectionService
       .instancesForType(classOf[ServerPlugin])
-      .filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
-      .map(plugin => {
-        plugin.activate()
-        EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
-        plugin
-      })
+      .filterNot(
+        plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
+      )
+      .map(
+        plugin => {
+          plugin.activate()
+          EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
+          plugin
+        }
+      )
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
@@ -106,19 +121,21 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     Http()
       .newServerAt(interface, port)
       .bindFlow(routeHandler(routes))
-      .map(serverBinding => {
-        AuthHolder.handler
+      .map(
+        serverBinding => {
+          AuthHolder.handler
 
-        logger.warn("init server with interface: %s at port: %s".format(interface, port))
+          logger.warn("init server with interface: %s at port: %s".format(interface, port))
 
-        if (ApiDocsRoutes.isSwaggerEnabled) {
-          logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
+          if (ApiDocsRoutes.isSwaggerEnabled) {
+            logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
+          }
+
+          EventSystem.eventStream.publish(ServerStartedEvent())
+          doAfterServerStartUp()
+          serverBinding
         }
-
-        EventSystem.eventStream.publish(ServerStartedEvent())
-        doAfterServerStartUp()
-        serverBinding
-      })
+      )
   }
 
   private def doBeforeServerStartUp(): Unit = {
@@ -126,7 +143,9 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   private def doAfterServerStartUp(): Unit = {
-    afterServerStartCallBacks.foreach(f => f())
+    afterServerStartCallBacks.foreach(
+      f => f()
+    )
   }
 
   def listOfRoutePlugins: List[RoutesPlugin] = routesPluginList

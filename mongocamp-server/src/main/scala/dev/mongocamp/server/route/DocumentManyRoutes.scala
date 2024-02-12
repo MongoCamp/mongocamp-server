@@ -31,7 +31,9 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .tag(DocumentRoutes.apiName)
     .method(Method.PUT)
     .name("insertMany")
-    .serverLogic(connection => insertList => insertManyInCollection(connection, insertList))
+    .serverLogic(
+      connection => insertList => insertManyInCollection(connection, insertList)
+    )
 
   def insertManyInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -40,8 +42,10 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     Future.successful(
       Right(
         {
-          val dao                            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val listOfDocuments                = parameter.map(map => documentFromScalaMap(convertFields(map)))
+          val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+          val listOfDocuments = parameter.map(
+            map => documentFromScalaMap(convertFields(map))
+          )
           val result                         = dao.insertMany(listOfDocuments).result()
           val listOfIds                      = result.getInsertedIds.values().asScala.map(_.asObjectId().getValue.toHexString).toList
           val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
@@ -63,7 +67,9 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .tag(DocumentRoutes.apiName)
     .method(Method.PATCH)
     .name("updateMany")
-    .serverLogic(collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter)
+    )
 
   def updateManyInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -79,7 +85,11 @@ object DocumentManyRoutes extends CollectionBaseRoute {
           val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
           val updateResponse = UpdateResponse(
             result.wasAcknowledged(),
-            Option(result.getUpsertedId).map(value => value.asObjectId().getValue.toHexString).toList,
+            Option(result.getUpsertedId)
+              .map(
+                value => value.asObjectId().getValue.toHexString
+              )
+              .toList,
             result.getModifiedCount,
             result.getMatchedCount
           )
@@ -101,7 +111,9 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .tag(DocumentRoutes.apiName)
     .method(Method.DELETE)
     .name("deleteMany")
-    .serverLogic(collectionRequest => search => deleteManyInCollection(collectionRequest, search))
+    .serverLogic(
+      collectionRequest => search => deleteManyInCollection(collectionRequest, search)
+    )
 
   def deleteManyInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,

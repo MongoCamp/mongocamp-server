@@ -36,10 +36,12 @@ object AggregationService {
   }
 
   def convertToBsonPipeline(pipeline: List[PipelineStage]): Seq[Bson] = {
-    val response: Seq[Bson] = pipeline.map(element => {
-      val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
-      mapToBson(Map(stage -> element.value))
-    })
+    val response: Seq[Bson] = pipeline.map(
+      element => {
+        val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
+        mapToBson(Map(stage -> element.value))
+      }
+    )
     response
   }
 }

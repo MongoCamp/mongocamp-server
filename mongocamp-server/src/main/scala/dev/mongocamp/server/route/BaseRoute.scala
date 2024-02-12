@@ -60,8 +60,12 @@ abstract class BaseRoute extends TapirSchema with SchemaDerivation {
     baseEndpoint.securityIn(authInput)
   }
 
-  protected val securedEndpoint = securedEndpointDefinition.serverSecurityLogic(loginInformation => login(loginInformation))
-  protected val adminEndpoint   = securedEndpointDefinition.serverSecurityLogic(loginInformation => loginAdmin(loginInformation))
+  protected val securedEndpoint = securedEndpointDefinition.serverSecurityLogic(
+    loginInformation => login(loginInformation)
+  )
+  protected val adminEndpoint = securedEndpointDefinition.serverSecurityLogic(
+    loginInformation => loginAdmin(loginInformation)
+  )
 
   lazy val mongoDbPath = "mongodb"
 

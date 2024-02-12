@@ -30,12 +30,23 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the Settings of the running MongoCamp Application.")
     .method(Method.GET)
     .name("settings")
-    .serverLogic(_ => _ => systemSettings())
+    .serverLogic(
+      _ => _ => systemSettings()
+    )
 
   def systemSettings(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SettingsResponse]] = {
     Future.successful {
       val configurations: Map[String, Any] =
-        ListMap(ConfigurationService.getAllRegisteredConfigurations().map(config => config.key -> config.typedValue()).toMap.toSeq.sortBy(_._1): _*)
+        ListMap(
+          ConfigurationService
+            .getAllRegisteredConfigurations()
+            .map(
+              config => config.key -> config.typedValue()
+            )
+            .toMap
+            .toSeq
+            .sortBy(_._1): _*
+        )
       Right(
         SettingsResponse(
           Server.listOfRoutePlugins.map(_.getClass.getName),
@@ -54,7 +65,9 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
     .description("List all Configurations or filtered")
     .method(Method.GET)
     .name("listConfigurations")
-    .serverLogic(_ => _ => listConfigurations())
+    .serverLogic(
+      _ => _ => listConfigurations()
+    )
 
   def listConfigurations(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[MongoCampConfiguration]]] = {
     Future.successful {
@@ -72,7 +85,9 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
     .description("Get Configuration for key")
     .method(Method.GET)
     .name("getConfig")
-    .serverLogic(_ => loginToUpdate => getConfig(loginToUpdate))
+    .serverLogic(
+      _ => loginToUpdate => getConfig(loginToUpdate)
+    )
 
   def getConfig(configKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[MongoCampConfiguration]]] = {
     Future.successful {
@@ -91,7 +106,9 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
     .description("Update Configuration with the value")
     .method(Method.PATCH)
     .name("updateConfiguration")
-    .serverLogic(userInformation => loginToUpdate => updateConfig(userInformation, loginToUpdate))
+    .serverLogic(
+      userInformation => loginToUpdate => updateConfig(userInformation, loginToUpdate)
+    )
 
   def updateConfig(
       userInformation: UserInformation,

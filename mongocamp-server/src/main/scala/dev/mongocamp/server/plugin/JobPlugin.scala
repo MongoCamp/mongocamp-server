@@ -79,7 +79,9 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       val inserted        = MongoDaoHolder.jobDao.insertOne(jobConfigDetail).result()
       reloadJobs()
       if (inserted.wasAcknowledged()) {
-        userInformationOption.foreach(userInformation => EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig)))
+        userInformationOption.foreach(
+          userInformation => EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig))
+        )
       }
       inserted.wasAcknowledged()
     }

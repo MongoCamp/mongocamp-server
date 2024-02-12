@@ -25,7 +25,9 @@ object InformationRoutes extends BaseRoute with RoutesPlugin {
     .tag("Information")
     .method(Method.GET)
     .name("version")
-    .serverLogic(_ => createVersion())
+    .serverLogic(
+      _ => createVersion()
+    )
 
   def createVersion(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Version]] = {
     Future.successful(Right(Version(BuildInfo.name, BuildInfo.version, new DateTime(BuildInfo.builtAtMillis).toDate)))

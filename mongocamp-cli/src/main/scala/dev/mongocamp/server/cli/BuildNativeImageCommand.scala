@@ -49,7 +49,11 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Building Native Image")
         try {
-          val pluginUrls = PluginService.listOfReadableUrls().map(url => File(url))
+          val pluginUrls = PluginService
+            .listOfReadableUrls()
+            .map(
+              url => File(url)
+            )
           if (pluginUrls.nonEmpty) {
             val serverUrls = CoursierModuleService.loadServerWithAllDependencies()
             NativeImageBuildService.buildNativeImage(pluginUrls ++ serverUrls, "server-with-plugins")

@@ -41,7 +41,11 @@ object JvmService {
     val availableVersions = Await.result(jvmCache.index.get.future()(ExecutionContext.global), 5.minutes).available().getOrElse(Map())
     val graalvmKey        = s"graalvm-java${buildJavaVersion.getMajor}"
     val graalVersions     = availableVersions.get(s"$graalvmKey").getOrElse(throw new Exception("no possible java version for installation found"))
-    val maxSemver         = graalVersions.keys.map(version => new Semver(version)).max
+    val maxSemver = graalVersions.keys
+      .map(
+        version => new Semver(version)
+      )
+      .max
     s"${graalvmKey}:${maxSemver.toString}"
   }
 

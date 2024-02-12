@@ -15,8 +15,12 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
   implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
 
   private def corsHeaderFromRequest(request: ServerRequest): List[Header] = {
-    val origin  = request.header(KeyCorsHeaderOrigin)
-    val referer = request.header(KeyCorsHeaderOrigin).map(string => if (string.endsWith("/")) string.replaceAll("/$", "") else string)
+    val origin = request.header(KeyCorsHeaderOrigin)
+    val referer = request
+      .header(KeyCorsHeaderOrigin)
+      .map(
+        string => if (string.endsWith("/")) string.replaceAll("/$", "") else string
+      )
     Cors.corsHeadersFromOrigin((origin ++ referer).headOption)
   }
 
@@ -28,7 +32,9 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onDecodeSuccess(ctx)
-          .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ corsHeaderFromRequest(ctx.request)))
+          .map(
+            serverResponse => serverResponse.copy(headers = serverResponse.headers ++ corsHeaderFromRequest(ctx.request))
+          )
       }
 
       override def onSecurityFailure[A](
@@ -36,7 +42,9 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onSecurityFailure(ctx)
-          .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ corsHeaderFromRequest(ctx.request)))
+          .map(
+            serverResponse => serverResponse.copy(headers = serverResponse.headers ++ corsHeaderFromRequest(ctx.request))
+          )
       }
 
       override def onDecodeFailure(
@@ -44,7 +52,12 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponse[B]]] = {
         endpointHandler
           .onDecodeFailure(ctx)
-          .map(serverResponse => serverResponse.map(response => response.copy(headers = response.headers ++ corsHeaderFromRequest(ctx.request))))
+          .map(
+            serverResponse =>
+              serverResponse.map(
+                response => response.copy(headers = response.headers ++ corsHeaderFromRequest(ctx.request))
+              )
+          )
       }
 
     }

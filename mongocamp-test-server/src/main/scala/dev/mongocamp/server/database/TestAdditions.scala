@@ -119,17 +119,19 @@ object TestAdditions extends CirceSchema {
   def readGeoDataJson(): List[Map[String, Any]] = {
     val list = SystemFileService
       .readJsonList("geodata.json")
-      .map(element => {
-        val newElement = mutable.Map[String, Any]()
-        newElement.put("name", element("name"))
-        val geoData   = element("geodata").toString.split(", ")
-        val longitude = geoData.last.toDouble
-        val latitude  = geoData.head.toDouble
-        newElement.put("geodata", Map("type" -> "Point", "coordinates" -> List(longitude, latitude)))
-        newElement.put("type", "company")
-        newElement.put("checkedAt", new DateTime(element("checkedAt")).toDate)
-        newElement.toMap
-      })
+      .map(
+        element => {
+          val newElement = mutable.Map[String, Any]()
+          newElement.put("name", element("name"))
+          val geoData   = element("geodata").toString.split(", ")
+          val longitude = geoData.last.toDouble
+          val latitude  = geoData.head.toDouble
+          newElement.put("geodata", Map("type" -> "Point", "coordinates" -> List(longitude, latitude)))
+          newElement.put("type", "company")
+          newElement.put("checkedAt", new DateTime(element("checkedAt")).toDate)
+          newElement.toMap
+        }
+      )
     list
   }
 

@@ -17,12 +17,14 @@ class CleanUpTokenJob extends Job with LazyLogging {
     if (ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)) {
       tokenCacheDao
         .find(lte(TokenCache.keyValidTo, new DateTime().toDate))
-        .foreach(tokenCache => {
-          val isValid = new DateTime().isBefore(new DateTime(tokenCache.validTo))
-          if (!isValid) {
-            tokenCacheDao.deleteOne(Map(keyToken -> tokenCache.token)).asFuture()
+        .foreach(
+          tokenCache => {
+            val isValid = new DateTime().isBefore(new DateTime(tokenCache.validTo))
+            if (!isValid) {
+              tokenCacheDao.deleteOne(Map(keyToken -> tokenCache.token)).asFuture()
+            }
           }
-        })
+        )
     }
   }
 

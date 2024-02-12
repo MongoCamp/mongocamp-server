@@ -6,7 +6,7 @@ import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.http.HttpRequestEvent
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.plugin.ServerPlugin
-import dev.mongocamp.server.plugin.requestlogging.listener.{DatabaseRequestLoggingElement, RequestLoggingActor}
+import dev.mongocamp.server.plugin.requestlogging.listener.{ DatabaseRequestLoggingElement, RequestLoggingActor }
 import dev.mongocamp.server.service.ConfigurationService
 import org.apache.pekko.actor.Props
 import org.mongodb.scala.bson.codecs.Macros._

@@ -26,17 +26,19 @@ class ReflectionService {
   }
 
   def instancesForType[T <: Any](clazz: Class[T]): List[T] = {
-    val reflected = getSubClassesList(clazz).flatMap(foundClazz => {
-      val clazzInstance = Try(foundClazz.getDeclaredConstructor().newInstance()).toOption
-      if (clazzInstance.isDefined) {
-        clazzInstance.map(_.asInstanceOf[T])
+    val reflected = getSubClassesList(clazz).flatMap(
+      foundClazz => {
+        val clazzInstance = Try(foundClazz.getDeclaredConstructor().newInstance()).toOption
+        if (clazzInstance.isDefined) {
+          clazzInstance.map(_.asInstanceOf[T])
+        }
+        else {
+          lazy val mirror = runtimeMirror(foundClazz.getClassLoader)
+          val instance    = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
+          instance.map(_.asInstanceOf[T])
+        }
       }
-      else {
-        lazy val mirror = runtimeMirror(foundClazz.getClassLoader)
-        val instance    = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
-        instance.map(_.asInstanceOf[T])
-      }
-    })
+    )
     reflected
   }
 

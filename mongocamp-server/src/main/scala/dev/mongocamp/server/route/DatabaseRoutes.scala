@@ -30,7 +30,9 @@ object DatabaseRoutes extends RoutesPlugin {
     .description("List of all Databases")
     .method(Method.GET)
     .name("ListDatabases")
-    .serverLogic(_ => _ => databaseList())
+    .serverLogic(
+      _ => _ => databaseList()
+    )
 
   def databaseList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
@@ -46,7 +48,9 @@ object DatabaseRoutes extends RoutesPlugin {
     .description("List of all Databases Infos")
     .method(Method.GET)
     .name("databaseInfos")
-    .serverLogic(_ => _ => databaseInfos())
+    .serverLogic(
+      _ => _ => databaseInfos()
+    )
 
   def databaseInfos(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
     Future.successful(Right({
@@ -62,7 +66,9 @@ object DatabaseRoutes extends RoutesPlugin {
     .description("All Information about given Database")
     .method(Method.GET)
     .name("getDatabaseInfo")
-    .serverLogic(_ => databaseName => getDatabaseInfo(databaseName))
+    .serverLogic(
+      _ => databaseName => getDatabaseInfo(databaseName)
+    )
 
   def getDatabaseInfo(databaseName: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DatabaseInfo]] = {
     Future.successful(Right({
@@ -78,7 +84,9 @@ object DatabaseRoutes extends RoutesPlugin {
     .description("Delete given Database")
     .method(Method.DELETE)
     .name("deleteDatabase")
-    .serverLogic(userInformation => databaseName => deleteDatabaseInfo(userInformation, databaseName))
+    .serverLogic(
+      userInformation => databaseName => deleteDatabaseInfo(userInformation, databaseName)
+    )
 
   def deleteDatabaseInfo(
       userInformation: UserInformation,
@@ -103,19 +111,23 @@ object DatabaseRoutes extends RoutesPlugin {
     .tag("Collection")
     .method(Method.GET)
     .name("listCollectionsByDatabase")
-    .serverLogic(user => parameter => collectionList(user, parameter))
+    .serverLogic(
+      user => parameter => collectionList(user, parameter)
+    )
 
   def collectionList(userInformation: UserInformation, database: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
       val result           = MongoDatabase.databaseProvider.collectionNames(database)
       val collectionGrants = userInformation.getCollectionGrants
-      result.filter(coll => {
-        val collection      = if (database.equalsIgnoreCase(MongoDatabase.databaseProvider.DefaultDatabaseName)) coll else s"$database:$coll"
-        val readCollections = collectionGrants.filter(_.read).map(_.name)
-        val allBucketMetaFilter =
-          readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
-        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
-      })
+      result.filter(
+        coll => {
+          val collection      = if (database.equalsIgnoreCase(MongoDatabase.databaseProvider.DefaultDatabaseName)) coll else s"$database:$coll"
+          val readCollections = collectionGrants.filter(_.read).map(_.name)
+          val allBucketMetaFilter =
+            readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
+          userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
+        }
+      )
     }))
   }
 

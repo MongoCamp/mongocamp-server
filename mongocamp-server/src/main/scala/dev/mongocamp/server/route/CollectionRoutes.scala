@@ -35,18 +35,22 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.GET)
     .name("listCollections")
-    .serverLogic(user => _ => collectionList(user))
+    .serverLogic(
+      user => _ => collectionList(user)
+    )
 
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
       val result           = MongoDatabase.databaseProvider.collectionNames()
       val collectionGrants = userInformation.getCollectionGrants
-      result.filter(collection => {
-        val readCollections = collectionGrants.filter(_.read).map(_.name)
-        val allBucketMetaFilter =
-          readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
-        userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
-      })
+      result.filter(
+        collection => {
+          val readCollections = collectionGrants.filter(_.read).map(_.name)
+          val allBucketMetaFilter =
+            readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
+          userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
+        }
+      )
     }))
   }
 
@@ -58,7 +62,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.GET)
     .name("getCollectionInformation")
-    .serverLogic(collectionRequest => filter => collectionStatus(collectionRequest, filter))
+    .serverLogic(
+      collectionRequest => filter => collectionStatus(collectionRequest, filter)
+    )
 
   def collectionStatus(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -76,7 +82,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
       val result = mongoDatabase
         .runCommand(Map("collStats" -> collection))
-        .map(document => CollectionStatus(document))
+        .map(
+          document => CollectionStatus(document)
+        )
         .result()
 
       if (parameter) {
@@ -97,7 +105,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.GET)
     .name("getCollectionFields")
-    .serverLogic(collectionRequest => parameter => collectionFields(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => collectionFields(collectionRequest, parameter)
+    )
 
   def collectionFields(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -122,7 +132,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.GET)
     .name("getJsonSchema")
-    .serverLogic(collectionRequest => parameter => detectSchema(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => detectSchema(collectionRequest, parameter)
+    )
 
   def detectSchema(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -146,7 +158,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.GET)
     .name("getSchemaAnalysis")
-    .serverLogic(collectionRequest => parameter => detectSchemaAnalysis(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => detectSchemaAnalysis(collectionRequest, parameter)
+    )
 
   def detectSchemaAnalysis(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -166,7 +180,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.DELETE)
     .name("deleteCollection")
-    .serverLogic(collectionRequest => _ => deleteCollection(collectionRequest))
+    .serverLogic(
+      collectionRequest => _ => deleteCollection(collectionRequest)
+    )
 
   def deleteCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest
@@ -187,7 +203,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.DELETE)
     .name("clearCollection")
-    .serverLogic(collectionRequest => _ => deleteAllInCollection(collectionRequest))
+    .serverLogic(
+      collectionRequest => _ => deleteAllInCollection(collectionRequest)
+    )
 
   def deleteAllInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest
@@ -236,7 +254,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.POST)
     .name("aggregate")
-    .serverLogic(collectionRequest => parameter => aggregateInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => aggregateInCollection(collectionRequest, parameter)
+    )
 
   def aggregateInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -268,7 +288,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Collection")
     .method(Method.POST)
     .name("distinct")
-    .serverLogic(collectionRequest => parameter => distinctInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => distinctInCollection(collectionRequest, parameter)
+    )
 
   def distinctInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -288,7 +310,12 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
             aggregationPipeline = List(Map("$group" -> Map("_id" -> fieldName, "field" -> Map("$first" -> fieldName))))
           ).paginate(rowsPerPage, page)
 
-          (response.databaseObjects.map(document => BsonConverter.fromBson(document.get("field"))), response.paginationInfo)
+          (
+            response.databaseObjects.map(
+              document => BsonConverter.fromBson(document.get("field"))
+            ),
+            response.paginationInfo
+          )
         }
       )
     )

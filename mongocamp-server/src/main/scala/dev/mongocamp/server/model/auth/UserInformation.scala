@@ -9,22 +9,32 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
   def getRoles: List[Role] = AuthHolder.handler.findRoles(this)
 
   def getGrants: List[Grant] = {
-    val roleGrants = getRoles.flatMap(_.collectionGrants).groupBy[(String, String)](grant => (grant.name, grant.grantType))
+    val roleGrants = getRoles
+      .flatMap(_.collectionGrants)
+      .groupBy[(String, String)](
+        grant => (grant.name, grant.grantType)
+      )
     roleGrants
-      .map(roleGroup => Grant(roleGroup._1._1, roleGroup._2.exists(_.read), roleGroup._2.exists(_.write), roleGroup._2.exists(_.administrate), roleGroup._1._2))
+      .map(
+        roleGroup => Grant(roleGroup._1._1, roleGroup._2.exists(_.read), roleGroup._2.exists(_.write), roleGroup._2.exists(_.administrate), roleGroup._1._2)
+      )
       .toList
   }
 
   def getCollectionGrants: List[Grant] = {
     val allGrands = getGrants
     allGrands.filter(_.grantType.equalsIgnoreCase(ModelConstants.grantTypeCollection)) ++ allGrands
-      .filter(grant => grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta))
-      .map(grant => grant.copy(name = s"${grant.name}$BucketCollectionSuffix"))
+      .filter(
+        grant => grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta)
+      )
+      .map(
+        grant => grant.copy(name = s"${grant.name}$BucketCollectionSuffix")
+      )
   }
 
   def getBucketGrants: List[Grant] = {
-    getGrants.filter(grant =>
-      grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta) || grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucket)
+    getGrants.filter(
+      grant => grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta) || grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucket)
     )
   }
 

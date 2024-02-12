@@ -13,14 +13,16 @@ class PluginService extends LazyLogging {
   private def getChildFiles(dir: File): List[File] = {
     if (dir.isDirectory) {
       val files = ArrayBuffer[File]()
-      dir.children.toList.foreach(file => {
-        if (file.isDirectory) {
-          files ++= getChildFiles(file)
+      dir.children.toList.foreach(
+        file => {
+          if (file.isDirectory) {
+            files ++= getChildFiles(file)
+          }
+          else {
+            files += file
+          }
         }
-        else {
-          files += file
-        }
-      })
+      )
       files.toList
     }
     else {

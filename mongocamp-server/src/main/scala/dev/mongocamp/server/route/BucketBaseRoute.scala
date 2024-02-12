@@ -15,9 +15,15 @@ abstract class BucketBaseRoute extends BaseRoute {
     .securityIn("buckets")
     .securityIn(path[String]("bucketName").description("The name of your MongoDb Collection"))
 
-  lazy val readBucketEndpoint         = bucketBaseEndpoint.serverSecurityLogic(connection => loginRead(connection))
-  lazy val writeBucketEndpoint        = bucketBaseEndpoint.serverSecurityLogic(connection => loginWrite(connection))
-  lazy val administrateBucketEndpoint = bucketBaseEndpoint.serverSecurityLogic(connection => loginAdministrate(connection))
+  lazy val readBucketEndpoint = bucketBaseEndpoint.serverSecurityLogic(
+    connection => loginRead(connection)
+  )
+  lazy val writeBucketEndpoint = bucketBaseEndpoint.serverSecurityLogic(
+    connection => loginWrite(connection)
+  )
+  lazy val administrateBucketEndpoint = bucketBaseEndpoint.serverSecurityLogic(
+    connection => loginAdministrate(connection)
+  )
 
   def loginRead(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
     Future.successful {
@@ -27,11 +33,13 @@ abstract class BucketBaseRoute extends BaseRoute {
       }
       else {
         userInformation.getBucketGrants
-          .find(bucketGrant => {
-            val bucket        = bucketGrant.name
-            val isBucketGrant = bucket.equalsIgnoreCase(loginInformation._2) || bucket.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-            isBucketGrant && bucketGrant.read
-          })
+          .find(
+            bucketGrant => {
+              val bucket        = bucketGrant.name
+              val isBucketGrant = bucket.equalsIgnoreCase(loginInformation._2) || bucket.equalsIgnoreCase(AuthorizedCollectionRequest.all)
+              isBucketGrant && bucketGrant.read
+            }
+          )
           .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for bucket"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
@@ -46,11 +54,13 @@ abstract class BucketBaseRoute extends BaseRoute {
       }
       else {
         userInformation.getBucketGrants
-          .find(bucketGrant => {
-            val bucket        = bucketGrant.name
-            val isBucketGrant = bucket.equalsIgnoreCase(loginInformation._2) || bucket.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-            isBucketGrant && bucketGrant.write
-          })
+          .find(
+            bucketGrant => {
+              val bucket        = bucketGrant.name
+              val isBucketGrant = bucket.equalsIgnoreCase(loginInformation._2) || bucket.equalsIgnoreCase(AuthorizedCollectionRequest.all)
+              isBucketGrant && bucketGrant.write
+            }
+          )
           .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for bucket"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
@@ -67,11 +77,13 @@ abstract class BucketBaseRoute extends BaseRoute {
       }
       else {
         userInformation.getBucketGrants
-          .find(bucketGrant => {
-            val bucket        = bucketGrant.name
-            val isBucketGrant = bucket.equalsIgnoreCase(loginInformation._2) || bucket.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-            isBucketGrant && bucketGrant.administrate
-          })
+          .find(
+            bucketGrant => {
+              val bucket        = bucketGrant.name
+              val isBucketGrant = bucket.equalsIgnoreCase(loginInformation._2) || bucket.equalsIgnoreCase(AuthorizedCollectionRequest.all)
+              isBucketGrant && bucketGrant.administrate
+            }
+          )
           .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for bucket"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }

@@ -1,53 +1,53 @@
 {
-  "name": "mongocamp-server",
-  "organization": "dev.mongocamp",
-  "version": "1.5.9",
-  "description": "",
-  "directories": {
-    "doc": "docs"
+  "name" : "mongocamp-server",
+  "organization" : "dev.mongocamp",
+  "version" : "1.5.10.snapshot",
+  "description" : "",
+  "directories" : {
+    "doc" : "docs"
   },
-  "scripts": {
-    "docs:serve": "vitepress serve docs --port 5555",
-    "api-docs-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
-    "docs:build": "pnpm docs:external; vitepress build docs",
-    "docs:external": "sh docs/external/fileloader.sh",
-    "docs:dev": "pnpm docs:external; vitepress dev docs",
-    "api-codegen": "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.test.client,jsonLibrary=circe,dateLibrary=joda"
+  "scripts" : {
+    "docs:serve" : "vitepress serve docs --port 5555",
+    "api-docs-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -g markdown -o ./docs/rest",
+    "docs:build" : "pnpm docs:external; vitepress build docs",
+    "docs:external" : "sh docs/external/fileloader.sh",
+    "docs:dev" : "pnpm docs:external; vitepress dev docs",
+    "api-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.test.client,jsonLibrary=circe,dateLibrary=joda"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MongoCamp/mongocamp-server.git"
+  "repository" : {
+    "type" : "git",
+    "url" : "git+https://github.com/MongoCamp/mongocamp-server.git"
   },
-  "author": "info@mongocamp.dev",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/MongoCamp/mongocamp-server/issues"
+  "author" : "info@mongocamp.dev",
+  "license" : "Apache-2.0",
+  "bugs" : {
+    "url" : "https://github.com/MongoCamp/mongocamp-server/issues"
   },
-  "homepage": "https://mongodb-server.mongocamp.dev",
-  "devDependencies": {
-    "@antfu/eslint-config": "^0.38.6",
-    "@anu-vue/preset-theme-default": "^0.13.1",
-    "@iconify-json/bx": "^1.1.10",
-    "@iconify-json/fluent-emoji": "^1.1.18",
-    "@iconify-json/heroicons-outline": "^1.1.10",
-    "@iconify-json/logos": "^1.1.42",
-    "@iconify-json/mdi": "^1.1.64",
-    "@openapitools/openapi-generator-cli": "^2.9.0",
-    "@types/node": "^18.19.15",
-    "@unocss/preset-icons": "^0.51.13",
-    "@unocss/preset-uno": "0.51.8",
-    "@vueuse/core": "^10.7.2",
-    "anu-vue": "^0.13.1",
-    "conventional-changelog-cli": "^2.2.2",
-    "date-fns": "^2.30.0",
-    "eslint": "^8.56.0",
-    "flexsearch": "^0.7.43",
-    "fs-extra": "^11.2.0",
-    "gray-matter": "^4.0.3",
-    "markdown-it": "^13.0.2",
-    "typescript": "^5.3.3",
-    "unocss": "^0.51.13",
-    "vitepress": "1.0.0-rc.42",
-    "vue": "^3.4.18"
+  "homepage" : "https://mongodb-server.mongocamp.dev",
+  "devDependencies" : {
+    "@unocss/preset-icons" : "^0.51.13",
+    "unocss" : "^0.51.13",
+    "vitepress" : "1.0.0-rc.42",
+    "date-fns" : "^2.30.0",
+    "@iconify-json/fluent-emoji" : "^1.1.18",
+    "gray-matter" : "^4.0.3",
+    "fs-extra" : "^11.2.0",
+    "conventional-changelog-cli" : "^2.2.2",
+    "@iconify-json/heroicons-outline" : "^1.1.10",
+    "flexsearch" : "^0.7.43",
+    "eslint" : "^8.56.0",
+    "vue" : "^3.4.18",
+    "@anu-vue/preset-theme-default" : "^0.13.1",
+    "typescript" : "^5.3.3",
+    "anu-vue" : "^0.13.1",
+    "@openapitools/openapi-generator-cli" : "^2.9.0",
+    "@iconify-json/logos" : "^1.1.42",
+    "@antfu/eslint-config" : "^0.38.6",
+    "@iconify-json/bx" : "^1.1.10",
+    "@types/node" : "^18.19.15",
+    "@vueuse/core" : "^10.7.2",
+    "@iconify-json/mdi" : "^1.1.64",
+    "@unocss/preset-uno" : "0.51.8",
+    "markdown-it" : "^13.0.2"
   }
 }

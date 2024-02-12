@@ -186,19 +186,25 @@ trait ConfigurationRead extends LazyLogging {
   }
 
   private[service] def checkAndUpdateWithEnv(key: String): Unit = {
-    getConfigFromDatabase(key).foreach(dbConfig => {
-      loadEnvValue(key)
-        .map(s => convertStringToValue(s, dbConfig.configType))
-        .map(envConfigValue => {
-          if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
-            val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
-            val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), configurationToDocument(mongoCampConfiguration)).result()
-            configCache.invalidate(key)
-            publishConfigUpdateEvent(key, envConfigValue, dbConfig.value, "checkAndUpdateWithEnv")
-            replaceResult.wasAcknowledged()
-          }
-        })
-    })
+    getConfigFromDatabase(key).foreach(
+      dbConfig => {
+        loadEnvValue(key)
+          .map(
+            s => convertStringToValue(s, dbConfig.configType)
+          )
+          .map(
+            envConfigValue => {
+              if (dbConfig.value == null || !dbConfig.value.equals(envConfigValue)) {
+                val mongoCampConfiguration = dbConfig.copy(value = envConfigValue, comment = "updated by env")
+                val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), configurationToDocument(mongoCampConfiguration)).result()
+                configCache.invalidate(key)
+                publishConfigUpdateEvent(key, envConfigValue, dbConfig.value, "checkAndUpdateWithEnv")
+                replaceResult.wasAcknowledged()
+              }
+            }
+          )
+      }
+    )
   }
 
   private[service] def getConfigFromDatabase(key: String): Option[MongoCampConfiguration] = {
@@ -393,7 +399,11 @@ trait ConfigurationRead extends LazyLogging {
       case MongoCampConfiguration.confTypeDoubleList  => decode[List[Double]](stringValue).getOrElse(List())
       case MongoCampConfiguration.confTypeLongList    => decode[List[Long]](stringValue).getOrElse(List())
       case MongoCampConfiguration.confTypeDurationList =>
-        decode[List[String]](stringValue).getOrElse(List()).map(durationString => Duration(durationString))
+        decode[List[String]](stringValue)
+          .getOrElse(List())
+          .map(
+            durationString => Duration(durationString)
+          )
       case MongoCampConfiguration.confTypeString   => stringValue
       case MongoCampConfiguration.confTypeBoolean  => stringValue.toBooleanOption.getOrElse(false)
       case MongoCampConfiguration.confTypeDouble   => stringValue.toDoubleOption.getOrElse(false)

@@ -25,14 +25,20 @@ object SchemaService extends TapirSchema {
 
   private def schemaAggregation(deepth: Int, sampleSize: Option[Int]): List[PipelineStage] = {
     val buffer = ArrayBuffer[PipelineStage]()
-    buffer.addAll(sampleSize.map(size => PipelineStage("sample", Map("size" -> size))))
+    buffer.addAll(
+      sampleSize.map(
+        size => PipelineStage("sample", Map("size" -> size))
+      )
+    )
 
     buffer.addOne(PipelineStage("project", Map("_" -> processObject(deepth, 0, "$$ROOT", List()), "_id" -> 0)))
 
-    (0 to deepth).foreach(_ => {
-      buffer.addOne(PipelineStage("unwind", Map("path" -> "$_", "preserveNullAndEmptyArrays" -> true)))
-      buffer.addOne(PipelineStage("replaceRoot", Map("newRoot" -> Map("$cond" -> List(Map("$eq" -> List("$_", null)), "$$ROOT", "$_")))))
-    })
+    (0 to deepth).foreach(
+      _ => {
+        buffer.addOne(PipelineStage("unwind", Map("path" -> "$_", "preserveNullAndEmptyArrays" -> true)))
+        buffer.addOne(PipelineStage("replaceRoot", Map("newRoot" -> Map("$cond" -> List(Map("$eq" -> List("$_", null)), "$$ROOT", "$_")))))
+      }
+    )
 
     buffer.addAll(
       List(
@@ -69,28 +75,36 @@ object SchemaService extends TapirSchema {
       .replace(ObjectName, FieldSplitter ++ ObjectName)
       .replace(ArrayName, FieldSplitter + ArrayName)
       .replace(ArrayItemMark, FieldSplitter + ArrayItemMark)
-    val fields                             = field.split(FieldSplitter).filterNot(s => s == null || s.isEmpty || s.isBlank)
+    val fields = field
+      .split(FieldSplitter)
+      .filterNot(
+        s => s == null || s.isEmpty || s.isBlank
+      )
     val responseArray: ArrayBuffer[String] = ArrayBuffer()
     fields.toList
-      .map(string => string.replace(ObjectName, "$$" ++ ObjectName))
-      .foreach(string => {
-        var fieldName = string
-        if (fieldName.startsWith(NameSeparator)) {
-          responseArray.addOne(NameSeparator)
-          fieldName = fieldName.substring(1)
+      .map(
+        string => string.replace(ObjectName, "$$" ++ ObjectName)
+      )
+      .foreach(
+        string => {
+          var fieldName = string
+          if (fieldName.startsWith(NameSeparator)) {
+            responseArray.addOne(NameSeparator)
+            fieldName = fieldName.substring(1)
+          }
+          val hasEndingSeperator: Boolean = if (fieldName.endsWith(NameSeparator)) {
+            fieldName = fieldName.substring(0, fieldName.length - 1)
+            true
+          }
+          else {
+            false
+          }
+          responseArray.addOne(fieldName)
+          if (hasEndingSeperator) {
+            responseArray.addOne(NameSeparator)
+          }
         }
-        val hasEndingSeperator: Boolean = if (fieldName.endsWith(NameSeparator)) {
-          fieldName = fieldName.substring(0, fieldName.length - 1)
-          true
-        }
-        else {
-          false
-        }
-        responseArray.addOne(fieldName)
-        if (hasEndingSeperator) {
-          responseArray.addOne(NameSeparator)
-        }
-      })
+      )
 
     if (responseArray.size == 1) {
       var result = responseArray.head
@@ -197,55 +211,63 @@ object SchemaService extends TapirSchema {
     val dao           = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
     val dbResponse    = dao.findAggregated(convertToBsonPipeline(schemaAggregation(deepth, sample)), allowDiskUse = true).resultList(3.minutes.toSeconds.toInt)
     val countResponse = dao.count().result()
-    val sampledDataCountOption: Option[Long] = dbResponse.find(document => document.getString("n").equalsIgnoreCase("_id")).map(_.getLongValue("c"))
-    val sampledDataCount                     = sampledDataCountOption.getOrElse(-1L)
-    val fieldsMap                            = mutable.Map[String, model.SchemaAnalysisField]()
-    fieldsMap.put(emptyField.name, emptyField.copy(count = sampledDataCount))
-    dbResponse.foreach(document => {
-      val documentMap        = mapFromDocument(document)
-      val fullName           = documentMap.get("n").map(_.toString).getOrElse("")
-      var name: String       = fullName
-      var parentName: String = emptyField.name
-      var percentage: Double = 0
-      val fieldCount         = document.getLongValue("c")
-
-      if (fullName.contains(NameSeparator)) {
-        val fieldNames = fullName.split(NameSeparator.charAt(0))
-        name = fieldNames.last
-        val parentFields = fieldNames.splitAt(fieldNames.length - 1)
-        parentName = parentFields._1.mkString(".")
-      }
-      else {
-        percentage = fieldCount / sampledDataCount.toDouble
-      }
-
-      val parent = fieldsMap.getOrElse(
-        parentName, {
-          val newF = emptyField.copy(name = parentName)
-          fieldsMap.put(parentName, newF)
-          newF
-        }
+    val sampledDataCountOption: Option[Long] = dbResponse
+      .find(
+        document => document.getString("n").equalsIgnoreCase("_id")
       )
+      .map(_.getLongValue("c"))
+    val sampledDataCount = sampledDataCountOption.getOrElse(-1L)
+    val fieldsMap        = mutable.Map[String, model.SchemaAnalysisField]()
+    fieldsMap.put(emptyField.name, emptyField.copy(count = sampledDataCount))
+    dbResponse.foreach(
+      document => {
+        val documentMap        = mapFromDocument(document)
+        val fullName           = documentMap.get("n").map(_.toString).getOrElse("")
+        var name: String       = fullName
+        var parentName: String = emptyField.name
+        var percentage: Double = 0
+        val fieldCount         = document.getLongValue("c")
 
-      if (fullName.contains(NameSeparator)) {
-        percentage = fieldCount.toDouble / parent.count.toDouble
+        if (fullName.contains(NameSeparator)) {
+          val fieldNames = fullName.split(NameSeparator.charAt(0))
+          name = fieldNames.last
+          val parentFields = fieldNames.splitAt(fieldNames.length - 1)
+          parentName = parentFields._1.mkString(".")
+        }
+        else {
+          percentage = fieldCount / sampledDataCount.toDouble
+        }
+
+        val parent = fieldsMap.getOrElse(
+          parentName, {
+            val newF = emptyField.copy(name = parentName)
+            fieldsMap.put(parentName, newF)
+            newF
+          }
+        )
+
+        if (fullName.contains(NameSeparator)) {
+          percentage = fieldCount.toDouble / parent.count.toDouble
+        }
+        val types: List[SchemaAnalysisFieldType] = documentMap
+          .get("T")
+          .map(_.asInstanceOf[List[Map[String, Any]]])
+          .getOrElse(List())
+          .map(
+            typeDocument => {
+              val doc                         = documentFromScalaMap(convertFields(typeDocument))
+              val count                       = doc.getLongValue("c")
+              val fieldTypePercentage: Double = count.toDouble / parent.count.toDouble
+              SchemaAnalysisFieldType(doc.getStringValue("t"), count, fieldTypePercentage)
+            }
+          )
+
+        val newField = model.SchemaAnalysisField(name.replace(ArrayItemMark, ArrayElementText), fullName, types, fieldCount, percentage, ArrayBuffer())
+
+        parent.subFields.addOne(newField)
+        fieldsMap.put(s"$parentName$NameSeparator$name".replace("ROOT.", ""), newField)
       }
-      val types: List[SchemaAnalysisFieldType] = documentMap
-        .get("T")
-        .map(_.asInstanceOf[List[Map[String, Any]]])
-        .getOrElse(List())
-        .map(typeDocument => {
-          val doc                         = documentFromScalaMap(convertFields(typeDocument))
-          val count                       = doc.getLongValue("c")
-          val fieldTypePercentage: Double = count.toDouble / parent.count.toDouble
-          SchemaAnalysisFieldType(doc.getStringValue("t"), count, fieldTypePercentage)
-        })
-
-      val newField = model.SchemaAnalysisField(name.replace(ArrayItemMark, ArrayElementText), fullName, types, fieldCount, percentage, ArrayBuffer())
-
-      parent.subFields.addOne(newField)
-      fieldsMap.put(s"$parentName$NameSeparator$name".replace("ROOT.", ""), newField)
-    })
+    )
 
     val fieldPercentage: Double = if (countResponse != 0) sampledDataCount / countResponse else 0
     model.SchemaAnalysis(countResponse, sampledDataCount, fieldPercentage, fieldsMap.get("ROOT").map(_.subFields).getOrElse(ArrayBuffer()))
@@ -263,63 +285,79 @@ object SchemaService extends TapirSchema {
     map.put(objectName, null)
     val requiredFields = ArrayBuffer[String]()
     val properties     = mutable.Map[String, Map[String, Any]]()
-    fields.foreach(field => {
-      val fieldMap        = mutable.Map[String, Any]()
-      val fieldObjectName = getObjectName(camelCaseObjectName(field.name), map)
-      if (field.fieldTypes.exists(_.fieldType.equalsIgnoreCase("object"))) {
-        fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
-      }
-      if (field.percentageOfParent == 1.0) {
-        requiredFields.addOne(field.name)
-      }
-      if (field.fieldTypes.size == 1) {
-        val t                  = field.fieldTypes.head
-        val convertedFieldType = convertFieldType(t.fieldType)
-        fieldMap.put("type", convertedFieldType.name)
-        convertedFieldType.pattern.foreach(value => fieldMap.put("pattern", value))
-        convertedFieldType.format.foreach(value => fieldMap.put("format", value))
-        val mapping: Map[String, Any] = if (t.fieldType.equalsIgnoreCase("array")) {
-          val items = {
-            val subField = field.subFields.head
-            if (subField.fieldTypes.size == 1) {
-              if (subField.fieldTypes.head.fieldType.equalsIgnoreCase("object")) {
-                fieldsToJsonSchemaDefinition(map, fieldObjectName, subField.subFields.toList)
-                Map("$ref" -> s"#/definitions/$fieldObjectName")
+    fields.foreach(
+      field => {
+        val fieldMap        = mutable.Map[String, Any]()
+        val fieldObjectName = getObjectName(camelCaseObjectName(field.name), map)
+        if (field.fieldTypes.exists(_.fieldType.equalsIgnoreCase("object"))) {
+          fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+        }
+        if (field.percentageOfParent == 1.0) {
+          requiredFields.addOne(field.name)
+        }
+        if (field.fieldTypes.size == 1) {
+          val t                  = field.fieldTypes.head
+          val convertedFieldType = convertFieldType(t.fieldType)
+          fieldMap.put("type", convertedFieldType.name)
+          convertedFieldType.pattern.foreach(
+            value => fieldMap.put("pattern", value)
+          )
+          convertedFieldType.format.foreach(
+            value => fieldMap.put("format", value)
+          )
+          val mapping: Map[String, Any] = if (t.fieldType.equalsIgnoreCase("array")) {
+            val items = {
+              val subField = field.subFields.head
+              if (subField.fieldTypes.size == 1) {
+                if (subField.fieldTypes.head.fieldType.equalsIgnoreCase("object")) {
+                  fieldsToJsonSchemaDefinition(map, fieldObjectName, subField.subFields.toList)
+                  Map("$ref" -> s"#/definitions/$fieldObjectName")
+                }
+                else {
+                  val convertedFieldType = convertFieldType(subField.fieldTypes.head.fieldType)
+                  val mutableMap         = mutable.Map[String, Any]()
+                  mutableMap.put("type", convertedFieldType.name)
+                  convertedFieldType.pattern.foreach(
+                    value => mutableMap.put("pattern", value)
+                  )
+                  convertedFieldType.format.foreach(
+                    value => mutableMap.put("format", value)
+                  )
+                  mutableMap.toMap
+                }
               }
               else {
-                val convertedFieldType = convertFieldType(subField.fieldTypes.head.fieldType)
-                val mutableMap         = mutable.Map[String, Any]()
-                mutableMap.put("type", convertedFieldType.name)
-                convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
-                convertedFieldType.format.foreach(value => mutableMap.put("format", value))
-                mutableMap.toMap
+                Map("oneOf" -> getOneOfMapping(field, fieldObjectName, map))
               }
             }
-            else {
-              Map("oneOf" -> getOneOfMapping(field, fieldObjectName, map))
-            }
+            Map("type" -> "array", "items" -> items)
           }
-          Map("type" -> "array", "items" -> items)
-        }
-        else if (t.fieldType.equalsIgnoreCase("object")) {
-          fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
-          Map("$ref" -> s"#/definitions/$fieldObjectName")
+          else if (t.fieldType.equalsIgnoreCase("object")) {
+            fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+            Map("$ref" -> s"#/definitions/$fieldObjectName")
+          }
+          else {
+            val convertedFieldType = convertFieldType(t.fieldType)
+            val mutableMap         = mutable.Map[String, Any]()
+            mutableMap.put("type", convertedFieldType.name)
+            convertedFieldType.pattern.foreach(
+              value => mutableMap.put("pattern", value)
+            )
+            convertedFieldType.format.foreach(
+              value => mutableMap.put("format", value)
+            )
+            mutableMap.toMap
+          }
+          mapping.foreach(
+            element => fieldMap.put(element._1, element._2)
+          )
         }
         else {
-          val convertedFieldType = convertFieldType(t.fieldType)
-          val mutableMap         = mutable.Map[String, Any]()
-          mutableMap.put("type", convertedFieldType.name)
-          convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
-          convertedFieldType.format.foreach(value => mutableMap.put("format", value))
-          mutableMap.toMap
+          fieldMap.put("oneOf", getOneOfMapping(field, fieldObjectName, map))
         }
-        mapping.foreach(element => fieldMap.put(element._1, element._2))
+        properties.put(field.name, fieldMap.toMap)
       }
-      else {
-        fieldMap.put("oneOf", getOneOfMapping(field, fieldObjectName, map))
-      }
-      properties.put(field.name, fieldMap.toMap)
-    })
+    )
     val jsonSchemaDefinition = JsonSchemaDefinition("object", objectName, additionalProperties = false, requiredFields.toList, properties.toMap)
     map.put(objectName, jsonSchemaDefinition)
   }
@@ -348,35 +386,45 @@ object SchemaService extends TapirSchema {
 
   private def getOneOfMapping(field: SchemaAnalysisField, fieldObjectName: String, map: mutable.Map[String, JsonSchemaDefinition]) = {
     field.fieldTypes
-      .map(t => {
-        if (t.fieldType.equalsIgnoreCase("array")) {
-          if (t.fieldType.equalsIgnoreCase("object")) {
+      .map(
+        t => {
+          if (t.fieldType.equalsIgnoreCase("array")) {
+            if (t.fieldType.equalsIgnoreCase("object")) {
+              fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
+              Map("type" -> "array", "items" -> Map("$ref" -> s"#/definitions/$fieldObjectName"))
+            }
+            else {
+              val arrayItemType      = field.subFields.find(_.name.equalsIgnoreCase(ArrayElementText)).map(_.fieldTypes.head.fieldType).getOrElse("Error")
+              val convertedFieldType = convertFieldType(arrayItemType)
+              val mutableMap         = mutable.Map[String, Any]()
+              mutableMap.put("type", convertedFieldType.name)
+              convertedFieldType.pattern.foreach(
+                value => mutableMap.put("pattern", value)
+              )
+              convertedFieldType.format.foreach(
+                value => mutableMap.put("format", value)
+              )
+              mutableMap.toMap
+            }
+          }
+          else if (t.fieldType.equalsIgnoreCase("object")) {
             fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
-            Map("type" -> "array", "items" -> Map("$ref" -> s"#/definitions/$fieldObjectName"))
+            Map("$ref" -> s"#/definitions/$fieldObjectName")
           }
           else {
-            val arrayItemType      = field.subFields.find(_.name.equalsIgnoreCase(ArrayElementText)).map(_.fieldTypes.head.fieldType).getOrElse("Error")
-            val convertedFieldType = convertFieldType(arrayItemType)
+            val convertedFieldType = convertFieldType(t.fieldType)
             val mutableMap         = mutable.Map[String, Any]()
             mutableMap.put("type", convertedFieldType.name)
-            convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
-            convertedFieldType.format.foreach(value => mutableMap.put("format", value))
+            convertedFieldType.pattern.foreach(
+              value => mutableMap.put("pattern", value)
+            )
+            convertedFieldType.format.foreach(
+              value => mutableMap.put("format", value)
+            )
             mutableMap.toMap
           }
         }
-        else if (t.fieldType.equalsIgnoreCase("object")) {
-          fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
-          Map("$ref" -> s"#/definitions/$fieldObjectName")
-        }
-        else {
-          val convertedFieldType = convertFieldType(t.fieldType)
-          val mutableMap         = mutable.Map[String, Any]()
-          mutableMap.put("type", convertedFieldType.name)
-          convertedFieldType.pattern.foreach(value => mutableMap.put("pattern", value))
-          convertedFieldType.format.foreach(value => mutableMap.put("format", value))
-          mutableMap.toMap
-        }
-      })
+      )
       .distinct
   }
 

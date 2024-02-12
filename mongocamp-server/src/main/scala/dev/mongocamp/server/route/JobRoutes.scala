@@ -26,14 +26,18 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the List of all registered Jobs with full information")
     .method(Method.GET)
     .name("jobsList")
-    .serverLogic(_ => _ => jobsList())
+    .serverLogic(
+      _ => _ => jobsList()
+    )
 
   def jobsList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[JobInformation]]] = {
     Future.successful(Right({
       MongoDaoHolder.jobDao
         .find()
         .resultList()
-        .map(jobConfig => JobPlugin.convertToJobInformation(jobConfig))
+        .map(
+          jobConfig => JobPlugin.convertToJobInformation(jobConfig)
+        )
     }))
   }
 
@@ -44,7 +48,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Register an Job and return the JobInformation with next schedule information")
     .method(Method.PUT)
     .name("registerJob")
-    .serverLogic(auth => config => registerJob(auth, config))
+    .serverLogic(
+      auth => config => registerJob(auth, config)
+    )
 
   def registerJob(auth: UserInformation, jobConfig: JobConfig): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
     Future.successful(Right({
@@ -73,7 +79,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Add Job and get JobInformation back")
     .method(Method.PATCH)
     .name("updateJob")
-    .serverLogic(auth => parameter => updateJob(auth, parameter))
+    .serverLogic(
+      auth => parameter => updateJob(auth, parameter)
+    )
 
   def updateJob(
       auth: UserInformation,
@@ -98,7 +106,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Delete Job and reload all Job Information")
     .method(Method.DELETE)
     .name("deleteJob")
-    .serverLogic(auth => parameter => deleteJob(auth, parameter))
+    .serverLogic(
+      auth => parameter => deleteJob(auth, parameter)
+    )
 
   def deleteJob(auth: UserInformation, parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
@@ -113,7 +123,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the List of possible job classes")
     .method(Method.GET)
     .name("possibleJobsList")
-    .serverLogic(_ => _ => jobClassesList())
+    .serverLogic(
+      _ => _ => jobClassesList()
+    )
 
   def jobClassesList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
@@ -128,7 +140,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     .description("Execute scheduled Job manually")
     .method(Method.POST)
     .name("executeJob")
-    .serverLogic(_ => parameter => executeJob(parameter))
+    .serverLogic(
+      _ => parameter => executeJob(parameter)
+    )
 
   def executeJob(parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({

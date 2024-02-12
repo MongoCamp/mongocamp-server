@@ -34,7 +34,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("List all Users or filtered")
     .method(Method.GET)
     .name("listUsers")
-    .serverLogic(_ => parameter => listUsers(parameter))
+    .serverLogic(
+      _ => parameter => listUsers(parameter)
+    )
 
   def listUsers(parameter: (Option[String], Paging)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[UserProfile], PaginationInfo)]] = {
     Future.successful {
@@ -51,7 +53,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Add a new User")
     .method(Method.PUT)
     .name("addUser")
-    .serverLogic(authUser => userInformation => addUser(authUser, userInformation))
+    .serverLogic(
+      authUser => userInformation => addUser(authUser, userInformation)
+    )
 
   def addUser(authUser: UserInformation, userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful {
@@ -78,7 +82,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Get UserProfile for user")
     .method(Method.GET)
     .name("getUser")
-    .serverLogic(_ => loginToUpdate => getUser(loginToUpdate))
+    .serverLogic(
+      _ => loginToUpdate => getUser(loginToUpdate)
+    )
 
   val updatePasswordEndpoint = adminBase
     .in("users")
@@ -90,7 +96,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Change Password of User")
     .method(Method.PATCH)
     .name("updatePasswordForUser")
-    .serverLogic(userInformation => loginToUpdate => updatePassword(userInformation, loginToUpdate))
+    .serverLogic(
+      userInformation => loginToUpdate => updatePassword(userInformation, loginToUpdate)
+    )
 
   def updatePassword(
       userInformation: UserInformation,
@@ -114,7 +122,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Generate an new APIkey for the user")
     .method(Method.PATCH)
     .name("gnerateNewApiKeyForUser")
-    .serverLogic(loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate))
+    .serverLogic(
+      loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate)
+    )
 
   def updateApiKey(
       loggedInUser: UserInformation,
@@ -135,7 +145,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Delete User")
     .method(Method.DELETE)
     .name("deleteUser")
-    .serverLogic(loggedInUser => loginToUpdate => deleteUser(loggedInUser, loginToUpdate))
+    .serverLogic(
+      loggedInUser => loginToUpdate => deleteUser(loggedInUser, loginToUpdate)
+    )
 
   def deleteUser(
       loggedInUser: UserInformation,
@@ -160,7 +172,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Update Roles of User")
     .method(Method.PATCH)
     .name("updateRolesForUser")
-    .serverLogic(loggedInUser => loginToUpdate => updateRolesForUser(loggedInUser, loginToUpdate))
+    .serverLogic(
+      loggedInUser => loginToUpdate => updateRolesForUser(loggedInUser, loginToUpdate)
+    )
 
   def updateRolesForUser(
       loggedInUser: UserInformation,
@@ -183,7 +197,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("List all Roles or filtered")
     .method(Method.GET)
     .name("listRoles")
-    .serverLogic(_ => parameter => listRoles(parameter))
+    .serverLogic(
+      _ => parameter => listRoles(parameter)
+    )
 
   def listRoles(parameter: (Option[String], Paging)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Role], PaginationInfo)]] = {
     Future.successful {
@@ -200,7 +216,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Get Role by RoleKey")
     .method(Method.GET)
     .name("getRole")
-    .serverLogic(_ => role => getRole(role))
+    .serverLogic(
+      _ => role => getRole(role)
+    )
 
   def getRole(roleKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
@@ -217,7 +235,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Add a new Role")
     .method(Method.PUT)
     .name("addRole")
-    .serverLogic(loggedInUser => role => addRole(loggedInUser, role))
+    .serverLogic(
+      loggedInUser => role => addRole(loggedInUser, role)
+    )
 
   def addRole(loggedInUser: UserInformation, role: Role): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
@@ -238,7 +258,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Delete Role")
     .method(Method.DELETE)
     .name("deleteRole")
-    .serverLogic(loggedInUser => role => deleteRole(loggedInUser, role))
+    .serverLogic(
+      loggedInUser => role => deleteRole(loggedInUser, role)
+    )
 
   def deleteRole(loggedInUser: UserInformation, role: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
@@ -259,7 +281,9 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .description("Update Role")
     .method(Method.PATCH)
     .name("updateRole")
-    .serverLogic(loggedInUser => parameter => updateRole(loggedInUser, parameter))
+    .serverLogic(
+      loggedInUser => parameter => updateRole(loggedInUser, parameter)
+    )
 
   def updateRole(
       loggedInUser: UserInformation,

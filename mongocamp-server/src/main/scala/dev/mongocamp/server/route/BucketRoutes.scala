@@ -33,17 +33,23 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.GET)
     .name("listBuckets")
-    .serverLogic(user => _ => bucketsList(user))
+    .serverLogic(
+      user => _ => bucketsList(user)
+    )
 
   def bucketsList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right({
       val result = MongoDatabase.databaseProvider.collectionNames().filter(_.endsWith(BucketCollectionSuffix)).map(_.replace(BucketCollectionSuffix, ""))
       val bucketGrants =
-        userInformation.getGrants.filter(g => g.grantType.equals(ModelConstants.grantTypeBucket) || g.grantType.equals(ModelConstants.grantTypeBucketMeta))
-      result.filter(collection => {
-        val readBuckets = bucketGrants.filter(_.read).map(_.name)
-        userInformation.isAdmin || readBuckets.contains(AuthorizedCollectionRequest.all) || readBuckets.contains(collection)
-      })
+        userInformation.getGrants.filter(
+          g => g.grantType.equals(ModelConstants.grantTypeBucket) || g.grantType.equals(ModelConstants.grantTypeBucketMeta)
+        )
+      result.filter(
+        collection => {
+          val readBuckets = bucketGrants.filter(_.read).map(_.name)
+          userInformation.isAdmin || readBuckets.contains(AuthorizedCollectionRequest.all) || readBuckets.contains(collection)
+        }
+      )
     }))
   }
 
@@ -54,7 +60,9 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.GET)
     .name("getBucket")
-    .serverLogic(authorizedCollectionRequest => _ => getBucket(authorizedCollectionRequest))
+    .serverLogic(
+      authorizedCollectionRequest => _ => getBucket(authorizedCollectionRequest)
+    )
 
   def getBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest
@@ -74,7 +82,9 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.DELETE)
     .name("deleteBucket")
-    .serverLogic(authorizedCollectionRequest => _ => deleteBucket(authorizedCollectionRequest))
+    .serverLogic(
+      authorizedCollectionRequest => _ => deleteBucket(authorizedCollectionRequest)
+    )
 
   def deleteBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest
@@ -95,7 +105,9 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.DELETE)
     .name("clearBucket")
-    .serverLogic(authorizedCollectionRequest => _ => clearBucket(authorizedCollectionRequest))
+    .serverLogic(
+      authorizedCollectionRequest => _ => clearBucket(authorizedCollectionRequest)
+    )
 
   def clearBucket(
       authorizedCollectionRequest: AuthorizedCollectionRequest

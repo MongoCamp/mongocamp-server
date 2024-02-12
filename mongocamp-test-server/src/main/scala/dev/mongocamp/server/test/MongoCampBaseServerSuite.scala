@@ -64,17 +64,21 @@ trait MongoCampBaseServerSuite extends munit.FunSuite {
   private def resetDatabase(): Unit = synchronized {
     if (TestServer.isServerRunning()) {
       val databasesToIgnore = List("admin", "config", "local")
-      MongoDatabase.databaseProvider.databaseNames.foreach(db => {
-        if (!databasesToIgnore.contains(db)) {
-          MongoDatabase.databaseProvider
-            .collectionNames(db)
-            .foreach(collection => {
-              if (!collection.startsWith(ConfigurationRead.noPublishReader.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix))) {
-                MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
-              }
-            })
+      MongoDatabase.databaseProvider.databaseNames.foreach(
+        db => {
+          if (!databasesToIgnore.contains(db)) {
+            MongoDatabase.databaseProvider
+              .collectionNames(db)
+              .foreach(
+                collection => {
+                  if (!collection.startsWith(ConfigurationRead.noPublishReader.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix))) {
+                    MongoDatabase.databaseProvider.collection(s"$db:$collection").drop().result()
+                  }
+                }
+              )
+          }
         }
-      })
+      )
       TestAdditions.importData()
       TestAdditions.insertUsersAndRoles()
       clearAdminToken

@@ -18,7 +18,9 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
   private def addHeaders(request: ServerRequest): List[Header] = {
     List(Header("server", s"${BuildInfo.name}/${BuildInfo.version}")) ++ RequestFunctions
       .getRequestIdOption(request)
-      .map(requestId => Header(mongoCampRequestIdKey, s"${requestId}"))
+      .map(
+        requestId => Header(mongoCampRequestIdKey, s"${requestId}")
+      )
   }
 
   override def apply[B](responder: Responder[Future, B], endpointHandler: EndpointHandler[Future, B]): EndpointHandler[Future, B] = {
@@ -29,7 +31,9 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onDecodeSuccess(ctx)
-          .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ addHeaders(ctx.request)))
+          .map(
+            serverResponse => serverResponse.copy(headers = serverResponse.headers ++ addHeaders(ctx.request))
+          )
       }
 
       override def onSecurityFailure[A](
@@ -37,7 +41,9 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onSecurityFailure(ctx)
-          .map(serverResponse => serverResponse.copy(headers = serverResponse.headers ++ addHeaders(ctx.request)))
+          .map(
+            serverResponse => serverResponse.copy(headers = serverResponse.headers ++ addHeaders(ctx.request))
+          )
       }
 
       override def onDecodeFailure(
@@ -45,7 +51,12 @@ class HeadersInterceptor extends EndpointInterceptor[Future] {
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponse[B]]] = {
         endpointHandler
           .onDecodeFailure(ctx)
-          .map(serverResponse => serverResponse.map(response => response.copy(headers = response.headers ++ addHeaders(ctx.request))))
+          .map(
+            serverResponse =>
+              serverResponse.map(
+                response => response.copy(headers = response.headers ++ addHeaders(ctx.request))
+              )
+          )
       }
     }
   }

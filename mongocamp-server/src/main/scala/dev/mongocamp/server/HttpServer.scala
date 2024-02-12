@@ -18,10 +18,11 @@ object HttpServer extends LazyLogging {
 
   private val serverOptions: PekkoHttpServerOptions = {
     var serverOptions = PekkoHttpServerOptions.customiseInterceptors
-      .prependInterceptor(RequestInterceptor.transformServerRequest { request =>
-        val requestContext = request.underlying.asInstanceOf[RequestContext]
-        val changedContext = requestContext.withRequest(requestContext.request.addAttribute(requestIdAttributeKey, Random.alphanumeric.take(10).mkString))
-        Future.successful(request.withUnderlying(changedContext))
+      .prependInterceptor(RequestInterceptor.transformServerRequest {
+        request =>
+          val requestContext = request.underlying.asInstanceOf[RequestContext]
+          val changedContext = requestContext.withRequest(requestContext.request.addAttribute(requestIdAttributeKey, Random.alphanumeric.take(10).mkString))
+          Future.successful(request.withUnderlying(changedContext))
       })
       .exceptionHandler(new MongoCampExceptionHandler())
       .decodeFailureHandler(MongoCampDefaultDecodeFailureHandler.handler)

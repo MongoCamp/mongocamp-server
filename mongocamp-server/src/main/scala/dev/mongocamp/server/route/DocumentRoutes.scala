@@ -46,16 +46,30 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.GET)
     .name("listDocuments")
-    .serverLogic(collectionRequest => parameter => findAllInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => findAllInCollection(collectionRequest, parameter)
+    )
 
   def findAllInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
       parameter: (Option[Query], List[String], List[String], Paging)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
-    val sort: Map[String, Any]       = parameter._2.map(s => if (s.startsWith("-")) (s.substring(1) -> -1) else (s -> 1)).toMap
-    val projection: Map[String, Any] = parameter._3.map(value => (value -> 1)).toMap
+    val sort: Map[String, Any] = parameter._2
+      .map(
+        s => if (s.startsWith("-")) (s.substring(1) -> -1) else (s -> 1)
+      )
+      .toMap
+    val projection: Map[String, Any] = parameter._3
+      .map(
+        value => (value -> 1)
+      )
+      .toMap
     val filter: Map[String, Any] =
-      parameter._1.map(query => MongoCampBsonConverter.documentToMap(LuceneQueryConverter.toDocument(query).toBsonDocument)).getOrElse(Map())
+      parameter._1
+        .map(
+          query => MongoCampBsonConverter.documentToMap(LuceneQueryConverter.toDocument(query).toBsonDocument)
+        )
+        .getOrElse(Map())
     findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), parameter._4))
   }
 
@@ -78,7 +92,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.POST)
     .name("find")
-    .serverLogic(collectionRequest => parameter => findInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => findInCollection(collectionRequest, parameter)
+    )
 
   def findInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -119,7 +135,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.PUT)
     .name("insert")
-    .serverLogic(login => insert => insertInCollection(login, insert))
+    .serverLogic(
+      login => insert => insertInCollection(login, insert)
+    )
 
   def insertInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -147,7 +165,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.GET)
     .name("getDocument")
-    .serverLogic(collectionRequest => parameter => findById(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => findById(collectionRequest, parameter)
+    )
 
   def findById(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -170,7 +190,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.DELETE)
     .name("delete")
-    .serverLogic(collectionRequest => parameter => deleteById(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => deleteById(collectionRequest, parameter)
+    )
 
   def deleteById(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -198,7 +220,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.PATCH)
     .name("update")
-    .serverLogic(collectionRequest => parameter => replaceInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => replaceInCollection(collectionRequest, parameter)
+    )
 
   def replaceInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -217,11 +241,17 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
             Some(originalDocumentId)
           }
           else {
-            Option(result.getUpsertedId).map(value => value.asObjectId().getValue)
+            Option(result.getUpsertedId).map(
+              value => value.asObjectId().getValue
+            )
           }
           val updateResponse = UpdateResponse(
             result.wasAcknowledged(),
-            maybeValue.map(value => value.toHexString).toList,
+            maybeValue
+              .map(
+                value => value.toHexString
+              )
+              .toList,
             result.getModifiedCount,
             result.getMatchedCount
           )
@@ -243,7 +273,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag(apiName)
     .method(Method.PATCH)
     .name("updateDocumentPartial")
-    .serverLogic(collectionRequest => parameter => updateFieldsInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => updateFieldsInCollection(collectionRequest, parameter)
+    )
 
   def updateFieldsInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -262,12 +294,18 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
             Some(originalDocumentId)
           }
           else {
-            Option(result.getUpsertedId).map(value => value.asObjectId().getValue)
+            Option(result.getUpsertedId).map(
+              value => value.asObjectId().getValue
+            )
           }
 
           val updateResponse = UpdateResponse(
             result.wasAcknowledged(),
-            maybeValue.map(value => value.toHexString).toList,
+            maybeValue
+              .map(
+                value => value.toHexString
+              )
+              .toList,
             result.getModifiedCount,
             result.getMatchedCount
           )

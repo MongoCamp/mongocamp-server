@@ -49,14 +49,18 @@ object TokenCache {
       val userOption = tokenCacheDao
         .find(Map(keyToken -> token))
         .resultOption()
-        .filter(tokenCache => {
-          val result = new DateTime().isBefore(new DateTime(tokenCache.validTo))
-          if (!result) {
-            tokenCacheDao.deleteOne(Map(keyToken -> tokenCache.token)).asFuture()
+        .filter(
+          tokenCache => {
+            val result = new DateTime().isBefore(new DateTime(tokenCache.validTo))
+            if (!result) {
+              tokenCacheDao.deleteOne(Map(keyToken -> tokenCache.token)).asFuture()
+            }
+            result
           }
-          result
-        })
-        .map(tokenCache => handler.findUser(tokenCache.userId))
+        )
+        .map(
+          tokenCache => handler.findUser(tokenCache.userId)
+        )
       if (userOption.isDefined) {
         internalTokenCache.put(token, userOption.get)
       }

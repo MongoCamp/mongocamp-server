@@ -12,7 +12,7 @@ import scala.util.Random
 
 object TestServer extends LazyLogging {
 
-  private var _serverRunning      = false
+  private var _serverRunning     = false
   private var mongoServerStarted = false
 
   System.setProperty("CONNECTION_HOST", "localhost")
@@ -31,16 +31,14 @@ object TestServer extends LazyLogging {
     }
   }
 
-
   def isServerRunning(): Boolean = synchronized {
     while (!_serverRunning) {
       try {
         if (!mongoServerStarted) {
           Future.successful {
             MongoTestServer.startMongoDatabase()
-            while (!MongoTestServer.isRunning) {
+            while (!MongoTestServer.isRunning)
               ""
-            }
             setPort()
             server.registerMongoCampServerDefaultConfigs()
             server.startServer()(ExecutionContext.global)

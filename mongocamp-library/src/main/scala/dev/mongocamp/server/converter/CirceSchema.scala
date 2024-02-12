@@ -14,19 +14,31 @@ trait CirceSchema {
   implicit val DateFormat: Encoder[Date] with Decoder[Date] = new Encoder[Date] with Decoder[Date] {
     override def apply(a: Date): Json = Encoder.encodeString.apply(a.toInstant.toString)
 
-    override def apply(c: HCursor): Result[Date] = Decoder.decodeString.map(s => new DateTime(s).toDate).apply(c)
+    override def apply(c: HCursor): Result[Date] = Decoder.decodeString
+      .map(
+        s => new DateTime(s).toDate
+      )
+      .apply(c)
   }
 
   implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
     override def apply(a: DateTime): Json = Encoder.encodeString.apply(a.toInstant.toString)
 
-    override def apply(c: HCursor): Result[DateTime] = Decoder.decodeString.map(s => new DateTime(s)).apply(c)
+    override def apply(c: HCursor): Result[DateTime] = Decoder.decodeString
+      .map(
+        s => new DateTime(s)
+      )
+      .apply(c)
   }
 
   implicit val ObjectIdFormat: Encoder[ObjectId] with Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
     override def apply(a: ObjectId): Json = Encoder.encodeString.apply(a.toHexString)
 
-    override def apply(c: HCursor): Result[ObjectId] = Decoder.decodeString.map(s => new ObjectId(s)).apply(c)
+    override def apply(c: HCursor): Result[ObjectId] = Decoder.decodeString
+      .map(
+        s => new ObjectId(s)
+      )
+      .apply(c)
   }
 
   implicit val MapStringAnyFormat: Encoder[Map[String, Any]] with Decoder[Map[String, Any]] = new Encoder[Map[String, Any]] with Decoder[Map[String, Any]] {
@@ -39,7 +51,11 @@ trait CirceSchema {
     override def apply(a: Any): Json = encodeAnyToJson(a)
 
     override def apply(c: HCursor): Result[Any] = {
-      Decoder.decodeJson.map(a => decodeFromJson(a)).apply(c)
+      Decoder.decodeJson
+        .map(
+          a => decodeFromJson(a)
+        )
+        .apply(c)
     }
   }
 
@@ -49,7 +65,11 @@ trait CirceSchema {
 
   def encodeMapStringAny(a: Map[String, Any]): Json = {
     Json.obj(
-      a.keySet.map(key => (key, encodeAnyToJson(a(key)))).toList: _*
+      a.keySet
+        .map(
+          key => (key, encodeAnyToJson(a(key)))
+        )
+        .toList: _*
     )
   }
 
@@ -79,10 +99,16 @@ trait CirceSchema {
           string
         }
       case a if a.isBoolean => a.asBoolean.getOrElse(false)
-      case a if a.isArray   => a.asArray.get.toList.map(e => decodeFromJson(e))
-      case a if a.isObject  => a.asObject.get.toMap.map(e => (e._1, decodeFromJson(e._2)))
-      case a if a.isNull    => null
-      case _                => null
+      case a if a.isArray =>
+        a.asArray.get.toList.map(
+          e => decodeFromJson(e)
+        )
+      case a if a.isObject =>
+        a.asObject.get.toMap.map(
+          e => (e._1, decodeFromJson(e._2))
+        )
+      case a if a.isNull => null
+      case _             => null
     }
   }
 
@@ -100,15 +126,29 @@ trait CirceSchema {
       case d: DateTime       => Encoder.encodeString.apply(d.toInstant.toString)
       case o: ObjectId       => Encoder.encodeString.apply(o.toHexString)
       case m: Map[String, _] => encodeMapStringAny(m)
-      case seq: Seq[_]       => Json.arr(seq.map(e => encodeAnyToJson(e, deepth)): _*)
-      case set: Set[_]       => Json.arr(set.map(e => encodeAnyToJson(e, deepth)).toList: _*)
+      case seq: Seq[_] =>
+        Json.arr(
+          seq.map(
+            e => encodeAnyToJson(e, deepth)
+          ): _*
+        )
+      case set: Set[_] =>
+        Json.arr(
+          set
+            .map(
+              e => encodeAnyToJson(e, deepth)
+            )
+            .toList: _*
+        )
       case product: Product =>
         val productElementNames = product.productElementNames.toList
         val fieldMap = productElementNames
-          .map(key => {
-            val index = productElementNames.indexOf(key)
-            (key, product.productElement(index))
-          })
+          .map(
+            key => {
+              val index = productElementNames.indexOf(key)
+              (key, product.productElement(index))
+            }
+          )
           .toMap
         encodeAnyToJson(fieldMap)
       case r: Document => encodeAnyToJson(r.toMap)

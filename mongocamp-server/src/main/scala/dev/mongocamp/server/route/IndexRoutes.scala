@@ -29,7 +29,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.GET)
     .name("listIndices")
-    .serverLogic(collectionRequest => _ => listIndicesInCollection(collectionRequest))
+    .serverLogic(
+      collectionRequest => _ => listIndicesInCollection(collectionRequest)
+    )
 
   def listIndicesInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest
@@ -54,7 +56,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.GET)
     .name("index")
-    .serverLogic(collectionRequest => parameter => indexByNameInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => indexByNameInCollection(collectionRequest, parameter)
+    )
 
   def indexByNameInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -80,7 +84,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.PUT)
     .name("createIndex")
-    .serverLogic(collectionRequest => parameter => createIndexByBsonInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => createIndexByBsonInCollection(collectionRequest, parameter)
+    )
 
   def createIndexByBsonInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -109,7 +115,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.PUT)
     .name("createIndexForField")
-    .serverLogic(collectionRequest => parameter => createIndexForFieldInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => createIndexForFieldInCollection(collectionRequest, parameter)
+    )
 
   def createIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -139,7 +147,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.PUT)
     .name("createUniqueIndex")
-    .serverLogic(collectionRequest => parameter => createUniqueIndexForFieldInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => createUniqueIndexForFieldInCollection(collectionRequest, parameter)
+    )
 
   def createUniqueIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -174,7 +184,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.PUT)
     .name("createExpiringIndex")
-    .serverLogic(collectionRequest => parameter => createExpiringIndexForFieldInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => createExpiringIndexForFieldInCollection(collectionRequest, parameter)
+    )
 
   def createExpiringIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -203,7 +215,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.PUT)
     .name("createTextIndex")
-    .serverLogic(collectionRequest => parameter => createTextIndexForFieldInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => createTextIndexForFieldInCollection(collectionRequest, parameter)
+    )
 
   def createTextIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -229,7 +243,9 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     .tag("Index")
     .method(Method.DELETE)
     .name("deleteIndex")
-    .serverLogic(collectionRequest => parameter => dropIndexForFieldInCollection(collectionRequest, parameter))
+    .serverLogic(
+      collectionRequest => parameter => dropIndexForFieldInCollection(collectionRequest, parameter)
+    )
 
   def dropIndexForFieldInCollection(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
@@ -248,19 +264,37 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def requestToDBIndexOptions(indexOptionsRequestOption: Option[IndexOptionsRequest]): IndexOptions = {
     var indexOptions = IndexOptions()
-    indexOptionsRequestOption.foreach(indexOptionsRequest => {
-      indexOptionsRequest.name.foreach(name => indexOptions = indexOptions.name(name))
-      indexOptionsRequest.background.foreach(background => indexOptions = indexOptions.background(background))
-      indexOptionsRequest.defaultLanguage.foreach(defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage))
-      indexOptionsRequest.unique.foreach(unique => indexOptions = indexOptions.unique(unique))
-      indexOptionsRequest.textVersion.foreach(textVersion => indexOptions = indexOptions.textVersion(textVersion))
-      indexOptionsRequest.max.foreach(max => indexOptions = indexOptions.max(max))
-      indexOptionsRequest.min.foreach(min => indexOptions = indexOptions.min(min))
-      indexOptionsRequest.expireAfter.foreach(expireAfter => {
-        val expire = scala.concurrent.duration.Duration(expireAfter)
-        indexOptions = indexOptions.expireAfter(expire._1, expire._2)
-      })
-    })
+    indexOptionsRequestOption.foreach(
+      indexOptionsRequest => {
+        indexOptionsRequest.name.foreach(
+          name => indexOptions = indexOptions.name(name)
+        )
+        indexOptionsRequest.background.foreach(
+          background => indexOptions = indexOptions.background(background)
+        )
+        indexOptionsRequest.defaultLanguage.foreach(
+          defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage)
+        )
+        indexOptionsRequest.unique.foreach(
+          unique => indexOptions = indexOptions.unique(unique)
+        )
+        indexOptionsRequest.textVersion.foreach(
+          textVersion => indexOptions = indexOptions.textVersion(textVersion)
+        )
+        indexOptionsRequest.max.foreach(
+          max => indexOptions = indexOptions.max(max)
+        )
+        indexOptionsRequest.min.foreach(
+          min => indexOptions = indexOptions.min(min)
+        )
+        indexOptionsRequest.expireAfter.foreach(
+          expireAfter => {
+            val expire = scala.concurrent.duration.Duration(expireAfter)
+            indexOptions = indexOptions.expireAfter(expire._1, expire._2)
+          }
+        )
+      }
+    )
     indexOptions
   }
 

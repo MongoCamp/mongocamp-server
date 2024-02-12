@@ -30,7 +30,9 @@ object AuthRoutes extends BaseRoute {
     .tag("Auth")
     .method(Method.POST)
     .name("login")
-    .serverLogic(loginInformation => generateAuthToken(loginInformation))
+    .serverLogic(
+      loginInformation => generateAuthToken(loginInformation)
+    )
 
   def generateAuthToken(loginInformation: Login): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
     Future.successful {
@@ -48,7 +50,9 @@ object AuthRoutes extends BaseRoute {
     .description("Check a given Login for is authenticated")
     .method(Method.GET)
     .name("isAuthenticated")
-    .serverLogic(loginInformation => _ => checkAuth(loginInformation))
+    .serverLogic(
+      loginInformation => _ => checkAuth(loginInformation)
+    )
 
   def checkAuth(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
@@ -64,17 +68,33 @@ object AuthRoutes extends BaseRoute {
     .summary("Logout User")
     .description("Logout by bearer Token")
 
-  val logoutEndpoint = baseLogoutEndpoint.method(Method.POST).name("logout").serverLogic(_ => token => logout(token))
+  val logoutEndpoint = baseLogoutEndpoint
+    .method(Method.POST)
+    .name("logout")
+    .serverLogic(
+      _ => token => logout(token)
+    )
 
-  val logoutDeleteEndpoint = baseLogoutEndpoint.method(Method.DELETE).name("logoutByDelete").serverLogic(_ => token => logout(token))
+  val logoutDeleteEndpoint = baseLogoutEndpoint
+    .method(Method.DELETE)
+    .name("logoutByDelete")
+    .serverLogic(
+      _ => token => logout(token)
+    )
 
   def logout(token: Option[String]): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
-      val result = token.forall(tokenValue => {
-        TokenCache.validateToken(tokenValue).foreach(user => EventSystem.eventStream.publish(LogoutEvent(user)))
-        TokenCache.invalidateToken(tokenValue)
-        true
-      })
+      val result = token.forall(
+        tokenValue => {
+          TokenCache
+            .validateToken(tokenValue)
+            .foreach(
+              user => EventSystem.eventStream.publish(LogoutEvent(user))
+            )
+          TokenCache.invalidateToken(tokenValue)
+          true
+        }
+      )
       Right(JsonValue(result))
     }
   }
@@ -87,7 +107,9 @@ object AuthRoutes extends BaseRoute {
     .description("Refresh Token and return Login Information")
     .method(Method.GET)
     .name("refreshToken")
-    .serverLogic(loginInformation => _ => refreshAuthToken(loginInformation))
+    .serverLogic(
+      loginInformation => _ => refreshAuthToken(loginInformation)
+    )
 
   def refreshAuthToken(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
     Future.successful {
@@ -103,7 +125,9 @@ object AuthRoutes extends BaseRoute {
     .description("Return the User Profile of loggedin user")
     .method(Method.GET)
     .name("userProfile")
-    .serverLogic(loginInformation => _ => userProfile(loginInformation))
+    .serverLogic(
+      loginInformation => _ => userProfile(loginInformation)
+    )
 
   def userProfile(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful {
@@ -120,7 +144,9 @@ object AuthRoutes extends BaseRoute {
     .description("Change Password of logged in User")
     .method(Method.PATCH)
     .name("updatePassword")
-    .serverLogic(loggedInUser => loginToUpdate => updatePassword(loggedInUser, loginToUpdate))
+    .serverLogic(
+      loggedInUser => loginToUpdate => updatePassword(loggedInUser, loginToUpdate)
+    )
 
   def updatePassword(
       loggedInUser: UserInformation,
@@ -143,7 +169,9 @@ object AuthRoutes extends BaseRoute {
     .description("Generate new ApiKey of logged in User")
     .method(Method.PATCH)
     .name("generateNewApiKey")
-    .serverLogic(loggedInUser => _ => updateApiKey(loggedInUser))
+    .serverLogic(
+      loggedInUser => _ => updateApiKey(loggedInUser)
+    )
 
   def updateApiKey(
       loggedInUser: UserInformation

@@ -37,7 +37,9 @@ object ApiDocsRoutes extends BaseRoute {
       .tag("Docs")
       .method(Method.GET)
       .name(yamlName)
-      .serverLogic(_ => contentToResponse())
+      .serverLogic(
+        _ => contentToResponse()
+      )
 
     endpoint
   }

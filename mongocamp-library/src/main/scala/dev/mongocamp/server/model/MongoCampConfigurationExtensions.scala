@@ -70,13 +70,21 @@ object MongoCampConfigurationExtensions {
           mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDurationList) && mongoCampConfiguration.value
             .isInstanceOf[List[String]]
         ) {
-          mongoCampConfiguration.value.asInstanceOf[List[String]].map(s => Duration(s))
+          mongoCampConfiguration.value
+            .asInstanceOf[List[String]]
+            .map(
+              s => Duration(s)
+            )
         }
         else if (
           mongoCampConfiguration.configType.equalsIgnoreCase(MongoCampConfiguration.confTypeDurationOption) && mongoCampConfiguration.value
             .isInstanceOf[Option[String]]
         ) {
-          mongoCampConfiguration.value.asInstanceOf[Option[String]].map(s => Duration(s))
+          mongoCampConfiguration.value
+            .asInstanceOf[Option[String]]
+            .map(
+              s => Duration(s)
+            )
         }
         else if (mongoCampConfiguration.configType.equalsIgnoreCase(confTypeLong) && mongoCampConfiguration.value.isInstanceOf[Int]) {
           mongoCampConfiguration.value.asInstanceOf[Int].toLong
