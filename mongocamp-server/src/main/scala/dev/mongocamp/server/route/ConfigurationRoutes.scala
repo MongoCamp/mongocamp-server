@@ -1,9 +1,12 @@
 package dev.mongocamp.server.route
 
+import better.files.File
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.Server
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
+import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.{ JsonValue, MongoCampConfiguration, SettingsResponse }
@@ -19,8 +22,9 @@ import sttp.tapir.server.ServerEndpoint
 
 import scala.collection.immutable.ListMap
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 
-object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
+object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging {
   private val applicationApiBaseEndpoint = adminEndpoint.tag("Application")
 
   val settingsEndpoint = applicationApiBaseEndpoint
@@ -122,12 +126,43 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin {
     }
   }
 
+  val shutdownEndpoint = applicationApiBaseEndpoint
+    .in("system")
+    .out(jsonBody[JsonValue[Boolean]])
+    .summary("Shutdown MongoCamp")
+    .description("Shutdown the running MongoCamp Application. CLI Mode will automatically restart the Application.")
+    .method(Method.DELETE)
+    .name("shutdown")
+    .serverLogic(
+      _ => _ => shutdown()
+    )
+
+  def shutdown(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
+    Future.successful {
+      Right {
+        Future {
+          val temp    = File(File.temp.pathAsString + s"/mongocamp_${BuildInfo.version}")
+          val tmpFile = File.newTemporaryFile(parent = Some(temp))
+          val pid     = ProcessHandle.current.pid
+          val shutdownTimestamp = System.currentTimeMillis() + 1.seconds.toMillis
+          tmpFile.write("{\"event\":\"shutdown\",\"timestamp\":\"" + shutdownTimestamp + "\",\"pid\":\"" + pid + "\"}")
+          tmpFile.appendLine()
+          logger.trace(s"Shutdown triggered. File written. $tmpFile.")
+          while (java.lang.System.currentTimeMillis() < shutdownTimestamp) {}
+          java.lang.System.exit(0)
+        }(scala.concurrent.ExecutionContext.global)
+        JsonValue(true)
+      }
+    }
+  }
+
   override def endpoints = {
     var endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
       settingsEndpoint,
       listConfigurationEndpoint,
       getConfigEndpoint,
-      updateConfigEndpoint
+      updateConfigEndpoint,
+      shutdownEndpoint
     )
     endpoints
   }

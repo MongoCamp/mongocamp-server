@@ -1,6 +1,7 @@
 package dev.mongocamp.server.database
 
 import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
 import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
 import dev.mongocamp.server.config.DefaultConfigurations
@@ -15,7 +16,7 @@ import org.mongodb.scala.bson.codecs.Macros._
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
 
-object MongoDatabase {
+object MongoDatabase extends LazyLogging {
 
   private lazy val collectionPrefix = {
     val configRead = ConfigurationRead.noPublishReader
@@ -59,6 +60,7 @@ object MongoDatabase {
       connectionPoolListener = connectionPoolListener.toList,
       commandListener = commandListener.toList
     )
+    logger.trace(s"Creating new DatabaseProvider with connection: $connection")
     val dbProvider = DatabaseProvider(connection, fromRegistries(DEFAULT_CODEC_REGISTRY, providerRegistry))
     _databaseProvider = dbProvider
     dbProvider

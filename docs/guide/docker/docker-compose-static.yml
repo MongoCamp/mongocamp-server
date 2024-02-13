@@ -1,12 +1,14 @@
 version: '2'
 services:
   mongo-db:
-    image: mongocamp/mongodb:6.0.4
+    image: mongocamp/mongodb:7.0.5
     environment:
       MONGO_ROOT_PWD: mySavePassword
       MONGO_WIREDTIGER_CACHE_SIZE_GB: '4.21'
       MONGO_EXTRA_ARGS: '--ipv6 --quiet'
     restart: always
+    ports:
+      - "27017:27017"
   mongo-camp:
     image: mongocamp/mongocamp-server:latest
     ports:
