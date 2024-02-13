@@ -1,3 +1,13 @@
+## [v1.5.10] - 2024-02-13
+### :sparkles: New Features
+- [`ecdb97d`](https://github.com/MongoCamp/mongocamp-server/commit/ecdb97d9221fed6de18ad615172c5e7685104f33) - Route to shutdown running Server. *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`756264b`](https://github.com/MongoCamp/mongocamp-server/commit/756264bc9d39a3eb9ac13b1a0ca4257443bfa880) - CLI automatically reboot on shutdown by api route *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`99675cb`](https://github.com/MongoCamp/mongocamp-server/commit/99675cbd5da1f2971f0463071186643401698b14) - added micrometer plugin to default build set *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`9b8ec50`](https://github.com/MongoCamp/mongocamp-server/commit/9b8ec50cfec541808fd625b8988b22fda55acb1b) - dependency update *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v1.5.9] - 2024-02-12
 ### :sparkles: New Features
 - [`dd609cc`](https://github.com/MongoCamp/mongocamp-server/commit/dd609ccd7487380275e5cca61e4dd6c01c475946) - RequestLogging Plugin as sbt submodul *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -314,3 +324,4 @@
 [v1.5.7]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.6...v1.5.7
 [v1.5.8]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.7...v1.5.8
 [v1.5.9]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.8...v1.5.9
+[v1.5.10]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.9...v1.5.10
