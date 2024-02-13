@@ -6,7 +6,7 @@ import dev.mongocamp.server.service.CoursierModuleService
 object JvmStartService {
 
   def startServer(): scala.sys.process.Process = {
-    val jars = CoursierModuleService.loadServerWithAllDependencies()
+    val jars       = CoursierModuleService.loadServerWithAllDependencies()
     val runCommand = s"${JvmService.javaHome}/bin/java -cp ${jars.mkString(":")} ${BuildInfo.mainClass}"
     ProcessExecutorService.stoutProcessBuilder(runCommand)
   }

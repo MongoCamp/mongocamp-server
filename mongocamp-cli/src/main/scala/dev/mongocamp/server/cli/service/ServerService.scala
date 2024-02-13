@@ -32,9 +32,8 @@ object ServerService {
           val jsonString         = file.contentAsString
           val jsonMapParseResult = decode[Map[String, String]](jsonString)
           val jsonMap            = jsonMapParseResult.getOrElse(throw new Exception(s"Could not parse file ${file.toString()}"))
-          while (System.currentTimeMillis() < jsonMap("timestamp").toLong) {
+          while (System.currentTimeMillis() < jsonMap("timestamp").toLong)
             "wait"
-          }
           bootServer(monitoredSystemMode)
         case EventType.ENTRY_MODIFY =>
         case EventType.ENTRY_DELETE =>

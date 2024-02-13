@@ -56,36 +56,48 @@ object MongoDbMetricsPlugin extends ServerPlugin with LazyLogging {
     val registerFunctionsList: ArrayBuffer[() => Unit] = ArrayBuffer()
 
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyMetricsCommand)) {
-      registerFunctionsList += { () =>
-        {
-          MetricsConfiguration.getMongoDbMetricsRegistries.foreach(r => {
-            val commandListener = new MongoMetricsCommandListener(r)
-            MongoDatabase.registerCommandListener(commandListener)
-          })
-        }
+      registerFunctionsList += {
+        () =>
+          {
+            MetricsConfiguration.getMongoDbMetricsRegistries.foreach(
+              r => {
+                val commandListener = new MongoMetricsCommandListener(r)
+                MongoDatabase.registerCommandListener(commandListener)
+              }
+            )
+          }
       }
     }
 
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyMetricsConnectionpool)) {
-      registerFunctionsList += { () =>
-        {
-          MetricsConfiguration.getMongoDbMetricsRegistries.foreach(r => {
-            val commandListener = new MongoMetricsConnectionPoolListener(r)
-            MongoDatabase.registerConnectionPoolListener(commandListener)
-          })
-        }
+      registerFunctionsList += {
+        () =>
+          {
+            MetricsConfiguration.getMongoDbMetricsRegistries.foreach(
+              r => {
+                val commandListener = new MongoMetricsConnectionPoolListener(r)
+                MongoDatabase.registerConnectionPoolListener(commandListener)
+              }
+            )
+          }
       }
     }
 
     ConfigurationService
       .getConfigValue[List[String]](ConfKeyMetricsCollectionList)
-      .foreach(collection => MetricsConfiguration.addMongoDbBinder(CollectionMetrics(MongoDatabase.databaseProvider.database(), collection)))
+      .foreach(
+        collection => MetricsConfiguration.addMongoDbBinder(CollectionMetrics(MongoDatabase.databaseProvider.database(), collection))
+      )
 
-    Server.registerAfterStartCallBack(() => {
-      MetricsConfiguration.bindAll()
-      registerFunctionsList.foreach(f => f())
-      MongoDatabase.createNewDatabaseProvider()
-    })
+    Server.registerAfterStartCallBack(
+      () => {
+        MetricsConfiguration.bindAll()
+        registerFunctionsList.foreach(
+          f => f()
+        )
+        MongoDatabase.createNewDatabaseProvider()
+      }
+    )
   }
 
 }

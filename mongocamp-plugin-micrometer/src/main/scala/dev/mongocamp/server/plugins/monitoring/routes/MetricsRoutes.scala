@@ -8,7 +8,7 @@ import dev.mongocamp.server.route.BaseRoute
 import io.circe.generic.auto._
 import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -26,7 +26,9 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the JVM Metrics of the running MongoCamp Application")
     .method(Method.GET)
     .name("jvmMetrics")
-    .serverLogic(_ => _ => jvmMetrics())
+    .serverLogic(
+      _ => _ => jvmMetrics()
+    )
 
   def jvmMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
@@ -42,7 +44,9 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the Metrics of the MongoCamp System")
     .method(Method.GET)
     .name("systemMetrics")
-    .serverLogic(_ => _ => systemMetrics())
+    .serverLogic(
+      _ => _ => systemMetrics()
+    )
 
   def systemMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
@@ -58,7 +62,9 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the MongoDB Metrics of the running MongoCamp Application")
     .method(Method.GET)
     .name("mongoDbMetrics")
-    .serverLogic(_ => _ => mongoDbMetrics())
+    .serverLogic(
+      _ => _ => mongoDbMetrics()
+    )
 
   def mongoDbMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
@@ -74,7 +80,9 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     .description("Returns the Metrics of events of the running MongoCamp Application.")
     .method(Method.GET)
     .name("eventMetrics")
-    .serverLogic(_ => _ => eventMetrics())
+    .serverLogic(
+      _ => _ => eventMetrics()
+    )
 
   def eventMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({

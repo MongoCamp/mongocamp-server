@@ -143,9 +143,9 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging 
       Right {
         Future {
           if (!force) {
-            val temp    = File(File.temp.pathAsString + s"/mongocamp_${BuildInfo.version}")
-            val tmpFile = File.newTemporaryFile(parent = Some(temp))
-            val pid     = ProcessHandle.current.pid
+            val temp              = File(File.temp.pathAsString + s"/mongocamp_${BuildInfo.version}")
+            val tmpFile           = File.newTemporaryFile(parent = Some(temp))
+            val pid               = ProcessHandle.current.pid
             val shutdownTimestamp = System.currentTimeMillis() + 1.seconds.toMillis
             tmpFile.write("{\"event\":\"shutdown\",\"timestamp\":\"" + shutdownTimestamp + "\",\"pid\":\"" + pid + "\"}")
             tmpFile.appendLine()

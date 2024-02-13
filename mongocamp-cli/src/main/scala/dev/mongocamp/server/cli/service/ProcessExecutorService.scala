@@ -20,7 +20,8 @@ object ProcessExecutorService {
     }
     var responseString = ""
     var errorString    = ""
-    val stringProcessLogger = ProcessLogger(stout => responseString = appendString(responseString, stout), sterr => errorString = appendString(errorString, sterr))
+    val stringProcessLogger =
+      ProcessLogger(stout => responseString = appendString(responseString, stout), sterr => errorString = appendString(errorString, sterr))
     val responseCode = executable.!(stringProcessLogger)
     if (responseCode != 0) {
       throw new RuntimeException(s"Error while executing command: $executable\n$responseString\n$errorString")
@@ -37,6 +38,7 @@ object ProcessExecutorService {
     process
   }
 
-  def stoutProcessLogger: ProcessLogger = ProcessLogger(stout => println(Ansi.AUTO.string(s"@|green $stout|@")), sterr => println(Ansi.AUTO.string(s"@|red $sterr|@")))
+  def stoutProcessLogger: ProcessLogger =
+    ProcessLogger(stout => println(Ansi.AUTO.string(s"@|green $stout|@")), sterr => println(Ansi.AUTO.string(s"@|red $sterr|@")))
 
 }

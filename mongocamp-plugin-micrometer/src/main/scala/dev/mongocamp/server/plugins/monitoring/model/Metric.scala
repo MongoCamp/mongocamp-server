@@ -18,7 +18,9 @@ object Metric extends LazyLogging {
         .measure()
         .asScala
         .toList
-        .map(v => Measurement(validStringValue(v.getStatistic.name()), validDoubleValue(v.getValue)))
+        .map(
+          v => Measurement(validStringValue(v.getStatistic.name()), validDoubleValue(v.getValue))
+        )
     )
   }
 

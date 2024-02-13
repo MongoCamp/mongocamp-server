@@ -71,10 +71,18 @@ object MetricsConfiguration {
   def addEventMeterBinder(meterBinder: MeterBinder): Unit = eventMeterBinder += meterBinder
 
   def bindAll(): Unit = {
-    getJvmMetricsRegistries.foreach(r => jvmMeterBinder.foreach(_.bindTo(r)))
-    getSystemMetricsRegistries.foreach(r => systemMeterBinder.foreach(_.bindTo(r)))
-    getMongoDbMetricsRegistries.foreach(r => mongoDbMeterBinder.foreach(_.bindTo(r)))
-    getEventMetricsRegistries.foreach(r => eventMeterBinder.foreach(_.bindTo(r)))
+    getJvmMetricsRegistries.foreach(
+      r => jvmMeterBinder.foreach(_.bindTo(r))
+    )
+    getSystemMetricsRegistries.foreach(
+      r => systemMeterBinder.foreach(_.bindTo(r))
+    )
+    getMongoDbMetricsRegistries.foreach(
+      r => mongoDbMeterBinder.foreach(_.bindTo(r))
+    )
+    getEventMetricsRegistries.foreach(
+      r => eventMeterBinder.foreach(_.bindTo(r))
+    )
   }
 
 }
