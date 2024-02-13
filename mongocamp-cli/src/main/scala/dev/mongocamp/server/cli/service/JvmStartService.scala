@@ -5,11 +5,10 @@ import dev.mongocamp.server.service.CoursierModuleService
 
 object JvmStartService {
 
-  def startServer(): Int = {
-    scala.util.Properties.osName
-    val jars       = CoursierModuleService.loadServerWithAllDependencies()
+  def startServer(): scala.sys.process.Process = {
+    val jars = CoursierModuleService.loadServerWithAllDependencies()
     val runCommand = s"${JvmService.javaHome}/bin/java -cp ${jars.mkString(":")} ${BuildInfo.mainClass}"
-    ProcessExecutorService.executeToStout(runCommand)
+    ProcessExecutorService.stoutProcessBuilder(runCommand)
   }
 
   def startServerWithAgent(path: String): Int = {

@@ -2,12 +2,13 @@ package dev.mongocamp.server.cli
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.cli.service.{ JvmStartService, ProcessExecutorService }
+import dev.mongocamp.server.cli.service.{JvmStartService, ProcessExecutorService, ServerService}
 import dev.mongocamp.server.service.PluginService
 import picocli.CommandLine.Help.Ansi
-import picocli.CommandLine.{ Command, Parameters }
+import picocli.CommandLine.{Command, Parameters}
 
 import java.util.concurrent.Callable
+import scala.sys.process
 
 @Command(
   name = "run",
@@ -19,44 +20,7 @@ class StartApplicationCommand extends Callable[Integer] with LazyLogging {
   var mode: String = "default"
 
   def call(): Integer = {
-    println(Ansi.AUTO.string(s"@|yellow Start MongoCamp Server with $mode|@"))
-    mode match {
-      case s: String if s.equalsIgnoreCase("jvm") => JvmStartService.startServer()
-
-      case s: String if s.equalsIgnoreCase("native") =>
-        val pluginUrls = PluginService
-          .listOfReadableUrls()
-          .map(
-            url => File(url)
-          )
-        if (pluginUrls.nonEmpty) {
-          var response = Main.commandLine.execute(List("buildNative"): _*).abs
-          response += ProcessExecutorService.executeToStout("./server-with-plugins").abs
-          response
-        }
-        else {
-          ProcessExecutorService.executeToStout("./server-raw")
-        }
-
-      case s: String if s.equalsIgnoreCase("default") =>
-        val pluginUrls = PluginService
-          .listOfReadableUrls()
-          .map(
-            url => File(url)
-          )
-        // todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
-        if (pluginUrls.nonEmpty || true) {
-          JvmStartService.startServer()
-        }
-        else {
-          ProcessExecutorService.executeToStout("./server-raw")
-        }
-
-      case _ =>
-        println(Ansi.AUTO.string(s"@|bold,red Could not found definition for Mode $mode|@"))
-        1
-
-    }
+    ServerService.startServer(mode)
   }
 
 }

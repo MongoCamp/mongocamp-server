@@ -128,27 +128,30 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging 
 
   val shutdownEndpoint = applicationApiBaseEndpoint
     .in("system")
+    .in(query[Boolean]("force").description("Shutdown Server and don`t send reboot event.").default(false))
     .out(jsonBody[JsonValue[Boolean]])
     .summary("Shutdown MongoCamp")
     .description("Shutdown the running MongoCamp Application. CLI Mode will automatically restart the Application.")
     .method(Method.DELETE)
     .name("shutdown")
     .serverLogic(
-      _ => _ => shutdown()
+      _ => force => shutdown(force)
     )
 
-  def shutdown(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
+  def shutdown(force: Boolean): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       Right {
         Future {
-          val temp    = File(File.temp.pathAsString + s"/mongocamp_${BuildInfo.version}")
-          val tmpFile = File.newTemporaryFile(parent = Some(temp))
-          val pid     = ProcessHandle.current.pid
-          val shutdownTimestamp = System.currentTimeMillis() + 1.seconds.toMillis
-          tmpFile.write("{\"event\":\"shutdown\",\"timestamp\":\"" + shutdownTimestamp + "\",\"pid\":\"" + pid + "\"}")
-          tmpFile.appendLine()
-          logger.trace(s"Shutdown triggered. File written. $tmpFile.")
-          while (java.lang.System.currentTimeMillis() < shutdownTimestamp) {}
+          if (!force) {
+            val temp    = File(File.temp.pathAsString + s"/mongocamp_${BuildInfo.version}")
+            val tmpFile = File.newTemporaryFile(parent = Some(temp))
+            val pid     = ProcessHandle.current.pid
+            val shutdownTimestamp = System.currentTimeMillis() + 1.seconds.toMillis
+            tmpFile.write("{\"event\":\"shutdown\",\"timestamp\":\"" + shutdownTimestamp + "\",\"pid\":\"" + pid + "\"}")
+            tmpFile.appendLine()
+            logger.trace(s"Shutdown triggered. File written. $tmpFile.")
+            while (java.lang.System.currentTimeMillis() < shutdownTimestamp) {}
+          }
           java.lang.System.exit(0)
         }(scala.concurrent.ExecutionContext.global)
         JsonValue(true)
