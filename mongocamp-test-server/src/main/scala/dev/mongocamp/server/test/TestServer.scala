@@ -64,6 +64,8 @@ object TestServer extends LazyLogging {
     _serverRunning
   }
 
+  def ignoreRunningInstanceAndReset(): Unit = _serverRunning = false
+
   def serverBaseUrl: String = {
     "http://%s:%s".format(server.interface, server.port)
   }
