@@ -1,6 +1,6 @@
 name := "mongocamp-server"
 
-val TapirVersion = "1.9.9"
+val TapirVersion = "1.11.7"
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-pekko-http-server" % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"      % TapirVersion
 libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % TapirVersion
@@ -9,11 +9,11 @@ libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-sttp-client"     
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-docs"       % TapirVersion
 //libraryDependencies += "com.softwaremill.sttp.tapir" %% "tapir-asyncapi-circe-yaml" % TapirVersion
 
-val sttClientVersion = "3.9.3"
+val sttClientVersion = "3.10.1"
 libraryDependencies += "com.softwaremill.sttp.client3" %% "pekko-http-backend" % sttClientVersion
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core"               % sttClientVersion
 
-libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "10.0.0"
+libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "10.0.1"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 

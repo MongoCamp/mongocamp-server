@@ -2,63 +2,24 @@ package dev.mongocamp.server.test
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import de.flapdoodle.embed.mongo.config.Net
-import de.flapdoodle.embed.mongo.distribution.Version
-import de.flapdoodle.embed.mongo.transitions.{ Mongod, RunningMongodProcess }
-import de.flapdoodle.embed.mongo.types.DatabaseDir
-import de.flapdoodle.embed.process.io.ProcessOutput
-import de.flapdoodle.reverse.TransitionWalker
-import de.flapdoodle.reverse.transitions.Start
 import dev.mongocamp.server.database.TestAdditions
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.wait.strategy.Wait
 import sttp.client3._
 import sttp.model.Method
 
+import scala.concurrent.duration.DurationInt
+import scala.jdk.DurationConverters.ScalaDurationOps
 import scala.util.Random
 
 object MongoTestServer extends LazyLogging {
   private var running: Boolean = false
 
-  var mongoPort: Int = setPort()
-
-  var process: TransitionWalker.ReachedState[RunningMongodProcess] = null
-
-  def setPort(): Int = {
-    val port = Random.nextInt(10000) + TestAdditions.minPort
-    System.setProperty("CONNECTION_PORT", port.toString)
-    mongoPort = port
-    mongoPort
-  }
-
-  private var mongodExecutable: Mongod = initMonoExecutable
-
-  private var tempDir = File.newTemporaryDirectory()
-
-  private def initMonoExecutable: Mongod = {
-    val mongod = Mongod
-      .builder()
-      .net(
-        Start
-          .to(classOf[Net])
-          .providedBy(
-            () => Net.builder().port(mongoPort).bindIp(Net.defaults().getBindIp).isIpv6(false).build()
-          )
-      )
-      .databaseDir(
-        Start
-          .to(classOf[DatabaseDir])
-          .providedBy(
-            () => DatabaseDir.of(tempDir.path)
-          )
-      )
-      .processOutput(
-        Start
-          .to(classOf[ProcessOutput])
-          .providedBy(
-            () => ProcessOutput.silent()
-          )
-      )
-      .build()
-    mongod
+  private lazy val containerConfiguration: GenericContainer[_] = {
+    val mongoDbContainer = new GenericContainer(s"mongocamp/mongodb:latest")
+    mongoDbContainer.withExposedPorts(27017)
+    mongoDbContainer.waitingFor(Wait.forLogMessage("(.*?)child process started successfully, parent exiting(.*?)", 2).withStartupTimeout(60.seconds.toJava))
+    mongoDbContainer
   }
 
   def isRunning: Boolean = running
@@ -85,23 +46,26 @@ object MongoTestServer extends LazyLogging {
   def startMongoDatabase(): Unit = {
     checkForLocalRunningMongoDb()
     if (!running) {
-      process = mongodExecutable.start(Version.V7_0_4)
+      try
+        containerConfiguration.start()
+      catch {
+        case _: Throwable =>
+      }
+      System.setProperty("CONNECTION_PORT", containerConfiguration.getMappedPort(27017).toString)
+      System.setProperty("CONNECTION_HOST", containerConfiguration.getHost)
       running = true
       sys.addShutdownHook({
         println("Shutdown for MongoDB Server triggered.")
         stopMongoDatabase()
       })
+
     }
   }
 
   def stopMongoDatabase(): Unit = {
     if (running) {
-      process.current().stop()
-      process = null
+      containerConfiguration.stop()
       running = false
-      tempDir.delete()
-      tempDir = File.newTemporaryDirectory()
-      mongodExecutable = initMonoExecutable
     }
   }
 

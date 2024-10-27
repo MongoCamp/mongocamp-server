@@ -1,20 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <conversionRule conversionWord="highlighttx" converterClass="dev.mongocamp.server.logging.HighlightingColorConverter" />
+<?xml version="1.0" encoding="UTF-8" ?>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender" target="System.out">
-        <withJansi>true</withJansi>
-        <encoder>
+<configuration>
+    <conversionRule conversionWord="highlighttx"
+                    converterClass="dev.mongocamp.server.logging.HighlightingColorConverter"/>
+    <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
+    <import class="ch.qos.logback.core.ConsoleAppender"/>
+
+    <appender name="STDOUT" class="ConsoleAppender" target="System.out">
+        <encoder class="PatternLayoutEncoder">
             <pattern>%d{HH:mm:ss.SSS} %highlighttx(%-5level) %highlighttx(%logger{36}) - %msg %n</pattern>
         </encoder>
     </appender>
 
-    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="CONSOLE" />
-    </appender>
-
     <root level="warn">
-        <appender-ref ref="ASYNC_CONSOLE"/>
+        <appender-ref ref="STDOUT"/>
     </root>
-
 </configuration>

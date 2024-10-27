@@ -6,4 +6,4 @@ buildInfoPackage := "dev.mongocamp.server.plugin.micrometer"
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
-libraryDependencies += "dev.mongocamp" %% "micrometer-mongodb" % "0.7.1"
+libraryDependencies += "dev.mongocamp" %% "micrometer-mongodb" % "1.0.1"

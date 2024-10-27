@@ -32,7 +32,7 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
 
   def jvmMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.getJvmMetricsRegistries.head.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getJvmMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
     }))
   }
@@ -50,7 +50,7 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
 
   def systemMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.getSystemMetricsRegistries.head.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getSystemMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
     }))
   }
@@ -68,7 +68,7 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
 
   def mongoDbMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.getMongoDbMetricsRegistries.head.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getMongoDbMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
     }))
   }
@@ -86,7 +86,7 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
 
   def eventMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
     Future.successful(Right({
-      val meters = MetricsConfiguration.getEventMetricsRegistries.head.getMeters.asScala.toList
+      val meters = MetricsConfiguration.getEventMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
     }))
   }
