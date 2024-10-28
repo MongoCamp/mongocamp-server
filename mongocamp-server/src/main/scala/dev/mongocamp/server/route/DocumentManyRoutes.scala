@@ -49,7 +49,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
           val result                         = dao.insertMany(listOfDocuments).result()
           val listOfIds                      = result.getInsertedIds.values().asScala.map(_.asObjectId().getValue.toHexString).toList
           val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
-          EventSystem.eventStream.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
+          EventSystem.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
           insertedResult
         }
       )
@@ -93,7 +93,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
+          EventSystem.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
           updateResponse
         }
       )
@@ -127,7 +127,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
           val oldValues      = dao.find(deleteFilter).resultList()
           val result         = dao.deleteMany(deleteFilter).result()
           val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-          EventSystem.eventStream.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
+          EventSystem.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
           deleteResponse
         }
       )

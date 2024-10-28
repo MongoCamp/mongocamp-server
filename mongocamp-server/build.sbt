@@ -15,6 +15,8 @@ libraryDependencies += "com.softwaremill.sttp.client3" %% "core"               %
 
 libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "10.0.1"
 
+libraryDependencies += "org.jgroups" % "jgroups" % "5.3.13.Final"
+
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.3.2"
 
 enablePlugins(BuildInfoPlugin)

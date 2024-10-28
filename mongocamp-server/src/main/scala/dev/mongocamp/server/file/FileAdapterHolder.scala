@@ -19,7 +19,7 @@ object FileAdapterHolder {
     )
     .map(
       plugin => {
-        EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "FilePlugin"))
+        EventSystem.publish(PluginLoadedEvent(plugin.getClass.getName, "FilePlugin"))
         plugin
       }
     )

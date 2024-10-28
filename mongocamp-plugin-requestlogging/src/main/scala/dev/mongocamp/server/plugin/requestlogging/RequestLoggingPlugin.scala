@@ -17,8 +17,8 @@ object RequestLoggingPlugin extends ServerPlugin with LazyLogging {
     ConfigurationService.registerConfig(ConfigKeyRequestLogging, MongoCampConfiguration.confTypeBoolean, Option(true), needsRestartForActivation = true)
     MongoDatabase.addToProvider(classOf[DatabaseRequestLoggingElement])
     if (ConfigurationService.getConfigValue(ConfigKeyRequestLogging)) {
-      val requestLoggingActor = EventSystem.eventBusActorSystem.actorOf(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
-      EventSystem.eventStream.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
+      val requestLoggingActor = EventSystem.startActor(Props(classOf[RequestLoggingActor]), "requestLoggingActor")
+      EventSystem.subscribe(requestLoggingActor, classOf[HttpRequestEvent])
     }
   }
 

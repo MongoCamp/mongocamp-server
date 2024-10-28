@@ -94,7 +94,7 @@ object DatabaseRoutes extends RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dropDatabase(databaseName).result()
-      EventSystem.eventStream.publish(DropDatabaseEvent(userInformation, databaseName))
+      EventSystem.publish(DropDatabaseEvent(userInformation, databaseName))
       JsonValue(true)
     }))
   }

@@ -38,7 +38,7 @@ object AuthRoutes extends BaseRoute {
     Future.successful {
       val user                     = AuthHolder.handler.findUser(loginInformation.userId, AuthHolder.handler.encryptPassword(loginInformation.password))
       val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(user)
-      EventSystem.eventStream.publish(LoginEvent(user))
+      EventSystem.publish(LoginEvent(user))
       Right(loginResult)
     }
   }
@@ -89,7 +89,7 @@ object AuthRoutes extends BaseRoute {
           TokenCache
             .validateToken(tokenValue)
             .foreach(
-              user => EventSystem.eventStream.publish(LogoutEvent(user))
+              user => EventSystem.publish(LogoutEvent(user))
             )
           TokenCache.invalidateToken(tokenValue)
           true
@@ -155,7 +155,7 @@ object AuthRoutes extends BaseRoute {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password)
       if (result) {
-        EventSystem.eventStream.publish(UpdatePasswordEvent(loggedInUser, loggedInUser.userId))
+        EventSystem.publish(UpdatePasswordEvent(loggedInUser, loggedInUser.userId))
       }
       Right(JsonValue(result))
     }
@@ -178,7 +178,7 @@ object AuthRoutes extends BaseRoute {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(loggedInUser.userId)
-      EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, loggedInUser.userId))
+      EventSystem.publish(UpdateApiKeyEvent(loggedInUser, loggedInUser.userId))
       Right(JsonValue(result))
     }
   }

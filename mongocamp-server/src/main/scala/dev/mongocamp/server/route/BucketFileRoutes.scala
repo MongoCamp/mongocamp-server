@@ -173,7 +173,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
               FileAdapterHolder.handler.putFile(authorizedCollectionRequest.collection, fileId.toHexString, uploadedFile)
             }
             val insertedResult = InsertResponse(wasAcknowledged = true, List(fileId.toHexString))
-            EventSystem.eventStream.publish(CreateFileEvent(authorizedCollectionRequest.userInformation, insertedResult))
+            EventSystem.publish(CreateFileEvent(authorizedCollectionRequest.userInformation, insertedResult))
 
             insertedResult
           }
@@ -264,7 +264,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
         val fileCollectionDelete = FileInformationDao(authorizedCollectionRequest.collection).deleteOne(Map("_id" -> convertIdField(parameter))).result()
         val fileDeleted          = FileAdapterHolder.handler.deleteFile(authorizedCollectionRequest.collection, parameter)
         val deleteResponse       = DeleteResponse(fileCollectionDelete.wasAcknowledged() && fileDeleted, fileCollectionDelete.getDeletedCount)
-        EventSystem.eventStream.publish(DeleteFileEvent(authorizedCollectionRequest.userInformation, deleteResponse))
+        EventSystem.publish(DeleteFileEvent(authorizedCollectionRequest.userInformation, deleteResponse))
         deleteResponse
       })
     )
@@ -323,7 +323,7 @@ object BucketFileRoutes extends BucketBaseRoute with RoutesPlugin {
           result.getModifiedCount,
           result.getMatchedCount
         )
-        EventSystem.eventStream.publish(UpdateFileEvent(authorizedCollectionRequest.userInformation, updateResponse))
+        EventSystem.publish(UpdateFileEvent(authorizedCollectionRequest.userInformation, updateResponse))
         updateResponse
       })
     )

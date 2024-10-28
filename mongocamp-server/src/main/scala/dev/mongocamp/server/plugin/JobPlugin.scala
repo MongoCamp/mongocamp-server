@@ -80,7 +80,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       reloadJobs()
       if (inserted.wasAcknowledged()) {
         userInformationOption.foreach(
-          userInformation => EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig))
+          userInformation => EventSystem.publish(CreateJobEvent(userInformation, jobConfig))
         )
       }
       inserted.wasAcknowledged()
@@ -138,7 +138,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       val updateResponse = MongoDaoHolder.jobDao.replaceOne(Map("name" -> jobName, "group" -> groupName), jobConfig).result()
       reloadJobs()
       if (updateResponse.getModifiedCount > 0) {
-        EventSystem.eventStream.publish(UpdateJobEvent(userInformation, jobName, groupName, jobConfig))
+        EventSystem.publish(UpdateJobEvent(userInformation, jobName, groupName, jobConfig))
       }
       updateResponse.wasAcknowledged() && updateResponse.getModifiedCount > 0
     }
@@ -151,7 +151,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     val deleteResponse = MongoDaoHolder.jobDao.deleteMany(Map("name" -> jobName, "group" -> groupName)).result()
     reloadJobs()
     if (deleteResponse.getDeletedCount > 0) {
-      EventSystem.eventStream.publish(DeleteJobEvent(userInformation, jobName, groupName))
+      EventSystem.publish(DeleteJobEvent(userInformation, jobName, groupName))
     }
     deleteResponse.wasAcknowledged() && deleteResponse.getDeletedCount > 0
   }

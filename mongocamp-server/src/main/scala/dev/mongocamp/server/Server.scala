@@ -46,7 +46,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
       )
       .map(
         plugin => {
-          EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
+          EventSystem.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
           plugin
         }
       )
@@ -97,15 +97,13 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   private def activateServerPlugins(): Unit = {
-    ReflectionService
-      .instancesForType(classOf[ServerPlugin])
-      .filterNot(
-        plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
-      )
+    val serverPlugins = ReflectionService.instancesForType(classOf[ServerPlugin])
+    val serverPluginsToActivate = serverPlugins.filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
+    serverPluginsToActivate
       .map(
         plugin => {
           plugin.activate()
-          EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
+          EventSystem.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
           plugin
         }
       )
@@ -131,7 +129,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
             logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
           }
 
-          EventSystem.eventStream.publish(ServerStartedEvent())
+          EventSystem.publish(ServerStartedEvent())
           doAfterServerStartUp()
           serverBinding
         }

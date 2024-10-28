@@ -190,7 +190,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right({
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       dao.drop().result()
-      EventSystem.eventStream.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      EventSystem.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue(true)
     }))
   }
@@ -215,7 +215,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
         {
           val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result = dao.deleteAll().result()
-          EventSystem.eventStream.publish(ClearCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+          EventSystem.publish(ClearCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
           JsonValue(result.wasAcknowledged())
         }
       )

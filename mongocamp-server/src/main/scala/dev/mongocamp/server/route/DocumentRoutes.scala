@@ -149,7 +149,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
           val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
           val result         = dao.insertOne(documentFromScalaMap(convertFields(parameter))).result()
           val insertedResult = InsertResponse(result.wasAcknowledged(), List(result.getInsertedId.asObjectId().getValue.toHexString))
-          EventSystem.eventStream.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
+          EventSystem.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
           insertedResult
         }
       )
@@ -204,7 +204,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
         val oldValues      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(filter).resultList()
         val result         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).deleteOne(filter).result()
         val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-        EventSystem.eventStream.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
+        EventSystem.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
         deleteResponse
       })
     )
@@ -255,7 +255,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
+          EventSystem.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
           updateResponse
         }
       )
@@ -309,7 +309,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
             result.getModifiedCount,
             result.getMatchedCount
           )
-          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
+          EventSystem.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
           updateResponse
         }
       )

@@ -92,7 +92,7 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").drop().result()
       FileAdapterHolder.handler.delete(authorizedCollectionRequest.collection)
-      EventSystem.eventStream.publish(DropBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      EventSystem.publish(DropBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue[Boolean](true)
     }))
   }
@@ -115,7 +115,7 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     Future.successful(Right({
       MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").deleteAll().result()
       val clearResponse = FileAdapterHolder.handler.clear(authorizedCollectionRequest.collection)
-      EventSystem.eventStream.publish(ClearBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      EventSystem.publish(ClearBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue[Boolean](clearResponse)
     }))
   }

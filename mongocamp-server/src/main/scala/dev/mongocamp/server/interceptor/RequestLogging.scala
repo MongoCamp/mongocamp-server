@@ -71,7 +71,7 @@ object RequestLogging {
                       methodeName,
                       endpoint.info.description.getOrElse("NOT_SET")
                     )
-                    EventSystem.eventStream.publish(requestCompletedEvent)
+                    EventSystem.publish(requestCompletedEvent)
                     histogram
                   })
               }
@@ -102,7 +102,7 @@ object RequestLogging {
                       methodeName,
                       endpoint.info.description.getOrElse("NOT_SET")
                     )
-                    EventSystem.eventStream.publish(requestCompletedEvent)
+                    EventSystem.publish(requestCompletedEvent)
                     histogram
                   })
               }
@@ -126,7 +126,7 @@ object RequestLogging {
                         endpoint.info.description.getOrElse("NOT_SET")
                       )
 
-                    EventSystem.eventStream.publish(requestStartEvent)
+                    EventSystem.publish(requestStartEvent)
                     endpoint
                   })
               )
