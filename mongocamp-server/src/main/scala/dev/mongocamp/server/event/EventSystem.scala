@@ -2,9 +2,10 @@ package dev.mongocamp.server.event
 
 import better.files.{File, Resource}
 import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
-import org.jgroups.{JChannel, Message, ObjectMessage}
+import org.jgroups.{Address, JChannel, Message, ObjectMessage}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.jdk.CollectionConverters._
 
 object EventSystem {
 
@@ -27,6 +28,9 @@ object EventSystem {
       }
 
     })
+    sys.addShutdownHook(() => {
+      channel.close()
+    })
     channel.connect("mongocamp-all-events")
   }
 
@@ -45,6 +49,18 @@ object EventSystem {
 
   def startActor(props: Props, name: String): ActorRef = {
     eventBusActorSystem.actorOf(props, name)
+  }
+
+  def listOfMembers: List[Address] = {
+    channel.view.getMembers.asScala.toList
+  }
+
+  def coordinator: Address = {
+    channel.view.getCoord
+  }
+
+  def isCoordinator: Boolean = {
+    channel.view.getCoord.equals(channel.address)
   }
 
 }
