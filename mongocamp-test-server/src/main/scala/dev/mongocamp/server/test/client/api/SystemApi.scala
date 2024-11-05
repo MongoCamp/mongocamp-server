@@ -11,6 +11,8 @@
  */
 package dev.mongocamp.server.test.client.api
 
+import dev.mongocamp.server.test.client.core.JsonSupport._
+import dev.mongocamp.server.test.client.model.Version
 import sttp.client3._
 import sttp.model.Method
 
@@ -46,5 +48,17 @@ class SystemApi(baseUrl: String) {
       .auth.bearer(bearerToken)
       .header("X-AUTH-APIKEY", apiKey)
       .response(asEither(asString, ignore))
+
+  /** Version Info of the MongoCamp API
+   *
+   * Expected answers: code 200 : Version () code 0 : ErrorDescription () Headers : x-error-code - Error Code x-error-message - Message of the
+   * MongoCampException x-error-additional-info - Additional information for the MongoCampException
+   */
+  def version(
+             ) =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/version")
+      .contentType("application/json")
+      .response(asJson[Version])
 
 }
