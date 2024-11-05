@@ -13,8 +13,7 @@ import dev.mongocamp.server.service.ConfigurationService
 import org.joda.time.DateTime
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{ Duration, DurationInt, FiniteDuration }
-import scala.util.Try
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 
 object TokenCache {
   val keyToken   = "token"
@@ -22,9 +21,12 @@ object TokenCache {
 
   private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
 
-  Try {
+  try {
     val cleanUpJobClass = classOf[CleanUpTokenJob]
     JobPlugin.addJob(JobConfig(cleanUpJobClass.getSimpleName, cleanUpJobClass.getName, "", "0 0/5 * ? * * *", "CleanUp", 10))
+  } catch {
+    case _: Throwable =>
+      ""
   }
   private def authTokenCacheDB = ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
 

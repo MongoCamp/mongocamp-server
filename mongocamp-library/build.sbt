@@ -2,7 +2,7 @@ name := "mongocamp-library"
 
 libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.14"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.8.0"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.8.1"
 
 libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.177"
 

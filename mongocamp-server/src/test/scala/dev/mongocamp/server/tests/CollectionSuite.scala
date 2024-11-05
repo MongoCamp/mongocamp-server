@@ -3,8 +3,8 @@ package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.{ CollectionApi, DatabaseApi }
-import dev.mongocamp.server.test.client.model.{ MongoAggregateRequest, PipelineStage }
+import dev.mongocamp.server.test.client.api.{CollectionApi, DatabaseApi}
+import dev.mongocamp.server.test.client.model.{MongoAggregateRequest, PipelineStage}
 
 class CollectionSuite extends MongoCampBaseServerSuite {
 
@@ -13,13 +13,19 @@ class CollectionSuite extends MongoCampBaseServerSuite {
 
   test("list all collections as admin") {
     val response = executeRequestToResponse(collectionApi.listCollections("", "", adminBearerToken, "")())
+    assertEquals(response.size, 17)
     assertEquals(
       response,
       List(
         "accounts",
         "admin-test",
         "mc_configuration",
-        "mc_jobs",
+        "mc_jobs_CRON_TRIGGERS",
+        "mc_jobs_FIRED_TRIGGERS",
+        "mc_jobs_JOB_DETAILS",
+        "mc_jobs_LOCKS",
+        "mc_jobs_SCHEDULER_STATE",
+        "mc_jobs_TRIGGERS",
         "mc_roles",
         "mc_token_cache",
         "mc_users",
@@ -30,8 +36,6 @@ class CollectionSuite extends MongoCampBaseServerSuite {
         "users"
       )
     )
-    assertEquals(response.size, 12)
-
   }
 
   test("collection status accounts as admin") {

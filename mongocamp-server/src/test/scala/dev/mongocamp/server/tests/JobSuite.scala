@@ -1,8 +1,10 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
 import dev.mongocamp.server.test.client.api.JobsApi
 import dev.mongocamp.server.test.client.model.JobConfig
+import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
+
+import scala.concurrent.duration.DurationInt
 
 class JobSuite extends MongoCampBaseServerSuite {
 
@@ -29,13 +31,14 @@ class JobSuite extends MongoCampBaseServerSuite {
   }
 
   test("list jobs as admin") {
+    val token = adminBearerToken
     val jobsList = executeRequestToResponse(jobsApi.jobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
     val fistJob = jobsList.head
     assertEquals(fistJob.jobClassName, "dev.mongocamp.server.test.CountingTestJob")
     assertEquals(fistJob.name, "CountingTestJob")
     assertEquals(fistJob.group, "Default")
-    assertEquals(fistJob.description, "")
+    assertEquals(fistJob.description, None)
     assertEquals(fistJob.cronExpression, "0/5 * * ? * * *")
     assertEquals(fistJob.nextScheduledFireTime.isDefined, true)
   }
@@ -51,6 +54,7 @@ class JobSuite extends MongoCampBaseServerSuite {
     val countBefore = CountingTestJob.counter
     val executedJob = executeRequestToResponse(jobsApi.executeJob("", "", adminBearerToken, "")("Default", "CountingTestJob"))
     assertEquals(executedJob.value, true)
+    Thread.sleep(1.seconds.toMillis)
     val countAfter = CountingTestJob.counter
     assertEquals(countAfter > countBefore, true)
   }
@@ -69,7 +73,7 @@ class JobSuite extends MongoCampBaseServerSuite {
     assertEquals(executedJob.group, config.group)
     assertEquals(executedJob.jobClassName, config.className)
     assertEquals(executedJob.cronExpression, config.cronExpression)
-    assertEquals(executedJob.description, config.description)
+    assertEquals(executedJob.description.get, config.description)
     assertEquals(executedJob.nextScheduledFireTime.isDefined, true)
   }
 
@@ -89,7 +93,7 @@ class JobSuite extends MongoCampBaseServerSuite {
     assertEquals(executedJob.group, config.group)
     assertEquals(executedJob.jobClassName, config.className)
     assertEquals(executedJob.cronExpression, config.cronExpression)
-    assertEquals(executedJob.description, config.description)
+    assertEquals(executedJob.description.get, config.description)
     assertEquals(executedJob.nextScheduledFireTime.isDefined, true)
   }
 

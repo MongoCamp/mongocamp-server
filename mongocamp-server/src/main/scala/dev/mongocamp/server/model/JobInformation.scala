@@ -6,7 +6,7 @@ case class JobInformation(
     name: String,
     group: String,
     jobClassName: String,
-    description: String,
+    description: Option[String],
     cronExpression: String,
     priority: Int,
     lastScheduledFireTime: Option[Date],

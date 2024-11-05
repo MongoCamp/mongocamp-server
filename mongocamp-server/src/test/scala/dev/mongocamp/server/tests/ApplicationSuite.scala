@@ -11,7 +11,7 @@ class ApplicationSuite extends MongoCampBaseServerSuite {
   test("Show all System Settings") {
     val systemSettings = executeRequestToResponse(applicationApi.settings("", "", adminBearerToken, "")())
     assertEquals(systemSettings.filePlugins.size, 1)
-    assertEquals(systemSettings.routesPlugins.size, 10)
+    assertEquals(systemSettings.routesPlugins.size, 11)
     assertEquals(systemSettings.ignoredPlugins.size, 0)
     assertEquals(systemSettings.configurations.size, 32)
     assertEquals(systemSettings.configurations("CORS_HEADERS_ALLOWED"), List("Authorization", "Content-Type", "X-Requested-With", "X-AUTH-APIKEY"))

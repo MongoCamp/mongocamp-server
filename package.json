@@ -12,7 +12,7 @@
     "docs:build" : "pnpm docs:external; vitepress build docs",
     "docs:external" : "sh docs/external/fileloader.sh",
     "docs:dev" : "pnpm docs:external; vitepress dev docs",
-    "api-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:8080/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.test.client,jsonLibrary=circe,dateLibrary=joda"
+    "api-codegen" : "openapi-generator-cli generate -i http://0.0.0.0:1511/docs/docs.yaml -o ./src/test/scala/dev/mongocamp/server/client-project -g scala-sttp --additional-properties=mainPackage=dev.mongocamp.server.test.client,jsonLibrary=circe,dateLibrary=joda"
   },
   "repository" : {
     "type" : "git",
