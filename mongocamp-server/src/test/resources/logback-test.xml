@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <configuration>
-    <conversionRule conversionWord="highlighttx"
-                    converterClass="dev.mongocamp.server.logging.HighlightingColorConverter"/>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+    <conversionRule conversionWord="highlighttx" onverterClass="dev.mongocamp.server.logging.HighlightingColorConverter"/>
     <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
     <import class="ch.qos.logback.core.ConsoleAppender"/>
 

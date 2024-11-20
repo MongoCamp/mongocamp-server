@@ -1,5 +1,6 @@
 package dev.mongocamp.server.route
 
+import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.Version
 import dev.mongocamp.server.plugin.RoutesPlugin
@@ -7,7 +8,7 @@ import io.circe.generic.auto._
 import org.joda.time.DateTime
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.{ Method, StatusCode }
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint

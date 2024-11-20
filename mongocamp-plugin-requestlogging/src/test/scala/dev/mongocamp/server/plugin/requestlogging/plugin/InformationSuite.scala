@@ -2,12 +2,12 @@ package dev.mongocamp.server.plugin.requestlogging.plugin
 
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.InformationApi
+import dev.mongocamp.server.test.client.api.SystemApi
 import org.joda.time.DateTime
 
 class InformationSuite extends MongoCampBaseServerSuite {
 
-  lazy val informationApi: InformationApi = InformationApi()
+  lazy val informationApi: SystemApi = SystemApi()
 
   test("check version by api request") {
     val version = executeRequestToResponse(informationApi.version())

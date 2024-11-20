@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.RestServer
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.service.ReflectionService
-import dev.mongocamp.server.test.client.api.InformationApi
+import dev.mongocamp.server.test.client.api.SystemApi
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
@@ -45,7 +45,7 @@ object TestServer extends LazyLogging {
           }
           mongoServerStarted = true
         }
-        val versionRequest = InformationApi().version()
+        val versionRequest = SystemApi().version()
         val versionFuture  = TestAdditions.backend.send(versionRequest)
         versionFuture.body.getOrElse(throw new Exception("error"))
         _serverRunning = true

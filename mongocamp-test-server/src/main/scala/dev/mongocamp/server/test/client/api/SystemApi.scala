@@ -11,14 +11,14 @@
  */
 package dev.mongocamp.server.test.client.api
 
+import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model.Version
 import sttp.client3._
 import sttp.model.Method
 
 object SystemApi {
-
-def apply(baseUrl: String = "http://localhost") = new SystemApi(baseUrl)
+  def apply(baseUrl: String = TestServer.serverBaseUrl) = new SystemApi(baseUrl)
 }
 
 class SystemApi(baseUrl: String) {

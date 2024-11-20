@@ -1,0 +1,17 @@
+[
+  {
+    "interfaces": [
+      "java.security.PrivilegedAction"
+    ]
+  },
+  {
+    "interfaces": [
+      "java.sql.Connection"
+    ]
+  },
+  {
+    "interfaces": [
+      "java.util.function.Consumer"
+    ]
+  }
+]

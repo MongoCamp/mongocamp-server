@@ -19,19 +19,25 @@ object NativeImageBuildService {
     ProcessExecutorService.executeToString(installCommand)
   }
 
-  def buildNativeImage(jars: List[File], imageName: String): String = {
-    val buildOptions = List(
+  def buildNativeImage(jars: List[File], imageName: String, waitForDebug : Boolean = false): String = {
+    var buildOptions = List(
       "--no-fallback",
       "--verbose",
       "--native-image-info",
       "-H:+DumpOnError",
-      "-H:+ReportExceptionStackTraces",
-      "-H:+ReportUnsupportedElementsAtRuntime",
-      "-H:+PrintAnalysisCallTree",
+//      "-H:+ReportExceptionStackTraces",
+//      "-H:+ReportUnsupportedElementsAtRuntime",
+//      "-H:+PrintAnalysisCallTree",
+//      "-H:Log=registerResource:5",
       "--report-unsupported-elements-at-runtime",
-      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
+//      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
     )
-    val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
+    if (waitForDebug) {
+      buildOptions = buildOptions ++ List("--debug-attach")
+    }
+    val tempDir = File.newTemporaryDirectory()
+    val classPath = (jars ++ List(tempDir.toString()))
+    val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${classPath.mkString(":")} ${BuildInfo.mainClass} $imageName"
     val result          = ProcessExecutorService.executeToString(generateCommand)
     if (result.contains(s"Failed generating '${imageName}'")) {
       throw NativeBuildException(result)
@@ -43,7 +49,9 @@ object NativeImageBuildService {
       runnableResponse = runnableResponse.trim
       runnableResponse = runnableResponse.trim
     }
-    println(s"Runnable Path after build: ${runnableResponse}")
+    println(s"Runnable Path after build: $runnableResponse")
+    println(s"TempDir: $tempDir")
+//    tempDir.delete()
     runnableResponse
   }
 

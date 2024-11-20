@@ -4,6 +4,8 @@ libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.15"
 
 libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.8.1"
 
+libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.16"
+
 libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.177"
 
 libraryDependencies += ("com.github.blemale" %% "scaffeine" % "5.3.0").exclude("org.scala-lang.modules", "scala-java8-compat_2.12")
@@ -17,7 +19,7 @@ libraryDependencies += "com.softwaremill.sttp.model" %% "core" % "1.7.11"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.13.0"
 
-libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
+libraryDependencies += "org.semver4j" % "semver4j" % "5.4.1"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.12"
 

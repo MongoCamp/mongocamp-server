@@ -3,13 +3,12 @@ package dev.mongocamp.server.plugins.monitoring
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.client.api.MetricsApi
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.InformationApi
+import dev.mongocamp.server.test.client.api.SystemApi
 import org.joda.time.DateTime
 class PersistenceSuite extends MicrometerBaseServerSuite {
 
   lazy val metricsApi: MetricsApi = MetricsApi()
-  lazy val informationApi: InformationApi = InformationApi()
+  lazy val informationApi: SystemApi = SystemApi()
 
   override def beforeEach(context: BeforeEach): Unit = {
     val jvmMetrics = executeRequestToResponse(metricsApi.jvmMetrics("", "", adminBearerToken, "")())

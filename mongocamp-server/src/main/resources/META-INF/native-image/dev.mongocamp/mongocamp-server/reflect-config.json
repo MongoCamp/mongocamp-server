@@ -1,12 +1,36 @@
 [
   {
+    "name": "<root>.dev"
+  },
+  {
+    "name": "<root>.java"
+  },
+  {
+    "name": "<root>.jdk"
+  },
+  {
+    "name": "<root>.org"
+  },
+  {
+    "name": "<root>.package"
+  },
+  {
+    "name": "<root>.scala"
+  },
+  {
+    "name": "<root>.sun"
+  },
+  {
     "name": "[B"
   },
   {
-    "name": "[Lorg.apache.pekko.actor.LightArrayRevolverScheduler$TaskQueue;"
+    "name": "[Lcom.zaxxer.hikari.util.ConcurrentBag$IConcurrentBagEntry;"
   },
   {
-    "name": "[Lorg.apache.pekko.stream.stage.GraphStageLogic;"
+    "name": "[Lio.circe.Json$JNumber;"
+  },
+  {
+    "name": "[Lio.github.classgraph.ObjectTypedValueWrapper;"
   },
   {
     "name": "[Ljava.lang.Class;"
@@ -15,514 +39,37 @@
     "name": "[Ljava.lang.String;"
   },
   {
-    "name": "[Ljava.net.URL;"
+    "name": "[Ljava.nio.file.LinkOption;"
   },
   {
-    "name": "[Ljava.nio.file.LinkOption;"
+    "name": "[Ljava.nio.file.OpenOption;"
+  },
+  {
+    "name": "[Ljava.nio.file.attribute.FileAttribute;"
+  },
+  {
+    "name": "[Ljava.sql.Statement;"
+  },
+  {
+    "name": "[Lorg.apache.pekko.actor.LightArrayRevolverScheduler$TaskQueue;"
+  },
+  {
+    "name": "[Lorg.apache.pekko.stream.stage.GraphStageLogic;"
   },
   {
     "name": "[Lscala.Function2;"
   },
   {
-    "name": "[Lscala.Option;"
+    "name": "[Lscala.reflect.internal.Symbols$Symbol;"
   },
   {
-    "name": "[Lsttp.model.UriInterpolator$Token;"
+    "name": "[Lscala.reflect.internal.Types$Type;"
   },
   {
-    "name": "org.apache.pekko.actor.ActorCell",
-    "fields": [
-      {
-        "name": "org$apache$pekko$actor$dungeon$Children$$_childrenRefsDoNotCallMeDirectly"
-      },
-      {
-        "name": "org$apache$pekko$actor$dungeon$Children$$_functionRefsDoNotCallMeDirectly"
-      },
-      {
-        "name": "org$apache$pekko$actor$dungeon$Children$$_nextNameDoNotCallMeDirectly"
-      },
-      {
-        "name": "org$apache$pekko$actor$dungeon$Dispatch$$_mailboxDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.DefaultSupervisorStrategy",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.LightArrayRevolverScheduler",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "com.typesafe.config.Config",
-          "org.apache.pekko.event.LoggingAdapter",
-          "java.util.concurrent.ThreadFactory"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.LightArrayRevolverScheduler$TaskHolder",
-    "fields": [
-      {
-        "name": "task"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.LocalActorRefProvider",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "java.lang.String",
-          "org.apache.pekko.actor.ActorSystem$Settings",
-          "org.apache.pekko.event.EventStream",
-          "org.apache.pekko.actor.DynamicAccess"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.LocalActorRefProvider$Guardian",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.SupervisorStrategy"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.LocalActorRefProvider$SystemGuardian",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.SupervisorStrategy",
-          "org.apache.pekko.actor.ActorRef"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.Props$EmptyActor",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.actor.RepointableActorRef",
-    "fields": [
-      {
-        "name": "_cellDoNotCallMeDirectly"
-      },
-      {
-        "name": "_lookupDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.dispatch.AbstractNodeQueue",
-    "fields": [
-      {
-        "name": "_tailDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.dispatch.AbstractNodeQueue$Node",
-    "fields": [
-      {
-        "name": "_nextDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.dispatch.BoundedControlAwareMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.BoundedDequeBasedMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.BoundedMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.ControlAwareMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.DequeBasedMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.Mailbox",
-    "fields": [
-      {
-        "name": "_statusDoNotCallMeDirectly"
-      },
-      {
-        "name": "_systemQueueDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.dispatch.MessageDispatcher",
-    "fields": [
-      {
-        "name": "_inhabitantsDoNotCallMeDirectly"
-      },
-      {
-        "name": "_shutdownScheduleDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.dispatch.MultipleConsumerSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.UnboundedControlAwareMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.UnboundedDequeBasedMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.dispatch.UnboundedMailbox",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ActorSystem$Settings",
-          "com.typesafe.config.Config"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.dispatch.UnboundedMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.event.DeadLetterListener",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.event.DefaultLoggingFilter",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ActorSystem$Settings",
-          "org.apache.pekko.event.EventStream"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.event.EventStreamUnsubscriber",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.event.EventStream",
-          "boolean"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.event.LoggerMailboxType",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ActorSystem$Settings",
-          "com.typesafe.config.Config"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.event.LoggerMessageQueueSemantics"
-  },
-  {
-    "name": "org.apache.pekko.event.Logging$DefaultLogger",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.http.DefaultParsingErrorHandler$",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.http.impl.engine.client.PoolMasterActor",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.io.SelectionHandler",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.io.SelectionHandlerSettings"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.io.TcpIncomingConnection",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.io.TcpExt",
-          "java.nio.channels.SocketChannel",
-          "org.apache.pekko.io.ChannelRegistry",
-          "org.apache.pekko.actor.ActorRef",
-          "scala.collection.immutable.Iterable",
-          "boolean"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.io.TcpListener",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ActorRef",
-          "org.apache.pekko.io.TcpExt",
-          "org.apache.pekko.io.ChannelRegistry",
-          "org.apache.pekko.actor.ActorRef",
-          "org.apache.pekko.io.Tcp$Bind"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.io.TcpManager",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.io.TcpExt"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.pattern.PromiseActorRef",
-    "fields": [
-      {
-        "name": "_stateDoNotCallMeDirectly"
-      },
-      {
-        "name": "_watchedByDoNotCallMeDirectly"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.routing.ConsistentHashingPool",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "com.typesafe.config.Config"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.routing.RoundRobinPool",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "com.typesafe.config.Config"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.routing.RoutedActorCell$RouterActorCreator",
-    "queryAllDeclaredConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.routing.RouterConfig"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.BooleanSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.ByteArraySerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.ByteStringSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.DisabledJavaSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.IntSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.LongSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.SerializationExtension$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.serialization.StringSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.stream.SinkRef"
-  },
-  {
-    "name": "org.apache.pekko.stream.SourceRef"
-  },
-  {
-    "name": "org.apache.pekko.stream.SystemMaterializer$",
-    "fields": [
-      {
-        "name": "MODULE$"
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.stream.impl.streamref.StreamRefsProtocol"
-  },
-  {
-    "name": "org.apache.pekko.stream.serialization.StreamRefSerializer",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "org.apache.pekko.actor.ExtendedActorSystem"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "org.apache.pekko.util.ByteString$ByteString1"
-  },
-  {
-    "name": "org.apache.pekko.util.ByteString$ByteString1C"
-  },
-  {
-    "name": "org.apache.pekko.util.ByteString$ByteStrings"
+    "name": "[Lscala.reflect.runtime.JavaMirrors$JavaMirror$JavaAnnotationProxy;"
   },
   {
     "name": "apple.security.AppleProvider",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "ch.qos.logback.classic.AsyncAppender",
     "methods": [
       {
         "name": "<init>",
@@ -595,15 +142,6 @@
     ]
   },
   {
-    "name": "ch.qos.logback.classic.pattern.ThreadConverter",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "ch.qos.logback.classic.util.DefaultJoranConfigurator",
     "methods": [
       {
@@ -634,6 +172,17 @@
     ]
   },
   {
+    "name": "ch.qos.logback.core.encoder.Encoder",
+    "methods": [
+      {
+        "name": "valueOf",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
     "name": "ch.qos.logback.core.encoder.LayoutWrappingEncoder",
     "methods": [
       {
@@ -652,6 +201,26 @@
         "parameterTypes": [
           "java.lang.String"
         ]
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.core.spi.ContextAware",
+    "methods": [
+      {
+        "name": "valueOf",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ch.qos.logback.core.status.NopStatusListener",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
       }
     ]
   },
@@ -722,14 +291,9 @@
   },
   {
     "name": "com.github.benmanes.caffeine.cache.SSSW",
-    "methods": [
+    "fields": [
       {
-        "name": "<init>",
-        "parameterTypes": [
-          "com.github.benmanes.caffeine.cache.Caffeine",
-          "com.github.benmanes.caffeine.cache.AsyncCacheLoader",
-          "boolean"
-        ]
+        "name": "FACTORY"
       }
     ]
   },
@@ -819,6 +383,26 @@
     ]
   },
   {
+    "name": "com.sun.management.HotSpotDiagnosticMXBean",
+    "methods": [
+      {
+        "name": "getVMOption",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "com.sun.management.VMOption",
+    "methods": [
+      {
+        "name": "getValue",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
     "methods": [
       {
@@ -828,70 +412,269 @@
     ]
   },
   {
-    "name": "dev.mongocamp.server.plugin.JobPlugin$",
+    "name": "com.typesafe.scalalogging.LazyLogging",
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "com.zaxxer.hikari.pool.PoolEntry",
+    "fields": [
+      {
+        "name": "state"
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp"
+  },
+  {
+    "name": "dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver",
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.package"
+  },
+  {
+    "name": "dev.mongocamp.server"
+  },
+  {
+    "name": "dev.mongocamp.server.file.GridFsFileAdapter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.jobs.CleanUpTokenJob",
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.jobs.CleanUpTokenJobBeanInfo"
+  },
+  {
+    "name": "dev.mongocamp.server.jobs.CleanUpTokenJobCustomizer"
+  },
+  {
+    "name": "dev.mongocamp.server.logging.HighlightingColorConverter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.model.DBFileInformation",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.mongocamp.server.model.MongoCampConfiguration",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "dev.mongocamp.server.package"
+  },
+  {
+    "name": "dev.mongocamp.server.plugin"
+  },
+  {
+    "name": "dev.mongocamp.server.plugin.JobPlugin"
+  },
+  {
+    "name": "dev.mongocamp.server.plugin.JobPlugin$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.plugin.package"
+  },
+  {
+    "name": "dev.mongocamp.server.route"
+  },
+  {
+    "name": "dev.mongocamp.server.route.AdminRoutes"
+  },
+  {
+    "name": "dev.mongocamp.server.route.AdminRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.BucketFileRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.BucketFileRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.BucketRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.BucketRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.CollectionRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.CollectionRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.ConfigurationRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.ConfigurationRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.DatabaseRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.DatabaseRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.DocumentRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.DocumentRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.IndexRoutes"
+  },
+  {
+    "name": "dev.mongocamp.server.route.IndexRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.InformationRoutes"
+  },
+  {
+    "name": "dev.mongocamp.server.route.InformationRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.JobRoutes"
   },
   {
     "name": "dev.mongocamp.server.route.JobRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
     "methods": [
       {
         "name": "<init>",
@@ -900,68 +683,259 @@
     ]
   },
   {
-    "name": "java.io.Closeable",
-    "queryAllDeclaredMethods": true
+    "name": "dev.mongocamp.server.route.SystemRoutes"
+  },
+  {
+    "name": "dev.mongocamp.server.route.SystemRoutes$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ],
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "dev.mongocamp.server.route.package"
+  },
+  {
+    "name": "dev.package"
+  },
+  {
+    "name": "io.github.classgraph.AnnotationClassRef",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationEnumValue",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationInfo",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationParameterValue",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationParameterValueList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ClassInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ClassInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ClassMemberInfo",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "io.github.classgraph.FieldInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.MethodInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.MethodInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ModuleInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ModulePathInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ObjectTypedValueWrapper",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.PackageInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ScanResult$SerializationFormat",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ScanResultObject",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "java"
+  },
+  {
+    "name": "java.beans.PropertyVetoException"
+  },
+  {
+    "name": "java.io"
   },
   {
     "name": "java.io.FilePermission"
   },
   {
-    "name": "java.io.InputStream",
-    "methods": [
-      {
-        "name": "readAllBytes",
-        "parameterTypes": []
-      },
-      {
-        "name": "readNBytes",
-        "parameterTypes": [
-          "int"
-        ]
-      },
-      {
-        "name": "readNBytes",
-        "parameterTypes": [
-          "byte[]",
-          "int",
-          "int"
-        ]
-      },
-      {
-        "name": "skipNBytes",
-        "parameterTypes": [
-          "long"
-        ]
-      },
-      {
-        "name": "transferTo",
-        "parameterTypes": [
-          "java.io.OutputStream"
-        ]
-      }
-    ]
+    "name": "java.io.IOException"
+  },
+  {
+    "name": "java.io.ObjectInputStream"
+  },
+  {
+    "name": "java.io.ObjectOutputStream"
+  },
+  {
+    "name": "java.io.ObjectStreamField"
+  },
+  {
+    "name": "java.io.PrintStream"
+  },
+  {
+    "name": "java.io.PrintWriter"
   },
   {
     "name": "java.io.Serializable",
-    "queryAllDeclaredMethods": true
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
   },
   {
-    "name": "java.lang.AutoCloseable",
-    "queryAllDeclaredMethods": true
+    "name": "java.io.UnsupportedEncodingException"
+  },
+  {
+    "name": "java.io.package"
+  },
+  {
+    "name": "java.java$$io"
+  },
+  {
+    "name": "java.lang"
+  },
+  {
+    "name": "java.lang.AbstractStringBuilder"
   },
   {
     "name": "java.lang.Boolean"
   },
   {
-    "name": "java.lang.Class",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "getModule",
-        "parameterTypes": []
-      }
-    ]
+    "name": "java.lang.Byte"
+  },
+  {
+    "name": "java.lang.CharSequence"
+  },
+  {
+    "name": "java.lang.Character"
+  },
+  {
+    "name": "java.lang.Class"
+  },
+  {
+    "name": "java.lang.ClassCastException"
   },
   {
     "name": "java.lang.ClassLoader",
@@ -969,11 +943,33 @@
     "queryAllDeclaredMethods": true
   },
   {
+    "name": "java.lang.ClassNotFoundException"
+  },
+  {
     "name": "java.lang.ClassValue"
   },
   {
+    "name": "java.lang.CloneNotSupportedException"
+  },
+  {
+    "name": "java.lang.Cloneable",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
     "name": "java.lang.Comparable",
-    "queryAllDeclaredMethods": true
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.Deprecated"
+  },
+  {
+    "name": "java.lang.Double"
   },
   {
     "name": "java.lang.Enum",
@@ -988,57 +984,86 @@
     ]
   },
   {
-    "name": "java.lang.Integer"
-  },
-  {
-    "name": "java.lang.Long"
-  },
-  {
-    "name": "java.lang.Module",
+    "name": "java.lang.Exception",
     "allDeclaredFields": true,
+    "allDeclaredClasses": true,
     "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "getLayer",
-        "parameterTypes": []
-      }
-    ]
+    "queryAllPublicConstructors": true
   },
   {
-    "name": "java.lang.ModuleLayer",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "boot",
-        "parameterTypes": []
-      },
-      {
-        "name": "configuration",
-        "parameterTypes": []
-      },
-      {
-        "name": "findLoader",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "parents",
-        "parameterTypes": []
-      }
-    ]
+    "name": "java.lang.Float"
+  },
+  {
+    "name": "java.lang.FunctionalInterface"
+  },
+  {
+    "name": "java.lang.IllegalAccessException"
+  },
+  {
+    "name": "java.lang.IllegalArgumentException"
+  },
+  {
+    "name": "java.lang.IndexOutOfBoundsException"
+  },
+  {
+    "name": "java.lang.Integer",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "java.lang.InternalError"
+  },
+  {
+    "name": "java.lang.InterruptedException"
+  },
+  {
+    "name": "java.lang.Iterable"
+  },
+  {
+    "name": "java.lang.Long",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "java.lang.NullPointerException"
+  },
+  {
+    "name": "java.lang.Number",
+    "allDeclaredFields": true
   },
   {
     "name": "java.lang.Object",
     "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.ObjectBeanInfo"
+  },
+  {
+    "name": "java.lang.ObjectCustomizer"
   },
   {
     "name": "java.lang.Record"
   },
   {
+    "name": "java.lang.ReflectiveOperationException"
+  },
+  {
+    "name": "java.lang.RuntimeException",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
     "name": "java.lang.RuntimePermission"
+  },
+  {
+    "name": "java.lang.Short"
+  },
+  {
+    "name": "java.lang.StackTraceElement"
   },
   {
     "name": "java.lang.StackWalker",
@@ -1071,11 +1096,22 @@
   },
   {
     "name": "java.lang.String",
-    "fields": [
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
+    "methods": [
       {
-        "name": "value"
+        "name": "<init>",
+        "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "java.lang.StringBuffer"
+  },
+  {
+    "name": "java.lang.StringBuilder"
   },
   {
     "name": "java.lang.System",
@@ -1087,19 +1123,145 @@
     ]
   },
   {
-    "name": "java.lang.constant.Constable",
-    "queryAllDeclaredMethods": true
+    "name": "java.lang.Thread",
+    "fields": [
+      {
+        "name": "threadLocalRandomProbe"
+      }
+    ],
+    "methods": [
+      {
+        "name": "ofVirtual",
+        "parameterTypes": []
+      }
+    ]
   },
   {
-    "name": "java.lang.invoke.TypeDescriptor",
-    "queryAllDeclaredMethods": true
+    "name": "java.lang.Thread$Builder$OfVirtual",
+    "methods": [
+      {
+        "name": "unstarted",
+        "parameterTypes": [
+          "java.lang.Runnable"
+        ]
+      }
+    ]
   },
   {
-    "name": "java.lang.invoke.TypeDescriptor$OfField",
-    "queryAllDeclaredMethods": true
+    "name": "java.lang.Throwable",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.Void"
+  },
+  {
+    "name": "java.lang.annotation"
+  },
+  {
+    "name": "java.lang.annotation.Inherited"
+  },
+  {
+    "name": "java.lang.annotation.Repeatable"
+  },
+  {
+    "name": "java.lang.annotation.Retention"
+  },
+  {
+    "name": "java.lang.annotation.RetentionPolicy"
+  },
+  {
+    "name": "java.lang.annotation.package"
+  },
+  {
+    "name": "java.lang.constant"
+  },
+  {
+    "name": "java.lang.constant.Constable"
+  },
+  {
+    "name": "java.lang.constant.ConstantDesc"
+  },
+  {
+    "name": "java.lang.constant.MethodHandleDesc"
+  },
+  {
+    "name": "java.lang.constant.package"
+  },
+  {
+    "name": "java.lang.foreign"
+  },
+  {
+    "name": "java.lang.foreign.ValueLayout"
+  },
+  {
+    "name": "java.lang.foreign.package"
+  },
+  {
+    "name": "java.lang.invoke"
+  },
+  {
+    "name": "java.lang.invoke.BoundMethodHandle",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.invoke.LambdaForm",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.invoke.LambdaFormEditor"
+  },
+  {
+    "name": "java.lang.invoke.MemberName",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.invoke.MethodHandle",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.invoke.MethodHandleImpl",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.invoke.MethodHandles",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true
+  },
+  {
+    "name": "java.lang.invoke.MethodType"
+  },
+  {
+    "name": "java.lang.invoke.ResolvedMethodName"
+  },
+  {
+    "name": "java.lang.invoke.VarForm"
   },
   {
     "name": "java.lang.invoke.VarHandle",
+    "allDeclaredFields": true,
+    "allDeclaredClasses": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicConstructors": true,
     "methods": [
       {
         "name": "releaseFence",
@@ -1108,80 +1270,33 @@
     ]
   },
   {
-    "name": "java.lang.module.Configuration",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "modules",
-        "parameterTypes": []
-      }
-    ]
+    "name": "java.lang.invoke.package"
   },
   {
-    "name": "java.lang.module.ModuleDescriptor",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
+    "name": "java.lang.management.ManagementFactory",
     "methods": [
       {
-        "name": "name",
-        "parameterTypes": []
-      },
-      {
-        "name": "packages",
-        "parameterTypes": []
-      },
-      {
-        "name": "rawVersion",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "java.lang.module.ModuleReader",
-    "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "list",
-        "parameterTypes": []
-      },
-      {
-        "name": "open",
+        "name": "getPlatformMXBean",
         "parameterTypes": [
-          "java.lang.String"
+          "java.lang.Class"
         ]
       }
     ]
   },
   {
-    "name": "java.lang.module.ModuleReference",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "descriptor",
-        "parameterTypes": []
-      },
-      {
-        "name": "location",
-        "parameterTypes": []
-      },
-      {
-        "name": "open",
-        "parameterTypes": []
-      }
-    ]
+    "name": "java.lang.package"
   },
   {
-    "name": "java.lang.module.ResolvedModule",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
-    "methods": [
-      {
-        "name": "reference",
-        "parameterTypes": []
-      }
-    ]
+    "name": "java.lang.ref"
+  },
+  {
+    "name": "java.lang.ref.SoftReference"
+  },
+  {
+    "name": "java.lang.ref.package"
+  },
+  {
+    "name": "java.lang.reflect"
   },
   {
     "name": "java.lang.reflect.AccessibleObject",
@@ -1209,16 +1324,22 @@
     ]
   },
   {
-    "name": "java.lang.reflect.AnnotatedElement",
-    "queryAllDeclaredMethods": true
+    "name": "java.lang.reflect.Constructor"
   },
   {
-    "name": "java.lang.reflect.GenericDeclaration",
-    "queryAllDeclaredMethods": true
+    "name": "java.lang.reflect.Field"
   },
   {
-    "name": "java.lang.reflect.Type",
-    "queryAllDeclaredMethods": true
+    "name": "java.lang.reflect.InvocationTargetException"
+  },
+  {
+    "name": "java.lang.reflect.Member"
+  },
+  {
+    "name": "java.lang.reflect.Method"
+  },
+  {
+    "name": "java.lang.reflect.package"
   },
   {
     "name": "java.net.NetPermission"
@@ -1237,6 +1358,33 @@
         ]
       }
     ]
+  },
+  {
+    "name": "java.nio"
+  },
+  {
+    "name": "java.nio.ByteOrder"
+  },
+  {
+    "name": "java.nio.charset"
+  },
+  {
+    "name": "java.nio.charset.CharacterCodingException"
+  },
+  {
+    "name": "java.nio.charset.Charset"
+  },
+  {
+    "name": "java.nio.charset.CharsetDecoder"
+  },
+  {
+    "name": "java.nio.charset.package"
+  },
+  {
+    "name": "java.nio.package"
+  },
+  {
+    "name": "java.package"
   },
   {
     "name": "java.security.AccessController",
@@ -1275,81 +1423,171 @@
     "name": "java.security.SecurityPermission"
   },
   {
+    "name": "java.sql.Connection",
+    "methods": [
+      {
+        "name": "commit",
+        "parameterTypes": []
+      },
+      {
+        "name": "prepareStatement",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "rollback",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "java.sql.Date"
   },
   {
     "name": "java.sql.Timestamp"
   },
   {
-    "name": "java.util.Optional",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
+    "name": "java.util"
+  },
+  {
+    "name": "java.util.ArrayList",
     "methods": [
       {
-        "name": "get",
-        "parameterTypes": []
-      },
-      {
-        "name": "isPresent",
-        "parameterTypes": []
+        "name": "<init>",
+        "parameterTypes": [
+          "int"
+        ]
       }
     ]
+  },
+  {
+    "name": "java.util.Comparator"
+  },
+  {
+    "name": "java.util.HashMap",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "int"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "java.util.HashSet",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "int"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "java.util.Iterator"
+  },
+  {
+    "name": "java.util.List"
+  },
+  {
+    "name": "java.util.Locale"
+  },
+  {
+    "name": "java.util.Map"
+  },
+  {
+    "name": "java.util.Optional"
   },
   {
     "name": "java.util.PropertyPermission"
   },
   {
-    "name": "java.util.function.Consumer"
+    "name": "java.util.Set"
   },
   {
-    "name": "java.util.stream.AbstractPipeline",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.util.stream.BaseStream",
-    "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.util.stream.Collector"
-  },
-  {
-    "name": "java.util.stream.Collectors",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true,
+    "name": "java.util.concurrent.Executors",
     "methods": [
       {
-        "name": "toList",
+        "name": "newVirtualThreadPerTaskExecutor",
         "parameterTypes": []
       }
     ]
   },
   {
-    "name": "java.util.stream.PipelineHelper",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.util.stream.ReferencePipeline",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.util.stream.ReferencePipeline$Head",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
-  },
-  {
-    "name": "java.util.stream.Stream",
-    "queryAllDeclaredMethods": true,
-    "methods": [
+    "name": "java.util.concurrent.ForkJoinTask",
+    "fields": [
       {
-        "name": "collect",
-        "parameterTypes": [
-          "java.util.stream.Collector"
-        ]
+        "name": "aux"
+      },
+      {
+        "name": "status"
       }
     ]
+  },
+  {
+    "name": "java.util.concurrent.atomic.AtomicBoolean",
+    "fields": [
+      {
+        "name": "value"
+      }
+    ]
+  },
+  {
+    "name": "java.util.concurrent.atomic.AtomicMarkableReference",
+    "fields": [
+      {
+        "name": "pair"
+      }
+    ]
+  },
+  {
+    "name": "java.util.concurrent.atomic.AtomicReference",
+    "fields": [
+      {
+        "name": "value"
+      }
+    ]
+  },
+  {
+    "name": "java.util.concurrent.atomic.Striped64",
+    "fields": [
+      {
+        "name": "base"
+      },
+      {
+        "name": "cellsBusy"
+      }
+    ]
+  },
+  {
+    "name": "java.util.function"
+  },
+  {
+    "name": "java.util.function.Consumer"
+  },
+  {
+    "name": "java.util.function.Function"
+  },
+  {
+    "name": "java.util.function.package"
+  },
+  {
+    "name": "java.util.package"
+  },
+  {
+    "name": "java.util.stream"
+  },
+  {
+    "name": "java.util.stream.IntStream"
+  },
+  {
+    "name": "java.util.stream.Stream"
+  },
+  {
+    "name": "java.util.stream.package"
   },
   {
     "name": "javax.security.auth.x500.X500Principal",
@@ -1368,29 +1606,67 @@
     ]
   },
   {
-    "name": "jdk.internal.loader.BuiltinClassLoader",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
+    "name": "javax.smartcardio.CardPermission"
   },
   {
-    "name": "jdk.internal.loader.ClassLoaders$AppClassLoader",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
+    "name": "jdk.internal"
   },
   {
-    "name": "jdk.internal.loader.ClassLoaders$PlatformClassLoader",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
+    "name": "jdk.internal.ValueBased"
   },
   {
-    "name": "jdk.internal.module.ModuleReferenceImpl",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
+    "name": "jdk.internal.misc.Unsafe"
   },
   {
-    "name": "jdk.internal.module.SystemModuleFinders$SystemModuleReader",
-    "allDeclaredFields": true,
-    "queryAllDeclaredMethods": true
+    "name": "jdk.internal.package"
+  },
+  {
+    "name": "jdk.internal.perf"
+  },
+  {
+    "name": "jdk.internal.perf.PerfCounter"
+  },
+  {
+    "name": "jdk.internal.perf.package"
+  },
+  {
+    "name": "jdk.internal.reflect"
+  },
+  {
+    "name": "jdk.internal.reflect.CallerSensitive"
+  },
+  {
+    "name": "jdk.internal.reflect.package"
+  },
+  {
+    "name": "jdk.internal.vm"
+  },
+  {
+    "name": "jdk.internal.vm.annotation"
+  },
+  {
+    "name": "jdk.internal.vm.annotation.DontInline"
+  },
+  {
+    "name": "jdk.internal.vm.annotation.ForceInline"
+  },
+  {
+    "name": "jdk.internal.vm.annotation.Hidden"
+  },
+  {
+    "name": "jdk.internal.vm.annotation.IntrinsicCandidate"
+  },
+  {
+    "name": "jdk.internal.vm.annotation.Stable"
+  },
+  {
+    "name": "jdk.internal.vm.annotation.package"
+  },
+  {
+    "name": "jdk.internal.vm.package"
+  },
+  {
+    "name": "jdk.package"
   },
   {
     "name": "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",
@@ -1973,23 +2249,2432 @@
     ]
   },
   {
-    "name": "nonapi.io.github.classgraph.scanspec.ScanSpec",
+    "name": "nonapi.io.github.classgraph.json.ClassFieldCache$NoConstructor",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject",
     "allDeclaredFields": true
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectLeafname",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectPrefix",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectWholeString",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.ScanSpec",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.logging.log4j.core.Logger"
+  },
+  {
+    "name": "org.apache.lucene.analysis.tokenattributes.PackedTokenAttributeImpl",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.lucene.index.Term",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.internal.hppc.IntArrayList",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.internal.hppc.IntHashSet",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.internal.hppc.IntIntHashMap",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.internal.hppc.IntObjectHashMap",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.search.AutomatonQuery",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.search.MultiTermQuery",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.search.Query",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.util.BitSet",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.util.BytesRef",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.util.FixedBitSet",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.util.automaton.CompiledAutomaton",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.util.automaton.RunAutomaton",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.lucene.util.automaton.Transition",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "org.apache.pekko.actor.ActorCell",
+    "fields": [
+      {
+        "name": "org$apache$pekko$actor$dungeon$Children$$_childrenRefsDoNotCallMeDirectly"
+      },
+      {
+        "name": "org$apache$pekko$actor$dungeon$Children$$_functionRefsDoNotCallMeDirectly"
+      },
+      {
+        "name": "org$apache$pekko$actor$dungeon$Children$$_nextNameDoNotCallMeDirectly"
+      },
+      {
+        "name": "org$apache$pekko$actor$dungeon$Dispatch$$_mailboxDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.DefaultSupervisorStrategy",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.LightArrayRevolverScheduler",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.typesafe.config.Config",
+          "org.apache.pekko.event.LoggingAdapter",
+          "java.util.concurrent.ThreadFactory"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.LightArrayRevolverScheduler$TaskHolder",
+    "fields": [
+      {
+        "name": "task"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.LocalActorRefProvider",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.lang.String",
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "org.apache.pekko.event.EventStream",
+          "org.apache.pekko.actor.DynamicAccess"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.LocalActorRefProvider$Guardian",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.SupervisorStrategy"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.LocalActorRefProvider$SystemGuardian",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.SupervisorStrategy",
+          "org.apache.pekko.actor.ActorRef"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.Props$EmptyActor",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.actor.RepointableActorRef",
+    "fields": [
+      {
+        "name": "_cellDoNotCallMeDirectly"
+      },
+      {
+        "name": "_lookupDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.AbstractNodeQueue",
+    "fields": [
+      {
+        "name": "_tailDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.AbstractNodeQueue$Node",
+    "fields": [
+      {
+        "name": "_nextDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.BoundedControlAwareMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.BoundedDequeBasedMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.BoundedMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.ControlAwareMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.DequeBasedMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.Dispatcher",
+    "fields": [
+      {
+        "name": "executorServiceDelegate"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.Mailbox",
+    "fields": [
+      {
+        "name": "_statusDoNotCallMeDirectly"
+      },
+      {
+        "name": "_systemQueueDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.MessageDispatcher",
+    "fields": [
+      {
+        "name": "_inhabitantsDoNotCallMeDirectly"
+      },
+      {
+        "name": "_shutdownScheduleDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.MultipleConsumerSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.PekkoJdk9ForkJoinPool",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "int",
+          "java.util.concurrent.ForkJoinPool$ForkJoinWorkerThreadFactory",
+          "int",
+          "java.lang.Thread$UncaughtExceptionHandler",
+          "boolean"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.SingleConsumerOnlyUnboundedMailbox",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "com.typesafe.config.Config"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.UnboundedControlAwareMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.UnboundedDequeBasedMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.dispatch.UnboundedMailbox",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "com.typesafe.config.Config"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.dispatch.UnboundedMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.event.DeadLetterListener",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.event.DefaultLoggingFilter",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "org.apache.pekko.event.EventStream"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.event.EventStreamUnsubscriber",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.event.EventStream",
+          "boolean"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.event.LoggerMailboxType",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ActorSystem$Settings",
+          "com.typesafe.config.Config"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.event.LoggerMessageQueueSemantics"
+  },
+  {
+    "name": "org.apache.pekko.event.Logging$DefaultLogger",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.http.DefaultParsingErrorHandler$",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.http.impl.engine.client.PoolMasterActor",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.io.SelectionHandler",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.io.SelectionHandlerSettings"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.io.TcpIncomingConnection",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.io.TcpExt",
+          "java.nio.channels.SocketChannel",
+          "org.apache.pekko.io.ChannelRegistry",
+          "org.apache.pekko.actor.ActorRef",
+          "scala.collection.immutable.Iterable",
+          "boolean"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.io.TcpListener",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ActorRef",
+          "org.apache.pekko.io.TcpExt",
+          "org.apache.pekko.io.ChannelRegistry",
+          "org.apache.pekko.actor.ActorRef",
+          "org.apache.pekko.io.Tcp$Bind"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.io.TcpManager",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.io.TcpExt"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.pattern.PromiseActorRef",
+    "fields": [
+      {
+        "name": "_stateDoNotCallMeDirectly"
+      },
+      {
+        "name": "_watchedByDoNotCallMeDirectly"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.routing.ConsistentHashingPool",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.typesafe.config.Config"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.routing.RoundRobinPool",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "com.typesafe.config.Config"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.routing.RoutedActorCell$RouterActorCreator",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.routing.RouterConfig"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.BooleanSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.ByteArraySerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.ByteStringSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.DisabledJavaSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.IntSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.LongSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.SerializationExtension$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.serialization.StringSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.stream.SinkRef"
+  },
+  {
+    "name": "org.apache.pekko.stream.SourceRef"
+  },
+  {
+    "name": "org.apache.pekko.stream.SystemMaterializer$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.stream.impl.streamref.StreamRefsProtocol"
+  },
+  {
+    "name": "org.apache.pekko.stream.serialization.StreamRefSerializer",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "org.apache.pekko.actor.ExtendedActorSystem"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.apache.pekko.util.ByteString$ByteString1"
+  },
+  {
+    "name": "org.apache.pekko.util.ByteString$ByteString1C"
+  },
+  {
+    "name": "org.apache.pekko.util.ByteString$ByteStrings"
+  },
+  {
+    "name": "org.bson.codecs.kotlin.DataClassCodecProvider"
+  },
+  {
+    "name": "org.bson.codecs.kotlinx.KotlinSerializerCodecProvider"
   },
   {
     "name": "org.bson.codecs.record.RecordCodecProvider"
   },
   {
+    "name": "org.jgroups.BytesMessage",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.MergeView",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.View",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.ViewId",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.auth.FixedMembershipToken",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.auth.X509Token",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.blocks.MethodCall",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.blocks.RequestCorrelator"
+  },
+  {
+    "name": "org.jgroups.blocks.RequestCorrelator$Header",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.blocks.RequestCorrelator$MultiDestinationHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.blocks.cs.ReceiverAdapter",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.conf.ClassConfigurator",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.conf.PropertyConverters$Default",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.conf.PropertyConverters$NetworkInterfaceList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.ASYM_ENCRYPT"
+  },
+  {
+    "name": "org.jgroups.protocols.AUTH"
+  },
+  {
+    "name": "org.jgroups.protocols.AuthHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.BARRIER",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.BATCH"
+  },
+  {
+    "name": "org.jgroups.protocols.BATCH$BatchHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.BATCH2"
+  },
+  {
+    "name": "org.jgroups.protocols.BATCH2$Batch2Header",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.BPING"
+  },
+  {
+    "name": "org.jgroups.protocols.BaseBundler",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.CENTRAL_LOCK"
+  },
+  {
+    "name": "org.jgroups.protocols.CENTRAL_LOCK2"
+  },
+  {
+    "name": "org.jgroups.protocols.COMPRESS"
+  },
+  {
+    "name": "org.jgroups.protocols.COMPRESS$CompressHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.COUNTER"
+  },
+  {
+    "name": "org.jgroups.protocols.COUNTER$CounterHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.DAISYCHAIN"
+  },
+  {
+    "name": "org.jgroups.protocols.DAISYCHAIN$DaisyHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.DH_KEY_EXCHANGE"
+  },
+  {
+    "name": "org.jgroups.protocols.DH_KEY_EXCHANGE$DhHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.DISCARD"
+  },
+  {
+    "name": "org.jgroups.protocols.Discovery",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.EncryptHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FD_ALL",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FD_ALL2"
+  },
+  {
+    "name": "org.jgroups.protocols.FD_ALL3"
+  },
+  {
+    "name": "org.jgroups.protocols.FD_HOST"
+  },
+  {
+    "name": "org.jgroups.protocols.FD_SOCK",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FD_SOCK$FdHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FD_SOCK2"
+  },
+  {
+    "name": "org.jgroups.protocols.FD_SOCK2$FdHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FILE_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.FORK"
+  },
+  {
+    "name": "org.jgroups.protocols.FORK$ForkHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FRAG"
+  },
+  {
+    "name": "org.jgroups.protocols.FRAG2",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FRAG3"
+  },
+  {
+    "name": "org.jgroups.protocols.FRAG4"
+  },
+  {
+    "name": "org.jgroups.protocols.FailureDetection",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.FailureDetection$HeartbeatHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FcHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FlowControl",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.Frag3Header",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.FragHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.Fragmentation",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.JDBC_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.JDBC_PING2"
+  },
+  {
+    "name": "org.jgroups.protocols.LOCAL_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.Locking$LockingHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.MERGE3",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.MERGE3$MergeHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.MFC",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.MFC_NB"
+  },
+  {
+    "name": "org.jgroups.protocols.MPING"
+  },
+  {
+    "name": "org.jgroups.protocols.MsgStats",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.PDC"
+  },
+  {
+    "name": "org.jgroups.protocols.PERF"
+  },
+  {
+    "name": "org.jgroups.protocols.PERF$PerfHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.PING",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.PingData",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.PingHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.ProtPerfHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.RACKSPACE_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.RSVP",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.RSVP$RsvpHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.RTTHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.SEQUENCER"
+  },
+  {
+    "name": "org.jgroups.protocols.SEQUENCER$SequencerHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.SEQUENCER2"
+  },
+  {
+    "name": "org.jgroups.protocols.SEQUENCER2$SequencerHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.SHARED_LOOPBACK"
+  },
+  {
+    "name": "org.jgroups.protocols.SHARED_LOOPBACK_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.STOMP"
+  },
+  {
+    "name": "org.jgroups.protocols.STOMP$StompHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.SWIFT_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.SYM_ENCRYPT"
+  },
+  {
+    "name": "org.jgroups.protocols.TCP"
+  },
+  {
+    "name": "org.jgroups.protocols.TCPGOSSIP"
+  },
+  {
+    "name": "org.jgroups.protocols.TCPPING"
+  },
+  {
+    "name": "org.jgroups.protocols.TCP_NIO2"
+  },
+  {
+    "name": "org.jgroups.protocols.TP",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.TUNNEL"
+  },
+  {
+    "name": "org.jgroups.protocols.TpHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.TransferQueueBundler",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.UDP",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.UFC",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.UFC_NB"
+  },
+  {
+    "name": "org.jgroups.protocols.UNICAST3",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.UnicastHeader3",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.VERIFY_SUSPECT",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.VERIFY_SUSPECT$VerifyHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.VERIFY_SUSPECT2"
+  },
+  {
+    "name": "org.jgroups.protocols.VERIFY_SUSPECT2$VerifyHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.dns.DNS_PING"
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.FLUSH"
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.FLUSH$FlushHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.GMS",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.GMS$GmsHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.JoinRsp",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.NAKACK2",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.NakAckHeader2",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.STABLE",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.STABLE$StableHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.STATE"
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.STATE_SOCK"
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.STATE_TRANSFER",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.STATE_TRANSFER$StateHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.pbcast.StreamingStateTransfer$StateHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.relay.RELAY2"
+  },
+  {
+    "name": "org.jgroups.protocols.relay.RELAY3"
+  },
+  {
+    "name": "org.jgroups.protocols.relay.RelayHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.relay.SiteMaster",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.relay.SiteUUID",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.stack.DiagnosticsHandler",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.stack.IpAddress",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.stack.Protocol",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.tests.perf.MPerf"
+  },
+  {
+    "name": "org.jgroups.tests.perf.MPerf$MPerfHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.AsyncExecutor",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.util.Digest",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.ExtendedUUID",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.FlagsUUID",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.MaxOneThreadPerSender",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.util.MutableDigest",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.ObjectWrapperPrimitive",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.ObjectWrapperSerializable",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.RTT",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.util.SeqnoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.SubmitToThreadPool",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "org.jgroups.util.ThreadPool",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "org.jgroups.util.UUID",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.junit"
+  },
+  {
+    "name": "org.junit.After"
+  },
+  {
+    "name": "org.junit.AfterClass"
+  },
+  {
+    "name": "org.junit.Before"
+  },
+  {
+    "name": "org.junit.BeforeClass"
+  },
+  {
+    "name": "org.junit.Ignore"
+  },
+  {
+    "name": "org.junit.Test"
+  },
+  {
+    "name": "org.junit.package"
+  },
+  {
+    "name": "org.package"
+  },
+  {
+    "name": "org.quartz.InterruptableJob"
+  },
+  {
+    "name": "org.quartz.Job",
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "org.quartz.StatefulJob"
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.Constants",
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.JobStoreSupport",
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "setDataSource",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setDriverDelegateClass",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setInstanceId",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setInstanceName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setIsClustered",
+        "parameterTypes": [
+          "boolean"
+        ]
+      },
+      {
+        "name": "setTablePrefix",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.JobStoreSupportBeanInfo"
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.JobStoreSupportCustomizer"
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.JobStoreTX",
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.JobStoreTXBeanInfo"
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.JobStoreTXCustomizer"
+  },
+  {
+    "name": "org.quartz.impl.jdbcjobstore.StdJDBCDelegate",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.quartz.simpl.CascadingClassLoadHelper",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.quartz.simpl.SimpleInstanceIdGenerator",
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.quartz.simpl.SimpleInstanceIdGeneratorBeanInfo"
+  },
+  {
+    "name": "org.quartz.simpl.SimpleInstanceIdGeneratorCustomizer"
+  },
+  {
+    "name": "org.quartz.simpl.SimpleThreadPool",
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "setInstanceId",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setInstanceName",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "setThreadCount",
+        "parameterTypes": [
+          "int"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "org.quartz.simpl.SimpleThreadPoolBeanInfo"
+  },
+  {
+    "name": "org.quartz.simpl.SimpleThreadPoolCustomizer"
+  },
+  {
+    "name": "org.quartz.spi.InstanceIdGenerator",
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "org.quartz.spi.JobStore",
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "org.quartz.spi.ThreadPool",
+    "queryAllPublicMethods": true
+  },
+  {
     "name": "org.slf4j.Logger"
+  },
+  {
+    "name": "reactor.core.publisher.BaseSubscriber",
+    "fields": [
+      {
+        "name": "subscription"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FlatMapTracker",
+    "fields": [
+      {
+        "name": "size"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxConcatArray$ConcatArraySubscriber",
+    "fields": [
+      {
+        "name": "requested"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxCreate$BaseSink",
+    "fields": [
+      {
+        "name": "disposable"
+      },
+      {
+        "name": "requestConsumer"
+      },
+      {
+        "name": "requested"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxCreate$BufferAsyncSink",
+    "fields": [
+      {
+        "name": "wip"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxCreate$SerializedFluxSink",
+    "fields": [
+      {
+        "name": "error"
+      },
+      {
+        "name": "wip"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxFlatMap$FlatMapInner",
+    "fields": [
+      {
+        "name": "s"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxFlatMap$FlatMapMain",
+    "fields": [
+      {
+        "name": "error"
+      },
+      {
+        "name": "requested"
+      },
+      {
+        "name": "wip"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxIterable$IterableSubscription",
+    "fields": [
+      {
+        "name": "requested"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.FluxLimitRequest$FluxLimitRequestSubscriber",
+    "fields": [
+      {
+        "name": "requestRemaining"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.LambdaMonoSubscriber",
+    "fields": [
+      {
+        "name": "subscription"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.LambdaSubscriber",
+    "fields": [
+      {
+        "name": "subscription"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.MonoCallable$MonoCallableSubscription",
+    "fields": [
+      {
+        "name": "requestedOnce"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.MonoCreate$DefaultMonoSink",
+    "fields": [
+      {
+        "name": "disposable"
+      },
+      {
+        "name": "requestConsumer"
+      },
+      {
+        "name": "state"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.MonoFlatMap$FlatMapMain",
+    "fields": [
+      {
+        "name": "second"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.MonoFlatMapMany$FlatMapManyMain",
+    "fields": [
+      {
+        "name": "inner"
+      },
+      {
+        "name": "requested"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.MonoIgnoreThen$ThenIgnoreMain",
+    "fields": [
+      {
+        "name": "state"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.MonoNext$NextSubscriber",
+    "fields": [
+      {
+        "name": "wip"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.Operators$BaseFluxToMonoOperator",
+    "fields": [
+      {
+        "name": "state"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.Operators$MultiSubscriptionSubscriber",
+    "fields": [
+      {
+        "name": "missedProduced"
+      },
+      {
+        "name": "missedRequested"
+      },
+      {
+        "name": "missedSubscription"
+      },
+      {
+        "name": "wip"
+      }
+    ]
+  },
+  {
+    "name": "reactor.core.publisher.StrictSubscriber",
+    "fields": [
+      {
+        "name": "error"
+      },
+      {
+        "name": "requested"
+      },
+      {
+        "name": "s"
+      },
+      {
+        "name": "wip"
+      }
+    ]
+  },
+  {
+    "name": "reactor.util.concurrent.MpscLinkedQueue",
+    "fields": [
+      {
+        "name": "consumerNode"
+      },
+      {
+        "name": "producerNode"
+      }
+    ]
+  },
+  {
+    "name": "reactor.util.concurrent.MpscLinkedQueue$LinkedQueueNode",
+    "fields": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  {
+    "name": "reactor.util.concurrent.SpscLinkedArrayQueue",
+    "fields": [
+      {
+        "name": "consumerIndex"
+      },
+      {
+        "name": "producerIndex"
+      }
+    ]
+  },
+  {
+    "name": "scala"
+  },
+  {
+    "name": "scala.$colon$colon"
+  },
+  {
+    "name": "scala.$colon$plus"
+  },
+  {
+    "name": "scala.$eq$colon$eq"
+  },
+  {
+    "name": "scala.$hash$colon$colon"
+  },
+  {
+    "name": "scala.$less$colon$less"
+  },
+  {
+    "name": "scala.$plus$colon"
+  },
+  {
+    "name": "scala.AbstractMethodError"
+  },
+  {
+    "name": "scala.AnyRef"
+  },
+  {
+    "name": "scala.AnyVal"
+  },
+  {
+    "name": "scala.AnyValCompanion"
+  },
+  {
+    "name": "scala.Array"
+  },
+  {
+    "name": "scala.ArrayIndexOutOfBoundsException"
+  },
+  {
+    "name": "scala.BigDecimal"
+  },
+  {
+    "name": "scala.BigInt"
   },
   {
     "name": "scala.Boolean"
   },
   {
+    "name": "scala.BufferedIterator"
+  },
+  {
+    "name": "scala.Byte"
+  },
+  {
+    "name": "scala.Char"
+  },
+  {
+    "name": "scala.ClassCastException"
+  },
+  {
+    "name": "scala.Cloneable"
+  },
+  {
+    "name": "scala.DelayedInit"
+  },
+  {
+    "name": "scala.Double"
+  },
+  {
+    "name": "scala.DummyImplicit"
+  },
+  {
+    "name": "scala.Dynamic"
+  },
+  {
+    "name": "scala.Either"
+  },
+  {
+    "name": "scala.Equals"
+  },
+  {
+    "name": "scala.Equiv"
+  },
+  {
+    "name": "scala.Error"
+  },
+  {
+    "name": "scala.Exception"
+  },
+  {
+    "name": "scala.Float"
+  },
+  {
+    "name": "scala.Fractional"
+  },
+  {
+    "name": "scala.Function0"
+  },
+  {
+    "name": "scala.Function1"
+  },
+  {
+    "name": "scala.Function10"
+  },
+  {
+    "name": "scala.Function11"
+  },
+  {
+    "name": "scala.Function12"
+  },
+  {
+    "name": "scala.Function13"
+  },
+  {
+    "name": "scala.Function14"
+  },
+  {
+    "name": "scala.Function15"
+  },
+  {
+    "name": "scala.Function16"
+  },
+  {
+    "name": "scala.Function17"
+  },
+  {
+    "name": "scala.Function18"
+  },
+  {
+    "name": "scala.Function19"
+  },
+  {
+    "name": "scala.Function2"
+  },
+  {
+    "name": "scala.Function20"
+  },
+  {
+    "name": "scala.Function21"
+  },
+  {
+    "name": "scala.Function22"
+  },
+  {
+    "name": "scala.Function3"
+  },
+  {
+    "name": "scala.Function4"
+  },
+  {
+    "name": "scala.Function5"
+  },
+  {
+    "name": "scala.Function6"
+  },
+  {
+    "name": "scala.Function7"
+  },
+  {
+    "name": "scala.Function8"
+  },
+  {
+    "name": "scala.Function9"
+  },
+  {
+    "name": "scala.IllegalArgumentException"
+  },
+  {
+    "name": "scala.IndexOutOfBoundsException"
+  },
+  {
+    "name": "scala.IndexedSeq"
+  },
+  {
     "name": "scala.Int"
   },
   {
+    "name": "scala.Integral"
+  },
+  {
+    "name": "scala.InterruptedException"
+  },
+  {
+    "name": "scala.Iterable"
+  },
+  {
+    "name": "scala.IterableOnce"
+  },
+  {
+    "name": "scala.Iterator"
+  },
+  {
+    "name": "scala.LazyList"
+  },
+  {
+    "name": "scala.Left"
+  },
+  {
+    "name": "scala.List"
+  },
+  {
     "name": "scala.Long"
+  },
+  {
+    "name": "scala.LowPriorityImplicits"
+  },
+  {
+    "name": "scala.MatchError"
+  },
+  {
+    "name": "scala.Nil"
+  },
+  {
+    "name": "scala.NoSuchElementException"
+  },
+  {
+    "name": "scala.None"
+  },
+  {
+    "name": "scala.None$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ]
+  },
+  {
+    "name": "scala.NullPointerException"
+  },
+  {
+    "name": "scala.NumberFormatException"
+  },
+  {
+    "name": "scala.Numeric"
+  },
+  {
+    "name": "scala.Option"
+  },
+  {
+    "name": "scala.Ordered"
+  },
+  {
+    "name": "scala.Ordering"
+  },
+  {
+    "name": "scala.PartialFunction"
+  },
+  {
+    "name": "scala.PartialOrdering"
+  },
+  {
+    "name": "scala.PartiallyOrdered"
+  },
+  {
+    "name": "scala.PolyFunction"
+  },
+  {
+    "name": "scala.Predef"
+  },
+  {
+    "name": "scala.Product"
+  },
+  {
+    "name": "scala.Product1"
+  },
+  {
+    "name": "scala.Product10"
+  },
+  {
+    "name": "scala.Product11"
+  },
+  {
+    "name": "scala.Product12"
+  },
+  {
+    "name": "scala.Product13"
+  },
+  {
+    "name": "scala.Product14"
+  },
+  {
+    "name": "scala.Product15"
+  },
+  {
+    "name": "scala.Product16"
+  },
+  {
+    "name": "scala.Product17"
+  },
+  {
+    "name": "scala.Product18"
+  },
+  {
+    "name": "scala.Product19"
+  },
+  {
+    "name": "scala.Product2"
+  },
+  {
+    "name": "scala.Product20"
+  },
+  {
+    "name": "scala.Product21"
+  },
+  {
+    "name": "scala.Product22"
+  },
+  {
+    "name": "scala.Product3"
+  },
+  {
+    "name": "scala.Product4"
+  },
+  {
+    "name": "scala.Product5"
+  },
+  {
+    "name": "scala.Product6"
+  },
+  {
+    "name": "scala.Product7"
+  },
+  {
+    "name": "scala.Product8"
+  },
+  {
+    "name": "scala.Product9"
+  },
+  {
+    "name": "scala.Range"
+  },
+  {
+    "name": "scala.Right"
+  },
+  {
+    "name": "scala.RuntimeException"
+  },
+  {
+    "name": "scala.Seq"
+  },
+  {
+    "name": "scala.SerialVersionUID"
+  },
+  {
+    "name": "scala.Serializable"
+  },
+  {
+    "name": "scala.Short"
+  },
+  {
+    "name": "scala.Some"
+  },
+  {
+    "name": "scala.Specializable"
+  },
+  {
+    "name": "scala.Stream"
+  },
+  {
+    "name": "scala.StringBuilder"
+  },
+  {
+    "name": "scala.StringContext"
+  },
+  {
+    "name": "scala.StringIndexOutOfBoundsException"
   },
   {
     "name": "scala.Symbol",
@@ -2003,6 +4688,1104 @@
     ]
   },
   {
+    "name": "scala.Throwable"
+  },
+  {
+    "name": "scala.Traversable"
+  },
+  {
+    "name": "scala.TraversableOnce"
+  },
+  {
+    "name": "scala.Tuple1"
+  },
+  {
+    "name": "scala.Tuple10"
+  },
+  {
+    "name": "scala.Tuple11"
+  },
+  {
+    "name": "scala.Tuple12"
+  },
+  {
+    "name": "scala.Tuple13"
+  },
+  {
+    "name": "scala.Tuple14"
+  },
+  {
+    "name": "scala.Tuple15"
+  },
+  {
+    "name": "scala.Tuple16"
+  },
+  {
+    "name": "scala.Tuple17"
+  },
+  {
+    "name": "scala.Tuple18"
+  },
+  {
+    "name": "scala.Tuple19"
+  },
+  {
+    "name": "scala.Tuple2"
+  },
+  {
+    "name": "scala.Tuple20"
+  },
+  {
+    "name": "scala.Tuple21"
+  },
+  {
+    "name": "scala.Tuple22"
+  },
+  {
+    "name": "scala.Tuple3"
+  },
+  {
+    "name": "scala.Tuple4"
+  },
+  {
+    "name": "scala.Tuple5"
+  },
+  {
+    "name": "scala.Tuple6"
+  },
+  {
+    "name": "scala.Tuple7"
+  },
+  {
+    "name": "scala.Tuple8"
+  },
+  {
+    "name": "scala.Tuple9"
+  },
+  {
+    "name": "scala.UninitializedFieldError"
+  },
+  {
+    "name": "scala.Unit"
+  },
+  {
+    "name": "scala.UnsupportedOperationException"
+  },
+  {
+    "name": "scala.ValueOf"
+  },
+  {
+    "name": "scala.Vector"
+  },
+  {
+    "name": "scala.annotation"
+  },
+  {
+    "name": "scala.annotation.Annotation"
+  },
+  {
+    "name": "scala.annotation.ConstantAnnotation"
+  },
+  {
+    "name": "scala.annotation.StaticAnnotation"
+  },
+  {
+    "name": "scala.annotation.TypeConstraint"
+  },
+  {
+    "name": "scala.annotation.compileTimeOnly"
+  },
+  {
+    "name": "scala.annotation.elidable"
+  },
+  {
+    "name": "scala.annotation.experimental"
+  },
+  {
+    "name": "scala.annotation.implicitAmbiguous"
+  },
+  {
+    "name": "scala.annotation.implicitNotFound"
+  },
+  {
+    "name": "scala.annotation.internal"
+  },
+  {
+    "name": "scala.annotation.internal.Child"
+  },
+  {
+    "name": "scala.annotation.internal.Repeated"
+  },
+  {
+    "name": "scala.annotation.internal.package"
+  },
+  {
+    "name": "scala.annotation.meta"
+  },
+  {
+    "name": "scala.annotation.meta.beanGetter"
+  },
+  {
+    "name": "scala.annotation.meta.beanSetter"
+  },
+  {
+    "name": "scala.annotation.meta.companionClass"
+  },
+  {
+    "name": "scala.annotation.meta.companionMethod"
+  },
+  {
+    "name": "scala.annotation.meta.companionObject"
+  },
+  {
+    "name": "scala.annotation.meta.field"
+  },
+  {
+    "name": "scala.annotation.meta.getter"
+  },
+  {
+    "name": "scala.annotation.meta.languageFeature"
+  },
+  {
+    "name": "scala.annotation.meta.package"
+  },
+  {
+    "name": "scala.annotation.meta.param"
+  },
+  {
+    "name": "scala.annotation.meta.setter"
+  },
+  {
+    "name": "scala.annotation.migration"
+  },
+  {
+    "name": "scala.annotation.nowarn"
+  },
+  {
+    "name": "scala.annotation.package"
+  },
+  {
+    "name": "scala.annotation.scala$annotation$$meta"
+  },
+  {
+    "name": "scala.annotation.showAsInfix"
+  },
+  {
+    "name": "scala.annotation.static"
+  },
+  {
+    "name": "scala.annotation.strictfp"
+  },
+  {
+    "name": "scala.annotation.switch"
+  },
+  {
+    "name": "scala.annotation.tailrec"
+  },
+  {
+    "name": "scala.annotation.targetName"
+  },
+  {
+    "name": "scala.annotation.unchecked"
+  },
+  {
+    "name": "scala.annotation.unchecked.package"
+  },
+  {
+    "name": "scala.annotation.unchecked.uncheckedStable"
+  },
+  {
+    "name": "scala.annotation.unchecked.uncheckedVariance"
+  },
+  {
+    "name": "scala.annotation.unspecialized"
+  },
+  {
+    "name": "scala.annotation.unused"
+  },
+  {
+    "name": "scala.annotation.varargs"
+  },
+  {
+    "name": "scala.beans"
+  },
+  {
+    "name": "scala.beans.BeanProperty"
+  },
+  {
+    "name": "scala.beans.BooleanBeanProperty"
+  },
+  {
+    "name": "scala.beans.package"
+  },
+  {
+    "name": "scala.collection"
+  },
+  {
+    "name": "scala.collection.$colon$plus"
+  },
+  {
+    "name": "scala.collection.$plus$colon"
+  },
+  {
+    "name": "scala.collection.AnyConstr"
+  },
+  {
+    "name": "scala.collection.ArrayLike"
+  },
+  {
+    "name": "scala.collection.ArrayOps"
+  },
+  {
+    "name": "scala.collection.BufferedIterator"
+  },
+  {
+    "name": "scala.collection.Factory"
+  },
+  {
+    "name": "scala.collection.GenIterable"
+  },
+  {
+    "name": "scala.collection.GenMap"
+  },
+  {
+    "name": "scala.collection.GenSeq"
+  },
+  {
+    "name": "scala.collection.GenSet"
+  },
+  {
+    "name": "scala.collection.GenTraversable"
+  },
+  {
+    "name": "scala.collection.GenTraversableOnce"
+  },
+  {
+    "name": "scala.collection.Iterable"
+  },
+  {
+    "name": "scala.collection.IterableFactory"
+  },
+  {
+    "name": "scala.collection.IterableFactoryDefaults"
+  },
+  {
+    "name": "scala.collection.IterableOnce"
+  },
+  {
+    "name": "scala.collection.IterableOnceExtensionMethods"
+  },
+  {
+    "name": "scala.collection.Iterator"
+  },
+  {
+    "name": "scala.collection.Map"
+  },
+  {
+    "name": "scala.collection.MapFactory"
+  },
+  {
+    "name": "scala.collection.Seq"
+  },
+  {
+    "name": "scala.collection.SeqFactory"
+  },
+  {
+    "name": "scala.collection.SeqLike"
+  },
+  {
+    "name": "scala.collection.SeqOps"
+  },
+  {
+    "name": "scala.collection.Set"
+  },
+  {
+    "name": "scala.collection.StringOps"
+  },
+  {
+    "name": "scala.collection.Traversable"
+  },
+  {
+    "name": "scala.collection.TraversableOnce"
+  },
+  {
+    "name": "scala.collection.concurrent.CNodeBase",
+    "fields": [
+      {
+        "name": "csize"
+      }
+    ]
+  },
+  {
+    "name": "scala.collection.concurrent.INodeBase",
+    "fields": [
+      {
+        "name": "mainnode"
+      }
+    ]
+  },
+  {
+    "name": "scala.collection.concurrent.MainNode",
+    "fields": [
+      {
+        "name": "prev"
+      }
+    ]
+  },
+  {
+    "name": "scala.collection.concurrent.TrieMap",
+    "fields": [
+      {
+        "name": "root"
+      }
+    ]
+  },
+  {
+    "name": "scala.collection.generic.SerializeEnd$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ]
+  },
+  {
+    "name": "scala.collection.immutable"
+  },
+  {
+    "name": "scala.collection.immutable.$colon$colon"
+  },
+  {
+    "name": "scala.collection.immutable.AbstractSeq"
+  },
+  {
+    "name": "scala.collection.immutable.DefaultMap"
+  },
+  {
+    "name": "scala.collection.immutable.IndexedSeq"
+  },
+  {
+    "name": "scala.collection.immutable.Iterable"
+  },
+  {
+    "name": "scala.collection.immutable.LinearSeq"
+  },
+  {
+    "name": "scala.collection.immutable.LinearSeqOps"
+  },
+  {
+    "name": "scala.collection.immutable.List"
+  },
+  {
+    "name": "scala.collection.immutable.List$",
+    "fields": [
+      {
+        "name": "MODULE$"
+      }
+    ]
+  },
+  {
+    "name": "scala.collection.immutable.Map"
+  },
+  {
+    "name": "scala.collection.immutable.Nil"
+  },
+  {
+    "name": "scala.collection.immutable.Seq"
+  },
+  {
+    "name": "scala.collection.immutable.Stream"
+  },
+  {
+    "name": "scala.collection.immutable.StringOps"
+  },
+  {
+    "name": "scala.collection.immutable.StringView"
+  },
+  {
+    "name": "scala.collection.immutable.Traversable"
+  },
+  {
+    "name": "scala.collection.immutable.package"
+  },
+  {
+    "name": "scala.collection.package"
+  },
+  {
+    "name": "scala.collection.scala$collection$$immutable"
+  },
+  {
+    "name": "scala.concurrent"
+  },
+  {
+    "name": "scala.concurrent.CancellationException"
+  },
+  {
+    "name": "scala.concurrent.ExecutionException"
+  },
+  {
+    "name": "scala.concurrent.Future"
+  },
+  {
+    "name": "scala.concurrent.Promise"
+  },
+  {
+    "name": "scala.concurrent.TimeoutException"
+  },
+  {
+    "name": "scala.concurrent.blocking"
+  },
+  {
+    "name": "scala.concurrent.package"
+  },
+  {
+    "name": "scala.deprecated"
+  },
+  {
+    "name": "scala.deprecatedInheritance"
+  },
+  {
+    "name": "scala.deprecatedName"
+  },
+  {
+    "name": "scala.deprecatedOverriding"
+  },
+  {
+    "name": "scala.inline"
+  },
+  {
+    "name": "scala.languageFeature"
+  },
+  {
+    "name": "scala.math"
+  },
+  {
+    "name": "scala.math.E"
+  },
+  {
+    "name": "scala.math.IEEEremainder"
+  },
+  {
+    "name": "scala.math.Pi"
+  },
+  {
+    "name": "scala.math.ScalaNumber"
+  },
+  {
+    "name": "scala.math.abs"
+  },
+  {
+    "name": "scala.math.acos"
+  },
+  {
+    "name": "scala.math.addExact"
+  },
+  {
+    "name": "scala.math.asin"
+  },
+  {
+    "name": "scala.math.atan"
+  },
+  {
+    "name": "scala.math.atan2"
+  },
+  {
+    "name": "scala.math.cbrt"
+  },
+  {
+    "name": "scala.math.ceil"
+  },
+  {
+    "name": "scala.math.copySign"
+  },
+  {
+    "name": "scala.math.cos"
+  },
+  {
+    "name": "scala.math.cosh"
+  },
+  {
+    "name": "scala.math.decrementExact"
+  },
+  {
+    "name": "scala.math.exp"
+  },
+  {
+    "name": "scala.math.expm1"
+  },
+  {
+    "name": "scala.math.floor"
+  },
+  {
+    "name": "scala.math.floorDiv"
+  },
+  {
+    "name": "scala.math.floorMod"
+  },
+  {
+    "name": "scala.math.getExponent"
+  },
+  {
+    "name": "scala.math.hypot"
+  },
+  {
+    "name": "scala.math.incrementExact"
+  },
+  {
+    "name": "scala.math.log"
+  },
+  {
+    "name": "scala.math.log10"
+  },
+  {
+    "name": "scala.math.log1p"
+  },
+  {
+    "name": "scala.math.max"
+  },
+  {
+    "name": "scala.math.min"
+  },
+  {
+    "name": "scala.math.multiplyExact"
+  },
+  {
+    "name": "scala.math.negateExact"
+  },
+  {
+    "name": "scala.math.nextAfter"
+  },
+  {
+    "name": "scala.math.nextDown"
+  },
+  {
+    "name": "scala.math.nextUp"
+  },
+  {
+    "name": "scala.math.package"
+  },
+  {
+    "name": "scala.math.pow"
+  },
+  {
+    "name": "scala.math.random"
+  },
+  {
+    "name": "scala.math.rint"
+  },
+  {
+    "name": "scala.math.round"
+  },
+  {
+    "name": "scala.math.scalb"
+  },
+  {
+    "name": "scala.math.signum"
+  },
+  {
+    "name": "scala.math.sin"
+  },
+  {
+    "name": "scala.math.sinh"
+  },
+  {
+    "name": "scala.math.sqrt"
+  },
+  {
+    "name": "scala.math.subtractExact"
+  },
+  {
+    "name": "scala.math.tan"
+  },
+  {
+    "name": "scala.math.tanh"
+  },
+  {
+    "name": "scala.math.toDegrees"
+  },
+  {
+    "name": "scala.math.toIntExact"
+  },
+  {
+    "name": "scala.math.toRadians"
+  },
+  {
+    "name": "scala.math.ulp"
+  },
+  {
+    "name": "scala.native"
+  },
+  {
+    "name": "scala.noinline"
+  },
+  {
+    "name": "scala.package"
+  },
+  {
+    "name": "scala.reflect"
+  },
+  {
+    "name": "scala.reflect.ClassManifest"
+  },
+  {
+    "name": "scala.reflect.ClassManifestFactory"
+  },
+  {
+    "name": "scala.reflect.ClassTag"
+  },
+  {
+    "name": "scala.reflect.Manifest"
+  },
+  {
+    "name": "scala.reflect.ManifestFactory"
+  },
+  {
+    "name": "scala.reflect.NoManifest"
+  },
+  {
+    "name": "scala.reflect.OptManifest"
+  },
+  {
+    "name": "scala.reflect.ScalaLongSignature"
+  },
+  {
+    "name": "scala.reflect.ScalaSignature",
+    "methods": [
+      {
+        "name": "bytes",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "scala.reflect.api"
+  },
+  {
+    "name": "scala.reflect.api.Exprs"
+  },
+  {
+    "name": "scala.reflect.api.JavaUniverse"
+  },
+  {
+    "name": "scala.reflect.api.Mirror"
+  },
+  {
+    "name": "scala.reflect.api.Quasiquotes"
+  },
+  {
+    "name": "scala.reflect.api.TreeCreator"
+  },
+  {
+    "name": "scala.reflect.api.Trees"
+  },
+  {
+    "name": "scala.reflect.api.TypeCreator"
+  },
+  {
+    "name": "scala.reflect.api.TypeTags"
+  },
+  {
+    "name": "scala.reflect.api.Universe"
+  },
+  {
+    "name": "scala.reflect.api.materializeTypeTag"
+  },
+  {
+    "name": "scala.reflect.api.materializeWeakTypeTag"
+  },
+  {
+    "name": "scala.reflect.api.package"
+  },
+  {
+    "name": "scala.reflect.classTag"
+  },
+  {
+    "name": "scala.reflect.ensureAccessible"
+  },
+  {
+    "name": "scala.reflect.internal"
+  },
+  {
+    "name": "scala.reflect.internal.annotations"
+  },
+  {
+    "name": "scala.reflect.internal.annotations.compileTimeOnly"
+  },
+  {
+    "name": "scala.reflect.internal.annotations.package"
+  },
+  {
+    "name": "scala.reflect.internal.annotations.uncheckedBounds"
+  },
+  {
+    "name": "scala.reflect.internal.package"
+  },
+  {
+    "name": "scala.reflect.macros"
+  },
+  {
+    "name": "scala.reflect.macros.Context"
+  },
+  {
+    "name": "scala.reflect.macros.blackbox"
+  },
+  {
+    "name": "scala.reflect.macros.blackbox.Context"
+  },
+  {
+    "name": "scala.reflect.macros.blackbox.package"
+  },
+  {
+    "name": "scala.reflect.macros.internal"
+  },
+  {
+    "name": "scala.reflect.macros.internal.macroImpl"
+  },
+  {
+    "name": "scala.reflect.macros.internal.macroImplLocation"
+  },
+  {
+    "name": "scala.reflect.macros.internal.package"
+  },
+  {
+    "name": "scala.reflect.macros.package"
+  },
+  {
+    "name": "scala.reflect.macros.scala$reflect$macros$$whitebox"
+  },
+  {
+    "name": "scala.reflect.macros.whitebox"
+  },
+  {
+    "name": "scala.reflect.macros.whitebox.Context"
+  },
+  {
+    "name": "scala.reflect.macros.whitebox.package"
+  },
+  {
+    "name": "scala.reflect.materializeClassTag"
+  },
+  {
+    "name": "scala.reflect.package"
+  },
+  {
+    "name": "scala.reflect.runtime"
+  },
+  {
+    "name": "scala.reflect.runtime.currentMirror"
+  },
+  {
+    "name": "scala.reflect.runtime.package"
+  },
+  {
+    "name": "scala.reflect.runtime.universe"
+  },
+  {
+    "name": "scala.runtime"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction0"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction1"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction10"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction11"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction12"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction13"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction14"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction15"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction16"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction17"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction18"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction19"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction2"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction20"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction21"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction22"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction3"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction4"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction5"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction6"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction7"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction8"
+  },
+  {
+    "name": "scala.runtime.AbstractFunction9"
+  },
+  {
+    "name": "scala.runtime.AbstractPartialFunction"
+  },
+  {
+    "name": "scala.runtime.BooleanRef"
+  },
+  {
+    "name": "scala.runtime.BoxedUnit"
+  },
+  {
+    "name": "scala.runtime.BoxesRunTime"
+  },
+  {
+    "name": "scala.runtime.ByteRef"
+  },
+  {
+    "name": "scala.runtime.CharRef"
+  },
+  {
+    "name": "scala.runtime.DoubleRef"
+  },
+  {
+    "name": "scala.runtime.EmptyMethodCache"
+  },
+  {
+    "name": "scala.runtime.FloatRef"
+  },
+  {
+    "name": "scala.runtime.IntRef"
+  },
+  {
+    "name": "scala.runtime.LazyBoolean"
+  },
+  {
+    "name": "scala.runtime.LazyByte"
+  },
+  {
+    "name": "scala.runtime.LazyChar"
+  },
+  {
+    "name": "scala.runtime.LazyDouble"
+  },
+  {
+    "name": "scala.runtime.LazyFloat"
+  },
+  {
+    "name": "scala.runtime.LazyInt"
+  },
+  {
+    "name": "scala.runtime.LazyLong"
+  },
+  {
+    "name": "scala.runtime.LazyRef"
+  },
+  {
+    "name": "scala.runtime.LazyShort"
+  },
+  {
+    "name": "scala.runtime.LazyUnit"
+  },
+  {
+    "name": "scala.runtime.LongRef"
+  },
+  {
+    "name": "scala.runtime.MethodCache"
+  },
+  {
+    "name": "scala.runtime.ModuleSerializationProxy"
+  },
+  {
+    "name": "scala.runtime.NonLocalReturnControl"
+  },
+  {
+    "name": "scala.runtime.Nothing$"
+  },
+  {
+    "name": "scala.runtime.Null$"
+  },
+  {
+    "name": "scala.runtime.ObjectRef"
+  },
+  {
+    "name": "scala.runtime.RichFloat"
+  },
+  {
+    "name": "scala.runtime.ScalaRunTime"
+  },
+  {
+    "name": "scala.runtime.ShortRef"
+  },
+  {
+    "name": "scala.runtime.Statics"
+  },
+  {
+    "name": "scala.runtime.StructuralCallSite"
+  },
+  {
+    "name": "scala.runtime.SymbolLiteral"
+  },
+  {
+    "name": "scala.runtime.VolatileBooleanRef"
+  },
+  {
+    "name": "scala.runtime.VolatileByteRef"
+  },
+  {
+    "name": "scala.runtime.VolatileCharRef"
+  },
+  {
+    "name": "scala.runtime.VolatileDoubleRef"
+  },
+  {
+    "name": "scala.runtime.VolatileFloatRef"
+  },
+  {
+    "name": "scala.runtime.VolatileIntRef"
+  },
+  {
+    "name": "scala.runtime.VolatileLongRef"
+  },
+  {
+    "name": "scala.runtime.VolatileObjectRef"
+  },
+  {
+    "name": "scala.runtime.VolatileShortRef"
+  },
+  {
+    "name": "scala.runtime.package"
+  },
+  {
+    "name": "scala.scala$$annotation"
+  },
+  {
+    "name": "scala.scala$$collection"
+  },
+  {
+    "name": "scala.scala$$reflect"
+  },
+  {
+    "name": "scala.specialized"
+  },
+  {
+    "name": "scala.throws"
+  },
+  {
+    "name": "scala.transient"
+  },
+  {
+    "name": "scala.unchecked"
+  },
+  {
+    "name": "scala.util"
+  },
+  {
+    "name": "scala.util.Failure"
+  },
+  {
+    "name": "scala.util.Success"
+  },
+  {
+    "name": "scala.util.Try"
+  },
+  {
+    "name": "scala.util.chaining"
+  },
+  {
+    "name": "scala.util.control"
+  },
+  {
+    "name": "scala.util.control.NonFatal$"
+  },
+  {
+    "name": "scala.util.control.package"
+  },
+  {
+    "name": "scala.util.package"
+  },
+  {
+    "name": "scala.volatile"
+  },
+  {
+    "name": "scala.xml"
+  },
+  {
+    "name": "scala.xml.EntityResolver"
+  },
+  {
+    "name": "scala.xml.InputSource"
+  },
+  {
+    "name": "scala.xml.SAXException"
+  },
+  {
+    "name": "scala.xml.SAXParseException"
+  },
+  {
+    "name": "scala.xml.SAXParser"
+  },
+  {
+    "name": "scala.xml.TopScope"
+  },
+  {
+    "name": "scala.xml.XMLReader"
+  },
+  {
+    "name": "scala.xml.XercesClassName"
+  },
+  {
+    "name": "scala.xml.package"
+  },
+  {
+    "name": "sun.invoke"
+  },
+  {
+    "name": "sun.invoke.empty"
+  },
+  {
+    "name": "sun.invoke.empty.Empty"
+  },
+  {
+    "name": "sun.invoke.empty.package"
+  },
+  {
+    "name": "sun.invoke.package"
+  },
+  {
+    "name": "sun.invoke.util"
+  },
+  {
+    "name": "sun.invoke.util.Wrapper"
+  },
+  {
+    "name": "sun.invoke.util.package"
+  },
+  {
     "name": "sun.misc.Unsafe",
     "allDeclaredFields": true,
     "methods": [
@@ -2013,6 +5796,12 @@
         ]
       }
     ]
+  },
+  {
+    "name": "sun.package"
+  },
+  {
+    "name": "sun.reflect.Reflection"
   },
   {
     "name": "sun.security.pkcs12.PKCS12KeyStore",
@@ -2051,7 +5840,7 @@
     ]
   },
   {
-    "name": "sun.security.provider.JavaKeyStore$JKS",
+    "name": "sun.security.provider.MD5",
     "methods": [
       {
         "name": "<init>",
@@ -2065,6 +5854,12 @@
       {
         "name": "<init>",
         "parameterTypes": []
+      },
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.security.SecureRandomParameters"
+        ]
       }
     ]
   },
@@ -2328,23 +6123,5 @@
         ]
       }
     ]
-  },
-  {
-    "name": "org.fusesource.jansi.AnsiConsole",
-    "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true,
-    "allDeclaredMethods" : true,
-    "allPublicMethods" : true,
-    "allDeclaredFields" : true,
-    "allPublicFields" : true
-  },
-  {
-    "name": "dev.mongocamp.server.logging.HighlightingColorConverter",
-    "allDeclaredConstructors" : true,
-    "allPublicConstructors" : true,
-    "allDeclaredMethods" : true,
-    "allPublicMethods" : true,
-    "allDeclaredFields" : true,
-    "allPublicFields" : true
   }
 ]

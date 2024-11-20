@@ -5,27 +5,27 @@ import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.server.{PluginLoadedEvent, ServerStartedEvent}
+import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{KeyCorsHeaderOrigin, KeyCorsHeaderReferer}
-import dev.mongocamp.server.plugin.{RoutesPlugin, ServerPlugin}
+import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
+import dev.mongocamp.server.plugin.{ RoutesPlugin, ServerPlugin }
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ConfigurationService, PluginDownloadService, PluginService, ReflectionService}
+import dev.mongocamp.server.service.{ ConfigurationService, PluginDownloadService, PluginService, ReflectionService }
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.http.scaladsl.Http
 import org.apache.pekko.http.scaladsl.model.HttpHeader.ParsingResult
 import org.apache.pekko.http.scaladsl.model.HttpMethods._
-import org.apache.pekko.http.scaladsl.model.{HttpHeader, HttpResponse, StatusCodes}
-import org.apache.pekko.http.scaladsl.server.Directives.{complete, extractRequestContext, options, reject}
-import org.apache.pekko.http.scaladsl.server.{Route, RouteConcatenation}
+import org.apache.pekko.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
+import org.apache.pekko.http.scaladsl.server.Directives.{ complete, extractRequestContext, options, reject }
+import org.apache.pekko.http.scaladsl.server.{ Route, RouteConcatenation }
 import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.tapir.server.ServerEndpoint
 
 import java.sql.DriverManager
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 object Server extends App with LazyLogging with RouteConcatenation with RestServer {
 
@@ -100,7 +100,9 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
 
   private def activateServerPlugins(): Unit = {
     val serverPlugins = ReflectionService.instancesForType(classOf[ServerPlugin])
-    val serverPluginsToActivate = serverPlugins.filterNot(plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName))
+    val serverPluginsToActivate = serverPlugins.filterNot(
+      plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
+    )
     serverPluginsToActivate
       .map(
         plugin => {
