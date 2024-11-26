@@ -8,14 +8,13 @@ import scala.reflect.runtime.universe.runtimeMirror
 import scala.util.Try
 
 class ClassGraphService extends LazyLogging {
-  var scanResult: ScanResult = _
+  var scanResult: ScanResult = scan()
 
-  private val classGraph: ClassGraph = {
+  private lazy val classGraph: ClassGraph = {
     val cG = new ClassGraph()
       .enableClassInfo()
       .disableModuleScanning()
       .addClassLoader(ClassLoader.getSystemClassLoader)
-    scanResult = scan()
     cG
   }
 
