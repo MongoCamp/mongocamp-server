@@ -30,9 +30,6 @@
     "name": "[Lio.circe.Json$JNumber;"
   },
   {
-    "name": "[Lio.github.classgraph.ObjectTypedValueWrapper;"
-  },
-  {
     "name": "[Ljava.lang.Class;"
   },
   {
@@ -416,6 +413,14 @@
     "queryAllPublicMethods": true
   },
   {
+    "name": "com.zaxxer.hikari.pool.PoolBase",
+    "fields": [
+      {
+        "name": "catalog"
+      }
+    ]
+  },
+  {
     "name": "com.zaxxer.hikari.pool.PoolEntry",
     "fields": [
       {
@@ -706,168 +711,6 @@
     "name": "dev.package"
   },
   {
-    "name": "io.github.classgraph.AnnotationClassRef",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.AnnotationEnumValue",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.AnnotationInfo",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.AnnotationInfoList",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.AnnotationParameterValue",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.AnnotationParameterValueList",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ClassInfo",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ClassInfoList",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ClassMemberInfo",
-    "allDeclaredFields": true
-  },
-  {
-    "name": "io.github.classgraph.FieldInfoList",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.MethodInfo",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.MethodInfoList",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ModuleInfo",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ModulePathInfo",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ObjectTypedValueWrapper",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.PackageInfo",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ScanResult$SerializationFormat",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "io.github.classgraph.ScanResultObject",
-    "allDeclaredFields": true
-  },
-  {
     "name": "java"
   },
   {
@@ -1099,13 +942,7 @@
     "allDeclaredFields": true,
     "allDeclaredClasses": true,
     "queryAllDeclaredMethods": true,
-    "queryAllPublicConstructors": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
+    "queryAllPublicConstructors": true
   },
   {
     "name": "java.lang.StringBuffer"
@@ -1451,40 +1288,10 @@
     "name": "java.util"
   },
   {
-    "name": "java.util.ArrayList",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "int"
-        ]
-      }
-    ]
-  },
-  {
     "name": "java.util.Comparator"
   },
   {
-    "name": "java.util.HashMap",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "int"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "java.util.HashSet",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": [
-          "int"
-        ]
-      }
-    ]
+    "name": "java.util.HashMap"
   },
   {
     "name": "java.util.Iterator"
@@ -1613,6 +1420,21 @@
   },
   {
     "name": "jdk.internal.ValueBased"
+  },
+  {
+    "name": "jdk.internal.loader.BuiltinClassLoader",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "jdk.internal.loader.ClassLoaders$AppClassLoader",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
+  },
+  {
+    "name": "jdk.internal.loader.ClassLoaders$PlatformClassLoader",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true
   },
   {
     "name": "jdk.internal.misc.Unsafe"
@@ -2249,57 +2071,8 @@
     ]
   },
   {
-    "name": "nonapi.io.github.classgraph.json.ClassFieldCache$NoConstructor",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject",
-    "allDeclaredFields": true
-  },
-  {
-    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectLeafname",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectPrefix",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectWholeString",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
     "name": "nonapi.io.github.classgraph.scanspec.ScanSpec",
-    "allDeclaredFields": true,
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
+    "allDeclaredFields": true
   },
   {
     "name": "org.apache.logging.log4j.core.Logger"
@@ -3993,6 +3766,9 @@
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "org.quartz.plugins.xml.FileScanJob"
   },
   {
     "name": "org.quartz.simpl.CascadingClassLoadHelper",

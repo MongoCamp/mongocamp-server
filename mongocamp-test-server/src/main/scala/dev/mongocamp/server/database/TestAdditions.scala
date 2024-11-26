@@ -22,9 +22,11 @@ object TestAdditions extends CirceSchema {
 
   lazy val adminUser: String     = "admin"
   lazy val adminPassword: String = Random.alphanumeric.take(10).mkString
+//  lazy val adminPassword: String = "40P2T2uQIJ"
 
   lazy val testUser: String     = "mongocamp_test"
   lazy val testPassword: String = Random.alphanumeric.take(10).mkString
+//  lazy val testPassword: String     = "mongocamp_test"
 
   private var dataImported: Boolean = false
 
