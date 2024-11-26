@@ -17,7 +17,8 @@ libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "10.0.1"
 
 libraryDependencies += "org.jgroups" % "jgroups" % "5.3.13.Final"
 
-libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.5.0"
+libraryDependencies += "org.quartz-scheduler" % "quartz"   % "2.5.0"
+libraryDependencies += "com.zaxxer"           % "HikariCP" % "6.2.1"
 
 enablePlugins(BuildInfoPlugin)
 
