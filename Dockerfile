@@ -1,5 +1,5 @@
 FROM debian:12.7-slim AS builder
-ARG GRAAL_VERSION="graalvm-java23:23.0.1"
+ARG GRAAL_VERSION="graalvm-java21:21.0.2"
 ARG UPX_VERSION="4.2.4"
 ENV COURSIER_FOLDER="/opt/coursier/bin"
 ENV PATH="$PATH:$COURSIER_FOLDER"

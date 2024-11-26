@@ -31,7 +31,6 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
         catch {
           case e: Exception =>
             monitor.failed(e)
-            response += 1
         }
       }
     }
@@ -43,7 +42,6 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
         catch {
           case e: Exception =>
             monitor.failed(e)
-            response += 1
         }
       }
     }

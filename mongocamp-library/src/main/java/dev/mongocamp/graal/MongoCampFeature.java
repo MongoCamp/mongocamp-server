@@ -22,7 +22,7 @@ public class MongoCampFeature implements Feature {
     }
 
     private Path writablePathFromClassPath(FeatureAccess access) {
-        return access.getApplicationClassPath().stream().filter(p -> !p.toString().toLowerCase().endsWith("jar")).findFirst().orElseThrow(() -> new RuntimeException("No writable path found " + access.getApplicationClassPath()));
+        return access.getApplicationClassPath().stream().filter(p -> !p.toString().toLowerCase().endsWith("jar")).findFirst().orElseThrow(() -> new RuntimeException("No writable path found "));
     }
 
     @Override
@@ -37,8 +37,7 @@ public class MongoCampFeature implements Feature {
         }).toArray(URL[]::new));
         ClassGraph classGraph = new ClassGraph().enableClassInfo().addClassLoader(classLoader);
         ScanResult scanResult = classGraph.scan();
-        ScanResult validation = ScanResult.fromJSON(scanResult.toJSON());
-        out.println("Validation: " + validation.equals(scanResult));
+        ScanResult.fromJSON(scanResult.toJSON());
         Path path = Paths.get(writablePathFromClassPath(access) + "/mongocamp-classes.json");
         try {
             Files.deleteIfExists(path);
@@ -46,7 +45,8 @@ public class MongoCampFeature implements Feature {
             Files.writeString(path, scanResult.toJSON());
             out.println("MongoCamp-Classes written to " + path);
         } catch (IOException e) {
-            e.printStackTrace();
+            out.println("MongoCamp-Classes error on write to " + path);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
