@@ -1,12 +1,12 @@
 name := "mongocamp-library"
 
-libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.15"
+libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.18"
 
 libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.8.1"
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.16"
 
-libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.177"
+libraryDependencies += "io.github.classgraph" % "classgraph" % "4.8.179"
 
 libraryDependencies += ("com.github.blemale" %% "scaffeine" % "5.3.0").exclude("org.scala-lang.modules", "scala-java8-compat_2.12")
 

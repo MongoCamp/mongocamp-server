@@ -12,7 +12,7 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging"   % "3.9.
 
 publish / skip := true
 
-libraryDependencies += "io.get-coursier" %% "coursier-jvm" % "2.1.15"
+libraryDependencies += "io.get-coursier" %% "coursier-jvm" % "2.1.18"
 
 graalVMNativeImageOptions ++= Seq(
   "--no-fallback",
