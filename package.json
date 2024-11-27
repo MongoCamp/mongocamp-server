@@ -1,7 +1,7 @@
 {
   "name" : "mongocamp-server",
   "organization" : "dev.mongocamp",
-  "version" : "1.6.0-SNAPSHOT",
+  "version" : "1.6.0.snapshot",
   "description" : "",
   "directories" : {
     "doc" : "docs"

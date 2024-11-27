@@ -22,6 +22,7 @@ object TestServer extends LazyLogging {
   var retries = 0
 
   def server: RestServer = {
+    ReflectionService.scanClassPath()
     val servers = ReflectionService.instancesForType(classOf[RestServer])
     if (servers.size == 1) {
       servers.head
@@ -67,8 +68,8 @@ object TestServer extends LazyLogging {
   def ignoreRunningInstanceAndReset(): Unit = _serverRunning = false
 
   def serverBaseUrl: String = {
-    "http://%s:%s".format(server.interface, server.port)
-//    "http://localhost:8080"
+//    "http://%s:%s".format(server.interface, server.port)
+    "http://localhost:8080"
   }
 
   def setPort(): Unit = {

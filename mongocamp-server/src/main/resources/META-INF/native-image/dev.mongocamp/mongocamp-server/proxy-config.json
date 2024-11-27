@@ -1,17 +1,11 @@
 [
   {
-    "interfaces": [
-      "java.security.PrivilegedAction"
-    ]
+    "interfaces":["java.security.PrivilegedAction"]
   },
   {
-    "interfaces": [
-      "java.sql.Connection"
-    ]
+    "interfaces":["java.sql.Connection"]
   },
   {
-    "interfaces": [
-      "java.util.function.Consumer"
-    ]
+    "interfaces":["java.util.function.Consumer"]
   }
 ]

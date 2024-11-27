@@ -8,18 +8,23 @@ import scala.reflect.runtime.universe.runtimeMirror
 import scala.util.Try
 
 class ClassGraphService extends LazyLogging {
-  var scanResult: ScanResult = scan()
+  var scanResult: ScanResult = _
 
   private lazy val classGraph: ClassGraph = {
     val cG = new ClassGraph()
       .enableClassInfo()
       .disableModuleScanning()
       .addClassLoader(ClassLoader.getSystemClassLoader)
+    ScanResult.fromJSON(cG.scan().toJSON)
     cG
   }
 
   private def scan(): ScanResult = {
     classGraph.scan()
+  }
+
+  def scanClassPath(): Unit = {
+    scanResult = scan()
   }
 
   def instancesForType[T <: Any](clazz: Class[T]): List[T] = {

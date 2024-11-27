@@ -115,6 +115,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
     DriverManager.registerDriver(new MongoJdbcDriver())
+    ReflectionService.scanClassPath()
     ConfigurationService.registerMongoCampServerDefaultConfigs()
     val pluginDownloadService = new PluginDownloadService()
     pluginDownloadService.downloadPlugins()
@@ -127,13 +128,10 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
       .map(
         serverBinding => {
           AuthHolder.handler
-
           logger.warn("init server with interface: %s at port: %s".format(interface, port))
-
           if (ApiDocsRoutes.isSwaggerEnabled) {
             logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
           }
-
           EventSystem.publish(ServerStartedEvent())
           doAfterServerStartUp()
           serverBinding

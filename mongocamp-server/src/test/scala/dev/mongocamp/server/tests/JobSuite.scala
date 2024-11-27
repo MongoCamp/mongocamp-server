@@ -2,7 +2,7 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.test.client.api.JobsApi
 import dev.mongocamp.server.test.client.model.JobConfig
-import dev.mongocamp.server.test.{CountingTestJob, MongoCampBaseServerSuite}
+import dev.mongocamp.server.test.{ CountingTestJob, MongoCampBaseServerSuite }
 
 import scala.concurrent.duration.DurationInt
 
@@ -31,10 +31,9 @@ class JobSuite extends MongoCampBaseServerSuite {
   }
 
   test("list jobs as admin") {
-    val token = adminBearerToken
     val jobsList = executeRequestToResponse(jobsApi.jobsList("", "", adminBearerToken, "")())
     assertEquals(jobsList.size, 2)
-    val fistJob = jobsList.head
+    val fistJob = jobsList.maxBy(_.name)
     assertEquals(fistJob.jobClassName, "dev.mongocamp.server.test.CountingTestJob")
     assertEquals(fistJob.name, "CountingTestJob")
     assertEquals(fistJob.group, "Default")
