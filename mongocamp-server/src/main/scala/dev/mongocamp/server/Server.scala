@@ -38,6 +38,8 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   private lazy val preLoadedRoutes: ArrayBuffer[Route]                = ArrayBuffer()
   private lazy val afterLoadedRoutes: ArrayBuffer[Route]              = ArrayBuffer()
   private lazy val afterServerStartCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
+  private lazy val serverShutdownCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
+  private var shutdownStarted: Boolean = false
   private var routesPluginList: List[RoutesPlugin]                    = List()
 
   private def initializeRoutesPlugin: List[RoutesPlugin] = {
@@ -163,7 +165,21 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     afterLoadedRoutes.addOne(r)
   }
 
+  def registerServerShutdownCallBacks(f: () => Unit): Unit = {
+    serverShutdownCallBacks.addOne(f)
+  }
+
   startServer()
 
   override def registerMongoCampServerDefaultConfigs(): Unit = ConfigurationService.registerMongoCampServerDefaultConfigs()
+
+  override def shutdown(): Unit = {
+    println("Shutdown server triggered")
+    if (!shutdownStarted) {
+      shutdownStarted = true
+      serverShutdownCallBacks.foreach(f => f())
+      ActorHandler.requestActorSystem.terminate()
+      actorSystem.terminate()
+    }
+  }
 }

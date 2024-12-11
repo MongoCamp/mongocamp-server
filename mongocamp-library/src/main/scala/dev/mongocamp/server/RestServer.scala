@@ -13,4 +13,10 @@ trait RestServer extends LazyLogging {
   def startServer()(implicit ex: ExecutionContext): Future[Unit]
 
   def registerMongoCampServerDefaultConfigs(): Unit
+
+  def registerServerShutdownCallBacks(f: () => Unit): Unit
+
+  def shutdown(): Unit
+
+  sys.addShutdownHook(() => shutdown())
 }

@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.BuildInfo
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.http.{HttpRequestCompletedEvent, HttpRequestStartEvent}
+import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
 import dev.mongocamp.server.plugin.requestlogging.database.RequestLoggingDatabase
 import org.apache.pekko.actor.Actor
 

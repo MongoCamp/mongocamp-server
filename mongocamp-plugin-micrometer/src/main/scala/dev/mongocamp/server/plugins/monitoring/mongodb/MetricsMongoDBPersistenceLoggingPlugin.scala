@@ -2,12 +2,14 @@ package dev.mongocamp.server.plugins.monitoring.mongodb
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.micrometer.mongodb.registry.MongoStepMeterRegistry
+import dev.mongocamp.server.Server
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.plugins.monitoring.MetricsConfiguration
 import dev.mongocamp.server.service.ConfigurationService
 
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
 
 object MetricsMongoDBPersistenceLoggingPlugin extends ServerPlugin with LazyLogging {
@@ -27,18 +29,38 @@ object MetricsMongoDBPersistenceLoggingPlugin extends ServerPlugin with LazyLogg
 
     val stepDuration = ConfigurationService.getConfigValue[Duration](ConfKeyMicrometerStep)
     val configMap    = Map("step" -> s"${stepDuration.toMillis}ms")
+    val registriesList : ArrayBuffer[MongoStepMeterRegistry]= ArrayBuffer()
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyLoggingJvmToMongoDb)) {
-      MetricsConfiguration.addJvmRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_jvm"), configMap))
+      val registry = MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_jvm"), configMap)
+      registriesList.addOne(registry)
+      MetricsConfiguration.addJvmRegistry(registry)
     }
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyLoggingSystemToMongoDb)) {
-      MetricsConfiguration.addSystemRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_system"), configMap))
+      val registry = MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_system"), configMap)
+      registriesList.addOne(registry)
+      MetricsConfiguration.addSystemRegistry(registry)
     }
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyLoggingMongoToMongoDb)) {
-      MetricsConfiguration.addMongoRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_mongo_db"), configMap))
+      val registry = MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_mongo_db"), configMap)
+      registriesList.addOne(registry)
+      MetricsConfiguration.addMongoRegistry(registry)
     }
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyLoggingEventToMongoDb)) {
-      MetricsConfiguration.addEventRegistry(MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_event"), configMap))
+      val registry = MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_event"), configMap)
+      registriesList.addOne(registry)
+      MetricsConfiguration.addEventRegistry(registry)
     }
+
+    Server.registerServerShutdownCallBacks(
+      () => {
+        registriesList.foreach(r => {
+          println(s"Publishing metrics for to close Registry")
+          r.publish()
+          r.stop()
+          r.close()
+        })
+      }
+    )
   }
 
 }

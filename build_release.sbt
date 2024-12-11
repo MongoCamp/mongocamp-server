@@ -23,8 +23,8 @@ val setToMyReleaseVersion = ReleaseStep(action = st => {
 
 def setMyVersion(version: String, state: State): Unit = {
   state.log.warn(s"Set Version in package.json  to $version")
-  val json = JsonFile(file("package.json"))
-  val newVersion         = version.replace("-SNAPSHOT", ".snapshot")
+  val json       = JsonFile(file("package.json"))
+  val newVersion = version.replace("-SNAPSHOT", ".snapshot")
   json.updateValue("version", newVersion)
   json.write()
 }
@@ -32,15 +32,18 @@ def setMyVersion(version: String, state: State): Unit = {
 releaseNextCommitMessage := s"ci: update version after release"
 releaseCommitMessage     := s"ci: prepare release of version ${runtimeVersion.value}"
 
-commands += Command.command("ci-release")((state: State) => {
-  val semVersion = new Semver(version.value)
-  if (semVersion.isStable) {
-    Command.process("release with-defaults", state)
+commands += Command.command("ci-release")(
+  (state: State) => {
+    val semVersion = new Semver(version.value)
+    if (semVersion.isStable) {
+      val callback: (String) => Unit = (s: String) => state.log.err(s"error on release parsing: $s")
+      Command.process("release with-defaults", state, callback)
+    }
+    else {
+      state
+    }
   }
-  else {
-    state
-  }
-})
+)
 
 releaseProcess := {
   Seq[ReleaseStep](

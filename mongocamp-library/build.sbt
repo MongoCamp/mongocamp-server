@@ -30,3 +30,11 @@ buildInfoPackage := "dev.mongocamp.server.library"
 buildInfoOptions += BuildInfoOption.BuildTime
 
 buildInfoKeys ++= Seq[BuildInfoKey]("organization" -> organization.value, "mainClass" -> "dev.mongocamp.server.Server")
+
+libraryDependencies += "org.apache.pekko" %% "pekko-actor" % "1.1.2" % Provided
+
+Test / testOptions += Tests.Cleanup(
+  (loader: java.lang.ClassLoader) => {
+    CleanUpPlugin.cleanup(loader, name.value)
+  }
+)

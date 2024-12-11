@@ -1,11 +1,13 @@
 package dev.mongocamp.server.event
 
-import better.files.{File, Resource}
-import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
-import org.jgroups.{Address, JChannel, Message, ObjectMessage}
+import better.files.Resource
+import dev.mongocamp.server.Server
+import org.apache.pekko.actor.{ ActorRef, ActorSystem, Props }
+import org.jgroups.{ Address, JChannel, Message, ObjectMessage }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 object EventSystem {
 
@@ -28,10 +30,24 @@ object EventSystem {
       }
 
     })
-    sys.addShutdownHook(() => {
-      channel.close()
-    })
+
+    Server.registerServerShutdownCallBacks(
+      () => shutdown()
+    )
+
     channel.connect("mongocamp-all-events")
+  }
+
+  private[server] def shutdown(): Unit = {
+    println("Start shutdown")
+    if (isCoordinator && listOfMembers.size == 1) {
+      println("Close JGroup Channel")
+      channel.close()
+    }
+    println("Disconnect JGroup Channel")
+    channel.disconnect()
+    println("Terminate EventBus ActorSystem")
+    Try { eventBusActorSystem.terminate() }
   }
 
   private lazy val eventBusActorSystem: ActorSystem = {

@@ -32,16 +32,17 @@ object TestServer extends LazyLogging {
     }
   }
 
-  def isServerRunning(): Boolean = synchronized {
+  def isServerRunning: Boolean = synchronized {
     while (!_serverRunning) {
       try {
         if (!mongoServerStarted) {
           Future.successful {
             MongoTestServer.startMongoDatabase()
-            while (!MongoTestServer.isRunning)
-              ""
             setPort()
             server.registerMongoCampServerDefaultConfigs()
+            server.registerServerShutdownCallBacks(() => {
+              _serverRunning = false
+            })
             server.startServer()(ExecutionContext.global)
           }
           mongoServerStarted = true
@@ -68,8 +69,8 @@ object TestServer extends LazyLogging {
   def ignoreRunningInstanceAndReset(): Unit = _serverRunning = false
 
   def serverBaseUrl: String = {
-//    "http://%s:%s".format(server.interface, server.port)
-    "http://localhost:8080"
+    "http://%s:%s".format(server.interface, server.port)
+//    "http://localhost:8080"
   }
 
   def setPort(): Unit = {

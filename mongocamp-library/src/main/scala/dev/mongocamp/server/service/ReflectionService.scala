@@ -13,6 +13,10 @@ object ReflectionService {
     reflectionService.instancesForType(clazz)
   }
 
+  def instancesForType[T <: Any](className: String): List[T] = {
+    reflectionService.instancesForType(className)
+  }
+
   def getSubClassesList[T <: Any](clazz: Class[T]): List[Class[_ <: T]] = {
     reflectionService.getSubClassesList(clazz)
   }

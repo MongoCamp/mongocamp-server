@@ -32,3 +32,9 @@ buildInfoPackage := "dev.mongocamp.server.cli"
 buildInfoOptions += BuildInfoOption.BuildTime
 
 buildInfoKeys ++= Seq[BuildInfoKey]("organization" -> organization.value, "buildJavaVersion" -> System.getProperty("java.version"))
+
+Test / testOptions += Tests.Cleanup(
+  (loader: java.lang.ClassLoader) => {
+    CleanUpPlugin.cleanup(loader, name.value)
+  }
+)
