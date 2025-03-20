@@ -1,10 +1,10 @@
 name := "mongocamp-test-server"
 
-libraryDependencies += "org.testcontainers" % "testcontainers" % "1.20.4"
+libraryDependencies += "org.testcontainers" % "testcontainers" % "1.20.6"
 
-libraryDependencies += "org.scalameta" %% "munit" % "1.0.4"
+libraryDependencies += "org.scalameta" %% "munit" % "1.1.0"
 
-libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.10.2"
+libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.10.3"
 
 libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.5.0" % Provided
 
