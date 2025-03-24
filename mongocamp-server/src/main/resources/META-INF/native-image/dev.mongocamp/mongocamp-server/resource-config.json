@@ -83,7 +83,7 @@
         "pattern": "\\Qjg-protocol-ids.xml\\E"
       },
       {
-        "pattern": "\\Qjgroups-udp.xml\\E"
+        "pattern": "\\Qjgroups.xml\\E"
       },
       {
         "pattern": "\\Qlibrary.properties\\E"

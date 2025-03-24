@@ -2,9 +2,13 @@ package dev.mongocamp.server.event
 
 import better.files.Resource
 import dev.mongocamp.server.Server
-import org.apache.pekko.actor.{ ActorRef, ActorSystem, Props }
-import org.jgroups.{ Address, JChannel, Message, ObjectMessage }
-
+import org.apache.pekko.actor.ActorRef
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.actor.Props
+import org.jgroups.Address
+import org.jgroups.JChannel
+import org.jgroups.Message
+import org.jgroups.ObjectMessage
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
 import scala.util.Try
@@ -14,7 +18,7 @@ object EventSystem {
   private lazy val listeners: ArrayBuffer[(ActorRef, Class[_ <: Event])] = ArrayBuffer()
 
   private val channel: JChannel = {
-    val channel = new JChannel(Resource.getAsStream("jgroups-udp.xml"))
+    val channel = new JChannel(Resource.getAsStream("jgroups.xml"))
     channel.setReceiver(new org.jgroups.Receiver {
 
       override def receive(msg: Message): Unit = {
