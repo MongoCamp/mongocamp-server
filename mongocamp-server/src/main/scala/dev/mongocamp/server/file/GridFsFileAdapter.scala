@@ -1,7 +1,7 @@
 package dev.mongocamp.server.file
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.{ GenericObservable, _ }
+import dev.mongocamp.driver.mongodb.{GenericObservable, _}
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdField
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.GridFsBucketChunksSuffix
@@ -18,7 +18,9 @@ class GridFsFileAdapter extends FilePlugin {
     tmpFile
   }
 
-  override def putFile(bucket: String, fileId: String, file: File): Boolean = ???
+  override def putFile(bucket: String, fileId: String, file: File): Boolean = {
+    ???
+  }
 
   override def size(bucket: String): Double = {
     MongoDatabase.databaseProvider.dao(s"$bucket$GridFsBucketChunksSuffix").collectionStatus.result().size

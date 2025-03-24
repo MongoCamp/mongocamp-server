@@ -27,7 +27,5 @@ buildInfoPackage := "dev.mongocamp.server"
 buildInfoOptions += BuildInfoOption.BuildTime
 
 Test / testOptions += Tests.Cleanup(
-  (loader: java.lang.ClassLoader) => {
-    CleanUpPlugin.cleanup(loader, name.value)
-  }
+  (loader: java.lang.ClassLoader) => CleanUpPlugin.cleanup(loader, name.value)
 )

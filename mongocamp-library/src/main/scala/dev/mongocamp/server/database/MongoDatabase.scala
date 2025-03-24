@@ -1,20 +1,13 @@
 package dev.mongocamp.server.database
 
-import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
+import com.mongodb.event.{CommandListener, ConnectionPoolListener}
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
+import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.library.BuildInfo
-import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.service.ConfigurationRead
-import org.bson.codecs.configuration.CodecProvider
-import org.bson.codecs.configuration.CodecRegistries._
-import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
-import org.mongodb.scala.bson.codecs.Macros._
 
 import scala.collection.mutable.ArrayBuffer
-import scala.jdk.CollectionConverters._
 
 object MongoDatabase extends LazyLogging {
 
@@ -61,23 +54,9 @@ object MongoDatabase extends LazyLogging {
       commandListener = commandListener.toList
     )
     logger.trace(s"Creating new DatabaseProvider with connection: $connection")
-    val dbProvider = DatabaseProvider(connection, fromRegistries(DEFAULT_CODEC_REGISTRY, providerRegistry))
+    val dbProvider = DatabaseProvider(connection)
     _databaseProvider = dbProvider
     dbProvider
   }
-
-  val userProviders: ArrayBuffer[CodecProvider] = ArrayBuffer(
-    CustomCodecProvider()
-  )
-
-  def addToProvider(provider: CodecProvider): Unit = {
-    userProviders += provider
-    providerRegistry = fromProviders(userProviders.asJava)
-    if (_databaseProvider != null) {
-      createNewDatabaseProvider()
-    }
-  }
-
-  private var providerRegistry = fromProviders(userProviders.asJava)
 
 }

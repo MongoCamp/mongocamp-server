@@ -24,7 +24,8 @@ object TokenCache {
   try {
     val cleanUpJobClass = classOf[CleanUpTokenJob]
     JobPlugin.addJob(JobConfig(cleanUpJobClass.getSimpleName, cleanUpJobClass.getName, "", "0 0/5 * ? * * *", "CleanUp", 10))
-  } catch {
+  }
+  catch {
     case _: Throwable =>
       ""
   }
@@ -83,7 +84,7 @@ object TokenCache {
     val element = dev.mongocamp.server.model.auth.TokenCacheElement(
       token,
       userInformation.userId,
-      new DateTime().plusMillis(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt).toDate
+      new DateTime().plusMillis(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt)
     )
     if (authTokenCacheDB) {
       tokenCacheDao.insertOne(element).asFuture()

@@ -1,4 +1,4 @@
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.4")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
 
@@ -6,7 +6,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.4.1")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.4")
 
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.0")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
 addDependencyTreePlugin
 
@@ -22,4 +22,6 @@ dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
 
 libraryDependencies += ("com.vdurmont" % "semver4j" % "3.1.0")
 
-libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit" % "7.0.0.202409031743-r"
+libraryDependencies += "org.eclipse.jgit" % "org.eclipse.jgit" % "7.2.0.202503040940-r"
+
+addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")

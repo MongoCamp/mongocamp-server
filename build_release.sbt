@@ -56,7 +56,7 @@ releaseProcess := {
     releaseStepCommand("sonatypeBundleRelease"),
     releaseStepCommand("ci-docker"),
     setToMyNextVersion,
-    releaseStepCommand("scalafmt"),
+    releaseStepCommand("scalafmtAll"),
     gitAddAllTask,
     commitNextVersion,
     pushChanges

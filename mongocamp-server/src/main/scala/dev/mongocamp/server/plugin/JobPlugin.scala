@@ -5,24 +5,24 @@ import dev.mongocamp.server.Server
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.job._
-import dev.mongocamp.server.exception.ErrorCodes.{ jobAlreadyAdded, jobClassNotFound, jobCouldNotFound }
+import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound}
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JobConfig, JobInformation }
-import dev.mongocamp.server.service.{ ConfigurationRead, ReflectionService }
+import dev.mongocamp.server.service.{ConfigurationRead, ReflectionService}
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
 import org.quartz._
 import org.quartz.impl.StdSchedulerFactory
 import org.quartz.impl.matchers.GroupMatcher
-import org.quartz.utils.{ DBConnectionManager, HikariCpPoolingConnectionProvider }
+import org.quartz.utils.{DBConnectionManager, HikariCpPoolingConnectionProvider}
 import sttp.model.StatusCode
 
 import java.util.Date
-import scala.jdk.CollectionConverters.{ CollectionHasAsScala, ListHasAsScala }
+import scala.jdk.CollectionConverters.{CollectionHasAsScala, ListHasAsScala}
 
 object JobPlugin extends ServerPlugin with LazyLogging {
-  private var provider : HikariCpPoolingConnectionProvider = _
+  private var provider: HikariCpPoolingConnectionProvider = _
   private lazy val scheduler = {
     val configRead         = ConfigurationRead.noPublishReader
     val connectionDatabase = configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase)
@@ -32,13 +32,14 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     val userName           = configRead.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionUsername).getOrElse("")
     val password           = configRead.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionPassword).getOrElse("")
 
-    provider = new HikariCpPoolingConnectionProvider("dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver", jdbcUrl, userName, password, 100, "select * from mc_users")
+    provider =
+      new HikariCpPoolingConnectionProvider("dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver", jdbcUrl, userName, password, 100, "select * from mc_users")
     DBConnectionManager.getInstance().addConnectionProvider("quartzJdbc", provider)
     StdSchedulerFactory.getDefaultScheduler
   }
 
   override def activate(): Unit = {
-    scheduler.start()
+    scheduler.startDelayed(1)
     Server.registerServerShutdownCallBacks(
       () => {
         println("Shutdown for Job Scheduler triggered. Wait fore Jobs to be completed")
@@ -51,18 +52,18 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   }
 
   def convertToJobInformation(
-      jobGroup: String,
-      jobName: String,
-      className: String,
-      description: String,
-      cronExpression: Option[String] = None
+    jobGroup: String,
+    jobName: String,
+    className: String,
+    description: String,
+    cronExpression: Option[String] = None
   ): JobInformation = {
     val schedulerTriggerList         = JobPlugin.getTriggerList(jobGroup, jobName)
     var nextFireTime: Option[Date]   = None
     var lastFireTime: Option[Date]   = None
     var scheduleInfo: Option[String] = None
-    var priority : Int = Int.MaxValue
-    var triggerCron : String = ""
+    var priority: Int                = Int.MaxValue
+    var triggerCron: String          = ""
     if (schedulerTriggerList.nonEmpty) {
       nextFireTime = Option(schedulerTriggerList.map(_.getNextFireTime).min)
       lastFireTime = Option(schedulerTriggerList.map(_.getPreviousFireTime).max)
@@ -89,7 +90,7 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     convertToJobInformation(jobConfig.group, jobConfig.name, jobConfig.className, jobConfig.description, Option(jobConfig.cronExpression))
   }
 
-  def addJob(jobConfig: JobConfig, userInformationOption: Option[UserInformation] = None, sendEvent : Boolean = true): Boolean = {
+  def addJob(jobConfig: JobConfig, userInformationOption: Option[UserInformation] = None, sendEvent: Boolean = true): Boolean = {
     val jobClass = getJobClass(jobConfig)
     val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
       jobClass.getSimpleName
@@ -139,19 +140,23 @@ object JobPlugin extends ServerPlugin with LazyLogging {
   }
 
   def jobsList(): List[JobInformation] = {
-    val jobList = scheduler.getJobGroupNames.asScala.flatMap(
-      jobGroup => {
-        scheduler
-          .getJobKeys(GroupMatcher.jobGroupEquals(jobGroup))
-          .asScala
-          .map(
-            jobKey => {
-              val jobDetail = scheduler.getJobDetail(jobKey)
-              convertToJobInformation(jobDetail.getKey.getGroup, jobDetail.getKey.getName, jobDetail.getJobClass.getName, jobDetail.getDescription)
-            }
-          )
-      }
-    )
+    val jobList = scheduler.getJobGroupNames.asScala
+      .filter(
+        s => Option(s).nonEmpty
+      )
+      .flatMap(
+        jobGroup => {
+          scheduler
+            .getJobKeys(GroupMatcher.jobGroupEquals(jobGroup))
+            .asScala
+            .map(
+              jobKey => {
+                val jobDetail = scheduler.getJobDetail(jobKey)
+                convertToJobInformation(jobDetail.getKey.getGroup, jobDetail.getKey.getName, jobDetail.getJobClass.getName, jobDetail.getDescription)
+              }
+            )
+        }
+      )
     jobList.toList
   }
 
@@ -166,8 +171,10 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     }
   }
 
-  def deleteJob(userInformation: UserInformation, groupName: String, jobName: String, sendEvent : Boolean = true): Boolean = {
-    getTriggerList(groupName, jobName).foreach(trigger => scheduler.unscheduleJob(trigger.getKey))
+  def deleteJob(userInformation: UserInformation, groupName: String, jobName: String, sendEvent: Boolean = true): Boolean = {
+    getTriggerList(groupName, jobName).foreach(
+      trigger => scheduler.unscheduleJob(trigger.getKey)
+    )
     val response = scheduler.deleteJob(new JobKey(jobName, groupName))
     if (sendEvent && response) {
       EventSystem.publish(DeleteJobEvent(userInformation, jobName, groupName))
