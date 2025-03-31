@@ -10,15 +10,16 @@ import dev.mongocamp.server.database.ConfigDao
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationRead.{ configCache, isDefaultConfigsRegistered, nonPersistentConfigs }
+import dev.mongocamp.server.service.ConfigurationRead.configCache
+import dev.mongocamp.server.service.ConfigurationRead.isDefaultConfigsRegistered
+import dev.mongocamp.server.service.ConfigurationRead.nonPersistentConfigs
 import io.circe.parser.decode
-import org.bson.BsonDocument
 import org.mongodb.scala.bson.Document
-import sttp.model.StatusCode
-
 import scala.collection.mutable
 import scala.concurrent.duration._
-import scala.util.{ Random, Try }
+import scala.util.Random
+import scala.util.Try
+import sttp.model.StatusCode
 trait ConfigurationRead extends LazyLogging {
 
   private lazy val conf: config.Config = ConfigFactory.load()
@@ -137,11 +138,11 @@ trait ConfigurationRead extends LazyLogging {
   }
 
   def registerConfig(
-      configKey: String,
-      configType: String,
-      value: Option[Any] = None,
-      comment: String = "",
-      needsRestartForActivation: Boolean = false
+    configKey: String,
+    configType: String,
+    value: Option[Any] = None,
+    comment: String = "",
+    needsRestartForActivation: Boolean = false
   ): Boolean = {
     if (getConfigFromDatabase(configKey).isEmpty) {
       val dbConfiguration: MongoCampConfiguration = convertToDbConfiguration(configKey, configType, value, comment, needsRestartForActivation)
@@ -225,11 +226,11 @@ trait ConfigurationRead extends LazyLogging {
   }
 
   private[service] def convertToDbConfiguration(
-      configKey: String,
-      configType: String,
-      value: Option[Any] = None,
-      comment: String = "",
-      needsRestartForActivation: Boolean = false
+    configKey: String,
+    configType: String,
+    value: Option[Any] = None,
+    comment: String = "",
+    needsRestartForActivation: Boolean = false
   ): MongoCampConfiguration = {
     val invalidConfListInt = "List[Int]"
     val invalidConfInt     = "Int"
@@ -351,13 +352,8 @@ trait ConfigurationRead extends LazyLogging {
       if (configurationValue.isInstanceOf[Some[_]]) {
         configurationValue = configurationValue.asInstanceOf[Some[_]].get
       }
-      val dbConfiguration = MongoCampConfiguration(
-        key = configKey,
-        value = configurationValue,
-        configType = internalValueType,
-        comment = s"$comment",
-        needsRestartForActivation
-      )
+      val dbConfiguration =
+        MongoCampConfiguration(key = configKey, value = configurationValue, configType = internalValueType, comment = s"$comment", needsRestartForActivation)
       if (dbConfiguration.validate) {
         dbConfiguration
       }
@@ -431,12 +427,12 @@ trait ConfigurationRead extends LazyLogging {
 
   protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit
   protected def publishConfigRegisterEvent(
-      persistent: Boolean,
-      configKey: String,
-      configType: String,
-      value: Option[Any],
-      comment: String,
-      needsRestartForActivation: Boolean
+    persistent: Boolean,
+    configKey: String,
+    configType: String,
+    value: Option[Any],
+    comment: String,
+    needsRestartForActivation: Boolean
   ): Unit
 
 }
@@ -447,12 +443,12 @@ object ConfigurationRead {
     override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {}
 
     override protected def publishConfigRegisterEvent(
-        persistent: Boolean,
-        configKey: String,
-        configType: String,
-        value: Option[Any],
-        comment: String,
-        needsRestartForActivation: Boolean
+      persistent: Boolean,
+      configKey: String,
+      configType: String,
+      value: Option[Any],
+      comment: String,
+      needsRestartForActivation: Boolean
     ): Unit = {}
   }
 

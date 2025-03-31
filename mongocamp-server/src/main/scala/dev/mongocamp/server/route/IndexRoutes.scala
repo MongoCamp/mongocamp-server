@@ -5,19 +5,21 @@ import dev.mongocamp.driver.mongodb.database.MongoIndex
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.index.{ IndexCreateRequest, IndexCreateResponse, IndexDropResponse, IndexOptionsRequest }
+import dev.mongocamp.server.model.index.IndexCreateRequest
+import dev.mongocamp.server.model.index.IndexCreateResponse
+import dev.mongocamp.server.model.index.IndexDropResponse
+import dev.mongocamp.server.model.index.IndexOptionsRequest
 import dev.mongocamp.server.plugin.RoutesPlugin
-import io.circe.generic.auto._
 import org.mongodb.scala.model.IndexOptions
-import sttp.capabilities.WebSockets
+import scala.concurrent.duration.Duration
+import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
-import scala.concurrent.duration.Duration
 
 object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
 
@@ -34,17 +36,13 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def listIndicesInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[MongoIndex]]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.indexList()
-          response
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.indexList()
+      response
+    })
   }
 
   val indexByNameEndpoint = administrateCollectionEndpoint
@@ -61,18 +59,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def indexByNameInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: String
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[MongoIndex]]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.indexForName(parameter)
-          response
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.indexForName(parameter)
+      response
+    })
   }
 
   val createIndexEndpoint = administrateCollectionEndpoint
@@ -89,18 +83,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def createIndexByBsonInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: IndexCreateRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: IndexCreateRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.createIndex(parameter.keys, requestToDBIndexOptions(parameter.indexOptionsRequest)).result()
-          IndexCreateResponse(response)
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.createIndex(parameter.keys, requestToDBIndexOptions(parameter.indexOptionsRequest)).result()
+      IndexCreateResponse(response)
+    })
   }
 
   val createIndexForFieldEndpoint = administrateCollectionEndpoint
@@ -120,18 +110,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def createIndexForFieldInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, Boolean, Option[IndexOptionsRequest])
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (String, Boolean, Option[IndexOptionsRequest])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.createIndexForField(parameter._1, parameter._2, requestToDBIndexOptions(parameter._3)).result()
-          IndexCreateResponse(response)
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.createIndexForField(parameter._1, parameter._2, requestToDBIndexOptions(parameter._3)).result()
+      IndexCreateResponse(response)
+    })
   }
 
   val createUniqueIndexForFieldEndpoint = administrateCollectionEndpoint
@@ -152,18 +138,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def createUniqueIndexForFieldInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, Boolean, Option[String])
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (String, Boolean, Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.createUniqueIndexForField(parameter._1, parameter._2, parameter._3).result()
-          IndexCreateResponse(response)
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.createUniqueIndexForField(parameter._1, parameter._2, parameter._3).result()
+      IndexCreateResponse(response)
+    })
   }
 
   val createExpiringIndexForFieldEndpoint = administrateCollectionEndpoint
@@ -189,18 +171,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def createExpiringIndexForFieldInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, String, Boolean, Option[String])
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (String, String, Boolean, Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.createExpiringIndexForField(parameter._1, Duration(parameter._2), parameter._3, parameter._4).result()
-          IndexCreateResponse(response)
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.createExpiringIndexForField(parameter._1, Duration(parameter._2), parameter._3, parameter._4).result()
+      IndexCreateResponse(response)
+    })
   }
 
   val createTextIndexForFieldEndpoint = administrateCollectionEndpoint
@@ -220,18 +198,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def createTextIndexForFieldInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, Option[IndexOptionsRequest])
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (String, Option[IndexOptionsRequest])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = dao.createTextIndexForField(parameter._1, requestToDBIndexOptions(parameter._2)).result()
-          IndexCreateResponse(response)
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = dao.createTextIndexForField(parameter._1, requestToDBIndexOptions(parameter._2)).result()
+      IndexCreateResponse(response)
+    })
   }
 
   val deleteIndexEndpoint = administrateCollectionEndpoint
@@ -248,18 +222,14 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def dropIndexForFieldInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: String
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexDropResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          dao.dropIndexForName(parameter).result()
-          IndexDropResponse(true)
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      dao.dropIndexForName(parameter).result()
+      IndexDropResponse(true)
+    })
   }
 
   def requestToDBIndexOptions(indexOptionsRequestOption: Option[IndexOptionsRequest]): IndexOptions = {

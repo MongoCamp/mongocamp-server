@@ -2,19 +2,19 @@ package dev.mongocamp.server.plugins.monitoring.routes
 
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.plugins.monitoring.MetricsConfiguration
 import dev.mongocamp.server.plugins.monitoring.model.Metric
+import dev.mongocamp.server.plugins.monitoring.MetricsConfiguration
 import dev.mongocamp.server.route.BaseRoute
 import io.circe.generic.auto._
-import sttp.capabilities.WebSockets
+import scala.concurrent.Future
+import scala.jdk.CollectionConverters._
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
-import scala.jdk.CollectionConverters._
 
 object MetricsRoutes extends BaseRoute with RoutesPlugin {
   private val applicationApiBaseEndpoint = adminEndpoint.tag("Application")
@@ -31,10 +31,10 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def jvmMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val meters = MetricsConfiguration.getJvmMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
-    }))
+    })
   }
 
   val systemMetricsRoutes = applicationApiBaseEndpoint
@@ -49,10 +49,10 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def systemMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val meters = MetricsConfiguration.getSystemMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
-    }))
+    })
   }
 
   val mongoDbMetricsRoutes = applicationApiBaseEndpoint
@@ -67,10 +67,10 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def mongoDbMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val meters = MetricsConfiguration.getMongoDbMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
-    }))
+    })
   }
 
   val eventMetricsRoutes = applicationApiBaseEndpoint
@@ -85,10 +85,10 @@ object MetricsRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def eventMetrics(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[Metric]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val meters = MetricsConfiguration.getEventMetricsRegistries.flatMap(_.getMeters.asScala.toList).distinct
       meters.map(Metric(_))
-    }))
+    })
   }
 
   override def endpoints = {
