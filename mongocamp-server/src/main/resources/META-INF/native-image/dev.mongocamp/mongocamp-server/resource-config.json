@@ -2,31 +2,106 @@
   "resources": {
     "includes": [
       {
+        "pattern": "\\QJGROUPS_VERSION.properties\\E"
+      },
+      {
         "pattern": "\\QMETA-INF/MANIFEST.MF\\E"
       },
       {
         "pattern": "\\QMETA-INF/maven/org.webjars/swagger-ui/pom.properties\\E"
       },
       {
-        "pattern": "\\QMETA-INF/resources/webjars/swagger-ui/5.7.2/swagger-initializer.js\\E"
+        "pattern": "\\QMETA-INF/resources/webjars/swagger-ui/5.18.2/\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/resources/webjars/swagger-ui/5.18.2/index.html/\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/resources/webjars/swagger-ui/5.18.2/index.html\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/resources/webjars/swagger-ui/5.18.2/swagger-initializer.js\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/resources/webjars/swagger-ui/5.18.2\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/com.mongodb.spi.dns.InetAddressResolverProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.nio.channels.spi.AsynchronousChannelProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.nio.channels.spi.SelectorProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.nio.charset.spi.CharsetProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.nio.file.spi.FileTypeDetector\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.sql.Driver\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.util.spi.ResourceBundleControlProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"
       },
       {
         "pattern": "\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
       },
       {
-        "pattern": "\\Qakka-http-version.conf\\E"
-      },
-      {
-        "pattern": "\\Qpekko-http-version.conf\\E"
-      },
-      {
         "pattern": "\\Qapplication.conf\\E"
+      },
+      {
+        "pattern": "\\Qapplication.json\\E"
+      },
+      {
+        "pattern": "\\Qapplication.properties\\E"
+      },
+      {
+        "pattern": "\\Qjg-magic-map.xml\\E"
+      },
+      {
+        "pattern": "\\Qjg-protocol-ids.xml\\E"
+      },
+      {
+        "pattern": "\\Qjgroups.xml\\E"
       },
       {
         "pattern": "\\Qlibrary.properties\\E"
       },
       {
+        "pattern": "\\Qlogback-test.scmo\\E"
+      },
+      {
+        "pattern": "\\Qlogback-test.xml\\E"
+      },
+      {
+        "pattern": "\\Qlogback.scmo\\E"
+      },
+      {
         "pattern": "\\Qlogback.xml\\E"
+      },
+      {
+        "pattern": "\\QmimeByExtensions.txt\\E"
       },
       {
         "pattern": "\\Qorg/joda/time/tz/data/Europe/Berlin\\E"
@@ -35,12 +110,56 @@
         "pattern": "\\Qorg/joda/time/tz/data/ZoneInfoMap\\E"
       },
       {
+        "pattern": "\\Qorg/quartz/core/quartz-build.properties\\E"
+      },
+      {
+        "pattern": "\\Qpekko-http-version.conf\\E"
+      },
+      {
+        "pattern": "\\Qpekko-http-version.json\\E"
+      },
+      {
+        "pattern": "\\Qpekko-http-version.properties\\E"
+      },
+      {
+        "pattern": "\\Qquartz.properties\\E"
+      },
+      {
         "pattern": "\\Qreference.conf\\E"
       },
       {
+        "pattern": "\\Qschema_stage11_group.json\\E"
+      },
+      {
         "pattern": "\\Qversion.conf\\E"
+      },
+      {
+        "pattern": "\\Qversion.json\\E"
+      },
+      {
+        "pattern": "\\Qversion.properties\\E"
+      },
+      {
+        "pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfc.nrm\\E"
+      },
+      {
+        "pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt72b/uprops.icu\\E"
+      },
+      {
+        "pattern": "java.base:\\Qsun/net/idn/uidna.spp\\E"
+      },
+      {
+        "pattern": "java.base:\\Qsun/net/www/content-types.properties\\E"
       }
     ]
   },
-  "bundles": []
+  "bundles": [
+    {
+      "name": "jg-messages",
+      "locales": [
+        "",
+        "de"
+      ]
+    }
+  ]
 }

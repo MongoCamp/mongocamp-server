@@ -35,13 +35,20 @@ class DatabaseSuite extends MongoCampBaseServerSuite {
 
   test("list all collections for database test as admin") {
     val response = executeRequestToResponse(databaseApi.listCollectionsByDatabase("", "", adminBearerToken, "")("test"))
+    assertEquals(response.size, 18)
     assertEquals(
       response,
       List(
         "accounts",
         "admin-test",
         "mc_configuration",
-        "mc_jobs",
+        "mc_jobs_CRON_TRIGGERS",
+        "mc_jobs_FIRED_TRIGGERS",
+        "mc_jobs_JOB_DETAILS",
+        "mc_jobs_LOCKS",
+        "mc_jobs_SCHEDULER_STATE",
+        "mc_jobs_SIMPLE_TRIGGERS",
+        "mc_jobs_TRIGGERS",
         "mc_roles",
         "mc_token_cache",
         "mc_users",
@@ -52,7 +59,6 @@ class DatabaseSuite extends MongoCampBaseServerSuite {
         "users"
       )
     )
-    assertEquals(response.size, 12)
   }
 
   test("list all collections for database geodata as admin") {

@@ -22,7 +22,7 @@ object InformationRoutes extends BaseRoute with RoutesPlugin {
     .out(jsonBody[Version])
     .summary("Version Information")
     .description("Version Info of the MongoCamp API")
-    .tag("Information")
+    .tag("System")
     .method(Method.GET)
     .name("version")
     .serverLogic(

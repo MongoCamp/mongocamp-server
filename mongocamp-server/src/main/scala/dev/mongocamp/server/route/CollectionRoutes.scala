@@ -4,26 +4,34 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
+import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.database.paging.{ MongoPaginatedAggregation, PaginationInfo }
+import dev.mongocamp.server.event.collection.ClearCollectionEvent
+import dev.mongocamp.server.event.collection.DropCollectionEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.collection.{ ClearCollectionEvent, DropCollectionEvent }
 import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
+import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import dev.mongocamp.server.model.{ JsonSchema, JsonValue, MongoAggregateRequest, SchemaAnalysis }
+import dev.mongocamp.server.model.JsonSchema
+import dev.mongocamp.server.model.JsonValue
+import dev.mongocamp.server.model.MongoAggregateRequest
+import dev.mongocamp.server.model.SchemaAnalysis
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
-import dev.mongocamp.server.service.{ AggregationService, SchemaService }
-import io.circe.generic.auto._
+import dev.mongocamp.server.route.parameter.paging.Paging
+import dev.mongocamp.server.route.parameter.paging.PagingFunctions
+import dev.mongocamp.server.service.AggregationService
+import dev.mongocamp.server.service.SchemaService
+import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 
-import scala.concurrent.Future
 object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   val collectionsEndpoint = securedEndpoint
@@ -40,7 +48,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val result           = MongoDatabase.databaseProvider.collectionNames()
       val collectionGrants = userInformation.getCollectionGrants
       result.filter(
@@ -51,7 +59,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
           userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
         }
       )
-    }))
+    })
   }
 
   val getCollectionStatusEndpoint = readCollectionEndpoint
@@ -67,10 +75,10 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def collectionStatus(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: Boolean
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val mongoDatabase = if (authorizedCollectionRequest.collection.contains(CollectionSeparator)) {
         MongoDatabase.databaseProvider.database(authorizedCollectionRequest.collection.split(CollectionSeparator).head)
       }
@@ -93,7 +101,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       else {
         result.copy(map = Map())
       }
-    }))
+    })
   }
 
   val getCollectionFieldsEndpoint = readCollectionEndpoint
@@ -110,13 +118,13 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def collectionFields(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      sampleSizeParameter: Option[Int]
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    sampleSizeParameter: Option[Int]
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       dao.columnNames(sampleSizeParameter.getOrElse(0))
-    }))
+    })
   }
 
   private val sampleSize: EndpointInput.Query[Option[Int]] =
@@ -137,14 +145,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def detectSchema(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (Option[Int], Int)
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (Option[Int], Int)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonSchema]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val deepth = parameter._2
       val sample = parameter._1
       SchemaService.detectSchema(authorizedCollectionRequest, deepth, sample)
-    }))
+    })
   }
 
   val getSchemaAnalysisEndpoint = readCollectionEndpoint
@@ -163,14 +171,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def detectSchemaAnalysis(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (Option[Int], Int)
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (Option[Int], Int)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SchemaAnalysis]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val deepth = parameter._2
       val sample = parameter._1
       SchemaService.analyzeSchema(authorizedCollectionRequest, deepth, sample)
-    }))
+    })
   }
 
   val deleteCollectionStatusEndpoint = administrateCollectionEndpoint
@@ -185,14 +193,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def deleteCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       dao.drop().result()
-      EventSystem.eventStream.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      EventSystem.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue(true)
-    }))
+    })
   }
 
   val deleteAllEndpoint = writeCollectionEndpoint
@@ -208,18 +216,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def deleteAllInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(
-      Right(
-        {
-          val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val result = dao.deleteAll().result()
-          EventSystem.eventStream.publish(ClearCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
-          JsonValue(result.wasAcknowledged())
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val result = dao.deleteAll().result()
+      EventSystem.publish(ClearCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      JsonValue(result.wasAcknowledged())
+    })
   }
 
   // todo: OpenAPI Generation could not build Sample
@@ -259,22 +263,18 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def aggregateInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (MongoAggregateRequest, Paging)
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (MongoAggregateRequest, Paging)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
-    Future.successful(
-      Right(
-        {
-          val mongoAggregateRequest = parameter._1
-          val pagingInfo            = parameter._2
-          val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
-          val page                  = pagingInfo.page.getOrElse(1L)
+    Future.successful(Right {
+      val mongoAggregateRequest = parameter._1
+      val pagingInfo            = parameter._2
+      val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+      val page                  = pagingInfo.page.getOrElse(1L)
 
-          AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page)
+      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page)
 
-        }
-      )
-    )
+    })
   }
 
   val distinctEndpoint = readCollectionEndpoint
@@ -293,32 +293,28 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
 
   def distinctInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (String, Paging)
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (String, Paging)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Any], PaginationInfo)]] = {
-    Future.successful(
-      Right(
-        {
-          val fieldName   = "$" + parameter._1
-          val pagingInfo  = parameter._2
-          val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
-          val page        = pagingInfo.page.getOrElse(1L)
-          val mongoDao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val response = MongoPaginatedAggregation(
-            dao = mongoDao,
-            allowDiskUse = true,
-            aggregationPipeline = List(Map("$group" -> Map("_id" -> fieldName, "field" -> Map("$first" -> fieldName))))
-          ).paginate(rowsPerPage, page)
+    Future.successful(Right {
+      val fieldName   = "$" + parameter._1
+      val pagingInfo  = parameter._2
+      val rowsPerPage = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
+      val page        = pagingInfo.page.getOrElse(1L)
+      val mongoDao    = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val response = MongoPaginatedAggregation(
+        dao = mongoDao,
+        allowDiskUse = true,
+        aggregationPipeline = List(Map("$group" -> Map("_id" -> fieldName, "field" -> Map("$first" -> fieldName))))
+      ).paginate(rowsPerPage, page)
 
-          (
-            response.databaseObjects.map(
-              document => BsonConverter.fromBson(document.get("field"))
-            ),
-            response.paginationInfo
-          )
-        }
+      (
+        response.databaseObjects.map(
+          document => BsonConverter.fromBson(document.get("field"))
+        ),
+        response.paginationInfo
       )
-    )
+    })
   }
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =

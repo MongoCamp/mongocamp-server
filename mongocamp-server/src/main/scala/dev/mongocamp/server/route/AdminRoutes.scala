@@ -63,7 +63,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
         throw MongoCampException("UserId could not be empty", StatusCode.PreconditionFailed)
       }
       val users = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addUser(userInformation)
-      EventSystem.eventStream.publish(CreateUserEvent(authUser, userInformation))
+      EventSystem.publish(CreateUserEvent(authUser, userInformation))
       Right(users.toResultUser)
     }
   }
@@ -107,7 +107,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     Future.successful {
       val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(parameter._1, parameter._2.password)
       if (response) {
-        EventSystem.eventStream.publish(UpdatePasswordEvent(userInformation, parameter._1))
+        EventSystem.publish(UpdatePasswordEvent(userInformation, parameter._1))
       }
       Right(JsonValue(response))
     }
@@ -132,7 +132,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)
-      EventSystem.eventStream.publish(UpdateApiKeyEvent(loggedInUser, userId))
+      EventSystem.publish(UpdateApiKeyEvent(loggedInUser, userId))
       Right(JsonValue(result))
     }
   }
@@ -156,7 +156,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     Future.successful({
       val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate)
       if (response) {
-        EventSystem.eventStream.publish(DeleteUserEvent(loggedInUser, loginToUpdate))
+        EventSystem.publish(DeleteUserEvent(loggedInUser, loginToUpdate))
       }
       Right(JsonValue(response))
     })
@@ -182,7 +182,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful(Right({
       val userInformation = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersRoles(loginToUpdate._1, loginToUpdate._2)
-      EventSystem.eventStream.publish(UpdateUserRoleEvent(loggedInUser, loginToUpdate._2))
+      EventSystem.publish(UpdateUserRoleEvent(loggedInUser, loginToUpdate._2))
       userInformation.toResultUser
     }))
   }
@@ -245,7 +245,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
         throw exception.MongoCampException("Role name could not be empty", StatusCode.PreconditionFailed)
       }
       val addResult = AuthHolder.handler.asInstanceOf[MongoAuthHolder].addRole(role)
-      EventSystem.eventStream.publish(CreateRoleEvent(loggedInUser, role))
+      EventSystem.publish(CreateRoleEvent(loggedInUser, role))
       Right(addResult)
     }
   }
@@ -266,7 +266,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     Future.successful {
       val deleted = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteRole(role)
       if (deleted) {
-        EventSystem.eventStream.publish(DeleteRoleEvent(loggedInUser, role))
+        EventSystem.publish(DeleteRoleEvent(loggedInUser, role))
       }
       Right(JsonValue(deleted))
     }
@@ -291,7 +291,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
       val role = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateRole(parameter._1, parameter._2)
-      EventSystem.eventStream.publish(UpdateRoleEvent(loggedInUser, parameter._1, parameter._2))
+      EventSystem.publish(UpdateRoleEvent(loggedInUser, parameter._1, parameter._2))
       Right(role)
     }
   }

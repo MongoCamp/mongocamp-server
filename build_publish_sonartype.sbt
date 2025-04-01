@@ -1,7 +1,17 @@
 ThisBuild / publishTo := sonatypePublishToBundle.value
 
-ThisBuild / credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASSWORD"))
-ThisBuild / credentials += Credentials("New Sonatype Nexus Repository Manager", "s01.oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASSWORD"))
+ThisBuild / credentials += Credentials(
+  "Sonatype Nexus Repository Manager",
+  "oss.sonatype.org",
+  System.getenv("SONATYPE_USER"),
+  System.getenv("SONATYPE_PASSWORD")
+)
+ThisBuild / credentials += Credentials(
+  "New Sonatype Nexus Repository Manager",
+  "s01.oss.sonatype.org",
+  System.getenv("SONATYPE_USER"),
+  System.getenv("SONATYPE_PASSWORD")
+)
 
 Global / useGpgPinentry := true
 

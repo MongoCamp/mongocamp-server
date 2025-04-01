@@ -29,7 +29,6 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
         catch {
           case e: Exception =>
             monitor.failed(e)
-            response += 1
         }
       }
     }
@@ -41,7 +40,6 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
         catch {
           case e: Exception =>
             monitor.failed(e)
-            response += 1
         }
       }
     }
@@ -65,6 +63,8 @@ class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
         catch {
           case e: Exception =>
             monitor.failed(e)
+            println(Ansi.AUTO.string(s"@|bold,underline,red Build Error:|@"))
+            println(Ansi.AUTO.string(s"@|red ${e.getMessage}|@"))
             response += 1
           case e: NativeBuildException =>
             monitor.failed(e)

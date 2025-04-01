@@ -1,5 +1,4 @@
 package dev.mongocamp.server.model
-import dev.mongocamp.server.converter.MongoCampBsonConverter
 import org.mongodb.scala.bson.ObjectId
 
 import java.util.Date
@@ -13,6 +12,6 @@ object FileInformation {
     dbFileInformation.length,
     dbFileInformation.chunkSize,
     dbFileInformation.uploadDate,
-    dbFileInformation.metadata.map(MongoCampBsonConverter.documentToMap).getOrElse(Map())
+    dbFileInformation.metadata.getOrElse(Map())
   )
 }

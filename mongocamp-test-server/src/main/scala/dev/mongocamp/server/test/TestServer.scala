@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.RestServer
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.service.ReflectionService
-import dev.mongocamp.server.test.client.api.InformationApi
+import dev.mongocamp.server.test.client.api.SystemApi
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
@@ -22,6 +22,7 @@ object TestServer extends LazyLogging {
   var retries = 0
 
   def server: RestServer = {
+    ReflectionService.scanClassPath()
     val servers = ReflectionService.instancesForType(classOf[RestServer])
     if (servers.size == 1) {
       servers.head
@@ -31,21 +32,22 @@ object TestServer extends LazyLogging {
     }
   }
 
-  def isServerRunning(): Boolean = synchronized {
+  def isServerRunning: Boolean = synchronized {
     while (!_serverRunning) {
       try {
         if (!mongoServerStarted) {
           Future.successful {
             MongoTestServer.startMongoDatabase()
-            while (!MongoTestServer.isRunning)
-              ""
             setPort()
             server.registerMongoCampServerDefaultConfigs()
+            server.registerServerShutdownCallBacks(() => {
+              _serverRunning = false
+            })
             server.startServer()(ExecutionContext.global)
           }
           mongoServerStarted = true
         }
-        val versionRequest = InformationApi().version()
+        val versionRequest = SystemApi().version()
         val versionFuture  = TestAdditions.backend.send(versionRequest)
         versionFuture.body.getOrElse(throw new Exception("error"))
         _serverRunning = true
@@ -68,6 +70,7 @@ object TestServer extends LazyLogging {
 
   def serverBaseUrl: String = {
     "http://%s:%s".format(server.interface, server.port)
+//    "http://localhost:8080"
   }
 
   def setPort(): Unit = {

@@ -1,13 +1,12 @@
 package dev.mongocamp.server.plugins.monitoring
 
 import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.InformationApi
+import dev.mongocamp.server.test.client.api.SystemApi
 import org.joda.time.DateTime
 
 class InformationSuite extends MicrometerBaseServerSuite {
 
-  lazy val informationApi: InformationApi = InformationApi()
+  lazy val informationApi: SystemApi = SystemApi()
 
   test("check version by api request") {
     val version = executeRequestToResponse(informationApi.version())

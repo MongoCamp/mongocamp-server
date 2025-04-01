@@ -1,70 +1,96 @@
 package dev.mongocamp.server.plugin
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.database.MongoDaoHolder
+import dev.mongocamp.server.Server
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.job._
-import dev.mongocamp.server.exception.ErrorCodes.{ jobAlreadyAdded, jobClassNotFound, jobCouldNotFound, jobCouldNotUpdated }
+import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound}
 import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JobConfig, JobInformation }
-import dev.mongocamp.server.service.ReflectionService
-import org.mongodb.scala.model.IndexOptions
+import dev.mongocamp.server.service.{ConfigurationRead, ReflectionService}
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
+import org.quartz._
 import org.quartz.impl.StdSchedulerFactory
-import org.quartz.{ CronScheduleBuilder, Job, JobKey, Trigger }
+import org.quartz.impl.matchers.GroupMatcher
+import org.quartz.utils.{DBConnectionManager, HikariCpPoolingConnectionProvider}
 import sttp.model.StatusCode
 
 import java.util.Date
-import scala.jdk.CollectionConverters.ListHasAsScala
+import scala.jdk.CollectionConverters.{CollectionHasAsScala, ListHasAsScala}
 
 object JobPlugin extends ServerPlugin with LazyLogging {
+  private var provider: HikariCpPoolingConnectionProvider = _
+  private lazy val scheduler = {
+    val configRead         = ConfigurationRead.noPublishReader
+    val connectionDatabase = configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionDatabase)
+    val connectionHost     = configRead.getConfigValue[String](DefaultConfigurations.ConfigKeyConnectionHost)
+    val connectionPort     = configRead.getConfigValue[Long](DefaultConfigurations.ConfigKeyConnectionPort).toInt
+    val jdbcUrl            = s"jdbc:mongodb://$connectionHost:$connectionPort/$connectionDatabase"
+    val userName           = configRead.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionUsername).getOrElse("")
+    val password           = configRead.getConfigValue[Option[String]](DefaultConfigurations.ConfigKeyConnectionPassword).getOrElse("")
 
-  private lazy val scheduler = StdSchedulerFactory.getDefaultScheduler
+    provider =
+      new HikariCpPoolingConnectionProvider("dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver", jdbcUrl, userName, password, 100, "select * from mc_users")
+    DBConnectionManager.getInstance().addConnectionProvider("quartzJdbc", provider)
+    StdSchedulerFactory.getDefaultScheduler
+  }
 
   override def activate(): Unit = {
-    scheduler.start()
-    MongoDaoHolder.jobDao.createIndex(Map("group" -> 1, "name" -> 1), IndexOptions().unique(true)).toFuture()
-    reloadJobs()
-    sys.addShutdownHook({
-      logger.info("Shutdown for Job Scheduler triggered. Wait fore Jobs to be completed")
-      scheduler.shutdown(true)
-    })
+    scheduler.startDelayed(1)
+    Server.registerServerShutdownCallBacks(
+      () => {
+        println("Shutdown for Job Scheduler triggered. Wait fore Jobs to be completed")
+        scheduler.shutdown(true)
+        if (provider != null) {
+          provider.shutdown()
+        }
+      }
+    )
   }
 
-  def reloadJobs(): Unit = {
-    scheduler.clear()
-    loadJobs()
-  }
-
-  def convertToJobInformation(jobConfig: JobConfig) = {
-    val schedulerTriggerList         = JobPlugin.getTriggerList(jobConfig.name, jobConfig.group)
+  def convertToJobInformation(
+    jobGroup: String,
+    jobName: String,
+    className: String,
+    description: String,
+    cronExpression: Option[String] = None
+  ): JobInformation = {
+    val schedulerTriggerList         = JobPlugin.getTriggerList(jobGroup, jobName)
     var nextFireTime: Option[Date]   = None
     var lastFireTime: Option[Date]   = None
     var scheduleInfo: Option[String] = None
+    var priority: Int                = Int.MaxValue
+    var triggerCron: String          = ""
     if (schedulerTriggerList.nonEmpty) {
       nextFireTime = Option(schedulerTriggerList.map(_.getNextFireTime).min)
       lastFireTime = Option(schedulerTriggerList.map(_.getPreviousFireTime).max)
+      priority = schedulerTriggerList.map(_.getPriority).min
+      triggerCron = schedulerTriggerList.filter(_.isInstanceOf[CronTrigger]).map(_.asInstanceOf[CronTrigger].getCronExpression).headOption.getOrElse("")
     }
     else {
-      scheduleInfo = Some(s"Job `${jobConfig.name}` in group `${jobConfig.group}` is not scheduled.")
+      scheduleInfo = Some(s"Job `${jobName}` in group `${jobGroup}` is not scheduled.")
     }
     JobInformation(
-      jobConfig.name,
-      jobConfig.group,
-      jobConfig.className,
-      jobConfig.description,
-      jobConfig.cronExpression,
-      jobConfig.priority,
+      jobName,
+      jobGroup,
+      className,
+      Option(description).filterNot(_.trim.isEmpty),
+      cronExpression.getOrElse(triggerCron),
+      priority,
       lastFireTime,
       nextFireTime,
       scheduleInfo
     )
   }
 
-  def addJob(jobConfig: JobConfig, userInformationOption: Option[UserInformation] = None): Boolean = {
+  def convertToJobInformation(jobConfig: JobConfig): JobInformation = {
+    convertToJobInformation(jobConfig.group, jobConfig.name, jobConfig.className, jobConfig.description, Option(jobConfig.cronExpression))
+  }
+
+  def addJob(jobConfig: JobConfig, userInformationOption: Option[UserInformation] = None, sendEvent: Boolean = true): Boolean = {
     val jobClass = getJobClass(jobConfig)
     val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
       jobClass.getSimpleName
@@ -72,27 +98,26 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     else {
       jobConfig.name
     }
-    val couldAddJob = MongoDaoHolder.jobDao.find(Map("name" -> internalJobName, "group" -> jobConfig.group)).resultOption().isEmpty
-
-    if (couldAddJob) {
-      val jobConfigDetail = jobConfig.copy(name = internalJobName)
-      val inserted        = MongoDaoHolder.jobDao.insertOne(jobConfigDetail).result()
-      reloadJobs()
-      if (inserted.wasAcknowledged()) {
+    try {
+      scheduleJob(jobConfig.copy(name = internalJobName))
+      if (sendEvent) {
         userInformationOption.foreach(
-          userInformation => EventSystem.eventStream.publish(CreateJobEvent(userInformation, jobConfig))
+          userInformation => EventSystem.publish(CreateJobEvent(userInformation, jobConfig))
         )
       }
-      inserted.wasAcknowledged()
+      true
     }
-    else {
-      throw MongoCampException(s"${jobConfig.name} with group ${jobConfig.group} is already added.", StatusCode.PreconditionFailed, jobAlreadyAdded)
+    catch {
+      case _: Throwable =>
+        throw MongoCampException(s"${jobConfig.name} with group ${jobConfig.group} is already added.", StatusCode.PreconditionFailed, jobAlreadyAdded)
     }
   }
 
-  def getTriggerList(jobName: String, groupName: String): List[Trigger] = {
-    try
-      scheduler.getTriggersOfJob(new JobKey(jobName, groupName)).asScala.toList
+  def getTriggerList(groupName: String, jobName: String): List[Trigger] = {
+    try {
+      val trigger = scheduler.getTriggersOfJob(new JobKey(jobName, groupName)).asScala
+      trigger.toList
+    }
     catch {
       case _: Exception =>
         List()
@@ -114,46 +139,47 @@ object JobPlugin extends ServerPlugin with LazyLogging {
     jobClass
   }
 
+  def jobsList(): List[JobInformation] = {
+    val jobList = scheduler.getJobGroupNames.asScala
+      .filter(
+        s => Option(s).nonEmpty
+      )
+      .flatMap(
+        jobGroup => {
+          scheduler
+            .getJobKeys(GroupMatcher.jobGroupEquals(jobGroup))
+            .asScala
+            .map(
+              jobKey => {
+                val jobDetail = scheduler.getJobDetail(jobKey)
+                convertToJobInformation(jobDetail.getKey.getGroup, jobDetail.getKey.getName, jobDetail.getJobClass.getName, jobDetail.getDescription)
+              }
+            )
+        }
+      )
+    jobList.toList
+  }
+
   def updateJob(userInformation: UserInformation, groupName: String, jobName: String, jobConfig: JobConfig): Boolean = {
-    val jobExists = MongoDaoHolder.jobDao.find(Map("name" -> jobName, "group" -> groupName)).resultOption().isDefined
-
-    if (!jobExists) {
-      throw MongoCampException(s"$jobName with group $groupName does not exists.", StatusCode.NotFound, jobCouldNotFound)
-    }
-
-    val couldUpdate = if (jobName == jobConfig.name && groupName == jobConfig.group) {
-      true
-    }
-    else {
-      val jobClass = getJobClass(jobConfig)
-      val internalJobName = if (jobConfig.name.trim.equalsIgnoreCase("")) {
-        jobClass.getSimpleName
-      }
-      else {
-        jobConfig.name
-      }
-      MongoDaoHolder.jobDao.find(Map("name" -> internalJobName, "group" -> jobConfig.group)).resultOption().isEmpty
-    }
-    if (couldUpdate) {
-      val updateResponse = MongoDaoHolder.jobDao.replaceOne(Map("name" -> jobName, "group" -> groupName), jobConfig).result()
-      reloadJobs()
-      if (updateResponse.getModifiedCount > 0) {
-        EventSystem.eventStream.publish(UpdateJobEvent(userInformation, jobName, groupName, jobConfig))
-      }
-      updateResponse.wasAcknowledged() && updateResponse.getModifiedCount > 0
-    }
-    else {
-      throw MongoCampException(s"$jobName with group $groupName is already exists. Could not rename.", StatusCode.PreconditionFailed, jobCouldNotUpdated)
+    val jobKey = new JobKey(jobName, groupName)
+    scheduler.getJobDetail(jobKey) match {
+      case null =>
+        throw MongoCampException(s"$jobName with group $groupName does not exists.", StatusCode.NotFound, jobCouldNotFound)
+      case _ =>
+        deleteJob(userInformation, groupName, jobName, sendEvent = false)
+        addJob(jobConfig, Some(userInformation), sendEvent = false)
     }
   }
 
-  def deleteJob(userInformation: UserInformation, groupName: String, jobName: String): Boolean = {
-    val deleteResponse = MongoDaoHolder.jobDao.deleteMany(Map("name" -> jobName, "group" -> groupName)).result()
-    reloadJobs()
-    if (deleteResponse.getDeletedCount > 0) {
-      EventSystem.eventStream.publish(DeleteJobEvent(userInformation, jobName, groupName))
+  def deleteJob(userInformation: UserInformation, groupName: String, jobName: String, sendEvent: Boolean = true): Boolean = {
+    getTriggerList(groupName, jobName).foreach(
+      trigger => scheduler.unscheduleJob(trigger.getKey)
+    )
+    val response = scheduler.deleteJob(new JobKey(jobName, groupName))
+    if (sendEvent && response) {
+      EventSystem.publish(DeleteJobEvent(userInformation, jobName, groupName))
     }
-    deleteResponse.wasAcknowledged() && deleteResponse.getDeletedCount > 0
+    response
   }
 
   def executeJob(groupName: String, jobName: String): Boolean = {
@@ -165,11 +191,6 @@ object JobPlugin extends ServerPlugin with LazyLogging {
       case _: Exception =>
         throw MongoCampException(s"$jobName with group $groupName not found", StatusCode.NotFound, jobCouldNotFound)
     }
-  }
-
-  private def loadJobs(): Unit = {
-    val foundJobs = MongoDaoHolder.jobDao.find().resultList()
-    foundJobs.foreach(scheduleJob)
   }
 
   private def scheduleJob(dbJob: JobConfig): Unit = {

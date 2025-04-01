@@ -1,13 +1,7 @@
 package dev.mongocamp.server
 
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.http.scaladsl.Http
-import org.apache.pekko.http.scaladsl.model.HttpHeader.ParsingResult
-import org.apache.pekko.http.scaladsl.model.HttpMethods._
-import org.apache.pekko.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import org.apache.pekko.http.scaladsl.server.Directives.{ complete, extractRequestContext, options, reject }
-import org.apache.pekko.http.scaladsl.server.{ Route, RouteConcatenation }
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.event.EventSystem
@@ -18,10 +12,18 @@ import dev.mongocamp.server.plugin.{ RoutesPlugin, ServerPlugin }
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.{ ConfigurationService, PluginDownloadService, PluginService, ReflectionService }
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.HttpHeader.ParsingResult
+import org.apache.pekko.http.scaladsl.model.HttpMethods._
+import org.apache.pekko.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
+import org.apache.pekko.http.scaladsl.server.Directives.{ complete, extractRequestContext, options, reject }
+import org.apache.pekko.http.scaladsl.server.{ Route, RouteConcatenation }
 import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.tapir.server.ServerEndpoint
 
+import java.sql.DriverManager
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -36,6 +38,8 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   private lazy val preLoadedRoutes: ArrayBuffer[Route]                = ArrayBuffer()
   private lazy val afterLoadedRoutes: ArrayBuffer[Route]              = ArrayBuffer()
   private lazy val afterServerStartCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
+  private lazy val serverShutdownCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
+  private var shutdownStarted: Boolean = false
   private var routesPluginList: List[RoutesPlugin]                    = List()
 
   private def initializeRoutesPlugin: List[RoutesPlugin] = {
@@ -46,7 +50,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
       )
       .map(
         plugin => {
-          EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
+          EventSystem.publish(PluginLoadedEvent(plugin.getClass.getName, "RoutesPlugin"))
           plugin
         }
       )
@@ -97,21 +101,23 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   }
 
   private def activateServerPlugins(): Unit = {
-    ReflectionService
-      .instancesForType(classOf[ServerPlugin])
-      .filterNot(
-        plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
-      )
+    val serverPlugins = ReflectionService.instancesForType(classOf[ServerPlugin])
+    val serverPluginsToActivate = serverPlugins.filterNot(
+      plugin => ConfigurationService.getConfigValue[List[String]](DefaultConfigurations.ConfigKeyPluginsIgnored).contains(plugin.getClass.getName)
+    )
+    serverPluginsToActivate
       .map(
         plugin => {
           plugin.activate()
-          EventSystem.eventStream.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
+          EventSystem.publish(PluginLoadedEvent(plugin.getClass.getName, "ServerPlugin"))
           plugin
         }
       )
   }
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit] = {
+    DriverManager.registerDriver(new MongoJdbcDriver())
+    ReflectionService.scanClassPath()
     ConfigurationService.registerMongoCampServerDefaultConfigs()
     val pluginDownloadService = new PluginDownloadService()
     pluginDownloadService.downloadPlugins()
@@ -124,14 +130,11 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
       .map(
         serverBinding => {
           AuthHolder.handler
-
           logger.warn("init server with interface: %s at port: %s".format(interface, port))
-
           if (ApiDocsRoutes.isSwaggerEnabled) {
             logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
           }
-
-          EventSystem.eventStream.publish(ServerStartedEvent())
+          EventSystem.publish(ServerStartedEvent())
           doAfterServerStartUp()
           serverBinding
         }
@@ -162,7 +165,21 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     afterLoadedRoutes.addOne(r)
   }
 
+  def registerServerShutdownCallBacks(f: () => Unit): Unit = {
+    serverShutdownCallBacks.addOne(f)
+  }
+
   startServer()
 
   override def registerMongoCampServerDefaultConfigs(): Unit = ConfigurationService.registerMongoCampServerDefaultConfigs()
+
+  override def shutdown(): Unit = {
+    println("Shutdown server triggered")
+    if (!shutdownStarted) {
+      shutdownStarted = true
+      serverShutdownCallBacks.foreach(f => f())
+      ActorHandler.requestActorSystem.terminate()
+      actorSystem.terminate()
+    }
+  }
 }

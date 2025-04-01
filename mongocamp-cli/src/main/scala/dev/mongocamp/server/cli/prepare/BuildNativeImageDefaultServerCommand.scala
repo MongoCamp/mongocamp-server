@@ -8,8 +8,8 @@ import lukfor.progress.Components.{ SPINNER, TASK_NAME }
 import lukfor.progress.TaskService
 import lukfor.progress.tasks.ITaskRunnable
 import lukfor.progress.tasks.monitors.ITaskMonitor
-import picocli.CommandLine.Command
 import picocli.CommandLine.Help.Ansi
+import picocli.CommandLine.{ Command, Option }
 
 import java.util.concurrent.Callable
 @Command(
@@ -17,6 +17,9 @@ import java.util.concurrent.Callable
   description = Array("Build native Image from Server Instance")
 )
 class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLogging {
+
+  @Option(names = Array("-d", "--debug"), description = Array("Should hold for Debugger"))
+  var waitForDebug: Boolean = false
 
   def call(): Integer = {
     var response = 0
@@ -28,7 +31,6 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
         catch {
           case e: Exception =>
             monitor.failed(e)
-            response += 1
         }
       }
     }
@@ -40,7 +42,6 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
         catch {
           case e: Exception =>
             monitor.failed(e)
-            response += 1
         }
       }
     }
@@ -48,7 +49,7 @@ class BuildNativeImageDefaultServerCommand extends Callable[Integer] with LazyLo
       def run(monitor: ITaskMonitor): Unit = {
         monitor.begin("Building Native Image")
         try
-          NativeImageBuildService.buildNativeImage(CoursierModuleService.loadServerWithAllDependencies(), "server-raw")
+          NativeImageBuildService.buildNativeImage(CoursierModuleService.loadServerWithAllDependencies(), "server-raw", waitForDebug = waitForDebug)
         catch {
           case e: Exception =>
             monitor.failed(e)

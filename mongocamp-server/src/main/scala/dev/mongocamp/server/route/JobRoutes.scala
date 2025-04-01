@@ -1,16 +1,14 @@
 package dev.mongocamp.server.route
-import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.database.MongoDaoHolder
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JobConfig, JobInformation, JsonValue, ModelConstants }
-import dev.mongocamp.server.plugin.{ JobPlugin, RoutesPlugin }
+import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonValue, ModelConstants}
+import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.{Method, StatusCode}
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -32,12 +30,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
 
   def jobsList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[JobInformation]]] = {
     Future.successful(Right({
-      MongoDaoHolder.jobDao
-        .find()
-        .resultList()
-        .map(
-          jobConfig => JobPlugin.convertToJobInformation(jobConfig)
-        )
+      JobPlugin.jobsList()
     }))
   }
 

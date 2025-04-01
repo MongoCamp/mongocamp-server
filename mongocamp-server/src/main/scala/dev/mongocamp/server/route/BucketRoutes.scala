@@ -2,23 +2,25 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.event.bucket.ClearBucketEvent
+import dev.mongocamp.server.event.bucket.DropBucketEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.bucket.{ ClearBucketEvent, DropBucketEvent }
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
+import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
+import dev.mongocamp.server.model.auth.UserInformation
+import dev.mongocamp.server.model.BucketInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
-import dev.mongocamp.server.model.{ BucketInformation, JsonValue, ModelConstants }
+import dev.mongocamp.server.model.JsonValue
+import dev.mongocamp.server.model.ModelConstants
 import dev.mongocamp.server.plugin.RoutesPlugin
-import io.circe.generic.auto._
+import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
-import sttp.tapir._
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
 
 object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
 
@@ -38,7 +40,7 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     )
 
   def bucketsList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val result = MongoDatabase.databaseProvider.collectionNames().filter(_.endsWith(BucketCollectionSuffix)).map(_.replace(BucketCollectionSuffix, ""))
       val bucketGrants =
         userInformation.getGrants.filter(
@@ -50,7 +52,7 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
           userInformation.isAdmin || readBuckets.contains(AuthorizedCollectionRequest.all) || readBuckets.contains(collection)
         }
       )
-    }))
+    })
   }
 
   val bucketEndpoint = readBucketEndpoint
@@ -65,14 +67,14 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     )
 
   def getBucket(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), BucketInformation]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val collectionStatus = MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").collectionStatus.result()
       val fileSizes        = FileAdapterHolder.handler.size(authorizedCollectionRequest.collection)
       val completeSize     = fileSizes + collectionStatus.size
       BucketInformation(authorizedCollectionRequest.collection, collectionStatus.count, completeSize, completeSize / collectionStatus.count)
-    }))
+    })
   }
 
   val deleteBucketEndpoint = writeBucketEndpoint
@@ -87,14 +89,14 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     )
 
   def deleteBucket(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").drop().result()
       FileAdapterHolder.handler.delete(authorizedCollectionRequest.collection)
-      EventSystem.eventStream.publish(DropBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      EventSystem.publish(DropBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue[Boolean](true)
-    }))
+    })
   }
 
   val clearBucketEndpoint = writeBucketEndpoint
@@ -110,22 +112,17 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     )
 
   def clearBucket(
-      authorizedCollectionRequest: AuthorizedCollectionRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").deleteAll().result()
       val clearResponse = FileAdapterHolder.handler.clear(authorizedCollectionRequest.collection)
-      EventSystem.eventStream.publish(ClearBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
+      EventSystem.publish(ClearBucketEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue[Boolean](clearResponse)
-    }))
+    })
   }
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
-    List(
-      bucketListEndpoint,
-      bucketEndpoint,
-      deleteBucketEndpoint,
-      clearBucketEndpoint
-    )
+    List(bucketListEndpoint, bucketEndpoint, deleteBucketEndpoint, clearBucketEndpoint)
 
 }

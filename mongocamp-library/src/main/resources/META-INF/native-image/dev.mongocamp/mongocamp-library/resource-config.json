@@ -4,7 +4,8 @@
       {"pattern": ".*/*.xml$"},
       {"pattern": ".*/*.properties$"},
       {"pattern": ".*/*.conf$"},
-      {"pattern": ".*/*.json$"}
+      {"pattern": ".*/*.json$"},
+      {"pattern": ".*/org.webjars/*"}
     ],
     "excludes": [
     ]

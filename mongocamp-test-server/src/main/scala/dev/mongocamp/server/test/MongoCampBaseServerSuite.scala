@@ -11,6 +11,7 @@ import sttp.client3.{ Identity, RequestT, Response, ResponseException }
 
 trait MongoCampBaseServerSuite extends munit.FunSuite {
   System.setProperty("PLUGINS_MODULES", "[\"dev.mongocamp:mongocamp-test-server_2.13:0.5.0\"]")
+  System.setProperty("DOCS_SWAGGER", "true")
 
   private var _adminBearerToken: String = ""
   def clearAdminToken                   = _adminBearerToken = ""
@@ -62,7 +63,7 @@ trait MongoCampBaseServerSuite extends munit.FunSuite {
   }
 
   private def resetDatabase(): Unit = synchronized {
-    if (TestServer.isServerRunning()) {
+    if (TestServer.isServerRunning) {
       val databasesToIgnore = List("admin", "config", "local")
       MongoDatabase.databaseProvider.databaseNames.foreach(
         db => {

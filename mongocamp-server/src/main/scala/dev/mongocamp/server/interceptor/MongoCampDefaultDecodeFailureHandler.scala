@@ -1,22 +1,26 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.exception.ErrorDefinition.{ HeaderErrorAdditionalInfo, HeaderErrorCode, HeaderErrorMessage }
+import dev.mongocamp.server.exception.ErrorDefinition.HeaderErrorAdditionalInfo
+import dev.mongocamp.server.exception.ErrorDefinition.HeaderErrorCode
+import dev.mongocamp.server.exception.ErrorDefinition.HeaderErrorMessage
 import dev.mongocamp.server.exception.ErrorDescription
 import io.circe.generic.auto._
 import io.circe.syntax.EncoderOps
-import sttp.model.{ Header, StatusCode }
+import scala.concurrent.Future
+import sttp.model.Header
+import sttp.model.StatusCode
 import sttp.monad.MonadError
-import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.interceptor.decodefailure.DecodeFailureHandler
-import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.{ failureResponse, respond, FailureMessages }
+import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.failureResponse
+import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.respond
+import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.FailureMessages
+import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.model.ValuedEndpointOutput
 
-import scala.concurrent.Future
-
 case class MongoCampDefaultDecodeFailureHandler(
-    respond: DecodeFailureContext => Option[(StatusCode, List[Header])],
-    failureMessage: DecodeFailureContext => String,
-    response: (StatusCode, List[Header], String) => ValuedEndpointOutput[_]
+  respond: DecodeFailureContext => Option[(StatusCode, List[Header])],
+  failureMessage: DecodeFailureContext => String,
+  response: (StatusCode, List[Header], String) => ValuedEndpointOutput[_]
 ) extends DecodeFailureHandler[Future] {
   override def apply(ctx: DecodeFailureContext)(implicit monad: MonadError[Future]): Future[Option[ValuedEndpointOutput[_]]] = {
     monad.unit {
@@ -43,9 +47,5 @@ case class MongoCampDefaultDecodeFailureHandler(
 }
 
 object MongoCampDefaultDecodeFailureHandler {
-  def handler: MongoCampDefaultDecodeFailureHandler = MongoCampDefaultDecodeFailureHandler(
-    respond,
-    FailureMessages.failureMessage,
-    failureResponse
-  )
+  def handler: MongoCampDefaultDecodeFailureHandler = MongoCampDefaultDecodeFailureHandler(respond, FailureMessages.failureMessage, failureResponse)
 }

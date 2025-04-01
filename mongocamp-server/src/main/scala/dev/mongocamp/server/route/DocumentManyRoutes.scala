@@ -1,23 +1,27 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, convertToOperationMap }
+import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
+import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.event.document.CreateDocumentEvent
+import dev.mongocamp.server.event.document.DeleteDocumentEvent
+import dev.mongocamp.server.event.document.UpdateDocumentEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.document.{ CreateDocumentEvent, DeleteDocumentEvent, UpdateDocumentEvent }
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.{ DeleteResponse, InsertResponse, UpdateRequest, UpdateResponse }
-import io.circe.generic.auto._
-import sttp.capabilities.WebSockets
-import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
-import sttp.tapir._
-import sttp.tapir.json.circe.jsonBody
-import sttp.tapir.server.ServerEndpoint
-
+import dev.mongocamp.server.model.DeleteResponse
+import dev.mongocamp.server.model.InsertResponse
+import dev.mongocamp.server.model.UpdateRequest
+import dev.mongocamp.server.model.UpdateResponse
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
+import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.server.ServerEndpoint
 object DocumentManyRoutes extends CollectionBaseRoute {
 
   val insertManyEndpoint = writeCollectionEndpoint
@@ -36,24 +40,20 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     )
 
   def insertManyInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: (List[Map[String, Any]])
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (List[Map[String, Any]])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), InsertResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val listOfDocuments = parameter.map(
-            map => documentFromScalaMap(convertFields(map))
-          )
-          val result                         = dao.insertMany(listOfDocuments).result()
-          val listOfIds                      = result.getInsertedIds.values().asScala.map(_.asObjectId().getValue.toHexString).toList
-          val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
-          EventSystem.eventStream.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
-          insertedResult
-        }
+    Future.successful(Right {
+      val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val listOfDocuments = parameter.map(
+        map => documentFromScalaMap(convertFields(map))
       )
-    )
+      val result                         = dao.insertMany(listOfDocuments).result()
+      val listOfIds                      = result.getInsertedIds.values().asScala.map(_.asObjectId().getValue.toHexString).toList
+      val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
+      EventSystem.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
+      insertedResult
+    })
   }
 
   val updateManyEndpoint = writeCollectionEndpoint
@@ -72,32 +72,28 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     )
 
   def updateManyInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: UpdateRequest
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: UpdateRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UpdateResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val documentMap = parameter.document
-          val filter      = convertFields(parameter.filter)
-          val oldValues   = dao.find(filter).resultList()
-          val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
-          val updateResponse = UpdateResponse(
-            result.wasAcknowledged(),
-            Option(result.getUpsertedId)
-              .map(
-                value => value.asObjectId().getValue.toHexString
-              )
-              .toList,
-            result.getModifiedCount,
-            result.getMatchedCount
+    Future.successful(Right {
+      val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val documentMap = parameter.document
+      val filter      = convertFields(parameter.filter)
+      val oldValues   = dao.find(filter).resultList()
+      val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
+      val updateResponse = UpdateResponse(
+        result.wasAcknowledged(),
+        Option(result.getUpsertedId)
+          .map(
+            value => value.asObjectId().getValue.toHexString
           )
-          EventSystem.eventStream.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
-          updateResponse
-        }
+          .toList,
+        result.getModifiedCount,
+        result.getMatchedCount
       )
-    )
+      EventSystem.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
+      updateResponse
+    })
   }
 
   val deleteManyEndpoint = writeCollectionEndpoint
@@ -116,22 +112,18 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     )
 
   def deleteManyInCollection(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      parameter: Map[String, Any]
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: Map[String, Any]
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
-    Future.successful(
-      Right(
-        {
-          val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-          val deleteFilter   = convertFields(parameter)
-          val oldValues      = dao.find(deleteFilter).resultList()
-          val result         = dao.deleteMany(deleteFilter).result()
-          val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
-          EventSystem.eventStream.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
-          deleteResponse
-        }
-      )
-    )
+    Future.successful(Right {
+      val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val deleteFilter   = convertFields(parameter)
+      val oldValues      = dao.find(deleteFilter).resultList()
+      val result         = dao.deleteMany(deleteFilter).result()
+      val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
+      EventSystem.publish(DeleteDocumentEvent(authorizedCollectionRequest.userInformation, deleteResponse, oldValues))
+      deleteResponse
+    })
   }
 
   def listOfManyEndpoints(): List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(insertManyEndpoint, updateManyEndpoint, deleteManyEndpoint)

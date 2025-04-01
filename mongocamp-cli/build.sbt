@@ -1,6 +1,6 @@
 enablePlugins(GraalVMNativeImagePlugin)
 
-val PicoliCliVersion = "4.7.5"
+val PicoliCliVersion = "4.7.6"
 libraryDependencies += "info.picocli" % "picocli"         % PicoliCliVersion
 libraryDependencies += "info.picocli" % "picocli-codegen" % PicoliCliVersion % "provided"
 libraryDependencies += "info.picocli" % "picocli-jansi-graalvm" % "1.2.0"
@@ -12,7 +12,7 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging"   % "3.9.
 
 publish / skip := true
 
-libraryDependencies += "io.get-coursier" %% "coursier-jvm" % "2.1.9"
+libraryDependencies += "io.get-coursier" %% "coursier-jvm" % "2.1.24"
 
 graalVMNativeImageOptions ++= Seq(
   "--no-fallback",
@@ -32,3 +32,9 @@ buildInfoPackage := "dev.mongocamp.server.cli"
 buildInfoOptions += BuildInfoOption.BuildTime
 
 buildInfoKeys ++= Seq[BuildInfoKey]("organization" -> organization.value, "buildJavaVersion" -> System.getProperty("java.version"))
+
+Test / testOptions += Tests.Cleanup(
+  (loader: java.lang.ClassLoader) => {
+    CleanUpPlugin.cleanup(loader, name.value)
+  }
+)

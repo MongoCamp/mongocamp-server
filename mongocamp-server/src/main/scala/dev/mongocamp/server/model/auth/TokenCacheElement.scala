@@ -1,5 +1,5 @@
 package dev.mongocamp.server.model.auth
 
-import java.util.Date
+import org.joda.time.DateTime
 
-case class TokenCacheElement(token: String, userId: String, validTo: Date)
+case class TokenCacheElement(token: String, userId: String, validTo: DateTime)

@@ -1,5 +1,889 @@
 [
   {
+    "name": "java.util.List",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "io.github.classgraph.ScanResult",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "io.github.classgraph.ClassGraph",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "io.github.classgraph.ScanResult$SerializationFormat",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "dev.mongocamp.server.service.ReflectionService",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "dev.mongocamp.server.service.reflection.ClassGraphService",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "allDeclaredClasses": true,
+    "allPublicClasses": true
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.ClassGraphClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.CxfContainerClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.EquinoxClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.EquinoxContextFinderClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.FallbackClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.FelixClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.JBossClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.JPMSClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.OSGiDefaultClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.ParentLastDelegationOrderTestClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.PlexusClassWorldsClassRealmClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.QuarkusClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.SpringBootRestartClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.TomcatWebappClassLoaderBaseHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.URLClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.UnoOneJarClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.WeblogicClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.WebsphereLibertyClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.WebsphereTraditionalClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.json.ClassFieldCache$NoConstructor",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectLeafname",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectPrefix",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectWholeString",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.ScanSpec",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "nonapi.io.github.classgraph.classloaderhandler.AntClassLoaderHandler",
+    "methods": [
+      {
+        "name": "canHandle",
+        "parameterTypes": [
+          "java.lang.Class",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClassLoaderOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClassLoaderOrder",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      },
+      {
+        "name": "findClasspathOrder",
+        "parameterTypes": [
+          "java.lang.ClassLoader",
+          "nonapi.io.github.classgraph.classpath.ClasspathOrder",
+          "nonapi.io.github.classgraph.scanspec.ScanSpec",
+          "nonapi.io.github.classgraph.utils.LogNode"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationClassRef",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationEnumValue",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationInfo",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationParameterValue",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.AnnotationParameterValueList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ClassInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ClassInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ClassMemberInfo",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "io.github.classgraph.FieldInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.MethodInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.MethodInfoList",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ModuleInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ModulePathInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ObjectTypedValueWrapper",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.PackageInfo",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ScanResult$SerializationFormat",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "io.github.classgraph.ScanResultObject",
+    "allDeclaredFields": true
+  },
+  {
     "name": "dev.mongocamp.server.service.ConfigurationRead",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
@@ -549,5 +1433,61 @@
   },
   {
     "name": "dev.mongocamp.server.logging.HighlightingColorConverter"
+  },
+  {
+    "name": "nonapi.io.github.classgraph.json.ClassFieldCache$NoConstructor",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject",
+    "allDeclaredFields": true
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectLeafname",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectPrefix",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.AcceptReject$AcceptRejectWholeString",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "nonapi.io.github.classgraph.scanspec.ScanSpec",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "[Lio.github.classgraph.ObjectTypedValueWrapper;"
   }
 ]

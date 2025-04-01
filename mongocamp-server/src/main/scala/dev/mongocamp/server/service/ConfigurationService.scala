@@ -27,7 +27,7 @@ object ConfigurationService extends ConfigurationRead {
         val mongoCampConfiguration = dbOption.get.copy(value = value, comment = commentOption.getOrElse(dbOption.get.comment))
         val replaceResult          = ConfigDao().replaceOne(Map("key" -> key), Converter.toDocument(mongoCampConfiguration)).result()
         configCache.invalidate(key)
-        EventSystem.eventStream.publish(ConfigUpdateEvent(key, value, dbOption.get.value, "updateConfig"))
+        EventSystem.publish(ConfigUpdateEvent(key, value, dbOption.get.value, "updateConfig"))
         replaceResult.wasAcknowledged()
       }
       else {
@@ -40,7 +40,7 @@ object ConfigurationService extends ConfigurationRead {
   }
 
   override protected def publishConfigUpdateEvent(key: String, newValue: Any, oldValue: Any, callingMethod: String): Unit = {
-    EventSystem.eventStream.publish(ConfigUpdateEvent(key, newValue, oldValue, "checkAndUpdateWithEnv"))
+    EventSystem.publish(ConfigUpdateEvent(key, newValue, oldValue, "checkAndUpdateWithEnv"))
   }
 
   override protected def publishConfigRegisterEvent(
@@ -51,6 +51,6 @@ object ConfigurationService extends ConfigurationRead {
       comment: String,
       needsRestartForActivation: Boolean
   ): Unit = {
-    EventSystem.eventStream.publish(ConfigRegisterEvent(persistent, configKey, configType, value, comment, needsRestartForActivation))
+    EventSystem.publish(ConfigRegisterEvent(persistent, configKey, configType, value, comment, needsRestartForActivation))
   }
 }

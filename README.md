@@ -43,3 +43,7 @@ You can use [Docker Compose](https://server.mongocamp.dev/guide/getting-started.
 ```shell
 docker run --publish 8080:8080 -e CONNECTION_HOST=your.mongo.db.host -e CONNECTION_DATABASE=test -e CONNECTION_USERNAME=mongodbUser -e CONNECTION_PASSWORD=mongodbPwd mongocamp/mongocamp-server:latest
 ```
+
+[error] Failed tests:
+[error]         dev.mongocamp.server.tests.JobSuite
+[error]         dev.mongocamp.server.tests.FileSuite

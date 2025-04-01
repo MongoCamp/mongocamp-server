@@ -4,6 +4,7 @@ import better.files.{ File, FileMonitor }
 import dev.mongocamp.server.cli.Main
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.service.PluginService
+import io.circe.parser._
 import picocli.CommandLine.Help.Ansi
 
 import java.nio.file.{ Path, StandardWatchEventKinds => EventType, WatchEvent }
@@ -11,9 +12,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
 import scala.sys.process
 import scala.sys.process.Process
-import io.circe.generic.auto._
-import io.circe.parser._
-import io.circe.syntax._
 
 object ServerService {
   private var processOption: Option[process.Process] = None
@@ -60,7 +58,8 @@ object ServerService {
 
   private def bootServer(mode: String): Unit = {
     mode match {
-      case s: String if s.equalsIgnoreCase("jvm") => processOption = Some(JvmStartService.startServer())
+      case s: String if s.equalsIgnoreCase("jvm") =>
+        processOption = Some(JvmStartService.startServer())
 
       case s: String if s.equalsIgnoreCase("native") =>
         val pluginUrls = PluginService
@@ -82,8 +81,8 @@ object ServerService {
           .map(
             url => File(url)
           )
-        // todo: reactivate build if fixed. https://github.com/oracle/graal/issues/7264
-        if (pluginUrls.nonEmpty || true) {
+
+        if (pluginUrls.nonEmpty) {
           processOption = Some(JvmStartService.startServer())
         }
         else {

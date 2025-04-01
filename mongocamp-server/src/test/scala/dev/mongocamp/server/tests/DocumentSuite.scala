@@ -1,9 +1,10 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.DocumentApi
-import dev.mongocamp.server.test.client.model.{ MongoFindRequest, UpdateRequest }
-
+import dev.mongocamp.server.test.client.model.MongoFindRequest
+import dev.mongocamp.server.test.client.model.UpdateRequest
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
+import java.util.Date
 import java.util.UUID
 import scala.collection.mutable
 import scala.util.Random
@@ -471,7 +472,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterInsert("number"), 1234)
-    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     mapToInsert.put("number", 5678)
     val updateResponse = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collectionNameTest, id, mapToInsert.toMap))
     assertEquals(updateResponse.upsertedIds.nonEmpty, true)
@@ -480,7 +484,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterUpdate("number"), 5678)
-    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
   }
 
   test("create or update a document with a sublist of type string") {
@@ -504,7 +511,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterInsert("number"), 1234)
-    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     assertEquals(checkAfterInsert("list"), List("hello", "men"))
     mapToInsert.put("number", 5678)
     mapToInsert.put("list", List("hello", "world"))
@@ -516,7 +526,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterUpdate("number"), 5678)
-    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     assertEquals(checkAfterUpdate("list"), List("hello", "world"))
 
   }
@@ -542,7 +555,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterInsert("number"), 1234)
-    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     assertEquals(checkAfterInsert("list"), List(123, 456))
     mapToInsert.put("number", 5678)
     mapToInsert.put("list", List(789, 987))
@@ -554,7 +570,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterUpdate("number"), 5678)
-    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     assertEquals(checkAfterUpdate("list"), List(789, 987))
 
   }
@@ -580,7 +599,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterInsert = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterInsert("number"), 1234)
-    assertEquals(checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterInsert("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     assertEquals(checkAfterInsert("list"), List(Map("a" -> "A"), Map("b" -> "B")))
     mapToInsert.put("number", 5678)
     mapToInsert.put("list", List(Map("c" -> "C"), Map("d" -> "D")))
@@ -592,7 +614,10 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
     val checkAfterUpdate = executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collectionNameTest, id))
     assertEquals(checkAfterUpdate("number"), 5678)
-    assertEquals(checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").toString, "2023-04-12T18:32:01.452+02:00")
+    assertEquals(
+      checkAfterUpdate("metaData").asInstanceOf[Map[String, Any]]("created").asInstanceOf[org.joda.time.DateTime].toInstant.toString,
+      "2023-04-12T16:32:01.452Z"
+    )
     assertEquals(checkAfterUpdate("list"), List(Map("c" -> "C"), Map("d" -> "D")))
 
   }

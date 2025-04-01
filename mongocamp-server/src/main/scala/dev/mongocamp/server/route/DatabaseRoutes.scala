@@ -3,22 +3,23 @@ package dev.mongocamp.server.route
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseInfo
 import dev.mongocamp.server.database.MongoDatabase
-import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.database.DropDatabaseEvent
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
+import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.JsonValue
-import dev.mongocamp.server.model.auth.{ AuthorizedCollectionRequest, UserInformation }
 import dev.mongocamp.server.plugin.RoutesPlugin
-import io.circe.generic.auto._
+import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
 
 object DatabaseRoutes extends RoutesPlugin {
 
@@ -35,10 +36,10 @@ object DatabaseRoutes extends RoutesPlugin {
     )
 
   def databaseList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val result = MongoDatabase.databaseProvider.databaseNames
       result
-    }))
+    })
   }
 
   val databaseStatusEndpoint = databaseBaseEndpoint
@@ -53,10 +54,10 @@ object DatabaseRoutes extends RoutesPlugin {
     )
 
   def databaseInfos(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[DatabaseInfo]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val result = MongoDatabase.databaseProvider.databaseInfos
       result
-    }))
+    })
   }
 
   val databaseInfoEndpoint = databaseBaseEndpoint
@@ -71,10 +72,10 @@ object DatabaseRoutes extends RoutesPlugin {
     )
 
   def getDatabaseInfo(databaseName: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DatabaseInfo]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val result = MongoDatabase.databaseProvider.databaseInfos.find(_.name.equalsIgnoreCase(databaseName))
       result.getOrElse(throw MongoCampException("database not found", StatusCode.NotFound))
-    }))
+    })
   }
 
   val deleteDatabaseEndpoint = databaseBaseEndpoint
@@ -89,14 +90,14 @@ object DatabaseRoutes extends RoutesPlugin {
     )
 
   def deleteDatabaseInfo(
-      userInformation: UserInformation,
-      databaseName: String
+    userInformation: UserInformation,
+    databaseName: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       MongoDatabase.databaseProvider.dropDatabase(databaseName).result()
-      EventSystem.eventStream.publish(DropDatabaseEvent(userInformation, databaseName))
+      EventSystem.publish(DropDatabaseEvent(userInformation, databaseName))
       JsonValue(true)
-    }))
+    })
   }
 
   val collectionsEndpoint = securedEndpoint
@@ -116,7 +117,7 @@ object DatabaseRoutes extends RoutesPlugin {
     )
 
   def collectionList(userInformation: UserInformation, database: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val result           = MongoDatabase.databaseProvider.collectionNames(database)
       val collectionGrants = userInformation.getCollectionGrants
       result.filter(
@@ -128,7 +129,7 @@ object DatabaseRoutes extends RoutesPlugin {
           userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
         }
       )
-    }))
+    })
   }
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =

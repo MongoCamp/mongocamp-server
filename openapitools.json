@@ -2,12 +2,12 @@
   "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
   "spaces": 2,
   "generator-cli": {
-    "version": "6.4.0",
+    "version": "7.4.0",
     "generators":{
       "mongo-camp-generator": {
         "generatorName": "scala-sttp",
         "output": "./src/test/scala/dev/mongocamp/server/client-project",
-        "inputSpec": "http://0.0.0.0:8080/docs/docs.yaml",
+        "inputSpec": "http://0.0.0.0:1511/docs/docs.yaml",
         "additionalProperties": {
           "mainPackage": "dev.mongocamp.server.test.client",
           "artifactId": "client",

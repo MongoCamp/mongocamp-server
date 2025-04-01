@@ -19,8 +19,8 @@ object NativeImageBuildService {
     ProcessExecutorService.executeToString(installCommand)
   }
 
-  def buildNativeImage(jars: List[File], imageName: String): String = {
-    val buildOptions = List(
+  def buildNativeImage(jars: List[File], imageName: String, waitForDebug: Boolean = false): String = {
+    var buildOptions = List(
       "--no-fallback",
       "--verbose",
       "--native-image-info",
@@ -28,23 +28,46 @@ object NativeImageBuildService {
       "-H:+ReportExceptionStackTraces",
       "-H:+ReportUnsupportedElementsAtRuntime",
       "-H:+PrintAnalysisCallTree",
-      "--report-unsupported-elements-at-runtime",
-      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
+      "-H:Log=registerResource:5",
+      "-H:IncludeResources=\".*mongocamp-classes.json$\""
+//      "--trace-object-instantiation=java.io.File,java.util.jar.JarFile"
     )
-    val generateCommand = s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${jars.mkString(":")} ${BuildInfo.mainClass} $imageName"
-    val result          = ProcessExecutorService.executeToString(generateCommand)
+    if (waitForDebug) {
+      buildOptions = buildOptions ++ List("--debug-attach")
+    }
+    val tempDir   = File.newTemporaryDirectory()
+    val classPath = (jars ++ List(tempDir.toString()))
+    val generateCommand =
+      s"${JvmService.javaHome}/bin/native-image ${buildOptions.mkString(" ")} -cp ${classPath.mkString(":")} ${BuildInfo.mainClass} $imageName"
+    val result = ProcessExecutorService.executeToString(generateCommand)
+
     if (result.contains(s"Failed generating '${imageName}'")) {
       throw NativeBuildException(result)
     }
-    val runnableRegex    = "Produced artifacts:\n(.*?) \\(executable\\)".r
-    val matches          = runnableRegex.findAllMatchIn(result).toList
-    var runnableResponse = matches.last.matched.replaceAll("Produced artifacts:\n", "").replaceAll("\\(executable\\)", "")
-    while (runnableResponse.startsWith(" ") || runnableResponse.endsWith(" ")) {
-      runnableResponse = runnableResponse.trim
-      runnableResponse = runnableResponse.trim
+
+    val runnableMacRegex          = "Produced artifacts:\n(.*?) \\(executable\\)".r
+    val matchesMac                = runnableMacRegex.findAllMatchIn(result).toList
+    val runnableMacResponseOption = matchesMac.lastOption.map(_.matched.replaceAll("Produced artifacts:\n", "").replaceAll("\\(executable\\)", ""))
+
+    val runnableLinuxRegex          = "Build artifacts:\n(.*?) \\(executable\\)".r
+    val matchesLinux                = runnableLinuxRegex.findAllMatchIn(result).toList
+    val runnableLinuxResponseOption = matchesLinux.lastOption.map(_.matched.replaceAll("Produced artifacts:\n", "").replaceAll("\\(executable\\)", ""))
+    val runnableProcessList = runnableLinuxResponseOption.toList ++ runnableMacResponseOption.toList
+
+    if (runnableProcessList.isEmpty) {
+      println(s"Could not find process path.")
+      throw NativeBuildException(result)
     }
-    println(s"Runnable Path after build: ${runnableResponse}")
-    runnableResponse
+    else {
+      var runnableResponse = runnableProcessList.head
+      while (runnableResponse.startsWith(" ") || runnableResponse.endsWith(" ")) {
+        runnableResponse = runnableResponse.trim
+        runnableResponse = runnableResponse.trim
+      }
+      println(s"Runnable Path after build: $runnableResponse")
+//      println(s"Build Output: $result")
+      runnableResponse
+    }
   }
 
 }

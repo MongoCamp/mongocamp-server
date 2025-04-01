@@ -1,6 +1,6 @@
 package dev.mongocamp.server.database.paging
 
-import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
+import dev.mongocamp.driver.mongodb.{MongoDAO, _}
 import dev.mongocamp.server.exception.MongoCampException
 import org.mongodb.scala.bson.conversions.Bson
 import sttp.model.StatusCode
@@ -17,7 +17,7 @@ case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map()
     }
     val allPages     = Math.ceil(count.toDouble / rows).toInt
     val skip         = (page - 1) * rows
-    val responseList = dao.find(filter, sort, projection, rows.toInt).skip(skip.toInt).resultList()
+    val responseList = dao.find(filter, sort, projection, rows.toInt, skip.toInt).resultList()
     PaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
   }
 
