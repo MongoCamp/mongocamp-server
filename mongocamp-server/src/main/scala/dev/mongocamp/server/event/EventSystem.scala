@@ -43,14 +43,10 @@ object EventSystem {
   }
 
   private[server] def shutdown(): Unit = {
-    println("Start shutdown")
     if (isCoordinator && listOfMembers.size == 1) {
-      println("Close JGroup Channel")
       channel.close()
     }
-    println("Disconnect JGroup Channel")
     channel.disconnect()
-    println("Terminate EventBus ActorSystem")
     Try { eventBusActorSystem.terminate() }
   }
 
