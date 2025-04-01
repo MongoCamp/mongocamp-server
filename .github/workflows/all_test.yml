@@ -43,7 +43,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        docker-platform: [ "linux/amd64",  "linux/arm64/v8", "linux/arm64" ]
+#        docker-platform: [ "linux/amd64",  "linux/arm64/v8", "linux/arm64" ]
+        docker-platform: [ "linux/amd64" ]
     steps:
       - name: Git Checkout
         uses: actions/checkout@main

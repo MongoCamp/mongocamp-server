@@ -1,12 +1,12 @@
 import com.vdurmont.semver4j.Semver
-
 import scala.sys.process.*
 
 commands += Command.command("ci-docker")(
   (state: State) => {
     val semVersion = new Semver(version.value)
     if (semVersion.isStable) {
-      val listOfPlatforms = List("linux/amd64", "linux/arm64/v8", "linux/arm64")
+//      val listOfPlatforms = List("linux/amd64", "linux/arm64/v8", "linux/arm64")
+      val listOfPlatforms = List("linux/amd64")
       val listOfTags      = List("latest", version.value, s"${semVersion.getMajor}.${semVersion.getMinor}", s"${semVersion.getMajor}")
       val containerNameList = listOfTags
         .map(
