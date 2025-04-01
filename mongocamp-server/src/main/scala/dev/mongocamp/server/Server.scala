@@ -4,28 +4,40 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcDriver
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.event.server.PluginLoadedEvent
+import dev.mongocamp.server.event.server.ServerStartedEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.server.{ PluginLoadedEvent, ServerStartedEvent }
 import dev.mongocamp.server.interceptor.cors.Cors
-import dev.mongocamp.server.interceptor.cors.Cors.{ KeyCorsHeaderOrigin, KeyCorsHeaderReferer }
-import dev.mongocamp.server.plugin.{ RoutesPlugin, ServerPlugin }
+import dev.mongocamp.server.interceptor.cors.Cors.KeyCorsHeaderOrigin
+import dev.mongocamp.server.interceptor.cors.Cors.KeyCorsHeaderReferer
+import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
-import dev.mongocamp.server.service.{ ConfigurationService, PluginDownloadService, PluginService, ReflectionService }
+import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.service.PluginDownloadService
+import dev.mongocamp.server.service.PluginService
+import dev.mongocamp.server.service.ReflectionService
+import java.sql.DriverManager
 import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.HttpHeader
 import org.apache.pekko.http.scaladsl.model.HttpHeader.ParsingResult
 import org.apache.pekko.http.scaladsl.model.HttpMethods._
-import org.apache.pekko.http.scaladsl.model.{ HttpHeader, HttpResponse, StatusCodes }
-import org.apache.pekko.http.scaladsl.server.Directives.{ complete, extractRequestContext, options, reject }
-import org.apache.pekko.http.scaladsl.server.{ Route, RouteConcatenation }
-import sttp.capabilities.WebSockets
-import sttp.capabilities.pekko.PekkoStreams
-import sttp.tapir.server.ServerEndpoint
-
-import java.sql.DriverManager
+import org.apache.pekko.http.scaladsl.model.HttpResponse
+import org.apache.pekko.http.scaladsl.model.StatusCodes
+import org.apache.pekko.http.scaladsl.server.Directives.complete
+import org.apache.pekko.http.scaladsl.server.Directives.extractRequestContext
+import org.apache.pekko.http.scaladsl.server.Directives.options
+import org.apache.pekko.http.scaladsl.server.Directives.reject
+import org.apache.pekko.http.scaladsl.server.Route
+import org.apache.pekko.http.scaladsl.server.RouteConcatenation
+import org.apache.pekko.http.scaladsl.Http
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.capabilities.WebSockets
+import sttp.tapir.server.ServerEndpoint
 
 object Server extends App with LazyLogging with RouteConcatenation with RestServer {
 
@@ -38,8 +50,8 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   private lazy val preLoadedRoutes: ArrayBuffer[Route]                = ArrayBuffer()
   private lazy val afterLoadedRoutes: ArrayBuffer[Route]              = ArrayBuffer()
   private lazy val afterServerStartCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
-  private lazy val serverShutdownCallBacks: ArrayBuffer[() => Unit] = ArrayBuffer()
-  private var shutdownStarted: Boolean = false
+  private lazy val serverShutdownCallBacks: ArrayBuffer[() => Unit]   = ArrayBuffer()
+  private var shutdownStarted: Boolean                                = false
   private var routesPluginList: List[RoutesPlugin]                    = List()
 
   private def initializeRoutesPlugin: List[RoutesPlugin] = {
@@ -74,7 +86,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     extractRequestContext {
       ctx =>
         options {
-          complete({
+          complete {
             val requestHeaders = ctx.request.headers
             val originHeader   = requestHeaders.find(_.is(KeyCorsHeaderOrigin.toLowerCase())).map(_.value())
             val refererHeader = requestHeaders
@@ -91,7 +103,7 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
             )
             headers += org.apache.pekko.http.scaladsl.model.headers.`Access-Control-Allow-Methods`(Seq(OPTIONS, POST, PUT, PATCH, GET, DELETE))
             HttpResponse(StatusCodes.OK).withHeaders(headers.toList)
-          })
+          }
         }
     }
   }
@@ -174,10 +186,11 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
   override def registerMongoCampServerDefaultConfigs(): Unit = ConfigurationService.registerMongoCampServerDefaultConfigs()
 
   override def shutdown(): Unit = {
-    println("Shutdown server triggered")
     if (!shutdownStarted) {
       shutdownStarted = true
-      serverShutdownCallBacks.foreach(f => f())
+      serverShutdownCallBacks.foreach(
+        f => f()
+      )
       ActorHandler.requestActorSystem.terminate()
       actorSystem.terminate()
     }
