@@ -44,7 +44,7 @@
     "flexsearch": "^0.8.147",
     "fs-extra": "^11.3.0",
     "gray-matter": "^4.0.3",
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.1.1",
     "typescript": "^5.8.2",
     "unocss": "66.1.0-beta.8",
     "vitepress": "1.6.3",
