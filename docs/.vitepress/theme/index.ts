@@ -1,17 +1,11 @@
 import DefaultTheme from 'vitepress/theme'
+import type { Theme } from 'vitepress'
 import './custom.css'
-import type { App } from 'vue'
-import { anu } from 'anu-vue'
-import 'uno.css'
 import DependencyGroup from './components/DependencyGroup.vue'
 
 export default {
-    ...DefaultTheme,
-    enhanceApp({app}: { app: App }) {
-        app.use(anu, {
-            registerComponents: true,
-        })
+    extends: DefaultTheme,
+    enhanceApp({app}) {
         app.component('DependencyGroup', DependencyGroup)
     }
-}
-
+} satisfies Theme
