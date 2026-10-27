@@ -15,6 +15,7 @@ import dev.mongocamp.server.service.ConfigurationRead.isDefaultConfigsRegistered
 import dev.mongocamp.server.service.ConfigurationRead.nonPersistentConfigs
 import io.circe.parser.decode
 import org.mongodb.scala.bson.Document
+import org.mongodb.scala.documentToUntypedDocument
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.util.Random

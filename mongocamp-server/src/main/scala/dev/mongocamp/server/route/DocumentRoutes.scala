@@ -42,7 +42,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   val findAllEndpoint = readCollectionEndpoint
     .in("documents")
     .in(
-      query[Option[Query]]("filter")(
+      query[Option[Query]]("filter")(using
         Codec.listHeadOption(Codec.string.mapValidate(LuceneQueryTools.luceneQueryValidator(""))(LuceneQueryConverter.parse(_, ""))(_.toString))
       ).description("MongoDB Filter Query by Default all filter").default(None)
     )

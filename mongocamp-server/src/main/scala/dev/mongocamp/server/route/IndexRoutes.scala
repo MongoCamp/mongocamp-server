@@ -11,6 +11,7 @@ import dev.mongocamp.server.model.index.IndexDropResponse
 import dev.mongocamp.server.model.index.IndexOptionsRequest
 import dev.mongocamp.server.plugin.RoutesPlugin
 import org.mongodb.scala.model.IndexOptions
+import scala.concurrent.duration.durationToPair
 import scala.concurrent.duration.Duration
 import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams

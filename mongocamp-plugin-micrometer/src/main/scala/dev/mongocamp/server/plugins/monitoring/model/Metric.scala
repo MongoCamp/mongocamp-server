@@ -33,12 +33,6 @@ object Metric extends LazyLogging {
     }
   }
 
-  private def validDoubleValue(value: Double): Double = {
-    if (value == null) {
-      0.0
-    }
-    else {
-      value
-    }
-  }
+  // a primitive Double can not be null (the former null check was always false)
+  private def validDoubleValue(value: Double): Double = value
 }

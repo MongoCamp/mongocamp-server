@@ -9,6 +9,7 @@ import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
+import sttp.tapir.stringToPath
 import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.{ Method, StatusCode }
