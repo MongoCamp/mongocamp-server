@@ -59,7 +59,16 @@ object ApiDocsRoutes extends BaseRoute {
 
       if (swaggerEnabled) {
         val swaggerUIRoute =
-          SwaggerUI[Future](openApiYml, SwaggerUIOptions(List("docs"), nameOpenApiDocsYamlName, List(), useRelativePaths = true, showExtensions = false))
+          SwaggerUI[Future](
+            openApiYml,
+            SwaggerUIOptions.default.copy(
+              pathPrefix = List("docs"),
+              yamlName = nameOpenApiDocsYamlName,
+              contextPath = List(),
+              useRelativePaths = true,
+              showExtensions = false
+            )
+          )
         docs ++= swaggerUIRoute
       }
 

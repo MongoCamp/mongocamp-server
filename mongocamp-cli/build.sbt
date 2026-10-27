@@ -1,18 +1,18 @@
 enablePlugins(GraalVMNativeImagePlugin)
 
-val PicoliCliVersion = "4.7.6"
+val PicoliCliVersion = "4.7.7"
 libraryDependencies += "info.picocli" % "picocli"         % PicoliCliVersion
 libraryDependencies += "info.picocli" % "picocli-codegen" % PicoliCliVersion % "provided"
 libraryDependencies += "info.picocli" % "picocli-jansi-graalvm" % "1.2.0"
-libraryDependencies += "org.fusesource.jansi" % "jansi" % "2.4.1"
+libraryDependencies += "org.fusesource.jansi" % "jansi" % "2.4.3"
 
 libraryDependencies += "com.github.lukfor" % "magic-progress" % "0.3.2"
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging"   % "3.9.5"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging"   % "3.9.6"
 
 publish / skip := true
 
-libraryDependencies += "io.get-coursier" %% "coursier-jvm" % "2.1.24"
+libraryDependencies += "io.get-coursier" %% "coursier-jvm" % "2.1.26"
 
 graalVMNativeImageOptions ++= Seq(
   "--no-fallback",
