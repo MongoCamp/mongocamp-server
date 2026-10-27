@@ -22,6 +22,7 @@ Requirements to build and test the project:
 - **GraalVM for JDK 21** (for example `cs java --jvm graalvm-java21:21.0.2`). A plain JDK can not compile the project: the library contains the GraalVM native image substitutions (`com.oracle.svm`) and `native-image` builds the CLI and the server binary.
 - **sbt 2** (the version is pinned in `project/build.properties`) and **Scala 3** (`scalaVersion` in `build.sbt`).
 - **Docker**, the tests start MongoDB with Testcontainers.
+- **Node.js LTS** (24 at the moment, the documentation tooling needs at least 20.19 or 22.12) and **pnpm** (version pinned in `package.json`) for the documentation: `pnpm install` and `pnpm docs:dev`.
 
 ```shell
 sbt clean test                                   # sbt 2 caches task results, use clean to run the tests again
