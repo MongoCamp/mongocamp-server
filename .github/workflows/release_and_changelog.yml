@@ -46,10 +46,13 @@ jobs:
           jvm: graalvm-java21:21.0.2
           apps: sbt scala scalac
 
+      - name: Set up Node
+        uses: actions/setup-node@main
+        with:
+          node-version: lts/*
+
       - name: Install pnpm
         uses: pnpm/action-setup@master
-        with:
-          version: 8
 
       - name: Build and deploy Docu
         env:
