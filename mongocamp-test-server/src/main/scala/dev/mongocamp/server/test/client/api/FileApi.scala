@@ -6,7 +6,7 @@
   */
 package dev.mongocamp.server.test.client.api
 
-import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.test.client.core.ClientCirceSchema
 import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
@@ -20,7 +20,7 @@ object FileApi {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new FileApi(baseUrl)
 }
 
-class FileApi(baseUrl: String) extends CirceSchema {
+class FileApi(baseUrl: String) extends ClientCirceSchema {
 
   /** Delete one File from given Bucket
     *

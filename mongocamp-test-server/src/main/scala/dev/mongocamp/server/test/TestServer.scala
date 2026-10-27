@@ -56,11 +56,14 @@ object TestServer extends LazyLogging {
         case e: Exception =>
           _serverRunning = false
           setPort()
+          // do not hide the reason: a failing startServer was retried up to 60 times without any log output
+          logger.warn(s"server not running (retry $retries): ${e.getMessage}", e)
           if (retries > 60) {
             logger.error(e.getMessage, e)
             throw new Exception(s"could not start server in $retries seconds")
           }
           retries += 1
+          Thread.sleep(1000)
       }
     }
     _serverRunning
