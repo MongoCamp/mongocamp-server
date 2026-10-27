@@ -15,8 +15,17 @@ object NativeImageBuildService {
   }
 
   def installNativeImageExecutable(): Unit = {
-    val installCommand = s"${JvmService.javaHome}/bin/gu install native-image"
-    ProcessExecutorService.executeToString(installCommand)
+    val javaBin = new java.io.File(JvmService.javaHome, "bin")
+    // GraalVM for JDK 21+ ships native-image and has no gu (graal updater), older GraalVM distributions install it with gu
+    if (!new java.io.File(javaBin, "native-image").exists()) {
+      val gu = new java.io.File(javaBin, "gu")
+      if (gu.exists()) {
+        ProcessExecutorService.executeToString(s"$gu install native-image")
+      }
+      else {
+        throw new RuntimeException(s"native-image is not part of the JVM in ${JvmService.javaHome}, use a GraalVM distribution that includes it (GraalVM for JDK 21+)")
+      }
+    }
   }
 
   def buildNativeImage(jars: List[File], imageName: String, waitForDebug: Boolean = false): String = {
