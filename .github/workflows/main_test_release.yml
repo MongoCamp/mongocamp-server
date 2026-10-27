@@ -72,7 +72,7 @@ jobs:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USER }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSWORD }}
           PGP_SECRET: ${{ secrets.PGP_SECRET_KEY }}

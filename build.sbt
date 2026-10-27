@@ -1,15 +1,17 @@
 import common.mongoCampProject
 import dev.quadstingray.sbt.json.JsonFile
 
-lazy val root = Project(id = "mc-server-parent", base = file(".")).aggregate(mcCli, mcLibrary, mcServer, mcTest, mcPluginRequestLogging, mcPluginMicrometer)
+// sbt 2 applies bare settings of the root build.sbt to every project, so publish / skip has to be scoped to the root project explicitly
+lazy val root = Project(id = "mc-server-parent", base = file("."))
+  .aggregate(mcCli, mcLibrary, mcServer, mcTest, mcPluginRequestLogging, mcPluginMicrometer)
+  .settings(publish / skip := true)
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.9.0"
 
 val json = JsonFile(file("package.json"))
 
 ThisBuild / organization := json.stringValue("organization")
 
-publish / skip := true
 
 lazy val mcLibrary = mongoCampProject("library")
 
