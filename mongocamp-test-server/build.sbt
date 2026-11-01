@@ -1,12 +1,12 @@
 name := "mongocamp-test-server"
 
-libraryDependencies += "org.testcontainers" % "testcontainers" % "1.20.6"
+libraryDependencies += "org.testcontainers" % "testcontainers" % "2.0.5"
 
-libraryDependencies += "org.scalameta" %% "munit" % "1.1.0"
+libraryDependencies += "org.scalameta" %% "munit" % "1.3.6"
 
-libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.10.3"
+libraryDependencies += "com.softwaremill.sttp.client3" %% "circe" % "3.11.0"
 
-libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.5.0" % Provided
+libraryDependencies += "org.quartz-scheduler" % "quartz" % "2.5.2" % Provided
 
 enablePlugins(BuildInfoPlugin)
 

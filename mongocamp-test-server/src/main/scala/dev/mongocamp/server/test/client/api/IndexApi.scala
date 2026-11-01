@@ -6,7 +6,7 @@
   */
 package dev.mongocamp.server.test.client.api
 
-import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.test.client.core.ClientCirceSchema
 import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
@@ -18,7 +18,7 @@ object IndexApi {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new IndexApi(baseUrl)
 }
 
-class IndexApi(baseUrl: String) extends CirceSchema {
+class IndexApi(baseUrl: String) extends ClientCirceSchema {
 
   /** Create expiring Index by Field for given Collection
     *

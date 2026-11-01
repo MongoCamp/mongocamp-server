@@ -8,6 +8,7 @@ import dev.mongocamp.server.model
 import dev.mongocamp.server.model._
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.service.AggregationService.convertToBsonPipeline
+import org.mongodb.scala.documentToUntypedDocument
 import org.bson.conversions.Bson
 
 import scala.collection.mutable

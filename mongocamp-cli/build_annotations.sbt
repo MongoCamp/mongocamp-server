@@ -5,7 +5,10 @@ processAnnotations := {
 
   log.info("Processing annotations ...")
 
-  val classpath = ((Compile / products).value ++ ((Compile / dependencyClasspath).value.files)).mkString(":")
+  // sbt 2 classpath entries are virtual file references (${OUT}/...), they have to be resolved to real paths for javac
+  val converter = fileConverter.value
+  val classpath = ((Compile / products).value ++
+    (Compile / dependencyClasspath).value.map(entry => converter.toPath(entry.data).toFile)).mkString(":")
   val destinationDirectory = (Compile / classDirectory).value
   val processor = "picocli.codegen.aot.graalvm.processor.NativeImageConfigGeneratorProcessor"
 
@@ -35,7 +38,7 @@ def recursiveFileSearch(file: File): Array[File] = {
 
 def failIfNonZeroExitStatus(command: String, message: => String, log: Logger) = {
   import scala.sys.process.*
-  val result = command !
+  val result = command.!
 
   if (result != 0) {
     log.error(message)

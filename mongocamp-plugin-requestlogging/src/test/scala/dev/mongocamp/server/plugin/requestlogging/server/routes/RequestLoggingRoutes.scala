@@ -7,6 +7,7 @@ import dev.mongocamp.server.route.BaseRoute
 import io.circe.generic.auto._
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.Future
+import sttp.tapir.stringToPath
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
 import sttp.model.Method

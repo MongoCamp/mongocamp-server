@@ -6,8 +6,8 @@ import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.service.ReflectionService.registerClassLoaders
 
 import java.net.URL
+import java.net.URLClassLoader
 import scala.collection.mutable.ArrayBuffer
-import scala.reflect.internal.util.ScalaClassLoader.URLClassLoader
 
 class PluginService extends LazyLogging {
   private def getChildFiles(dir: File): List[File] = {
@@ -35,7 +35,7 @@ class PluginService extends LazyLogging {
     registerClassLoaders(ReflectionService.getClass)
     val listUrl = listOfReadableUrls()
     if (listUrl.nonEmpty) {
-      val urlClassLoader = new URLClassLoader(listUrl, ClassLoader.getSystemClassLoader)
+      val urlClassLoader = new URLClassLoader(listUrl.toArray, ClassLoader.getSystemClassLoader)
       registerClassLoaders(urlClassLoader)
     }
   }

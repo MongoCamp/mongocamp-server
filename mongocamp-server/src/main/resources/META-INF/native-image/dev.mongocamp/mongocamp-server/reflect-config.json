@@ -2559,6 +2559,17 @@
           "java.lang.Thread$UncaughtExceptionHandler",
           "boolean"
         ]
+      },
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "int",
+          "java.util.concurrent.ForkJoinPool$ForkJoinWorkerThreadFactory",
+          "int",
+          "java.lang.Thread$UncaughtExceptionHandler",
+          "boolean",
+          "int"
+        ]
       }
     ]
   },
@@ -3166,7 +3177,16 @@
     "name": "org.jgroups.protocols.FD_ALL2"
   },
   {
-    "name": "org.jgroups.protocols.FD_ALL3"
+    "name": "org.jgroups.protocols.FD_ALL3",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   },
   {
     "name": "org.jgroups.protocols.FD_HOST"
@@ -3193,7 +3213,16 @@
     ]
   },
   {
-    "name": "org.jgroups.protocols.FD_SOCK2"
+    "name": "org.jgroups.protocols.FD_SOCK2",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   },
   {
     "name": "org.jgroups.protocols.FD_SOCK2$FdHeader",
@@ -3238,7 +3267,16 @@
     "name": "org.jgroups.protocols.FRAG3"
   },
   {
-    "name": "org.jgroups.protocols.FRAG4"
+    "name": "org.jgroups.protocols.FRAG4",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   },
   {
     "name": "org.jgroups.protocols.FailureDetection",
@@ -3489,7 +3527,16 @@
     "name": "org.jgroups.protocols.SYM_ENCRYPT"
   },
   {
-    "name": "org.jgroups.protocols.TCP"
+    "name": "org.jgroups.protocols.TCP",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   },
   {
     "name": "org.jgroups.protocols.TCPGOSSIP"
@@ -6134,5 +6181,101 @@
         ]
       }
     ]
+  },
+  {
+    "name": "org.jgroups.protocols.InfoHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.NAKACK3",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.NAKACK4",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.NakAckHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.PerfHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.UNICAST4",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.UnicastHeader",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.util.MillisAddress",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.RED",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "org.jgroups.protocols.BasicTCP",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
+  },
+  {
+    "name": "org.jgroups.protocols.TPConfig",
+    "allDeclaredFields": true,
+    "queryAllDeclaredMethods": true,
+    "queryAllPublicMethods": true
   }
 ]

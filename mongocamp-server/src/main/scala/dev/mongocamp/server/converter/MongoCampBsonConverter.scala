@@ -1,5 +1,6 @@
 package dev.mongocamp.server.converter
 
+import org.mongodb.scala.bsonDocumentToDocument
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.Document

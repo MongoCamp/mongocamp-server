@@ -10,14 +10,17 @@ RUN /mongocamp-cli/prepare-build.sh;
 RUN chmod +x /mongocamp-cli/prepare-build-upx.sh;
 RUN /mongocamp-cli/prepare-build-upx.sh
 WORKDIR /mongocamp-cli/
-RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; $JAVA_HOME/bin/gu install native-image; sbt clean publishLocal mongocamp-cli/graalvm-native-image:packageBin;
-RUN /bin/upx --best /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli
-RUN /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli prepare native
+# GraalVM for JDK 21 includes native-image (there is no gu anymore). sbt 2 writes the build output to target/out/jvm/<scala version>/<module>/,
+# the binary is copied to a fixed path so that a new scala version does not break the following steps
+RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; sbt ";clean;publishLocal;mongocamp-cli/GraalVMNativeImage/packageBin";
+RUN cp "$(find /mongocamp-cli/target/out -type f -path '*/mongocamp-cli/graalvm-native-image/mongocamp-cli' | head -n 1)" /mongocamp-cli/mongocamp-cli-native
+RUN /bin/upx --best /mongocamp-cli/mongocamp-cli-native
+RUN /mongocamp-cli/mongocamp-cli-native prepare native
 RUN /bin/upx --best /mongocamp-cli/server-raw
 
 FROM debian:12.7-slim
 ENV PLUGINS_DIRECTORY="/opt/mongocamp/plugins"
-COPY --from=builder /mongocamp-cli/mongocamp-cli/target/graalvm-native-image/mongocamp-cli /opt/bin/mongocamp-cli
+COPY --from=builder /mongocamp-cli/mongocamp-cli-native /opt/bin/mongocamp-cli
 COPY --from=builder /mongocamp-cli/server-raw /opt/bin/server-raw
 ENV MODE="default"
 WORKDIR /opt/bin/

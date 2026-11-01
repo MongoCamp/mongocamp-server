@@ -6,18 +6,18 @@
   */
 package dev.mongocamp.server.test.client.api
 
-import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.test.client.core.ClientCirceSchema
 import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
 import sttp.client3._
 import sttp.model.Method
 
-object AdminApi extends CirceSchema {
+object AdminApi extends ClientCirceSchema {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new AdminApi(baseUrl)
 }
 
-class AdminApi(baseUrl: String) extends CirceSchema {
+class AdminApi(baseUrl: String) extends ClientCirceSchema {
 
   /** Add a new Role
     *

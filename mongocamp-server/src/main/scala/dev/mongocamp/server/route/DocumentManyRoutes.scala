@@ -16,6 +16,7 @@ import dev.mongocamp.server.model.UpdateRequest
 import dev.mongocamp.server.model.UpdateResponse
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
+import sttp.tapir.stringToPath
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
 import sttp.model.Method

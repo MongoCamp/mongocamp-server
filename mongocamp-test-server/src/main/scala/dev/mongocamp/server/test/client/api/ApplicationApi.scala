@@ -6,7 +6,7 @@
   */
 package dev.mongocamp.server.test.client.api
 
-import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.test.client.core.ClientCirceSchema
 import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
@@ -18,7 +18,7 @@ object ApplicationApi {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new ApplicationApi(baseUrl)
 }
 
-class ApplicationApi(baseUrl: String) extends CirceSchema {
+class ApplicationApi(baseUrl: String) extends ClientCirceSchema {
 
   /** Get Configuration for key
     *

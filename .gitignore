@@ -18,6 +18,9 @@ target
 sbt-cache
 sbt-cache/*
 .gitconfig
+brain
+out
+*.iml
 
 
 /.pnpm-debug.log

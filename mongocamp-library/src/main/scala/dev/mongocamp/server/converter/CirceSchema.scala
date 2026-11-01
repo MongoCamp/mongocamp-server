@@ -9,45 +9,10 @@ import org.mongodb.scala.Document
 
 import java.util.Date
 
-trait CirceSchema {
+// Encoder[Any] matches every type, so it has to rank below the more specific instances of CirceSchema (Scala 3 reports them as ambiguous otherwise)
+trait LowPriorityCirceSchema { self: CirceSchema =>
 
-  implicit val DateFormat: Encoder[Date] with Decoder[Date] = new Encoder[Date] with Decoder[Date] {
-    override def apply(a: Date): Json = Encoder.encodeString.apply(a.toInstant.toString)
-
-    override def apply(c: HCursor): Result[Date] = Decoder.decodeString
-      .map(
-        s => new DateTime(s).toDate
-      )
-      .apply(c)
-  }
-
-  implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
-    override def apply(a: DateTime): Json = Encoder.encodeString.apply(a.toInstant.toString)
-
-    override def apply(c: HCursor): Result[DateTime] = Decoder.decodeString
-      .map(
-        s => new DateTime(s)
-      )
-      .apply(c)
-  }
-
-  implicit val ObjectIdFormat: Encoder[ObjectId] with Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
-    override def apply(a: ObjectId): Json = Encoder.encodeString.apply(a.toHexString)
-
-    override def apply(c: HCursor): Result[ObjectId] = Decoder.decodeString
-      .map(
-        s => new ObjectId(s)
-      )
-      .apply(c)
-  }
-
-  implicit val MapStringAnyFormat: Encoder[Map[String, Any]] with Decoder[Map[String, Any]] = new Encoder[Map[String, Any]] with Decoder[Map[String, Any]] {
-    override def apply(a: Map[String, Any]): Json = encodeMapStringAny(a)
-
-    override def apply(c: HCursor): Result[Map[String, Any]] = Decoder.decodeMap[String, Any].apply(c)
-  }
-
-  implicit val AnyFormat: Encoder[Any] with Decoder[Any] = new Encoder[Any] with Decoder[Any] {
+  implicit val AnyFormat: Encoder[Any] & Decoder[Any] = new Encoder[Any] with Decoder[Any] {
     override def apply(a: Any): Json = encodeAnyToJson(a)
 
     override def apply(c: HCursor): Result[Any] = {
@@ -57,6 +22,46 @@ trait CirceSchema {
         )
         .apply(c)
     }
+  }
+
+}
+
+trait CirceSchema extends LowPriorityCirceSchema {
+
+  implicit val DateFormat: Encoder[Date] & Decoder[Date] = new Encoder[Date] with Decoder[Date] {
+    override def apply(a: Date): Json = Encoder.encodeString.apply(a.toInstant.toString)
+
+    override def apply(c: HCursor): Result[Date] = Decoder.decodeString
+      .map(
+        s => new DateTime(s).toDate
+      )
+      .apply(c)
+  }
+
+  implicit val DateTimeFormat: Encoder[DateTime] & Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
+    override def apply(a: DateTime): Json = Encoder.encodeString.apply(a.toInstant.toString)
+
+    override def apply(c: HCursor): Result[DateTime] = Decoder.decodeString
+      .map(
+        s => new DateTime(s)
+      )
+      .apply(c)
+  }
+
+  implicit val ObjectIdFormat: Encoder[ObjectId] & Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
+    override def apply(a: ObjectId): Json = Encoder.encodeString.apply(a.toHexString)
+
+    override def apply(c: HCursor): Result[ObjectId] = Decoder.decodeString
+      .map(
+        s => new ObjectId(s)
+      )
+      .apply(c)
+  }
+
+  implicit val MapStringAnyFormat: Encoder[Map[String, Any]] & Decoder[Map[String, Any]] = new Encoder[Map[String, Any]] with Decoder[Map[String, Any]] {
+    override def apply(a: Map[String, Any]): Json = encodeMapStringAny(a)
+
+    override def apply(c: HCursor): Result[Map[String, Any]] = Decoder.decodeMap[String, Any].apply(c)
   }
 
   implicit val ConfigFormat: Encoder[MongoCampConfiguration] = new Encoder[MongoCampConfiguration] {

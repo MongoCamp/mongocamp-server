@@ -39,7 +39,7 @@ import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
 import sttp.tapir.server.ServerEndpoint
 
-object Server extends App with LazyLogging with RouteConcatenation with RestServer {
+object Server extends LazyLogging with RouteConcatenation with RestServer {
 
   implicit private lazy val actorSystem: ActorSystem = ActorHandler.requestActorSystem
   implicit private lazy val ex: ExecutionContext     = ActorHandler.requestExecutionContext
@@ -181,7 +181,9 @@ object Server extends App with LazyLogging with RouteConcatenation with RestServ
     serverShutdownCallBacks.addOne(f)
   }
 
-  startServer()
+  // Scala 3 has no DelayedInit: with `extends App` the body (startServer()) would run on object initialisation, e.g. as soon as
+  // the server is looked up by reflection, so the server is started explicitly from main
+  def main(args: Array[String]): Unit = startServer()
 
   override def registerMongoCampServerDefaultConfigs(): Unit = ConfigurationService.registerMongoCampServerDefaultConfigs()
 

@@ -4,7 +4,6 @@ import com.typesafe.scalalogging.LazyLogging
 import io.github.classgraph.{ ClassGraph, ClassInfo, ScanResult }
 
 import scala.jdk.CollectionConverters._
-import scala.reflect.runtime.universe.runtimeMirror
 import scala.util.Try
 
 class ClassGraphService extends LazyLogging {
@@ -52,8 +51,8 @@ class ClassGraphService extends LazyLogging {
           clazzInstance.map(_.asInstanceOf[T])
         }
         else {
-          lazy val mirror = runtimeMirror(foundClazz.getClassLoader)
-          val instance = Try(mirror.reflectModule(mirror.moduleSymbol(foundClazz)).instance).toOption
+          // Scala objects are compiled to a class with a static MODULE$ field holding the singleton
+          val instance = Try(foundClazz.getField("MODULE$").get(null)).toOption
           instance.map(i => {
             if (i.isInstanceOf[T]) {
               i.asInstanceOf[T]

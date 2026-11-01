@@ -1,8 +1,10 @@
 package dev.mongocamp.graal;
 
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import org.graalvm.nativeimage.hosted.Feature;
+import org.graalvm.nativeimage.hosted.RuntimeReflection;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,6 +17,39 @@ import static java.lang.System.out;
 
 
 public class MongoCampFeature implements Feature {
+
+    /**
+     * Packages of the classes that are written to and read from MongoDB (users, roles, tokens, jobs, files, ...).
+     * The driver converts them reflectively, so every class of these packages is registered for reflection while the image is built,
+     * a hand-written reflect-config.json gets stale with every refactoring or dependency update.
+     */
+    private static final String[] REFLECTIVE_PACKAGES = {"dev.mongocamp.server.model"};
+
+    private static boolean isReflective(String className) {
+        for (String reflectivePackage : REFLECTIVE_PACKAGES) {
+            if (className.startsWith(reflectivePackage + ".")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void registerModelClassesForReflection(BeforeAnalysisAccess access, ScanResult scanResult) {
+        int registered = 0;
+        for (ClassInfo classInfo : scanResult.getAllClasses()) {
+            if (isReflective(classInfo.getName())) {
+                Class<?> clazz = access.findClassByName(classInfo.getName());
+                if (clazz != null) {
+                    RuntimeReflection.register(clazz);
+                    RuntimeReflection.registerAllDeclaredConstructors(clazz);
+                    RuntimeReflection.registerAllDeclaredFields(clazz);
+                    RuntimeReflection.registerAllDeclaredMethods(clazz);
+                    registered++;
+                }
+            }
+        }
+        out.println("MongoCamp-Classes registered for reflection: " + registered);
+    }
 
     @Override
     public String getDescription() {
@@ -38,6 +73,7 @@ public class MongoCampFeature implements Feature {
         ClassGraph classGraph = new ClassGraph().enableClassInfo().addClassLoader(classLoader);
         ScanResult scanResult = classGraph.scan();
         ScanResult.fromJSON(scanResult.toJSON());
+        registerModelClassesForReflection(access, scanResult);
         Path path = Paths.get(writablePathFromClassPath(access) + "/mongocamp-classes.json");
         try {
             Files.deleteIfExists(path);

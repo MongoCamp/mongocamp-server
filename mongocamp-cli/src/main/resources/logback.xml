@@ -8,7 +8,8 @@
     <import class="ch.qos.logback.core.ConsoleAppender"/>
 
     <appender name="STDOUT" class="ConsoleAppender" target="System.out">
-        <withJansi>true</withJansi>
+        <!-- jansi must not be touched while logback is initialised at native image build time, ANSI colors work natively on linux and macos -->
+        <withJansi>false</withJansi>
         <encoder class="PatternLayoutEncoder">
             <pattern>%d{HH:mm:ss.SSS} %highlighttx(%-5level) %highlighttx(%logger{36}) - %msg %n</pattern>
         </encoder>

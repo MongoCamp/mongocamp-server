@@ -7,19 +7,35 @@ import coursier._
 import coursier.core.Configuration
 import coursier.params.ResolutionParams
 import coursier.parse.DependencyParser
+import coursier.util.StringInterpolators.*
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.library.BuildInfo
 
 object CoursierModuleService extends LazyLogging {
 
-  private lazy val resolutionParams: ResolutionParams = {
-    val serverExclusion = Set("2.12", "2.13").map(
+  // Scala 3 artifacts end with _3, Scala 2 artifacts with the minor version (_2.13, _2.12)
+  private[service] def scalaBinaryVersion(scalaVersion: String): String = {
+    val semVersion = new Semver(scalaVersion)
+    if (semVersion.getMajor >= 3) semVersion.getMajor.toString else s"${semVersion.getMajor}.${semVersion.getMinor}"
+  }
+
+  private[service] def serverModuleName: ModuleName = ModuleName(s"mongocamp-server_${scalaBinaryVersion(BuildInfo.scalaVersion)}")
+
+  // the server and the scala library are already part of the running server, plugins must not bring their own copy
+  private[service] lazy val resolutionExclusions: Set[(Organization, ModuleName)] = {
+    val serverExclusion = Set("2.12", "2.13", "3").map(
       baseScala => (org"dev.mongocamp", ModuleName(s"mongocamp-server_$baseScala"))
     )
+    serverExclusion ++ Set(
+      (org"org.scala-lang", ModuleName("scala-library")),
+      (org"org.scala-lang", ModuleName("scala3-library_3"))
+    )
+  }
+
+  private lazy val resolutionParams: ResolutionParams = {
     ResolutionParams()
       .withScalaVersion(BuildInfo.scalaVersion)
-      .withExclusions(serverExclusion)
-      .addExclusions((org"org.scala-lang", ModuleName("scala-library")))
+      .addExclusions(resolutionExclusions.toSeq*)
   }
 
   private lazy val defaultRepositories: List[Repository] = {
@@ -57,9 +73,7 @@ object CoursierModuleService extends LazyLogging {
   }
 
   def loadServerWithAllDependencies(): List[File] = {
-    val scalaVersion = new Semver(BuildInfo.scalaVersion)
-    val scalaShort   = s"${scalaVersion.getMajor}.${scalaVersion.getMinor}"
-    val dependency   = Dependency(Module(Organization(BuildInfo.organization), ModuleName(s"mongocamp-server_$scalaShort")), BuildInfo.version)
+    val dependency = Dependency(Module(Organization(BuildInfo.organization), serverModuleName), BuildInfo.version)
     CoursierModuleService.fetchMavenDependencies(List(dependency), None, useCustomMavenRepos = false)
   }
 

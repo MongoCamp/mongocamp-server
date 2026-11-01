@@ -6,7 +6,7 @@
   */
 package dev.mongocamp.server.test.client.api
 
-import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.test.client.core.ClientCirceSchema
 import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
@@ -17,7 +17,7 @@ object JobsApi {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new JobsApi(baseUrl)
 }
 
-class JobsApi(baseUrl: String) extends CirceSchema {
+class JobsApi(baseUrl: String) extends ClientCirceSchema {
 
   /** Delete Job and reload all Job Information
     *

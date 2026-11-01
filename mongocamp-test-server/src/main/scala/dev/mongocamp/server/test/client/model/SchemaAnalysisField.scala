@@ -6,6 +6,10 @@
   */
 package dev.mongocamp.server.test.client.model
 
+import io.circe.generic.auto._
+import io.circe.generic.semiauto.{ deriveDecoder, deriveEncoder }
+import io.circe.{ Decoder, Encoder }
+
 case class SchemaAnalysisField(
     name: String,
     fullName: String,
@@ -14,3 +18,10 @@ case class SchemaAnalysisField(
     percentageOfParent: Double,
     subFields: Option[Seq[SchemaAnalysisField]] = None
 )
+
+// NOTE: added by hand, not generated. The type is recursive and circe auto derivation can not resolve it on Scala 3.
+// Keep this companion when the client is regenerated.
+object SchemaAnalysisField {
+  implicit lazy val schemaAnalysisFieldEncoder: Encoder[SchemaAnalysisField] = deriveEncoder[SchemaAnalysisField]
+  implicit lazy val schemaAnalysisFieldDecoder: Decoder[SchemaAnalysisField] = deriveDecoder[SchemaAnalysisField]
+}

@@ -6,7 +6,7 @@
   */
 package dev.mongocamp.server.test.client.api
 
-import dev.mongocamp.server.converter.CirceSchema
+import dev.mongocamp.server.test.client.core.ClientCirceSchema
 import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
@@ -18,7 +18,7 @@ object CollectionApi {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new CollectionApi(baseUrl)
 }
 
-class CollectionApi(baseUrl: String) extends CirceSchema {
+class CollectionApi(baseUrl: String) extends ClientCirceSchema {
 
   /** Aggregate in a given Collection
     *

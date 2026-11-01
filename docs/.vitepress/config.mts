@@ -1,4 +1,3 @@
-import Unocss from 'unocss/vite'
 import { defineConfig } from 'vitepress'
 import fs from 'fs'
 
@@ -32,14 +31,6 @@ export default defineConfig({
             {icon: 'github', link: 'https://github.com/MongoCamp/mongocamp-server'}
         ],
     },
-    vite: {
-        plugins: [
-            Unocss({
-                configFile: '../../unocss.config.mts',
-            })
-        ],
-    },
-
 })
 
 function nav() {

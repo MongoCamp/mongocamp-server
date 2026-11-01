@@ -6,9 +6,10 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 trait RestServer extends LazyLogging {
 
-  val interface: String
+  // def instead of val: implementations may be lazy (Scala 3 does not allow a lazy val to override a strict val)
+  def interface: String
 
-  val port: Int
+  def port: Int
 
   def startServer()(implicit ex: ExecutionContext): Future[Unit]
 
