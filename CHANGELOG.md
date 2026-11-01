@@ -1,3 +1,46 @@
+## [v1.6.0] - 2026-11-01
+### :sparkles: New Features
+- [`246483b`](https://github.com/MongoCamp/mongocamp-server/commit/246483beccddce005610ab70b453088a0a78a5ea) - Used JGroups as Messaging / Event System *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`0e2a66b`](https://github.com/MongoCamp/mongocamp-server/commit/0e2a66bedc56ee882d4f88babcf5c14affdad561) - More Information about JGroup Cluster as Admin *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`433b842`](https://github.com/MongoCamp/mongocamp-server/commit/433b842e24bfc16080f1d503fa1fc7b8fffcc1f1) - reactive build and publish for native image *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`19b7da5`](https://github.com/MongoCamp/mongocamp-server/commit/19b7da53897fab59f50f3dbc6b7842ad9bcf7a2f) - npe one ClassGraphService *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`7e2d02b`](https://github.com/MongoCamp/mongocamp-server/commit/7e2d02b0bf72c600cd1fa868d844507ae8d84726) - HikariCP needed as dependency now *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`5e25ead`](https://github.com/MongoCamp/mongocamp-server/commit/5e25eadeee85d4f88a182ce738e72ef2b4aab9ac) - resolve the server artifact with the Scala 3 suffix *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`5f00f61`](https://github.com/MongoCamp/mongocamp-server/commit/5f00f61502dd405a6c5b31cc984812a34c479e4a) - build the native images with Scala 3 and sbt 2 *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`79877c4`](https://github.com/MongoCamp/mongocamp-server/commit/79877c470d0098ee5a0f87e144416ca4c343ba97) - show the Scala 3 artifacts in the plugin docs *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`0e6b335`](https://github.com/MongoCamp/mongocamp-server/commit/0e6b3351b486b8d72db94983c3c8a499d100f706) - pass the sbt commands of the Docker build as one semicolon separated argument *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`2b77b43`](https://github.com/MongoCamp/mongocamp-server/commit/2b77b43e3c6ff8bb7f01ee1405ced789143c5b7a) - allow the release of a stable version with sbt-release *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`4d51638`](https://github.com/MongoCamp/mongocamp-server/commit/4d5163804819e70e6d5401d66dee4627d13ecdb3) - add the Sonatype Central Portal credentials to the publish *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :recycle: Refactors
+- [`3ae660d`](https://github.com/MongoCamp/mongocamp-server/commit/3ae660d6abf207528f71b439eccbae0a47974739) - Changed from RamJobStore to JdbcJobStore *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`383bfad`](https://github.com/MongoCamp/mongocamp-server/commit/383bfad147352e88141619aa905d762c611ab3ba) - Merged System- and InformationApi *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`d2aafe2`](https://github.com/MongoCamp/mongocamp-server/commit/d2aafe2db3dd38cf78fa8bfc10800f7c8682560d) - changes to reactivate native image build *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`e172a18`](https://github.com/MongoCamp/mongocamp-server/commit/e172a182aba4be0fccf62731815ec4fd5539daef) - regenerate with agent *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`cf748a7`](https://github.com/MongoCamp/mongocamp-server/commit/cf748a7a3cd11e392691db84d38e1ac014e8f820) - some needed changes for fix native build with classgraph *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`e61189a`](https://github.com/MongoCamp/mongocamp-server/commit/e61189ac2848ef424ee40cd7a9611f4c554b6855) - some needed changes for fix native build with classgraph *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`0d6cb80`](https://github.com/MongoCamp/mongocamp-server/commit/0d6cb8021b55c5a330d6035ad8165c15d041b96a) - changes for mongocamp "mongodb-driver" % "3.0.0" *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`3319804`](https://github.com/MongoCamp/mongocamp-server/commit/33198045d2784bedb9ca4fb7fbaf94d3dc2cfbcc) - changes on jgroups.xml *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`533ea85`](https://github.com/MongoCamp/mongocamp-server/commit/533ea85daf3377489e94d0f91e9f0211e7189609) - removed debug println *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`9de734a`](https://github.com/MongoCamp/mongocamp-server/commit/9de734ad01b5b944f0966813aab14bfac3bc22f1) - migrate the sources to Scala 3 *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :white_check_mark: Tests
+- [`54e523b`](https://github.com/MongoCamp/mongocamp-server/commit/54e523bb356fd9734114b4fc87e4bf0b835063b4) - request logging spec is flaky *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`c29a0eb`](https://github.com/MongoCamp/mongocamp-server/commit/c29a0eb02fb104c2bade6560731e25c2ad32f47f) - adapt the generated test client and the test harness to Scala 3 *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :wrench: Chores
+- [`c8d653d`](https://github.com/MongoCamp/mongocamp-server/commit/c8d653d7e29658d76b8a2ed245c96d68fc6243ff) - 25 dependencies updated *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`d412352`](https://github.com/MongoCamp/mongocamp-server/commit/d4123522458937d5b48ece6c6372d432bafe97d5) - 3 plugins and sbt updated *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`920769e`](https://github.com/MongoCamp/mongocamp-server/commit/920769e80d70af3c777be724be921398b3fb474d) - 7 dependency update for mongocamp *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`9f865fa`](https://github.com/MongoCamp/mongocamp-server/commit/9f865fa38a9836e699e6df6797db2747826d6a4e) - dependency updates for mongocamp *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`31eae83`](https://github.com/MongoCamp/mongocamp-server/commit/31eae83b3eee5e1bb26bb16a130148287233db10) - dependency updates for mongocamp *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`7cc17b9`](https://github.com/MongoCamp/mongocamp-server/commit/7cc17b97ea6377223b0a0f3b6625dee0d8af90c1) - dependency updates for mongocamp *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`9b92e71`](https://github.com/MongoCamp/mongocamp-server/commit/9b92e715af8dc5e010ca652ea0ad08943c233c9c) - mongocamp driver "3.0.3" implicit instead of io.circe.generic.auto *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`1105503`](https://github.com/MongoCamp/mongocamp-server/commit/110550364664967977cc6d4550a47068c99bc1af) - ignore IDE output and the brain folder *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.5.10] - 2024-02-13
 ### :sparkles: New Features
 - [`ecdb97d`](https://github.com/MongoCamp/mongocamp-server/commit/ecdb97d9221fed6de18ad615172c5e7685104f33) - Route to shutdown running Server. *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -325,3 +368,4 @@
 [v1.5.8]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.7...v1.5.8
 [v1.5.9]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.8...v1.5.9
 [v1.5.10]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.9...v1.5.10
+[v1.6.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.10...v1.6.0
