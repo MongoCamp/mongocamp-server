@@ -1,7 +1,7 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
+import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, idToString }
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.document.CreateDocumentEvent
@@ -50,7 +50,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
         map => documentFromScalaMap(convertFields(map))
       )
       val result                         = dao.insertMany(listOfDocuments).result()
-      val listOfIds                      = result.getInsertedIds.values().asScala.map(_.asObjectId().getValue.toHexString).toList
+      val listOfIds                      = result.getInsertedIds.values().asScala.map(idToString).toList
       val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
       EventSystem.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
       insertedResult
@@ -86,7 +86,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
         result.wasAcknowledged(),
         Option(result.getUpsertedId)
           .map(
-            value => value.asObjectId().getValue.toHexString
+            value => idToString(value)
           )
           .toList,
         result.getModifiedCount,

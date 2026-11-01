@@ -7,6 +7,7 @@ import dev.mongocamp.server.interceptor.RequestFunctions.requestIdAttributeKey
 import dev.mongocamp.server.interceptor._
 import dev.mongocamp.server.interceptor.cors.CorsInterceptor
 import sttp.tapir.server.pekkohttp.{ PekkoHttpServerInterpreter, PekkoHttpServerOptions }
+import sttp.tapir.server.interceptor.exception.ExceptionInterceptor
 import sttp.tapir.server.interceptor.RequestInterceptor
 import sttp.tapir.server.interceptor.metrics.MetricsRequestInterceptor
 
@@ -24,11 +25,13 @@ object HttpServer extends LazyLogging {
           val changedContext = requestContext.withRequest(requestContext.request.addAttribute(requestIdAttributeKey, Random.alphanumeric.take(10).mkString))
           Future.successful(request.withUnderlying(changedContext))
       })
-      .exceptionHandler(new MongoCampExceptionHandler())
+      // the exception handler is added as the last (innermost) interceptor, so that its responses also get the headers of the other interceptors (cors, server, request id)
+      .exceptionHandler(None)
       .decodeFailureHandler(MongoCampDefaultDecodeFailureHandler.handler)
       .serverLog(MongoCampHttpServerLog.serverLog())
       .addInterceptor(new CorsInterceptor())
       .addInterceptor(new HeadersInterceptor())
+      .addInterceptor(new ExceptionInterceptor[Future](new MongoCampExceptionHandler()))
 
     serverOptions = serverOptions.metricsInterceptor(new MetricsRequestInterceptor[Future](List(RequestLogging.responsesDuration()), List()))
 

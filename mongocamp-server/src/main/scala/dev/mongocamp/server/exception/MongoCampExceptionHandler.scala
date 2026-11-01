@@ -18,8 +18,12 @@ class MongoCampExceptionHandler extends ExceptionHandler[Future] with LazyLoggin
         val description = ErrorDescription(jEx.errorCode, jEx.message, jEx.additionalInfo)
         ValuedEndpointOutput(errorEndpointDefinition, (jEx.statusCode, description, description))
       case ex: Exception =>
+        // the full error is logged, the client only gets a description without the address of the database server
         logger.error(ex.getMessage, ex)
-        val description = ErrorDescription(-1, ex.getMessage)
+        val description = DatabaseErrorDescription
+          .findDatabaseException(ex)
+          .map(DatabaseErrorDescription.describe)
+          .getOrElse(ErrorDescription(-1, ex.getMessage))
         ValuedEndpointOutput(errorEndpointDefinition, (internalErrorStatusCode, description, description))
       case any: Any =>
         logger.error("None catchable Error <%s>".format(any.toString))
