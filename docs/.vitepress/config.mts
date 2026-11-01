@@ -61,6 +61,7 @@ function sidebarGuide() {
             items: [
                 {text: 'About', link: '/guide/'},
                 {text: 'Getting Started', link: '/guide/getting-started'},
+                {text: 'API behaviour', link: '/guide/api-behaviour'},
                 // { text: 'Configuration', link: '/guide/configuration' },
             ]
         },
