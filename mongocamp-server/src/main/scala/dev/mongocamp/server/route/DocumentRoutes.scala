@@ -43,7 +43,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in("documents")
     .in(
       query[Option[Query]]("filter")(using
-        Codec.listHeadOption(Codec.string.mapValidate(LuceneQueryTools.luceneQueryValidator(""))(LuceneQueryConverter.parse(_, ""))(_.toString))
+        Codec.listHeadOption(LuceneQueryTools.filterCodec)
       ).description("MongoDB Filter Query by Default all filter").default(None)
     )
     .in(query[List[String]]("sort").description("MongoDB sorting").default(List.empty).example(List.empty))

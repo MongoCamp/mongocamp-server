@@ -1,5 +1,6 @@
 package dev.mongocamp.server.interceptor
 
+import dev.mongocamp.server.converter.LuceneQueryTools.InvalidFilterException
 import dev.mongocamp.server.exception.ErrorDefinition.HeaderErrorAdditionalInfo
 import dev.mongocamp.server.exception.ErrorDefinition.HeaderErrorCode
 import dev.mongocamp.server.exception.ErrorDefinition.HeaderErrorMessage
@@ -10,6 +11,7 @@ import scala.concurrent.Future
 import sttp.model.Header
 import sttp.model.StatusCode
 import sttp.monad.MonadError
+import sttp.tapir.DecodeResult
 import sttp.tapir.server.interceptor.decodefailure.DecodeFailureHandler
 import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.failureResponse
 import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.respond
@@ -27,7 +29,11 @@ case class MongoCampDefaultDecodeFailureHandler(
       respond(ctx) match {
         case Some((sc, hs)) =>
           val failureMsg         = failureMessage(ctx)
-          val mongoCampException = ErrorDescription(4001, failureMsg)
+          val additionalInfo = ctx.failure match {
+            case DecodeResult.Error(_, InvalidFilterException(reason)) => reason
+            case _                                                     => ""
+          }
+          val mongoCampException = ErrorDescription(4001, failureMsg, additionalInfo)
           Some(
             response(
               sc,
