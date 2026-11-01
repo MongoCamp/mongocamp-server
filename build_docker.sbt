@@ -20,7 +20,7 @@ commands += Command.command("ci-docker")(
         throw new Exception(s"Not zero exit code for build base images: ${containerNameList}")
       }
 
-      val containerNameCached = s"mongocamp-server:${version.value}-cached"
+      val containerNameCached = s"mongocamp/mongocamp-server:${version.value}-cached"
       val buildCommandCached =
         s"docker buildx build --platform=${listOfPlatforms.mkString(",")} --build-arg MONGOCAMPVERSION=${version.value} --tag ${containerNameCached} -f DockerfileJVMCached --push ."
       if (buildCommandCached.!(ProcessLogger(stout => state.log.info(stout), sterr => state.log.info(sterr))) != 0) {
