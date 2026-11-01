@@ -5,7 +5,7 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthInput
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
-import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
+import dev.mongocamp.server.model.auth.UserInformation
 import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir._
@@ -27,74 +27,27 @@ abstract class CollectionBaseRoute extends BaseRoute {
     connection => loginAdministrate(connection)
   )
 
-  def loginRead(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
-    Future.successful {
-      val userInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
-      if (userInformation.isAdmin) {
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-      else {
-        userInformation.getCollectionGrants
-          .find(
-            collectionGrant => {
-              val collection        = collectionGrant.name
-              val isCollectionGrant = collection.equalsIgnoreCase(loginInformation._2) || collection.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-              val isBucketMetaGrant = s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(loginInformation._2) && loginInformation._2
-                .endsWith(BucketCollectionSuffix)
-              (isCollectionGrant || isBucketMetaGrant) && collectionGrant.read
-            }
-          )
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-    }
-  }
+  def loginRead(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] =
+    authorize(loginInformation, _.canRead(_))
 
-  def loginWrite(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
-    Future.successful {
-      val userInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
-      if (userInformation.isAdmin) {
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-      else {
-        userInformation.getCollectionGrants
-          .find(
-            collectionGrant => {
-              val collection        = collectionGrant.name
-              val isCollectionGrant = collection.equalsIgnoreCase(loginInformation._2) || collection.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-              val isBucketMetaGrant = s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(loginInformation._2) && loginInformation._2
-                .endsWith(BucketCollectionSuffix)
-              (isCollectionGrant || isBucketMetaGrant) && collectionGrant.write
-            }
-          )
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
-    }
-  }
+  def loginWrite(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] =
+    authorize(loginInformation, _.canWrite(_))
 
   def loginAdministrate(
     loginInformation: (AuthInput, String)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] =
+    authorize(loginInformation, _.canAdministrate(_))
+
+  private def authorize(
+    loginInformation: (AuthInput, String),
+    allowed: (UserInformation, String) => Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
     Future.successful {
       val userInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
-      if (userInformation.isAdmin) {
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
+      if (!allowed(userInformation, loginInformation._2)) {
+        throw MongoCampException.unauthorizedException("user not authorized for collection")
       }
-      else {
-        userInformation.getCollectionGrants
-          .find(
-            collectionGrant => {
-              val collection        = collectionGrant.name
-              val isCollectionGrant = collection.equalsIgnoreCase(loginInformation._2) || collection.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-              val isBucketMetaGrant = s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(loginInformation._2) && loginInformation._2
-                .endsWith(BucketCollectionSuffix)
-              (isCollectionGrant || isBucketMetaGrant) && collectionGrant.administrate
-            }
-          )
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for collection"))
-        Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
-      }
+      Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
     }
   }
 

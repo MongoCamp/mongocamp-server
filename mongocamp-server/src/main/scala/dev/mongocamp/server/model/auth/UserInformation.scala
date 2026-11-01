@@ -32,6 +32,23 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
       )
   }
 
+  private def hasCollectionGrant(collection: String, right: Grant => Boolean): Boolean = {
+    isAdmin || getCollectionGrants.exists(
+      collectionGrant => {
+        val grantName         = collectionGrant.name
+        val isCollectionGrant = grantName.equalsIgnoreCase(collection) || grantName.equalsIgnoreCase(AuthorizedCollectionRequest.all)
+        val isBucketMetaGrant = s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(collection) && collection.endsWith(BucketCollectionSuffix)
+        (isCollectionGrant || isBucketMetaGrant) && right(collectionGrant)
+      }
+    )
+  }
+
+  def canRead(collection: String): Boolean = hasCollectionGrant(collection, _.read)
+
+  def canWrite(collection: String): Boolean = hasCollectionGrant(collection, _.write)
+
+  def canAdministrate(collection: String): Boolean = hasCollectionGrant(collection, _.administrate)
+
   def getBucketGrants: List[Grant] = {
     getGrants.filter(
       grant => grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucketMeta) || grant.grantType.equalsIgnoreCase(ModelConstants.grantTypeBucket)
