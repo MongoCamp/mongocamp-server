@@ -6,6 +6,9 @@ import sbtrelease.ReleasePlugin.runtimeVersion
 
 import scala.sys.process.*
 
+// the version in package.json is bumped to the stable version before the release, sbt-release expects a snapshot otherwise
+releaseVersionBump := sbtrelease.Version.Bump.NextStable
+
 val gitAddAllTask = ReleaseStep(action = st => {
   "git add .".!
   st
