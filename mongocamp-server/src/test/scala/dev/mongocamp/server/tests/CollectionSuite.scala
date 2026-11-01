@@ -191,6 +191,31 @@ class CollectionSuite extends MongoCampBaseServerSuite {
     assertEquals(emailField.head.percentageOfParent, 1.0)
   }
 
+  test("schema analysis only contains the fields of the requested collection") {
+    def analysis(collection: String) = executeRequestToResponse(collectionApi.getSchemaAnalysis("", "", adminBearerToken, "")(collection))
+    def fieldNames(collection: String) = analysis(collection).fields.getOrElse(Seq()).map(_.name).toSet
+    def collectionFields(collection: String) = executeRequestToResponse(collectionApi.getCollectionFields("", "", adminBearerToken, "")(collection)).toSet
+
+    val usersFirst = fieldNames("users")
+    val pokemon    = fieldNames("pokemon")
+    val usersAgain = fieldNames("users")
+    assertEquals(usersFirst, collectionFields("users"))
+    assertEquals(pokemon, collectionFields("pokemon"))
+    // the result of a repeated request is identical, it does not grow with every request
+    assertEquals(usersAgain, usersFirst)
+    assertEquals(analysis("users").fields.getOrElse(Seq()).size, analysis("users").fields.getOrElse(Seq()).size)
+    assertEquals(pokemon.contains("email"), false, "fields of `users` are part of the analysis of `pokemon`")
+  }
+
+  test("json schema only contains the definitions of the requested collection") {
+    def jsonSchema(collection: String) = executeRequestToResponse(collectionApi.getJsonSchema("", "", adminBearerToken, "")(collection))
+    val users   = jsonSchema("users")
+    val pokemon = jsonSchema("pokemon")
+    assertEquals(pokemon.definitions.contains(users.$ref), false, s"definitions of `users` (${users.$ref}) are part of the schema of `pokemon`")
+    assertEquals(users.definitions.contains(pokemon.$ref), false, s"definitions of `pokemon` (${pokemon.$ref}) are part of the schema of `users`")
+    assertEquals(jsonSchema("users").definitions.keySet, users.definitions.keySet)
+  }
+
   test("check schema of `pokemon` collection") {
     val jsonSchema = executeRequestToResponse(collectionApi.getJsonSchema("", "", adminBearerToken, "")("pokemon"))
     assertEquals(jsonSchema.$schema, "https://json-schema.org/draft/2020-12/schema")

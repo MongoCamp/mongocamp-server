@@ -202,7 +202,9 @@ object SchemaService extends TapirSchema {
     Map("t" -> Map("$type" -> fieldValue))
   }
 
-  val emptyField = model.SchemaAnalysisField("ROOT", "", List(), -1, -1, ArrayBuffer())
+  // must be a def: copy() is shallow, so with a shared val every field created from it shares the same mutable subFields buffer
+  // and the fields of all earlier requests (and of all other collections) would be returned
+  def emptyField = model.SchemaAnalysisField("ROOT", "", List(), -1, -1, ArrayBuffer())
 
   def analyzeSchema(
       authorizedCollectionRequest: AuthorizedCollectionRequest,
