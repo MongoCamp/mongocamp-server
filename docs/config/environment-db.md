@@ -41,6 +41,16 @@ The configurations can also change by using the configuration routes.
 | FILE_HANDLER   | Default only supported `gridfs`. Possible to extend with Plugin. | gridfs  |
 | FILE_CACHE_AGE | Used at File Header `cache-control` with value `max-age=`        | 7776000 |
 
+## Aggregation
+::: info
+The aggregation endpoint refuses a pipeline that contains one of the denied operators, anywhere in the pipeline (also inside `$project`, `$addFields`, `$group`, `$match`, `$lookup` and `$facet`), with `403`.
+`$function`, `$accumulator` and `$where` run JavaScript on the database server, `$out` and `$merge` write to collections. In an environment variable the `$` has to be quoted for the shell, for example `AGGREGATION_STAGES_DENIED='["$function","$out"]'`.
+:::
+
+| Configuration             | Description                                                      |                                                    Default                                                    |
+|---------------------------|------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------:|
+| AGGREGATION_STAGES_DENIED | List of operators that are refused in the pipeline of an aggregation. | `["$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions"]` |
+
 ## Plugins
 ::: info
 All plugins in Folder and Modules will be activated automatically. If your want to exclude one of this plugins use `PLUGINS_IGNORED`, for example if you don't want to expose Metrics you can add `dev.mongocamp.server.route.MetricsRoutes$` to ignored plugins. 
