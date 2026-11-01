@@ -1,3 +1,8 @@
+## [v1.6.2] - 2026-11-01
+### :bug: Bug Fixes
+- [`d03e20f`](https://github.com/MongoCamp/mongocamp-server/commit/d03e20f847fe48179bbfd252c6e97f5053009842) - register all events for serialization in the native image and do not fail requests when an event cannot be sent *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.6.1] - 2026-11-01
 ### :bug: Bug Fixes
 - [`5de4a1b`](https://github.com/MongoCamp/mongocamp-server/commit/5de4a1bd84ec727d731369fe0a3ca2325c04279e) - use the mongocamp organisation for the cached docker image [skip ci] *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -381,3 +386,4 @@
 [v1.5.10]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.9...v1.5.10
 [v1.6.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.10...v1.6.0
 [v1.6.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.0...v1.6.1
+[v1.6.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.1...v1.6.2

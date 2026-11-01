@@ -152,6 +152,12 @@ class CollectionSuite extends MongoCampBaseServerSuite {
     )
   }
 
+  // #75: dropping answers 200 whether or not the collection exists
+  test("drop a collection that does not exist") {
+    val response = executeRequestToResponse(collectionApi.deleteCollection("", "", adminBearerToken, "")("collectionThatDoesNotExist"))
+    assertEquals(response.value, true)
+  }
+
   test("delete collection infos as user") {
     MongoDatabase.databaseProvider.dao("deleteTest").createIndexForField("index_for_test").result()
     val response = executeRequestToResponse(collectionApi.getCollectionInformation("", "", testUserBearerToken, "")("deleteTest"))
