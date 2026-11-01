@@ -128,4 +128,23 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     assertEquals(deleted.deletedCount, before.toLong)
     assertEquals(find(Map()).size, 0)
   }
+
+  // #76: the id in the path is a string, documents with a number as id are found too
+  test("single document endpoints find a document with a number as id") {
+    val docs: Seq[Map[String, Any]] = Seq(Map("_id" -> 98765, "n" -> 1), Map("_id" -> 98766L, "n" -> 2), Map("_id" -> 1.5, "n" -> 3), Map("_id" -> "98767", "n" -> 4))
+    executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, docs))
+    List("98765" -> 1, "98766" -> 2, "1.5" -> 3, "98767" -> 4).foreach(
+      entry => assertEquals(executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collection, entry._1)).get("n"), Some(entry._2), s"get ${entry._1}")
+    )
+    val partial = executeRequestToResponse(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collection, "98765", Map("x" -> 1)))
+    assertEquals(partial.matchedCount, 1L)
+    assertEquals(partial.modifiedCount, 1L)
+    val replaced = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collection, "98766", Map("n" -> 22)))
+    assertEquals(replaced.matchedCount, 1L)
+    assertEquals(executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collection, "98766")).get("n"), Some(22))
+    List("98765", "98766", "1.5", "98767").foreach(
+      id => assertEquals(executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, id)).deletedCount, 1L, s"delete $id")
+    )
+    assertEquals(executeRequest(documentsApi.getDocument("", "", adminBearerToken, "")(collection, "98765")).code.code, 404)
+  }
 }

@@ -133,6 +133,23 @@ object MongoCampBsonConverter {
     }
   }
 
+  private val numberPattern = "-?\\d+(\\.\\d+)?".r
+
+  /** The filter for the id in the path of a request, which is always a string. A document can have an id of any type, so beside the ObjectId (24 hex characters)
+    * or the string itself an id that looks like a number is also searched as number: `12345` finds the document with the id `"12345"` and the one with the
+    * id `12345`. MongoDB compares numbers of different types by value.
+    */
+  def pathIdFilter(id: String): Map[String, Any] = {
+    val candidates: List[Any] = convertIdValue(id) match {
+      case objectId: ObjectId => List(objectId)
+      case _ if numberPattern.matches(id) =>
+        val number: Any = id.toLongOption.getOrElse(id.toDouble)
+        List(id, number)
+      case _ => List(id)
+    }
+    if (candidates.size == 1) Map("_id" -> candidates.head) else Map("_id" -> Map("$in" -> candidates))
+  }
+
   /** The id of a document as string for the responses: the hex string of an ObjectId, otherwise the value itself. */
   def idToString(id: Any): String = {
     id match {
