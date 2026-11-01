@@ -14,6 +14,7 @@ The configurations can also change by using the configuration routes.
 | AUTH_SECRET            | Private Key for JWT                                                           | secret_key |
 | AUTH_CACHE_DB          | Should the JWT cached to the DB to keep it after application restart.         |    true    |
 | AUTH_EXPIRING_DURATION | Lifetime of generated JWT                                                     |     6h     |
+| AUTH_REFRESH_GRACE_DURATION | How long a JWT stays valid after it was replaced by `/auth/token/refresh`      |    60s     |
 | AUTH_BEARER            | Enable Bearer Header Token for secured routes.                                |    true    |
 | AUTH_BASIC             | Enable HttpBasicAuth for secured routes.                                      |    true    |
 | AUTH_TOKEN             | Enable Api Key Token for secured routes.                                      |    true    |
