@@ -108,4 +108,24 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     assertEquals(many.code.code, 409)
     assertEquals(executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, "doc-dup")).deletedCount, 1L)
   }
+
+  // #72
+  test("an empty filter is refused for update many and delete many unless matchAll is set") {
+    val before  = find(Map()).size
+    val update  = executeRequest(documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map())))
+    assertEquals(update.code.code, 400)
+    assertEquals(update.header("x-error-code"), Some("4003"))
+    val delete = executeRequest(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map()))
+    assertEquals(delete.code.code, 400)
+    assertEquals(find(Map()).size, before)
+    assertEquals(find(Map("touched" -> true)).size, 0)
+
+    val updated = executeRequestToResponse(
+      documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map()), Some(true))
+    )
+    assertEquals(updated.matchedCount, before.toLong)
+    val deleted = executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map(), Some(true)))
+    assertEquals(deleted.deletedCount, before.toLong)
+    assertEquals(find(Map()).size, 0)
+  }
 }

@@ -24,6 +24,7 @@ import sttp.capabilities.WebSockets
 import sttp.model.Method
 import sttp.model.StatusCode
 import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.query
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.stringToPath
 object DocumentManyRoutes extends CollectionBaseRoute {
@@ -63,11 +64,22 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     })
   }
 
+  // an empty filter matches every document, for an HTTP API that is too easy to do by accident (a filter built from an empty list of ids)
+  private def rejectEmptyFilter(filter: Map[String, Any], matchAll: Boolean): Unit = {
+    if (filter.isEmpty && !matchAll) {
+      throw MongoCampException.badRequestException(
+        "the filter is empty and would match all documents of the collection, send the query parameter matchAll=true if that is intended",
+        ErrorCodes.emptyFilter
+      )
+    }
+  }
+
   val updateManyEndpoint = writeCollectionEndpoint
     .in("documents")
     .in("many")
     .in("update")
     .in(jsonBody[UpdateRequest])
+    .in(query[Boolean]("matchAll").description("Allow an empty filter, that matches all documents of the collection").default(false))
     .out(jsonBody[UpdateResponse])
     .summary("Update many in Collection")
     .description("Update many Document in given Collection")
@@ -75,17 +87,20 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .method(Method.PATCH)
     .name("updateMany")
     .serverLogic(
-      collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter)
+      collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter._1, parameter._2)
     )
 
   def updateManyInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: UpdateRequest
+    parameter: UpdateRequest,
+    matchAll: Boolean = false
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UpdateResponse]] = {
     Future.successful(Right {
       val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val documentMap = parameter.document
       val filter      = convertFields(parameter.filter)
+      rejectEmptyFilter(filter, matchAll)
+      // on a match all operation this loads every document for the event
       val oldValues   = dao.find(filter).resultList()
       val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
       val updateResponse = UpdateResponse(
@@ -108,6 +123,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .in("many")
     .in("delete")
     .in(jsonBody[Map[String, Any]])
+    .in(query[Boolean]("matchAll").description("Allow an empty filter, that matches all documents of the collection").default(false))
     .out(jsonBody[DeleteResponse])
     .summary("Delete Many in Collection")
     .description("Delete many Document in given Collection")
@@ -115,16 +131,19 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .method(Method.DELETE)
     .name("deleteMany")
     .serverLogic(
-      collectionRequest => search => deleteManyInCollection(collectionRequest, search)
+      collectionRequest => search => deleteManyInCollection(collectionRequest, search._1, search._2)
     )
 
   def deleteManyInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: Map[String, Any]
+    parameter: Map[String, Any],
+    matchAll: Boolean = false
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(Right {
       val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val deleteFilter   = convertFields(parameter)
+      rejectEmptyFilter(deleteFilter, matchAll)
+      // on a match all operation this loads every document for the event
       val oldValues      = dao.find(deleteFilter).resultList()
       val result         = dao.deleteMany(deleteFilter).result()
       val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
