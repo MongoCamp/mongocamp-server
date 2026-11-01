@@ -5,7 +5,7 @@ import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
-import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdField
+import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertIdValue, idToString }
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
 import dev.mongocamp.server.database.paging.MongoPaginatedFilter
 import dev.mongocamp.server.database.paging.PaginationInfo
@@ -26,7 +26,6 @@ import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import java.util.Date
 import org.apache.lucene.search.Query
-import org.bson.types.ObjectId
 import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
@@ -152,7 +151,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right {
       val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val result         = dao.insertOne(documentFromScalaMap(convertFields(parameter))).result()
-      val insertedResult = InsertResponse(result.wasAcknowledged(), List(result.getInsertedId.asObjectId().getValue.toHexString))
+      val insertedResult = InsertResponse(result.wasAcknowledged(), List(idToString(result.getInsertedId)))
       EventSystem.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
       insertedResult
     })
@@ -176,7 +175,8 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Map[String, Any]]] = {
     Future.successful(Right {
-      val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).findById(parameter).resultOption()
+      // not dao.findById: it only accepts the hex string of an ObjectId, but a document can have any value as id
+      val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(Map("_id" -> convertIdValue(parameter))).resultOption()
       result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
     })
   }
@@ -199,7 +199,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(Right {
-      val filter         = Map("_id" -> convertIdField(parameter))
+      val filter         = Map("_id" -> convertIdValue(parameter))
       val oldValues      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(filter).resultList()
       val result         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).deleteOne(filter).result()
       val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
@@ -229,25 +229,21 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right {
       val dao                = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val documentMap        = parameter._2
-      val originalDocumentId = convertIdField(parameter._1)
+      val originalDocumentId = convertIdValue(parameter._1)
       val filter             = Map[String, Any]("_id" -> originalDocumentId)
       val oldValues          = dao.find(filter).resultList()
       val result             = dao.replaceOne(filter, documentFromScalaMap(convertFields(documentMap))).result()
-      val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
-        Some(originalDocumentId)
+      val maybeValue: Option[String] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
+        Some(idToString(originalDocumentId))
       }
       else {
         Option(result.getUpsertedId).map(
-          value => value.asObjectId().getValue
+          value => idToString(value)
         )
       }
       val updateResponse = UpdateResponse(
         result.wasAcknowledged(),
-        maybeValue
-          .map(
-            value => value.toHexString
-          )
-          .toList,
+        maybeValue.toList,
         result.getModifiedCount,
         result.getMatchedCount
       )
@@ -278,26 +274,22 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right {
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
 
-      val originalDocumentId = convertIdField(parameter._1)
+      val originalDocumentId = convertIdValue(parameter._1)
       val filter             = Map[String, Any]("_id" -> originalDocumentId)
       val oldValues          = dao.find(filter).resultList()
       val result             = dao.updateOne(filter, documentFromScalaMap(convertToOperationMap(convertFields(parameter._2)))).result()
-      val maybeValue: Option[ObjectId] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
-        Some(originalDocumentId)
+      val maybeValue: Option[String] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
+        Some(idToString(originalDocumentId))
       }
       else {
         Option(result.getUpsertedId).map(
-          value => value.asObjectId().getValue
+          value => idToString(value)
         )
       }
 
       val updateResponse = UpdateResponse(
         result.wasAcknowledged(),
-        maybeValue
-          .map(
-            value => value.toHexString
-          )
-          .toList,
+        maybeValue.toList,
         result.getModifiedCount,
         result.getMatchedCount
       )
