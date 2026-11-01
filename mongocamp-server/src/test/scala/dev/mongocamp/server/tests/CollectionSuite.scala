@@ -111,6 +111,16 @@ class CollectionSuite extends MongoCampBaseServerSuite {
     assertEquals(matchAndCount.size, 0)
   }
 
+  test("database errors do not contain the address of the database server") {
+    val invalidLimit = MongoAggregateRequest(List(PipelineStage("limit", "abc")), allowDiskUse = false)
+    val response     = executeRequest(collectionApi.aggregate("", "", adminBearerToken, "")("geodata:locations", invalidLimit))
+    assertEquals(response.code.code, 500)
+    val message = response.body.left.map(_.getMessage).left.getOrElse("")
+    assertEquals(message.isBlank, false, "the error response has no message")
+    assertEquals(message.contains("on server"), false, s"the error response contains the server address: $message")
+    assertEquals(message.contains("The full response is"), false, s"the error response contains the full server response: $message")
+  }
+
   test("fields on collection as admin") {
     val distinct = executeRequestToResponse(collectionApi.getCollectionFields("", "", adminBearerToken, "")("geodata:locations"))
     assertEquals(distinct.size, 5)
