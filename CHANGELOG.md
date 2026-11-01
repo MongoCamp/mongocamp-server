@@ -1,3 +1,14 @@
+## [v1.6.1] - 2026-11-01
+### :bug: Bug Fixes
+- [`5de4a1b`](https://github.com/MongoCamp/mongocamp-server/commit/5de4a1bd84ec727d731369fe0a3ca2325c04279e) - use the mongocamp organisation for the cached docker image [skip ci] *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`de21869`](https://github.com/MongoCamp/mongocamp-server/commit/de2186992b19bda9f0451e7e1029da6837eea1b1) - remove the api key from the claims of the auth token *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`15042c5`](https://github.com/MongoCamp/mongocamp-server/commit/15042c565c2a0d09e5aa5b2ede666a324974062a) - answer an aggregation with an empty result with an empty list *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`57758f5`](https://github.com/MongoCamp/mongocamp-server/commit/57758f5c2585577d5c14cf2a6ab42ba4741feaae) - return only the fields of the requested collection in the schema analysis *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`588e910`](https://github.com/MongoCamp/mongocamp-server/commit/588e910125271714081aee87844ef9c74da333e8) - do not send the address of the database server in error responses *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`7724fff`](https://github.com/MongoCamp/mongocamp-server/commit/7724fff821946b135f275000f39731ed7f75d1ed) - add the cors headers to the error responses *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`6b01185`](https://github.com/MongoCamp/mongocamp-server/commit/6b011857de7c53483da81ee9dc75a1f59a18c494) - accept ids of any type for documents and filters on _id *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.6.0] - 2026-11-01
 ### :sparkles: New Features
 - [`246483b`](https://github.com/MongoCamp/mongocamp-server/commit/246483beccddce005610ab70b453088a0a78a5ea) - Used JGroups as Messaging / Event System *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -369,3 +380,4 @@
 [v1.5.9]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.8...v1.5.9
 [v1.5.10]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.9...v1.5.10
 [v1.6.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.10...v1.6.0
+[v1.6.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.0...v1.6.1
