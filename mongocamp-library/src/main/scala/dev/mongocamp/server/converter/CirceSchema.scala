@@ -6,8 +6,6 @@ import io.circe.Decoder.Result
 import io.circe.Encoder
 import io.circe.HCursor
 import io.circe.Json
-import java.time.DateTimeException
-import java.time.OffsetDateTime
 import java.util.Date
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
@@ -82,25 +80,6 @@ trait CirceSchema extends LowPriorityCirceSchema {
     )
   }
 
-  // A string is a date if it is a full ISO-8601 instant: date, time with seconds, optional fraction of a second, and `Z` or an offset. These are the forms that
-  // JSON.stringify(new Date()) (with milliseconds), Instant.toString (without zero milliseconds) and most clients write. Strings without a time or a zone
-  // (`2024-06-15`, `2024-06-15T12:00:00`) are not dates, they are stored as they are.
-  private val instantPattern = """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,9})?(Z|[+-]\d{2}:\d{2})""".r
-
-  private def parseInstant(string: String): Option[DateTime] = {
-    if (string.length >= 20 && string.length <= 35 && instantPattern.matches(string)) {
-      try {
-        Some(new DateTime(OffsetDateTime.parse(string).toInstant.toEpochMilli))
-      }
-      catch {
-        case _: DateTimeException => None
-      }
-    }
-    else {
-      None
-    }
-  }
-
   def decodeFromJson(json: Json): Any = {
     json match {
       case a if a.isNumber =>
@@ -114,7 +93,7 @@ trait CirceSchema extends LowPriorityCirceSchema {
         }
       case a if a.isString =>
         val string = a.asString.get
-        parseInstant(string).getOrElse(string)
+        IsoInstant.parse(string).getOrElse(string)
       case a if a.isBoolean => a.asBoolean.getOrElse(false)
       case a if a.isArray =>
         a.asArray.get.toList.map(

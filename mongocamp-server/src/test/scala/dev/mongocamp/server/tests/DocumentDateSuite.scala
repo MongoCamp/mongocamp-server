@@ -65,6 +65,54 @@ class DocumentDateSuite extends MongoCampBaseServerSuite {
     assertEquals(body.contains("12345678901234567"), true, body)
   }
 
+  // Extended JSON wrappers are read in writes and filters
+  test("insert with the Extended JSON wrappers") {
+    raw(
+      Method.PUT,
+      "/documents/many/insert",
+      Some(
+        """[{"k":"w1","d":{"$date":"2024-06-16T12:00:00Z"}},{"k":"w2","d":{"$date":1718539200000}},
+          |{"k":"w3","d":{"$date":{"$numberLong":"1718539200000"}}},
+          |{"k":"w4","n":{"$numberLong":"12345678901234567"},"nested":{"list":[{"$date":"2024-06-17T00:00:00Z"}]}}]""".stripMargin
+      )
+    )
+  }
+
+  test("$date is stored as a date in all its forms") {
+    assertEquals(keys(dateRange).filter(_.startsWith("w")), Set("w1", "w2", "w3"))
+  }
+
+  test("$numberLong is stored as a 64 bit integer and the wrapper is not stored") {
+    val body = raw(Method.GET, "/documents", query = Map("filter" -> "k:w4"))
+    assertEquals(body.contains("\"n\":12345678901234567"), true, body)
+    assertEquals(body.contains("$numberLong"), false, body)
+    assertEquals(body.contains("$date"), false, body)
+  }
+
+  test("$date in a filter") {
+    val find = raw(
+      Method.POST,
+      "/documents",
+      Some("""{"filter":{"d":{"$gt":{"$date":"2024-06-16T00:00:00Z"}}},"sort":{},"projection":{}}""")
+    )
+    assertEquals(parse(find).toOption.get.asArray.get.map(_.hcursor.get[String]("k").toOption.get).toSet.filter(_.startsWith("w")), Set("w1", "w2", "w3"))
+  }
+
+  test("an invalid wrapper answers 400") {
+    List("""{"k":"bad","d":{"$date":"yesterday"}}""", """{"k":"bad","n":{"$numberLong":"abc"}}""").foreach(
+      body => {
+        val response = basicRequest
+          .put(Uri.unsafeParse(s"${TestServer.serverBaseUrl}/mongodb/collections/$collection/documents"))
+          .auth
+          .bearer(adminBearerToken)
+          .contentType("application/json")
+          .body(body)
+          .send(TestAdditions.backend)
+        assertEquals(response.code.code, 400, body)
+      }
+    )
+  }
+
   test("cleanup") {
     raw(Method.DELETE, "")
   }
