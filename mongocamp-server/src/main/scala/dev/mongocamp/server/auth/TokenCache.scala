@@ -16,6 +16,7 @@ import org.joda.time.DateTime
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.duration.FiniteDuration
+import scala.jdk.CollectionConverters._
 
 object TokenCache {
   val keyToken   = "token"
@@ -96,7 +97,11 @@ object TokenCache {
 
   /** The token stays valid for the grace period (requests that are already on the way, concurrent clients) and is invalid afterwards. */
   def supersede(token: String, grace: FiniteDuration): Unit = {
-    val revokeAt = System.currentTimeMillis() + grace.toMillis
+    val now      = System.currentTimeMillis()
+    val revokeAt = now + grace.toMillis
+    // tokens that are never presented again would stay in the map
+    // (the token is invalidated, not only forgotten, otherwise it would be valid again)
+    supersededTokens.entrySet().asScala.toList.filter(_.getValue.longValue() <= now).foreach(entry => invalidateToken(entry.getKey))
     supersededTokens.merge(token, revokeAt, (old, new_) => math.min(old.longValue(), new_.longValue()))
     if (authTokenCacheDB) {
       // the other instances read the token from the database when their local copy is gone
