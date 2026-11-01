@@ -80,7 +80,7 @@ jobs:
           docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
-          sbt ci-release
+          sbt --no-server ci-release
 
   sync-readme:
     needs: release
