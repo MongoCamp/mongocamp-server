@@ -4,6 +4,57 @@
       "name":"byte[]"
     },
     {
+      "name":"dev.mongocamp.server.event.collection.DropCollectionEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.database.DropDatabaseEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.file.CreateFileEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.job.CreateJobEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.job.DeleteJobEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.job.UpdateJobEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.http.HttpRequestEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.model.JobConfig"
+    },
+    {
+      "name":"scala.collection.immutable.Map$Map2"
+    },
+    {
+      "name":"scala.collection.immutable.Map$EmptyMap$"
+    },
+    {
+      "name":"java.lang.Double"
+    },
+    {
+      "name":"java.lang.Float"
+    },
+    {
+      "name":"java.lang.Short"
+    },
+    {
+      "name":"java.math.BigDecimal"
+    },
+    {
+      "name":"java.math.BigInteger"
+    },
+    {
+      "name":"java.util.ArrayList"
+    },
+    {
+      "name":"java.util.LinkedHashMap"
+    },
+    {
       "name":"dev.mongocamp.server.event.bucket.ClearBucketEvent"
     },
     {
