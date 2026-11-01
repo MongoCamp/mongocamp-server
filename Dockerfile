@@ -12,7 +12,7 @@ RUN /mongocamp-cli/prepare-build-upx.sh
 WORKDIR /mongocamp-cli/
 # GraalVM for JDK 21 includes native-image (there is no gu anymore). sbt 2 writes the build output to target/out/jvm/<scala version>/<module>/,
 # the binary is copied to a fixed path so that a new scala version does not break the following steps
-RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; sbt clean publishLocal mongocamp-cli/GraalVMNativeImage/packageBin;
+RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; sbt ";clean;publishLocal;mongocamp-cli/GraalVMNativeImage/packageBin";
 RUN cp "$(find /mongocamp-cli/target/out -type f -path '*/mongocamp-cli/graalvm-native-image/mongocamp-cli' | head -n 1)" /mongocamp-cli/mongocamp-cli-native
 RUN /bin/upx --best /mongocamp-cli/mongocamp-cli-native
 RUN /mongocamp-cli/mongocamp-cli-native prepare native
