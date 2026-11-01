@@ -96,6 +96,21 @@ class CollectionSuite extends MongoCampBaseServerSuite {
     assertEquals(headResponse("type").toString, "company")
   }
 
+  test("aggregation with an empty result answers an empty list") {
+    val noHit = PipelineStage("match", Map("name" -> "no-such-name"))
+    val matchOnly = executeRequestToResponse(
+      collectionApi.aggregate("", "", adminBearerToken, "")("geodata:locations", MongoAggregateRequest(List(noHit), allowDiskUse = false))
+    )
+    assertEquals(matchOnly.size, 0)
+    val matchAndCount = executeRequestToResponse(
+      collectionApi.aggregate("", "", adminBearerToken, "")(
+        "geodata:locations",
+        MongoAggregateRequest(List(noHit, PipelineStage("count", "total")), allowDiskUse = false)
+      )
+    )
+    assertEquals(matchAndCount.size, 0)
+  }
+
   test("fields on collection as admin") {
     val distinct = executeRequestToResponse(collectionApi.getCollectionFields("", "", adminBearerToken, "")("geodata:locations"))
     assertEquals(distinct.size, 5)

@@ -20,6 +20,17 @@ case class MongoPaginatedAggregation[A <: Any](
   private val AggregationKeyData          = "data"
   private val AggregationKeyMetaDataTotal = "total"
 
+  // the $count stage returns no document at all when the pipeline has no result
+  private def totalCount(dbResponse: Document): Long = {
+    val metaData = dbResponse.get(AggregationKeyMetaData).get.asArray()
+    if (metaData.isEmpty) {
+      0L
+    }
+    else {
+      metaData.get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
+    }
+  }
+
   def paginate(rows: Long, page: Long): PaginationResult[org.bson.BsonDocument] = {
     if (rows <= 0) {
       throw MongoCampException("rows per page must be greater then 0.", StatusCode.BadRequest)
@@ -40,7 +51,7 @@ case class MongoPaginatedAggregation[A <: Any](
 
     val dbResponse = dao.findAggregated(pipeline, allowDiskUse).result().asInstanceOf[Document]
 
-    val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
+    val count: Long = totalCount(dbResponse)
     val allPages    = Math.ceil(count.toDouble / rows).toInt
     val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument())
     PaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
@@ -54,8 +65,7 @@ case class MongoPaginatedAggregation[A <: Any](
       Aggregates.facet(new Facet(AggregationKeyMetaData, listOfMetaData.asJava), new Facet(AggregationKeyData, listOfPaging.asJava))
     )
     val dbResponse  = dao.findAggregated(pipeline, allowDiskUse).result().asInstanceOf[Document]
-    val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
-    count
+    totalCount(dbResponse)
   }
 
 }
