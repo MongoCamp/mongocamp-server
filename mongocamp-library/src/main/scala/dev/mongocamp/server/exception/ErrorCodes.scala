@@ -1,6 +1,8 @@
 package dev.mongocamp.server.exception
 
 object ErrorCodes {
+  val emptyFilter: Int         = 4003
+  val emptyBatch: Int          = 4002
   val badInsertRequest: Int    = 4401
   val idMissingForReplace: Int = 4402
 
@@ -9,6 +11,9 @@ object ErrorCodes {
 
   val unauthorizedUser: Int             = 4011
   val unauthorizedUserForOtherUser: Int = 4012
+
+  val forbiddenStage: Int               = 4031
+  val forbiddenCollectionInStage: Int   = 4032
 
   val jobAlreadyAdded: Int    = 4121
   val jobCouldNotUpdated: Int = 4122

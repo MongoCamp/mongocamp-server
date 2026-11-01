@@ -14,6 +14,9 @@ import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
@@ -108,20 +111,34 @@ object AuthRoutes extends BaseRoute {
   val refreshTokenEndpoint = authBase
     .in("token")
     .in("refresh")
+    .in(auth.bearer[Option[String]]())
     .out(jsonBody[LoginResult])
     .summary("Refresh User")
     .description(
-      "Refresh Token and return Login Information. A new token is issued on every call, the previous tokens stay valid until they expire or the user logs out with them."
+      "Refresh Token and return Login Information. A new token is issued on every call, the bearer token that was used for the call stays valid for a grace period (AUTH_REFRESH_GRACE_DURATION, default 60 seconds) and is invalid afterwards."
     )
     .method(Method.GET)
     .name("refreshToken")
     .serverLogic(
-      loginInformation => _ => refreshAuthToken(loginInformation)
+      loginInformation => token => refreshAuthToken(loginInformation, token)
     )
 
-  def refreshAuthToken(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
+  def refreshAuthToken(
+    loginInformation: UserInformation,
+    token: Option[String] = None
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), LoginResult]] = {
     Future.successful {
       val loginResult: LoginResult = AuthHolder.handler.generateLoginResult(AuthHolder.handler.findUser(loginInformation.userId))
+      // only a known token is superseded (a call with basic auth or an api key has no bearer token), so that unknown values cannot fill the cache
+      token
+        .filter(_ != loginResult.authToken)
+        .filter(TokenCache.validateToken(_).isDefined)
+        .foreach(
+          oldToken => {
+            val grace = ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthRefreshGraceDuration)
+            TokenCache.supersede(oldToken, FiniteDuration(grace.toMillis, TimeUnit.MILLISECONDS))
+          }
+        )
       Right(loginResult)
     }
   }

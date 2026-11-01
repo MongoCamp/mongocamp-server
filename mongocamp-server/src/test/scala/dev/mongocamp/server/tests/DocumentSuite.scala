@@ -140,7 +140,7 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
   test("update many documents from database as admin") {
     val request: UpdateRequest = UpdateRequest(Map("newField" -> "value"), Map())
-    val response               = executeRequestToResponse(documentsApi.updateMany("", "", adminBearerToken, "")(collectionNameTest, request))
+    val response               = executeRequestToResponse(documentsApi.updateMany("", "", adminBearerToken, "")(collectionNameTest, request, Some(true)))
     assertEquals(response.modifiedCount, 12L)
     assertEquals(response.matchedCount, 12L)
     val validation = executeRequestToResponse(documentsApi.find("", "", adminBearerToken, "")(collectionNameTest, MongoFindRequest(Map(), Map(), Map())))
@@ -294,7 +294,7 @@ class DocumentSuite extends MongoCampBaseServerSuite {
 
   test("update many documents from database as user") {
     val request: UpdateRequest = UpdateRequest(Map("newField" -> "value"), Map())
-    val response               = executeRequestToResponse(documentsApi.updateMany("", "", testUserBearerToken, "")(collectionNameTest, request))
+    val response               = executeRequestToResponse(documentsApi.updateMany("", "", testUserBearerToken, "")(collectionNameTest, request, Some(true)))
     assertEquals(response.modifiedCount, 12L)
     assertEquals(response.matchedCount, 20L)
     val validation = executeRequestToResponse(documentsApi.find("", "", testUserBearerToken, "")(collectionNameTest, MongoFindRequest(Map(), Map(), Map())))

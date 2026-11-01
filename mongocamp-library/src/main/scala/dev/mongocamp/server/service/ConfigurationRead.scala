@@ -76,6 +76,7 @@ trait ConfigurationRead extends LazyLogging {
     registerConfig(ConfigKeyServerInterface, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
     registerConfig(ConfigKeyServerPort, MongoCampConfiguration.confTypeLong, needsRestartForActivation = true)
 
+    registerConfig(ConfigKeyAggregationStagesDenied, MongoCampConfiguration.confTypeStringList)
     registerConfig(ConfigKeyPluginsIgnored, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsUrls, MongoCampConfiguration.confTypeStringList, needsRestartForActivation = true)
     registerConfig(ConfigKeyPluginsDirectory, MongoCampConfiguration.confTypeString, needsRestartForActivation = true)
@@ -89,6 +90,7 @@ trait ConfigurationRead extends LazyLogging {
     registerConfig(ConfigKeyAuthApiKeyLength, MongoCampConfiguration.confTypeLong)
     registerConfig(ConfigKeyAuthCacheDb, MongoCampConfiguration.confTypeBoolean)
     registerConfig(ConfigKeyAuthExpiringDuration, MongoCampConfiguration.confTypeDuration)
+    registerConfig(ConfigKeyAuthRefreshGraceDuration, MongoCampConfiguration.confTypeDuration)
 
     registerConfig(ConfigKeyAuthBearer, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
     registerConfig(ConfigKeyAuthBasic, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)

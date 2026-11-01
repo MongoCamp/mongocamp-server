@@ -1,8 +1,10 @@
 package dev.mongocamp.server.tests
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.MongoDaoHolder.tokenCacheDao
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.model.ModelConstants
+import dev.mongocamp.server.service.ConfigurationService
 import dev.mongocamp.server.test.client.api.AuthApi
 import dev.mongocamp.server.test.client.model
 import dev.mongocamp.server.test.client.model.Grant
@@ -67,6 +69,37 @@ class AuthSuite extends MongoCampBaseServerSuite {
         model.Grant("*", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection)
       )
     )
+  }
+
+  // #65: the token that was used for the refresh stops working after the grace period
+  test("a refreshed token is invalid after the grace period") {
+    val graceKey = DefaultConfigurations.ConfigKeyAuthRefreshGraceDuration
+    assertEquals(ConfigurationService.updateConfig(graceKey, "1s"), true)
+    try {
+      val login = executeRequestToResponse(adminApi.login(Login(TestAdditions.adminUser, TestAdditions.adminPassword)))
+      val first = executeRequestToResponse(adminApi.refreshToken("", "", login.authToken, "")())
+      // a second refresh with the same old token inside the grace period works, concurrent clients and requests on the way
+      val second = executeRequestToResponse(adminApi.refreshToken("", "", login.authToken, "")())
+      assertEquals(first.authToken == second.authToken, false)
+      assertEquals(executeRequest(adminApi.isAuthenticated("", "", login.authToken, "")()).code.code, 200, "old token inside the grace period")
+      Thread.sleep(1500)
+      assertEquals(executeRequest(adminApi.isAuthenticated("", "", login.authToken, "")()).code.code, 401, "old token after the grace period")
+      assertEquals(executeRequest(adminApi.isAuthenticated("", "", first.authToken, "")()).code.code, 200, "new token")
+      assertEquals(executeRequest(adminApi.isAuthenticated("", "", second.authToken, "")()).code.code, 200, "second new token")
+    }
+    finally {
+      ConfigurationService.updateConfig(graceKey, "60s")
+    }
+  }
+
+  test("a refresh with an api key does not revoke a token") {
+    val login  = executeRequestToResponse(adminApi.login(Login(TestAdditions.adminUser, TestAdditions.adminPassword)))
+    val apiKey = executeRequestToResponse(adminApi.generateNewApiKey("", "", login.authToken, "")()).value
+    // the generated client always sends an Authorization header, an api key call has none
+    val request = adminApi.refreshToken("", "", "", apiKey)()
+    val refresh = executeRequestToResponse(request.copy(headers = request.headers.filterNot(_.is("Authorization"))))
+    assertEquals(refresh.userProfile.user, "admin")
+    assertEquals(executeRequest(adminApi.isAuthenticated("", "", login.authToken, "")()).code.code, 200)
   }
 
   test("update api key") {

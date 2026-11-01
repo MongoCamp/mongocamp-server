@@ -6,6 +6,7 @@ import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdValue
+import dev.mongocamp.server.converter.MongoCampBsonConverter.pathIdFilter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
 import dev.mongocamp.server.converter.MongoCampBsonConverter.idToString
 import dev.mongocamp.server.database.paging.MongoPaginatedFilter
@@ -43,7 +44,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in("documents")
     .in(
       query[Option[Query]]("filter")(using
-        Codec.listHeadOption(Codec.string.mapValidate(LuceneQueryTools.luceneQueryValidator(""))(LuceneQueryConverter.parse(_, ""))(_.toString))
+        Codec.listHeadOption(LuceneQueryTools.filterCodec)
       ).description("MongoDB Filter Query by Default all filter").default(None)
     )
     .in(query[List[String]]("sort").description("MongoDB sorting").default(List.empty).example(List.empty))
@@ -177,7 +178,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Map[String, Any]]] = {
     Future.successful(Right {
       // not dao.findById: it only accepts the hex string of an ObjectId, but a document can have any value as id
-      val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(Map("_id" -> convertIdValue(parameter))).resultOption()
+      val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(pathIdFilter(parameter)).resultOption()
       result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
     })
   }
@@ -200,7 +201,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     parameter: String
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(Right {
-      val filter         = Map("_id" -> convertIdValue(parameter))
+      val filter         = pathIdFilter(parameter)
       val oldValues      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(filter).resultList()
       val result         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).deleteOne(filter).result()
       val deleteResponse = DeleteResponse(result.wasAcknowledged(), result.getDeletedCount)
@@ -231,7 +232,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
       val dao                = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val documentMap        = parameter._2
       val originalDocumentId = convertIdValue(parameter._1)
-      val filter             = Map[String, Any]("_id" -> originalDocumentId)
+      val filter             = pathIdFilter(parameter._1)
       val oldValues          = dao.find(filter).resultList()
       val result             = dao.replaceOne(filter, documentFromScalaMap(convertFields(documentMap))).result()
       val maybeValue: Option[String] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {
@@ -271,7 +272,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
 
       val originalDocumentId = convertIdValue(parameter._1)
-      val filter             = Map[String, Any]("_id" -> originalDocumentId)
+      val filter             = pathIdFilter(parameter._1)
       val oldValues          = dao.find(filter).resultList()
       val result             = dao.updateOne(filter, documentFromScalaMap(convertToOperationMap(convertFields(parameter._2)))).result()
       val maybeValue: Option[String] = if (result.getModifiedCount == 1 && result.getUpsertedId == null) {

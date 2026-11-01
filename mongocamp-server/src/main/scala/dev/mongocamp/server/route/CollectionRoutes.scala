@@ -254,7 +254,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
-    .description("Aggregate in a given Collection")
+    .description(
+      "Aggregate in a given Collection. The value of a stage is any JSON value. Operators that run JavaScript on the database server or write to collections (`$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions` by default, configured with AGGREGATION_STAGES_DENIED) are refused with 403."
+    )
     .tag("Collection")
     .method(Method.POST)
     .name("aggregate")

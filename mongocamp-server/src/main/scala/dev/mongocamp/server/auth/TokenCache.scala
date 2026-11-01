@@ -10,11 +10,13 @@ import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.plugin.JobPlugin
 import dev.mongocamp.server.service.ConfigurationService
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import org.joda.time.DateTime
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.duration.FiniteDuration
+import scala.jdk.CollectionConverters._
 
 object TokenCache {
   val keyToken   = "token"
@@ -30,6 +32,9 @@ object TokenCache {
     case _: Throwable =>
       ""
   }
+  // tokens that were replaced by a refresh: token -> epoch millis from which they are no longer valid
+  private val supersededTokens = new ConcurrentHashMap[String, java.lang.Long]()
+
   private def authTokenCacheDB = ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthCacheDb)
 
   if (authTokenCacheDB) {
@@ -48,6 +53,21 @@ object TokenCache {
   }
 
   def validateToken(token: String): Option[UserInformation] = {
+    if (isSuperseded(token)) None else validateKnownToken(token)
+  }
+
+  private def isSuperseded(token: String): Boolean = {
+    Option(supersededTokens.get(token)).exists(
+      revokeAt =>
+        if (System.currentTimeMillis() >= revokeAt) {
+          invalidateToken(token)
+          true
+        }
+        else false
+    )
+  }
+
+  private def validateKnownToken(token: String): Option[UserInformation] = {
     val cachedToken = internalTokenCache.getIfPresent(token)
     if (cachedToken.isEmpty && authTokenCacheDB) {
       val userOption = tokenCacheDao
@@ -75,7 +95,22 @@ object TokenCache {
     }
   }
 
+  /** The token stays valid for the grace period (requests that are already on the way, concurrent clients) and is invalid afterwards. */
+  def supersede(token: String, grace: FiniteDuration): Unit = {
+    val now      = System.currentTimeMillis()
+    val revokeAt = now + grace.toMillis
+    // tokens that are never presented again would stay in the map
+    // (the token is invalidated, not only forgotten, otherwise it would be valid again)
+    supersededTokens.entrySet().asScala.toList.filter(_.getValue.longValue() <= now).foreach(entry => invalidateToken(entry.getKey))
+    supersededTokens.merge(token, revokeAt, (old, new_) => math.min(old.longValue(), new_.longValue()))
+    if (authTokenCacheDB) {
+      // the other instances read the token from the database when their local copy is gone
+      tokenCacheDao.updateOne(Map(keyToken -> token, keyValidTo -> Map("$gt" -> new DateTime(revokeAt).toDate)), Map("$set" -> Map(keyValidTo -> new DateTime(revokeAt).toDate))).asFuture()
+    }
+  }
+
   def invalidateToken(token: String): Unit = {
+    supersededTokens.remove(token)
     internalTokenCache.invalidate(token)
     tokenCacheDao.deleteMany(Map(keyToken -> token)).resultOption()
   }
@@ -85,7 +120,8 @@ object TokenCache {
     val element = dev.mongocamp.server.model.auth.TokenCacheElement(
       token,
       userInformation.userId,
-      new DateTime().plusMillis(ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis.toInt)
+      // plusMillis takes an Int, which overflows for durations of more than about 24.8 days
+      new DateTime(System.currentTimeMillis() + ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis)
     )
     if (authTokenCacheDB) {
       tokenCacheDao.insertOne(element).asFuture()

@@ -13,6 +13,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import java.security.MessageDigest
 import java.time.Instant
+import java.util.UUID
 import org.joda.time.DateTime
 import pdi.jwt.JwtAlgorithm
 import pdi.jwt.JwtCirce
@@ -51,6 +52,8 @@ trait AuthHolder {
     val claim = JwtClaim(
       expiration = Some(expirationDate.toDate.toInstant.getEpochSecond),
       issuedAt = Some(Instant.now.getEpochSecond),
+      // two tokens of a user in the same second would be identical otherwise, and revoking one would revoke the other
+      jwtId = Some(UUID.randomUUID().toString),
       issuer = Some(s"${BuildInfo.name}/${BuildInfo.version}"),
       content = userProfile.asJson.mapObject(_.filterKeys(!secretClaimKeys.contains(_))).noSpaces
     )

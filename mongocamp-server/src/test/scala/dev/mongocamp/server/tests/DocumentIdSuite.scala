@@ -94,6 +94,60 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     assertEquals(deletedString.deletedCount, 1L)
   }
 
+  test("insert many with an empty list answers 400") {
+    val response = executeRequest(documentsApi.insertMany("", "", adminBearerToken, "")(collection, Seq()))
+    assertEquals(response.code.code, 400)
+    assertEquals(response.body.left.map(_.getMessage).left.getOrElse("").contains("empty"), true)
+  }
+
+  test("insert a document with an existing id answers 409") {
+    executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collection, Map("_id" -> "doc-dup", "name" -> "first")))
+    val single = executeRequest(documentsApi.insert("", "", adminBearerToken, "")(collection, Map("_id" -> "doc-dup", "name" -> "second")))
+    assertEquals(single.code.code, 409)
+    val many = executeRequest(documentsApi.insertMany("", "", adminBearerToken, "")(collection, Seq(Map("_id" -> "doc-dup", "name" -> "third"))))
+    assertEquals(many.code.code, 409)
+    assertEquals(executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, "doc-dup")).deletedCount, 1L)
+  }
+
+  // #72
+  test("an empty filter is refused for update many and delete many unless matchAll is set") {
+    val before  = find(Map()).size
+    val update  = executeRequest(documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map())))
+    assertEquals(update.code.code, 400)
+    assertEquals(update.header("x-error-code"), Some("4003"))
+    val delete = executeRequest(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map()))
+    assertEquals(delete.code.code, 400)
+    assertEquals(find(Map()).size, before)
+    assertEquals(find(Map("touched" -> true)).size, 0)
+
+    val updated = executeRequestToResponse(
+      documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map()), Some(true))
+    )
+    assertEquals(updated.matchedCount, before.toLong)
+    val deleted = executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map(), Some(true)))
+    assertEquals(deleted.deletedCount, before.toLong)
+    assertEquals(find(Map()).size, 0)
+  }
+
+  // #76: the id in the path is a string, documents with a number as id are found too
+  test("single document endpoints find a document with a number as id") {
+    val docs: Seq[Map[String, Any]] = Seq(Map("_id" -> 98765, "n" -> 1), Map("_id" -> 98766L, "n" -> 2), Map("_id" -> 1.5, "n" -> 3), Map("_id" -> "98767", "n" -> 4))
+    executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, docs))
+    List("98765" -> 1, "98766" -> 2, "1.5" -> 3, "98767" -> 4).foreach(
+      entry => assertEquals(executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collection, entry._1)).get("n"), Some(entry._2), s"get ${entry._1}")
+    )
+    val partial = executeRequestToResponse(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collection, "98765", Map("x" -> 1)))
+    assertEquals(partial.matchedCount, 1L)
+    assertEquals(partial.modifiedCount, 1L)
+    val replaced = executeRequestToResponse(documentsApi.update("", "", adminBearerToken, "")(collection, "98766", Map("n" -> 22)))
+    assertEquals(replaced.matchedCount, 1L)
+    assertEquals(executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collection, "98766")).get("n"), Some(22))
+    List("98765", "98766", "1.5", "98767").foreach(
+      id => assertEquals(executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, id)).deletedCount, 1L, s"delete $id")
+    )
+    assertEquals(executeRequest(documentsApi.getDocument("", "", adminBearerToken, "")(collection, "98765")).code.code, 404)
+  }
+
   // #76: the old values of a changed document are published as an event, a document with two fields is a Map2 in the native image
   test("change and delete documents with a string id and two fields") {
     val other                       = collection

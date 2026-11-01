@@ -14,6 +14,7 @@ The configurations can also change by using the configuration routes.
 | AUTH_SECRET            | Private Key for JWT                                                           | secret_key |
 | AUTH_CACHE_DB          | Should the JWT cached to the DB to keep it after application restart.         |    true    |
 | AUTH_EXPIRING_DURATION | Lifetime of generated JWT                                                     |     6h     |
+| AUTH_REFRESH_GRACE_DURATION | How long a JWT stays valid after it was replaced by `/auth/token/refresh`      |    60s     |
 | AUTH_BEARER            | Enable Bearer Header Token for secured routes.                                |    true    |
 | AUTH_BASIC             | Enable HttpBasicAuth for secured routes.                                      |    true    |
 | AUTH_TOKEN             | Enable Api Key Token for secured routes.                                      |    true    |
@@ -39,6 +40,16 @@ The configurations can also change by using the configuration routes.
 |----------------|------------------------------------------------------------------|:-------:|
 | FILE_HANDLER   | Default only supported `gridfs`. Possible to extend with Plugin. | gridfs  |
 | FILE_CACHE_AGE | Used at File Header `cache-control` with value `max-age=`        | 7776000 |
+
+## Aggregation
+::: info
+The aggregation endpoint refuses a pipeline that contains one of the denied operators, anywhere in the pipeline (also inside `$project`, `$addFields`, `$group`, `$match`, `$lookup` and `$facet`), with `403`.
+`$function`, `$accumulator` and `$where` run JavaScript on the database server, `$out` and `$merge` write to collections. In an environment variable the `$` has to be quoted for the shell, for example `AGGREGATION_STAGES_DENIED='["$function","$out"]'`.
+:::
+
+| Configuration             | Description                                                      |                                                    Default                                                    |
+|---------------------------|------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------:|
+| AGGREGATION_STAGES_DENIED | List of operators that are refused in the pipeline of an aggregation. | `["$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions"]` |
 
 ## Plugins
 ::: info

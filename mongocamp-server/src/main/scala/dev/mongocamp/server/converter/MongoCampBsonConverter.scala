@@ -1,10 +1,12 @@
 package dev.mongocamp.server.converter
 
+import dev.mongocamp.server.exception.MongoCampException
 import org.bson.types.ObjectId
 import org.bson.BsonValue
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.bsonDocumentToDocument
+import java.util.Date
 import scala.collection.mutable
 
 object MongoCampBsonConverter {
@@ -78,32 +80,59 @@ object MongoCampBsonConverter {
     map.put(element._1, element._2)
   }
 
+  /** Converts the values of a document or filter: dates (`DateTime` to `Date`) and the Extended JSON wrappers `{"$date": ...}` (an ISO-8601 instant, epoch
+    * milliseconds or `{"$numberLong": "..."}`) and `{"$numberLong": "..."}`, also nested in objects, lists and the operators of a filter. The wrappers are only
+    * read, responses never contain them. The `_id` is converted by [[convertIdValue]].
+    */
   def convertFields(map: Map[String, Any]): Map[String, Any] = {
-    val mutableMap = mutable.Map[String, Any]()
-    map.foreach(
-      element => {
-        if (element._1 == "_id") {
-          mutableMap.put(element._1, convertIdValue(element._2))
-        }
-        else {
-          element._2 match {
-            case value: Map[String, Any] =>
-              mutableMap.put(element._1, convertFields(value))
-            case value: Iterable[Map[String, Any]] if (value.nonEmpty && value.head.isInstanceOf[Map[String, Any]]) =>
-              mutableMap.put(
-                element._1,
-                value.map(
-                  e => convertFields(e)
-                )
-              )
-            case d: DateTime => mutableMap.put(element._1, d.toDate)
-            case _ =>
-              mutableMap.put(element._1, element._2)
-          }
-        }
-      }
+    map.map(
+      element =>
+        if (element._1 == "_id") element._1 -> convertIdValue(element._2)
+        else element._1                     -> convertValue(element._2)
     )
-    mutableMap.toMap
+  }
+
+  private def convertValue(value: Any): Any = {
+    value match {
+      case map: Map[_, _] =>
+        val typed = map.asInstanceOf[Map[String, Any]]
+        if (typed.size == 1 && typed.contains("$date")) convertDateWrapper(typed("$date"))
+        else if (typed.size == 1 && typed.contains("$numberLong")) convertNumberLong(typed("$numberLong"))
+        else convertFields(typed)
+      case d: DateTime           => d.toDate
+      case iterable: Iterable[_] => iterable.map(convertValue).toList
+      case other                 => other
+    }
+  }
+
+  private def convertDateWrapper(value: Any): Date = {
+    value match {
+      case d: DateTime => d.toDate
+      case s: String =>
+        IsoInstant
+          .parse(s)
+          .map(_.toDate)
+          .getOrElse(throw MongoCampException.badRequestException(s"""the value of "$$date" must be an ISO-8601 instant with a zone, for example 2024-06-15T12:00:00Z"""))
+      case l: Long                  => new Date(l)
+      case i: Int                   => new Date(i.toLong)
+      case d: Double                => new Date(d.toLong)
+      case m: Map[_, _] =>
+        val typed = m.asInstanceOf[Map[String, Any]]
+        if (typed.size == 1 && typed.contains("$numberLong")) new Date(convertNumberLong(typed("$numberLong")))
+        else throw MongoCampException.badRequestException(s"""the value of "$$date" must be an ISO-8601 instant or the epoch milliseconds""")
+      case _ =>
+        throw MongoCampException.badRequestException(s"""the value of "$$date" must be an ISO-8601 instant or the epoch milliseconds""")
+    }
+  }
+
+  private def convertNumberLong(value: Any): Long = {
+    value match {
+      case s: String =>
+        s.toLongOption.getOrElse(throw MongoCampException.badRequestException(s"""the value of "$$numberLong" must be a number with up to 64 bit, got $s"""))
+      case l: Long => l
+      case i: Int  => i.toLong
+      case _       => throw MongoCampException.badRequestException(s"""the value of "$$numberLong" must be a string with a number""")
+    }
   }
 
   // operators of a filter on _id, the values of these operators are ids
@@ -132,6 +161,23 @@ object MongoCampBsonConverter {
     }
   }
 
+  private val numberPattern = "-?\\d+(\\.\\d+)?".r
+
+  /** The filter for the id in the path of a request, which is always a string. A document can have an id of any type, so beside the ObjectId (24 hex characters)
+    * or the string itself an id that looks like a number is also searched as number: `12345` finds the document with the id `"12345"` and the one with the
+    * id `12345`. MongoDB compares numbers of different types by value.
+    */
+  def pathIdFilter(id: String): Map[String, Any] = {
+    val candidates: List[Any] = convertIdValue(id) match {
+      case objectId: ObjectId => List(objectId)
+      case _ if numberPattern.matches(id) =>
+        val number: Any = id.toLongOption.getOrElse(id.toDouble)
+        List(id, number)
+      case _ => List(id)
+    }
+    if (candidates.size == 1) Map("_id" -> candidates.head) else Map("_id" -> Map("$in" -> candidates))
+  }
+
   /** The id of a document as string for the responses: the hex string of an ObjectId, otherwise the value itself. */
   def idToString(id: Any): String = {
     id match {
@@ -145,11 +191,14 @@ object MongoCampBsonConverter {
     }
   }
 
+  // only for ids that must be an ObjectId (file ids), the ids of documents can have any type (see convertIdValue)
   def convertIdField(id: Any): ObjectId = {
     id match {
-      case s: String   => new ObjectId(s)
       case o: ObjectId => o
-      case _           => new ObjectId(id.toString)
+      case other =>
+        val value = other.toString
+        if (ObjectId.isValid(value)) new ObjectId(value)
+        else throw MongoCampException.badRequestException("the id is not a valid ObjectId, it must be a string with 24 hexadecimal characters")
     }
   }
 }

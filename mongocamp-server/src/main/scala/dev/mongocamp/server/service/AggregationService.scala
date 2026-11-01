@@ -30,6 +30,7 @@ object AggregationService {
     rowsPerPage: Long,
     page: Long
   ): (List[Map[String, Any]], PaginationInfo) = {
+    AggregationPipelineGuard.check(authorizedCollectionRequest, mongoAggregateRequest.pipeline)
     val pipeline: Seq[Bson] = convertToBsonPipeline(mongoAggregateRequest.pipeline)
     paginatedAggregation(authorizedCollectionRequest, pipeline, mongoAggregateRequest.allowDiskUse, rowsPerPage, page)
   }

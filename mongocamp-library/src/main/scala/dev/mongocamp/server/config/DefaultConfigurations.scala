@@ -3,6 +3,7 @@ package dev.mongocamp.server.config
 object DefaultConfigurations {
   lazy val ConfigKeyServerInterface          = "SERVER_INTERFACE"
   lazy val ConfigKeyServerPort               = "SERVER_PORT"
+  lazy val ConfigKeyAggregationStagesDenied  = "AGGREGATION_STAGES_DENIED"
   lazy val ConfigKeyPluginsIgnored           = "PLUGINS_IGNORED"
   lazy val ConfigKeyPluginsDirectory         = "PLUGINS_DIRECTORY"
   lazy val ConfigKeyPluginsUrls              = "PLUGINS_URLS"
@@ -14,6 +15,7 @@ object DefaultConfigurations {
   lazy val ConfigKeyAuthApiKeyLength         = "AUTH_APIKEYLENGTH"
   lazy val ConfigKeyAuthCacheDb              = "AUTH_CACHE_DB"
   lazy val ConfigKeyAuthExpiringDuration     = "AUTH_EXPIRING_DURATION"
+  lazy val ConfigKeyAuthRefreshGraceDuration = "AUTH_REFRESH_GRACE_DURATION"
   lazy val ConfigKeyAuthPrefix               = "AUTH_PREFIX"
   lazy val ConfigKeyAuthBearer               = "AUTH_BEARER"
   lazy val ConfigKeyAuthBasic                = "AUTH_BASIC"

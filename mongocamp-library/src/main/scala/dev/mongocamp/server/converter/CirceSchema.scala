@@ -93,18 +93,7 @@ trait CirceSchema extends LowPriorityCirceSchema {
         }
       case a if a.isString =>
         val string = a.asString.get
-        if (string.length == 24 && string.substring(10, 11).equals("T") && string.endsWith("Z")) {
-          try {
-            val date = new DateTime(string)
-            date
-          }
-          catch {
-            case _: Exception => string
-          }
-        }
-        else {
-          string
-        }
+        IsoInstant.parse(string).getOrElse(string)
       case a if a.isBoolean => a.asBoolean.getOrElse(false)
       case a if a.isArray =>
         a.asArray.get.toList.map(

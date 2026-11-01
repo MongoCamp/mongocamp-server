@@ -14,7 +14,8 @@ class CollectionSuite extends MongoCampBaseServerSuite {
   lazy val databaseApi: DatabaseApi     = DatabaseApi()
 
   test("list all collections as admin") {
-    val response = executeRequestToResponse(collectionApi.listCollections("", "", adminBearerToken, "")())
+    // Quartz creates this collection when the first one-shot trigger is stored, which depends on the order of the suites
+    val response = executeRequestToResponse(collectionApi.listCollections("", "", adminBearerToken, "")()).filterNot(_ == "mc_jobs_SIMPLE_TRIGGERS")
     assertEquals(response.size, 17)
     assertEquals(
       response,
