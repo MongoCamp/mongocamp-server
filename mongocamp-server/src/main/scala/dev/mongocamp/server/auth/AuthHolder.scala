@@ -41,12 +41,16 @@ trait AuthHolder {
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
 
+  // The api key is a long-lived credential and the token is exposed to clients (cookies, storage, logs), so it must not be part of the claims.
+  // A client that needs its own api key reads it from the profile endpoint.
+  private val secretClaimKeys = Set("apiKey")
+
   def encodeToken(userProfile: UserProfile, expirationDate: DateTime): String = {
     val claim = JwtClaim(
       expiration = Some(expirationDate.toDate.toInstant.getEpochSecond),
       issuedAt = Some(Instant.now.getEpochSecond),
       issuer = Some(s"${BuildInfo.name}/${BuildInfo.version}"),
-      content = userProfile.asJson.toString()
+      content = userProfile.asJson.mapObject(_.filterKeys(!secretClaimKeys.contains(_))).noSpaces
     )
     val algo  = JwtAlgorithm.HS256
     val token = JwtCirce.encode(claim, ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthSecret), algo)

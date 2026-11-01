@@ -76,6 +76,23 @@ class AuthSuite extends MongoCampBaseServerSuite {
     assertEquals(updateResponse.value, userProfile.apiKey.getOrElse("not_set"))
   }
 
+  test("token claims do not contain the api key") {
+    clearAdminToken
+    val apiKey  = executeRequestToResponse(adminApi.generateNewApiKey("", "", adminBearerToken, "")()).value
+    val login   = executeRequestToResponse(adminApi.login(Login(TestAdditions.adminUser, TestAdditions.adminPassword)))
+    val refresh = executeRequestToResponse(adminApi.refreshToken("", "", login.authToken, "")())
+    // the owner of the token still gets the api key in the response, only the token itself must not carry it
+    assertEquals(login.userProfile.apiKey, Some(apiKey))
+    List(login.authToken, refresh.authToken).foreach(
+      token => {
+        val payload = new String(java.util.Base64.getUrlDecoder.decode(token.split('.')(1)), "UTF-8")
+        assertEquals(payload.contains("apiKey"), false, s"token claims contain the apiKey field: $payload")
+        assertEquals(payload.contains(apiKey), false, s"token claims contain the api key value: $payload")
+        assertEquals(payload.contains("\"user\":\"admin\""), true, s"token claims lost the user: $payload")
+      }
+    )
+  }
+
   test("check user is authenticated") {
     val authenticatedResponse = executeRequestToResponse(adminApi.isAuthenticated("", "", testUserBearerToken, "")())
     assertEquals(authenticatedResponse.value, true)

@@ -105,7 +105,7 @@ object AuthRoutes extends BaseRoute {
     .in("refresh")
     .out(jsonBody[LoginResult])
     .summary("Refresh User")
-    .description("Refresh Token and return Login Information")
+    .description("Refresh Token and return Login Information. A new token is issued on every call, the previous tokens stay valid until they expire or the user logs out with them.")
     .method(Method.GET)
     .name("refreshToken")
     .serverLogic(
