@@ -1,5 +1,6 @@
 package dev.mongocamp.server.converter
 
+import dev.mongocamp.server.exception.MongoCampException
 import org.bson.types.ObjectId
 import org.bson.BsonValue
 import org.joda.time.DateTime
@@ -145,11 +146,14 @@ object MongoCampBsonConverter {
     }
   }
 
+  // only for ids that must be an ObjectId (file ids), the ids of documents can have any type (see convertIdValue)
   def convertIdField(id: Any): ObjectId = {
     id match {
-      case s: String   => new ObjectId(s)
       case o: ObjectId => o
-      case _           => new ObjectId(id.toString)
+      case other =>
+        val value = other.toString
+        if (ObjectId.isValid(value)) new ObjectId(value)
+        else throw MongoCampException.badRequestException("the id is not a valid ObjectId, it must be a string with 24 hexadecimal characters")
     }
   }
 }

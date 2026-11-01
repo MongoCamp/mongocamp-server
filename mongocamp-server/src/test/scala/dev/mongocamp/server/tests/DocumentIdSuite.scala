@@ -93,4 +93,19 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     val deletedString = executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, "doc-c"))
     assertEquals(deletedString.deletedCount, 1L)
   }
+
+  test("insert many with an empty list answers 400") {
+    val response = executeRequest(documentsApi.insertMany("", "", adminBearerToken, "")(collection, Seq()))
+    assertEquals(response.code.code, 400)
+    assertEquals(response.body.left.map(_.getMessage).left.getOrElse("").contains("empty"), true)
+  }
+
+  test("insert a document with an existing id answers 409") {
+    executeRequestToResponse(documentsApi.insert("", "", adminBearerToken, "")(collection, Map("_id" -> "doc-dup", "name" -> "first")))
+    val single = executeRequest(documentsApi.insert("", "", adminBearerToken, "")(collection, Map("_id" -> "doc-dup", "name" -> "second")))
+    assertEquals(single.code.code, 409)
+    val many = executeRequest(documentsApi.insertMany("", "", adminBearerToken, "")(collection, Seq(Map("_id" -> "doc-dup", "name" -> "third"))))
+    assertEquals(many.code.code, 409)
+    assertEquals(executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, "doc-dup")).deletedCount, 1L)
+  }
 }

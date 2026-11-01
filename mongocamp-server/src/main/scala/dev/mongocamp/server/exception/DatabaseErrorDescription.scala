@@ -1,10 +1,15 @@
 package dev.mongocamp.server.exception
 
+import com.mongodb.ErrorCategory
+import com.mongodb.MongoBulkWriteException
 import com.mongodb.MongoCommandException
 import com.mongodb.MongoConfigurationException
 import com.mongodb.MongoException
 import com.mongodb.MongoSocketException
 import com.mongodb.MongoTimeoutException
+import com.mongodb.MongoWriteException
+import scala.jdk.CollectionConverters._
+import sttp.model.StatusCode
 import scala.annotation.tailrec
 
 /** Describes errors of the database driver for the clients of the API.
@@ -27,6 +32,19 @@ object DatabaseErrorDescription {
       case other if depth >= 10 || other.getCause == other => None
       case other                                           => findDatabaseException(other.getCause, depth + 1)
     }
+  }
+
+  private val duplicateKeyCode = 11000
+
+  /** Status code for a database error: a duplicate key is a conflict with the data of the client, everything else stays an internal error. */
+  def statusCode(exception: MongoException): StatusCode = {
+    val duplicateKey = exception match {
+      case write: MongoWriteException     => write.getError.getCategory == ErrorCategory.DUPLICATE_KEY
+      case bulk: MongoBulkWriteException  => bulk.getWriteErrors.asScala.exists(_.getCategory == ErrorCategory.DUPLICATE_KEY)
+      case command: MongoCommandException => command.getErrorCode == duplicateKeyCode
+      case _                              => false
+    }
+    if (duplicateKey) StatusCode.Conflict else StatusCode.InternalServerError
   }
 
   def describe(exception: MongoException): ErrorDescription = {

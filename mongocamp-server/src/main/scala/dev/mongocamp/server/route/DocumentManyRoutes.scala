@@ -9,7 +9,9 @@ import dev.mongocamp.server.event.document.CreateDocumentEvent
 import dev.mongocamp.server.event.document.DeleteDocumentEvent
 import dev.mongocamp.server.event.document.UpdateDocumentEvent
 import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.DeleteResponse
 import dev.mongocamp.server.model.InsertResponse
@@ -46,6 +48,9 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     parameter: (List[Map[String, Any]])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), InsertResponse]] = {
     Future.successful(Right {
+      if (parameter.isEmpty) {
+        throw MongoCampException.badRequestException("the list of documents to insert is empty", ErrorCodes.emptyBatch)
+      }
       val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val listOfDocuments = parameter.map(
         map => documentFromScalaMap(convertFields(map))
