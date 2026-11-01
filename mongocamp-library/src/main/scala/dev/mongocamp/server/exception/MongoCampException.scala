@@ -11,6 +11,13 @@ object MongoCampException {
   def unauthorizedException(message: String = "user not authorized", errorCode: Int = ErrorCodes.unauthorizedUser): MongoCampException =
     MongoCampException(message, StatusCode.Unauthorized, errorCode)
 
+  def badRequestException(message: String, errorCode: Int = -1): MongoCampException =
+    MongoCampException(message, StatusCode.BadRequest, errorCode)
+
+  // 403 and not 401: a client such as the UI clears its session on 401, but the session is fine, only this request is refused
+  def forbiddenException(message: String, errorCode: Int = -1): MongoCampException =
+    MongoCampException(message, StatusCode.Forbidden, errorCode)
+
   def badAuthConfiguration(): MongoCampException =
     MongoCampException("Authentication method not configured correctly", StatusCode.NotImplemented, ErrorCodes.authMethodNotImplemented)
 
