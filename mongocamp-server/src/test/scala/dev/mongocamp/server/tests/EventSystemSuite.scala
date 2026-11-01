@@ -17,7 +17,11 @@ class EventSystemSuite extends FunSuite {
       .toSet
 
   test("every event class is registered for serialization in the native image") {
-    val eventClasses = new ClassGraphService().getClassesForPackage[Any]("dev.mongocamp.server.event").filter(c => classOf[Event].isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers))
+    val eventClasses = new ClassGraphService()
+      .getClassesForPackage[Any]("dev.mongocamp.server.event")
+      .filter(
+        c => classOf[Event].isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers)
+      )
     assert(eventClasses.nonEmpty, "no event classes found")
     val missing = eventClasses.map(_.getName).filterNot(registeredTypes.contains)
     assertEquals(missing, List.empty[String], "events missing in serialization-config.json")
