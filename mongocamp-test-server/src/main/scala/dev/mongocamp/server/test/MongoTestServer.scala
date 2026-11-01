@@ -3,14 +3,13 @@ package dev.mongocamp.server.test
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.database.TestAdditions
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
-import sttp.client3._
-import sttp.model.Method
-
+import org.testcontainers.containers.GenericContainer
 import scala.concurrent.duration.DurationInt
 import scala.jdk.DurationConverters.ScalaDurationOps
 import scala.util.Random
+import sttp.client3._
+import sttp.model.Method
 
 object MongoTestServer extends LazyLogging {
   private var running: Boolean = false
@@ -54,10 +53,10 @@ object MongoTestServer extends LazyLogging {
       System.setProperty("CONNECTION_PORT", containerConfiguration.getMappedPort(27017).toString)
       System.setProperty("CONNECTION_HOST", containerConfiguration.getHost)
       running = true
-      sys.addShutdownHook({
+      sys.addShutdownHook {
         println("Shutdown for MongoDB Server triggered.")
         stopMongoDatabase()
-      })
+      }
 
     }
   }

@@ -1,20 +1,16 @@
 package dev.mongocamp.server.database.paging
 
 import com.mongodb.client.model.Facet
-import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.server.exception.MongoCampException
-import org.mongodb.scala.bson.Document
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.bson.Document
 import org.mongodb.scala.model.Aggregates
+import scala.jdk.CollectionConverters._
 import sttp.model.StatusCode
 
-import scala.jdk.CollectionConverters._
-
-case class MongoPaginatedAggregation[A <: Any](
-    dao: MongoDAO[A],
-    allowDiskUse: Boolean = false,
-    aggregationPipeline: List[Bson] = List()
-) {
+case class MongoPaginatedAggregation[A <: Any](dao: MongoDAO[A], allowDiskUse: Boolean = false, aggregationPipeline: List[Bson] = List()) {
 
   private val AggregationKeyMetaData      = "metadata"
   private val AggregationKeyData          = "data"
@@ -64,7 +60,7 @@ case class MongoPaginatedAggregation[A <: Any](
     val pipeline = aggregationPipeline ++ List(
       Aggregates.facet(new Facet(AggregationKeyMetaData, listOfMetaData.asJava), new Facet(AggregationKeyData, listOfPaging.asJava))
     )
-    val dbResponse  = dao.findAggregated(pipeline, allowDiskUse).result().asInstanceOf[Document]
+    val dbResponse = dao.findAggregated(pipeline, allowDiskUse).result().asInstanceOf[Document]
     totalCount(dbResponse)
   }
 

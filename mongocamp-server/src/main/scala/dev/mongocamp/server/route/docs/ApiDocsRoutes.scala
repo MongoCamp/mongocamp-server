@@ -5,17 +5,18 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.route.BaseRoute
 import dev.mongocamp.server.service.ConfigurationService
+import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.Future
 import sttp.apispec.openapi.circe.yaml.RichOpenAPI
-import sttp.capabilities.WebSockets
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.swagger.{ SwaggerUI, SwaggerUIOptions }
-
-import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.Future
+import sttp.tapir.swagger.SwaggerUI
+import sttp.tapir.swagger.SwaggerUIOptions
 
 object ApiDocsRoutes extends BaseRoute {
   val nameAsyncApiDocsYamlName = "asyncapidocs.yaml"
@@ -23,9 +24,9 @@ object ApiDocsRoutes extends BaseRoute {
 
   def docsYamlEndpoint(yamlName: String, content: String): ServerEndpoint[PekkoStreams with WebSockets, Future] = {
     def contentToResponse(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (String, Long)]] = {
-      Future.successful(Right({
+      Future.successful(Right {
         (content, content.getBytes.length)
-      }))
+      })
     }
 
     val endpoint = baseEndpoint
@@ -49,11 +50,7 @@ object ApiDocsRoutes extends BaseRoute {
 
     val swaggerEnabled = isSwaggerEnabled
     if (swaggerEnabled || ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyOpenApi)) {
-      val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(
-        serverEndpoints.map(_.endpoint),
-        BuildInfo.name,
-        BuildInfo.version
-      )
+      val openApiDocs = OpenAPIDocsInterpreter().toOpenAPI(serverEndpoints.map(_.endpoint), BuildInfo.name, BuildInfo.version)
 
       val openApiYml: String = openApiDocs.toYaml
 
@@ -61,13 +58,8 @@ object ApiDocsRoutes extends BaseRoute {
         val swaggerUIRoute =
           SwaggerUI[Future](
             openApiYml,
-            SwaggerUIOptions.default.copy(
-              pathPrefix = List("docs"),
-              yamlName = nameOpenApiDocsYamlName,
-              contextPath = List(),
-              useRelativePaths = true,
-              showExtensions = false
-            )
+            SwaggerUIOptions.default
+              .copy(pathPrefix = List("docs"), yamlName = nameOpenApiDocsYamlName, contextPath = List(), useRelativePaths = true, showExtensions = false)
           )
         docs ++= swaggerUIRoute
       }

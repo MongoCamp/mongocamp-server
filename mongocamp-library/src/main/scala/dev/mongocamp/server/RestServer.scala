@@ -1,8 +1,8 @@
 package dev.mongocamp.server
 
 import com.typesafe.scalalogging.LazyLogging
-
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 trait RestServer extends LazyLogging {
 
@@ -19,5 +19,7 @@ trait RestServer extends LazyLogging {
 
   def shutdown(): Unit
 
-  sys.addShutdownHook(() => shutdown())
+  sys.addShutdownHook(
+    () => shutdown()
+  )
 }

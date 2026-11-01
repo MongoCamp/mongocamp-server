@@ -1,19 +1,20 @@
 package dev.mongocamp.server.model
 import io.circe.generic.auto._
-import io.circe.generic.semiauto.{ deriveDecoder, deriveEncoder }
-import io.circe.{ Decoder, Encoder }
-import sttp.tapir.Schema
-import sttp.tapir.generic.auto._
-
+import io.circe.generic.semiauto.deriveDecoder
+import io.circe.generic.semiauto.deriveEncoder
+import io.circe.Decoder
+import io.circe.Encoder
 import scala.collection.mutable.ArrayBuffer
+import sttp.tapir.generic.auto._
+import sttp.tapir.Schema
 
 case class SchemaAnalysisField(
-    name: String,
-    fullName: String,
-    fieldTypes: List[SchemaAnalysisFieldType],
-    count: Long,
-    percentageOfParent: Double,
-    subFields: ArrayBuffer[SchemaAnalysisField]
+  name: String,
+  fullName: String,
+  fieldTypes: List[SchemaAnalysisFieldType],
+  count: Long,
+  percentageOfParent: Double,
+  subFields: ArrayBuffer[SchemaAnalysisField]
 )
 
 // recursive type: circe auto derivation can not resolve it on Scala 3, so the codecs are derived explicitly (and lazily)

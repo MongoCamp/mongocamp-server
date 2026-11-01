@@ -1,8 +1,9 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertFields, idToString }
+import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
+import dev.mongocamp.server.converter.MongoCampBsonConverter.idToString
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.document.CreateDocumentEvent
 import dev.mongocamp.server.event.document.DeleteDocumentEvent
@@ -16,13 +17,13 @@ import dev.mongocamp.server.model.UpdateRequest
 import dev.mongocamp.server.model.UpdateResponse
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
-import sttp.tapir.stringToPath
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
 import sttp.model.Method
 import sttp.model.StatusCode
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.stringToPath
 object DocumentManyRoutes extends CollectionBaseRoute {
 
   val insertManyEndpoint = writeCollectionEndpoint

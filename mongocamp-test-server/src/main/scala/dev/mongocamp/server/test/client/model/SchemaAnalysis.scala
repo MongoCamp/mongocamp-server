@@ -6,9 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class SchemaAnalysis(
-    count: Long,
-    sample: Long,
-    percentageOfAnalysed: Double,
-    fields: Option[Seq[SchemaAnalysisField]] = None
-)
+case class SchemaAnalysis(count: Long, sample: Long, percentageOfAnalysed: Double, fields: Option[Seq[SchemaAnalysisField]] = None)

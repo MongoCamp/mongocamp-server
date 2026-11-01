@@ -7,9 +7,9 @@ class TestCleanup(name: String) {
   def cleanup(): Unit = {
     println("TestCleanup should to cleanup for " + name)
     val restServers = ReflectionService.instancesForType(classOf[RestServer])
-    restServers.foreach(restServer => {
-        restServer.shutdown()
-    })
+    restServers.foreach(
+      restServer => restServer.shutdown()
+    )
     MongoTestServer.stopMongoDatabase()
   }
 }

@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class InsertResponse(
-    wasAcknowledged: Boolean,
-    insertedIds: Seq[String] = Seq.empty
-)
+case class InsertResponse(wasAcknowledged: Boolean, insertedIds: Seq[String] = Seq.empty)

@@ -6,11 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class JobConfig(
-    name: String,
-    className: String,
-    description: String,
-    cronExpression: String,
-    group: String,
-    priority: Int
-)
+case class JobConfig(name: String, className: String, description: String, cronExpression: String, group: String, priority: Int)

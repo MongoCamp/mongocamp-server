@@ -2,15 +2,17 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.test.client.api.CollectionApi
-import dev.mongocamp.server.test.client.model.{ MongoAggregateRequest, PipelineStage }
-import dev.mongocamp.server.test.{ MongoCampBaseServerSuite, TestServer }
+import dev.mongocamp.server.test.client.model.MongoAggregateRequest
+import dev.mongocamp.server.test.client.model.PipelineStage
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
+import dev.mongocamp.server.test.TestServer
 import sttp.client3._
 
 class CorsSuite extends MongoCampBaseServerSuite {
 
-  private val origin           = "http://localhost:3000"
-  private val allowOriginKey   = "Access-Control-Allow-Origin"
-  private val allowHeadersKey  = "Access-Control-Allow-Headers"
+  private val origin          = "http://localhost:3000"
+  private val allowOriginKey  = "Access-Control-Allow-Origin"
+  private val allowHeadersKey = "Access-Control-Allow-Headers"
   // must be a def: the base url must not be read before the test server was started by the base suite
   private def baseUrl: String = TestServer.serverBaseUrl
 

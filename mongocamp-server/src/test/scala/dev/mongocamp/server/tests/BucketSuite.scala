@@ -1,12 +1,14 @@
 package dev.mongocamp.server.tests
 
-import better.files.{ File, Resource }
+import better.files.File
+import better.files.Resource
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.database.TestAdditions.copyResourceFileToTempDir
-import dev.mongocamp.server.database.{ MongoDatabase, TestAdditions }
+import dev.mongocamp.server.test.client.api.BucketApi
+import dev.mongocamp.server.test.client.api.DatabaseApi
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.{ BucketApi, DatabaseApi }
-
 import scala.util.Random
 
 class BucketSuite extends MongoCampBaseServerSuite {

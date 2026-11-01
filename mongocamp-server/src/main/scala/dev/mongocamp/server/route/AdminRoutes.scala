@@ -1,26 +1,32 @@
 package dev.mongocamp.server.route
 
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder }
+import dev.mongocamp.server.auth.AuthHolder
+import dev.mongocamp.server.auth.MongoAuthHolder
 import dev.mongocamp.server.database.paging.PaginationInfo
-import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.role.{ CreateRoleEvent, DeleteRoleEvent, UpdateRoleEvent }
+import dev.mongocamp.server.event.role.CreateRoleEvent
+import dev.mongocamp.server.event.role.DeleteRoleEvent
+import dev.mongocamp.server.event.role.UpdateRoleEvent
 import dev.mongocamp.server.event.user._
+import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.exception
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
-import dev.mongocamp.server.model.JsonValue
+import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth._
+import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.paging.{ Paging, PagingFunctions }
+import dev.mongocamp.server.route.parameter.paging.Paging
+import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import io.circe.generic.auto._
-import sttp.tapir.stringToPath
-import sttp.capabilities.WebSockets
-import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
-import sttp.tapir.json.circe.jsonBody
-import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{ path, query }
-
 import scala.concurrent.Future
+import sttp.capabilities.pekko.PekkoStreams
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
+import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.path
+import sttp.tapir.query
+import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.stringToPath
 
 object AdminRoutes extends BaseRoute with RoutesPlugin {
   private val adminBase = adminEndpoint.in("admin").tag("Admin")
@@ -102,8 +108,8 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def updatePassword(
-      userInformation: UserInformation,
-      parameter: (String, PasswordUpdateRequest)
+    userInformation: UserInformation,
+    parameter: (String, PasswordUpdateRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(parameter._1, parameter._2.password)
@@ -127,10 +133,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
       loggedInUser => loginToUpdate => updateApiKey(loggedInUser, loginToUpdate)
     )
 
-  def updateApiKey(
-      loggedInUser: UserInformation,
-      userId: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
+  def updateApiKey(loggedInUser: UserInformation, userId: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(userId)
       EventSystem.publish(UpdateApiKeyEvent(loggedInUser, userId))
@@ -150,17 +153,14 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
       loggedInUser => loginToUpdate => deleteUser(loggedInUser, loginToUpdate)
     )
 
-  def deleteUser(
-      loggedInUser: UserInformation,
-      loginToUpdate: String
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful({
+  def deleteUser(loggedInUser: UserInformation, loginToUpdate: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
+    Future.successful {
       val response = AuthHolder.handler.asInstanceOf[MongoAuthHolder].deleteUser(loginToUpdate)
       if (response) {
         EventSystem.publish(DeleteUserEvent(loggedInUser, loginToUpdate))
       }
       Right(JsonValue(response))
-    })
+    }
   }
 
   val updateUserRolesEndpoint = adminBase
@@ -178,14 +178,14 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def updateRolesForUser(
-      loggedInUser: UserInformation,
-      loginToUpdate: (String, List[String])
+    loggedInUser: UserInformation,
+    loginToUpdate: (String, List[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val userInformation = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateUsersRoles(loginToUpdate._1, loginToUpdate._2)
       EventSystem.publish(UpdateUserRoleEvent(loggedInUser, loginToUpdate._2))
       userInformation.toResultUser
-    }))
+    })
   }
 
   val listRolesEndpoint = adminBase
@@ -287,8 +287,8 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def updateRole(
-      loggedInUser: UserInformation,
-      parameter: (String, UpdateRoleRequest)
+    loggedInUser: UserInformation,
+    parameter: (String, UpdateRoleRequest)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Role]] = {
     Future.successful {
       val role = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateRole(parameter._1, parameter._2)

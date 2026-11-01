@@ -7,16 +7,18 @@
 package dev.mongocamp.server.test.client.model
 
 import io.circe.generic.auto._
-import io.circe.generic.semiauto.{ deriveDecoder, deriveEncoder }
-import io.circe.{ Decoder, Encoder }
+import io.circe.generic.semiauto.deriveDecoder
+import io.circe.generic.semiauto.deriveEncoder
+import io.circe.Decoder
+import io.circe.Encoder
 
 case class SchemaAnalysisField(
-    name: String,
-    fullName: String,
-    fieldTypes: Option[Seq[SchemaAnalysisFieldType]] = None,
-    count: Long,
-    percentageOfParent: Double,
-    subFields: Option[Seq[SchemaAnalysisField]] = None
+  name: String,
+  fullName: String,
+  fieldTypes: Option[Seq[SchemaAnalysisFieldType]] = None,
+  count: Long,
+  percentageOfParent: Double,
+  subFields: Option[Seq[SchemaAnalysisField]] = None
 )
 
 // NOTE: added by hand, not generated. The type is recursive and circe auto derivation can not resolve it on Scala 3.

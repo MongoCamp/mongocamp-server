@@ -1,25 +1,30 @@
 package dev.mongocamp.server.plugin
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.Server
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.event.job._
-import dev.mongocamp.server.exception.ErrorCodes.{jobAlreadyAdded, jobClassNotFound, jobCouldNotFound}
+import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.exception.ErrorCodes.jobAlreadyAdded
+import dev.mongocamp.server.exception.ErrorCodes.jobClassNotFound
+import dev.mongocamp.server.exception.ErrorCodes.jobCouldNotFound
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.model.{JobConfig, JobInformation}
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.service.{ConfigurationRead, ReflectionService}
+import dev.mongocamp.server.model.JobConfig
+import dev.mongocamp.server.model.JobInformation
+import dev.mongocamp.server.service.ConfigurationRead
+import dev.mongocamp.server.service.ReflectionService
+import dev.mongocamp.server.Server
+import java.util.Date
+import org.quartz._
+import org.quartz.impl.matchers.GroupMatcher
+import org.quartz.impl.StdSchedulerFactory
+import org.quartz.utils.DBConnectionManager
+import org.quartz.utils.HikariCpPoolingConnectionProvider
 import org.quartz.JobBuilder._
 import org.quartz.TriggerBuilder._
-import org.quartz._
-import org.quartz.impl.StdSchedulerFactory
-import org.quartz.impl.matchers.GroupMatcher
-import org.quartz.utils.{DBConnectionManager, HikariCpPoolingConnectionProvider}
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.jdk.CollectionConverters.ListHasAsScala
 import sttp.model.StatusCode
-
-import java.util.Date
-import scala.jdk.CollectionConverters.{CollectionHasAsScala, ListHasAsScala}
 
 object JobPlugin extends ServerPlugin with LazyLogging {
   private var provider: HikariCpPoolingConnectionProvider = _

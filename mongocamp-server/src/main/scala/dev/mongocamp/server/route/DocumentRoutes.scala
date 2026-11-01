@@ -5,8 +5,9 @@ import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
-import dev.mongocamp.server.converter.MongoCampBsonConverter.{ convertIdValue, idToString }
+import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdValue
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
+import dev.mongocamp.server.converter.MongoCampBsonConverter.idToString
 import dev.mongocamp.server.database.paging.MongoPaginatedFilter
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.database.MongoDatabase
@@ -241,12 +242,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
           value => idToString(value)
         )
       }
-      val updateResponse = UpdateResponse(
-        result.wasAcknowledged(),
-        maybeValue.toList,
-        result.getModifiedCount,
-        result.getMatchedCount
-      )
+      val updateResponse = UpdateResponse(result.wasAcknowledged(), maybeValue.toList, result.getModifiedCount, result.getMatchedCount)
       EventSystem.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
       updateResponse
     })
@@ -287,12 +283,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
         )
       }
 
-      val updateResponse = UpdateResponse(
-        result.wasAcknowledged(),
-        maybeValue.toList,
-        result.getModifiedCount,
-        result.getMatchedCount
-      )
+      val updateResponse = UpdateResponse(result.wasAcknowledged(), maybeValue.toList, result.getModifiedCount, result.getMatchedCount)
       EventSystem.publish(UpdateDocumentEvent(authorizedCollectionRequest.userInformation, updateResponse, oldValues))
       updateResponse
     })

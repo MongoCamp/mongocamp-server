@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class DeleteResponse(
-    wasAcknowledged: Boolean,
-    deletedCount: Long
-)
+case class DeleteResponse(wasAcknowledged: Boolean, deletedCount: Long)

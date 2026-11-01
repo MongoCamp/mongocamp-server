@@ -1,8 +1,9 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.DocumentApi
-import dev.mongocamp.server.test.client.model.{ MongoFindRequest, UpdateRequest }
+import dev.mongocamp.server.test.client.model.MongoFindRequest
+import dev.mongocamp.server.test.client.model.UpdateRequest
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 
 // documents can have any value as `_id`, only the values that are ObjectIds may be converted
 class DocumentIdSuite extends MongoCampBaseServerSuite {
@@ -29,12 +30,8 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
   }
 
   test("insert many documents with string, number and ObjectId ids") {
-    val documents: Seq[Map[String, Any]] = Seq(
-      Map("_id" -> "doc-b", "name" -> "b"),
-      Map("_id" -> 42, "name" -> "number"),
-      Map("_id" -> hexId, "name" -> "objectId"),
-      Map("name" -> "generated")
-    )
+    val documents: Seq[Map[String, Any]] =
+      Seq(Map("_id" -> "doc-b", "name" -> "b"), Map("_id" -> 42, "name" -> "number"), Map("_id" -> hexId, "name" -> "objectId"), Map("name" -> "generated"))
     val response = executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, documents))
     assertEquals(response.insertedIds.size, 4)
     assertEquals(response.insertedIds.contains("doc-b"), true)
@@ -83,7 +80,8 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     )
     assertEquals(updated.matchedCount, 2L)
     assertEquals(updated.modifiedCount, 2L)
-    val deleted = executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map("_id" -> Map("$in" -> List("doc-a", "doc-b")))))
+    val deleted =
+      executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map("_id" -> Map("$in" -> List("doc-a", "doc-b")))))
     assertEquals(deleted.deletedCount, 2L)
     assertEquals(find(Map()).size, 3)
   }

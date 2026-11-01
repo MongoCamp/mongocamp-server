@@ -1,12 +1,14 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
-import dev.mongocamp.server.model.auth.{ AuthInput, AuthorizedCollectionRequest, UserInformation }
+import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.model.auth.AuthInput
+import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
+import dev.mongocamp.server.model.auth.UserInformation
+import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir._
-
-import scala.concurrent.Future
 
 abstract class BucketBaseRoute extends BaseRoute {
 
@@ -68,7 +70,7 @@ abstract class BucketBaseRoute extends BaseRoute {
   }
 
   def loginAdministrate(
-      loginInformation: (AuthInput, String)
+    loginInformation: (AuthInput, String)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] = {
     Future.successful {
       val userInformation: UserInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)

@@ -6,10 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class MongoCampConfiguration(
-    key: String,
-    value: Any,
-    configType: String,
-    comment: String,
-    needsRestartForActivation: Boolean
-)
+case class MongoCampConfiguration(key: String, value: Any, configType: String, comment: String, needsRestartForActivation: Boolean)

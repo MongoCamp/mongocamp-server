@@ -8,11 +8,4 @@ package dev.mongocamp.server.test.client.model
 
 import org.joda.time.DateTime
 
-case class FileInformation(
-    _id: String,
-    filename: String,
-    length: Long,
-    chunkSize: Long,
-    uploadDate: DateTime,
-    metadata: Map[String, Any]
-)
+case class FileInformation(_id: String, filename: String, length: Long, chunkSize: Long, uploadDate: DateTime, metadata: Map[String, Any])

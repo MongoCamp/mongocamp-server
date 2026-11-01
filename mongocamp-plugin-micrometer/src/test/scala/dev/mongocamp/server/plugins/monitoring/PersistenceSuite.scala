@@ -7,16 +7,16 @@ import dev.mongocamp.server.test.client.api.SystemApi
 import org.joda.time.DateTime
 class PersistenceSuite extends MicrometerBaseServerSuite {
 
-  lazy val metricsApi: MetricsApi = MetricsApi()
+  lazy val metricsApi: MetricsApi    = MetricsApi()
   lazy val informationApi: SystemApi = SystemApi()
 
   override def beforeEach(context: BeforeEach): Unit = {
-    val jvmMetrics = executeRequestToResponse(metricsApi.jvmMetrics("", "", adminBearerToken, "")())
-    val systemMetrics = executeRequestToResponse(metricsApi.systemMetrics("", "", adminBearerToken, "")())
+    val jvmMetrics     = executeRequestToResponse(metricsApi.jvmMetrics("", "", adminBearerToken, "")())
+    val systemMetrics  = executeRequestToResponse(metricsApi.systemMetrics("", "", adminBearerToken, "")())
     val mongoDbMetrics = executeRequestToResponse(metricsApi.mongoDbMetrics("", "", adminBearerToken, "")())
-    val eventMetrics = executeRequestToResponse(metricsApi.eventMetrics("", "", adminBearerToken, "")())
-    val version = executeRequestToResponse(informationApi.version())
-    val startTime = new DateTime()
+    val eventMetrics   = executeRequestToResponse(metricsApi.eventMetrics("", "", adminBearerToken, "")())
+    val version        = executeRequestToResponse(informationApi.version())
+    val startTime      = new DateTime()
     while (startTime.plusSeconds(15).isBeforeNow) {
       // wait for collect metrics
     }

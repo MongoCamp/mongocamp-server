@@ -2,13 +2,12 @@ package dev.mongocamp.server.plugins.monitoring.mongodb
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.micrometer.mongodb.registry.MongoStepMeterRegistry
-import dev.mongocamp.server.Server
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.plugins.monitoring.MetricsConfiguration
 import dev.mongocamp.server.service.ConfigurationService
-
+import dev.mongocamp.server.Server
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
 
@@ -27,9 +26,9 @@ object MetricsMongoDBPersistenceLoggingPlugin extends ServerPlugin with LazyLogg
     ConfigurationService.registerConfig(ConfKeyLoggingMongoToMongoDb, MongoCampConfiguration.confTypeBoolean)
     ConfigurationService.registerConfig(ConfKeyLoggingEventToMongoDb, MongoCampConfiguration.confTypeBoolean)
 
-    val stepDuration = ConfigurationService.getConfigValue[Duration](ConfKeyMicrometerStep)
-    val configMap    = Map("step" -> s"${stepDuration.toMillis}ms")
-    val registriesList : ArrayBuffer[MongoStepMeterRegistry]= ArrayBuffer()
+    val stepDuration                                        = ConfigurationService.getConfigValue[Duration](ConfKeyMicrometerStep)
+    val configMap                                           = Map("step" -> s"${stepDuration.toMillis}ms")
+    val registriesList: ArrayBuffer[MongoStepMeterRegistry] = ArrayBuffer()
     if (ConfigurationService.getConfigValue[Boolean](ConfKeyLoggingJvmToMongoDb)) {
       val registry = MongoStepMeterRegistry(MongoDatabase.databaseProvider.dao("monitoring_jvm"), configMap)
       registriesList.addOne(registry)
@@ -53,12 +52,14 @@ object MetricsMongoDBPersistenceLoggingPlugin extends ServerPlugin with LazyLogg
 
     Server.registerServerShutdownCallBacks(
       () => {
-        registriesList.foreach(r => {
-          println(s"Publishing metrics for to close Registry")
-          r.publish()
-          r.stop()
-          r.close()
-        })
+        registriesList.foreach(
+          r => {
+            println(s"Publishing metrics for to close Registry")
+            r.publish()
+            r.stop()
+            r.close()
+          }
+        )
       }
     )
   }

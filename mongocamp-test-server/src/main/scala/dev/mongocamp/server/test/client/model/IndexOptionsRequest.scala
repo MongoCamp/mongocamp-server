@@ -7,12 +7,12 @@
 package dev.mongocamp.server.test.client.model
 
 case class IndexOptionsRequest(
-    name: Option[String] = None,
-    background: Option[Boolean] = None,
-    defaultLanguage: Option[String] = None,
-    textVersion: Option[Int] = None,
-    expireAfter: Option[String] = None,
-    unique: Option[Boolean] = None,
-    max: Option[Double] = None,
-    min: Option[Double] = None
+  name: Option[String] = None,
+  background: Option[Boolean] = None,
+  defaultLanguage: Option[String] = None,
+  textVersion: Option[Int] = None,
+  expireAfter: Option[String] = None,
+  unique: Option[Boolean] = None,
+  max: Option[Double] = None,
+  min: Option[Double] = None
 )

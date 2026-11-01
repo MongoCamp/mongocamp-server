@@ -4,13 +4,10 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.service.JvmStartService
 import dev.mongocamp.server.converter.CirceSchema
 import io.circe.parser.decode
-import picocli.CommandLine.{ Command, Parameters }
-
 import java.util.concurrent.Callable
-@Command(
-  name = "runAgent",
-  description = Array("Run Server with Agent and save generated Files to specified Folder")
-)
+import picocli.CommandLine.Command
+import picocli.CommandLine.Parameters
+@Command(name = "runAgent", description = Array("Run Server with Agent and save generated Files to specified Folder"))
 class RunAgentCommand extends Callable[Integer] with LazyLogging with CirceSchema {
 
   @Parameters(description = Array("Folder for generated Files"))
@@ -29,10 +26,12 @@ class RunAgentCommand extends Callable[Integer] with LazyLogging with CirceSchem
           "jdk.internal.loader.ClassLoaders$AppClassLoader",
           "jdk.internal.loader.ClassLoaders$PlatformClassLoader"
         )
-        val filtered = jsonMap.filter(map => {
-          val name = map.get("name")
-          ignoreClasses.contains(name)
-        })
+        val filtered = jsonMap.filter(
+          map => {
+            val name = map.get("name")
+            ignoreClasses.contains(name)
+          }
+        )
         file.write(encodeAnyToJson(filtered).toString())
       }
     )

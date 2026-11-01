@@ -2,14 +2,14 @@ package dev.mongocamp.server.plugins.monitoring.mongodb
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.micrometer.mongodb.binder._
-import dev.mongocamp.server.Server
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.plugins.monitoring.MetricsConfiguration
 import dev.mongocamp.server.service.ConfigurationService
-import io.micrometer.core.instrument.binder.mongodb.{ MongoMetricsCommandListener, MongoMetricsConnectionPoolListener }
-
+import dev.mongocamp.server.Server
+import io.micrometer.core.instrument.binder.mongodb.MongoMetricsCommandListener
+import io.micrometer.core.instrument.binder.mongodb.MongoMetricsConnectionPoolListener
 import scala.collection.mutable.ArrayBuffer
 
 object MongoDbMetricsPlugin extends ServerPlugin with LazyLogging {

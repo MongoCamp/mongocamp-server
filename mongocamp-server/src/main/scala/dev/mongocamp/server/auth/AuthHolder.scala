@@ -3,20 +3,22 @@ package dev.mongocamp.server.auth
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.exception.MongoCampException.{ apiKeyException, userNotFoundException }
+import dev.mongocamp.server.exception.MongoCampException.apiKeyException
+import dev.mongocamp.server.exception.MongoCampException.userNotFoundException
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
 import io.circe.syntax._
-import org.joda.time.DateTime
-import pdi.jwt.{ JwtAlgorithm, JwtCirce, JwtClaim }
-import sttp.model.StatusCode
-
 import java.security.MessageDigest
 import java.time.Instant
+import org.joda.time.DateTime
+import pdi.jwt.JwtAlgorithm
+import pdi.jwt.JwtCirce
+import pdi.jwt.JwtClaim
 import scala.concurrent.duration.Duration
+import sttp.model.StatusCode
 
 trait AuthHolder {
   def allUsers(userToSearch: Option[String], paging: Paging): (List[UserInformation], PaginationInfo)

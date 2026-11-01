@@ -1,7 +1,6 @@
 package dev.mongocamp.server.cli.service
 
 import picocli.CommandLine.Help.Ansi
-
 import scala.sys.process._
 
 object ProcessExecutorService {

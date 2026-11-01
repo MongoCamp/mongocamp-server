@@ -6,10 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class Metric(
-    name: String,
-    metricsType: String,
-    description: String,
-    baseUnit: String,
-    measurements: Option[Seq[Measurement]] = None
-)
+case class Metric(name: String, metricsType: String, description: String, baseUnit: String, measurements: Option[Seq[Measurement]] = None)

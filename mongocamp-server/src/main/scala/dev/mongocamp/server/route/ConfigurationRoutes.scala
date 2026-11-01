@@ -2,27 +2,29 @@ package dev.mongocamp.server.route
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.Server
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
 import dev.mongocamp.server.library.BuildInfo
-import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{ JsonValue, MongoCampConfiguration, SettingsResponse }
+import dev.mongocamp.server.model.JsonValue
+import dev.mongocamp.server.model.MongoCampConfiguration
+import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
+import dev.mongocamp.server.model.SettingsResponse
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.Server
 import io.circe.generic.auto._
-import sttp.capabilities.WebSockets
+import scala.collection.immutable.ListMap
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.collection.immutable.ListMap
-import scala.concurrent.Future
-import scala.concurrent.duration.DurationInt
 
 object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging {
   private val applicationApiBaseEndpoint = adminEndpoint.tag("Application")
@@ -75,9 +77,9 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging 
 
   def listConfigurations(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[MongoCampConfiguration]]] = {
     Future.successful {
-      Right({
+      Right {
         ConfigurationService.getAllRegisteredConfigurations()
-      })
+      }
     }
   }
 
@@ -95,9 +97,9 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging 
 
   def getConfig(configKey: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[MongoCampConfiguration]]] = {
     Future.successful {
-      Right({
+      Right {
         ConfigurationService.getConfig(configKey)
-      })
+      }
     }
   }
 
@@ -115,14 +117,14 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging 
     )
 
   def updateConfig(
-      userInformation: UserInformation,
-      parameter: (String, JsonValue[Any])
+    userInformation: UserInformation,
+    parameter: (String, JsonValue[Any])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
-      Right({
+      Right {
         val response = ConfigurationService.updateConfig(parameter._1, parameter._2.value)
         JsonValue(response)
-      })
+      }
     }
   }
 
@@ -160,13 +162,8 @@ object ConfigurationRoutes extends BaseRoute with RoutesPlugin with LazyLogging 
   }
 
   override def endpoints = {
-    var endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
-      settingsEndpoint,
-      listConfigurationEndpoint,
-      getConfigEndpoint,
-      updateConfigEndpoint,
-      shutdownEndpoint
-    )
+    var endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] =
+      List(settingsEndpoint, listConfigurationEndpoint, getConfigEndpoint, updateConfigEndpoint, shutdownEndpoint)
     endpoints
   }
 

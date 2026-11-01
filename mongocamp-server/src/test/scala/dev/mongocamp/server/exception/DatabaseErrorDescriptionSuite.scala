@@ -1,6 +1,8 @@
 package dev.mongocamp.server.exception
 
-import com.mongodb.{ MongoCommandException, MongoTimeoutException, ServerAddress }
+import com.mongodb.MongoCommandException
+import com.mongodb.MongoTimeoutException
+import com.mongodb.ServerAddress
 import org.bson.BsonDocument
 
 class DatabaseErrorDescriptionSuite extends munit.FunSuite {
@@ -28,7 +30,9 @@ class DatabaseErrorDescriptionSuite extends munit.FunSuite {
   }
 
   test("connection errors do not reveal the cluster") {
-    val timeout     = new MongoTimeoutException(s"Timed out after 30000 ms while waiting for a server. Client view of cluster state is {servers=[{address=$internalHost:27017}]}")
+    val timeout = new MongoTimeoutException(
+      s"Timed out after 30000 ms while waiting for a server. Client view of cluster state is {servers=[{address=$internalHost:27017}]}"
+    )
     val description = DatabaseErrorDescription.describe(timeout)
     assertEquals(description.msg, DatabaseErrorDescription.ConnectionErrorMessage)
     assertEquals(description.msg.contains(internalHost), false)

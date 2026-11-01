@@ -1,6 +1,5 @@
 package dev.mongocamp.server
 import org.apache.pekko.actor.ActorSystem
-
 import scala.concurrent.ExecutionContextExecutor
 
 object ActorHandler {

@@ -17,7 +17,9 @@ class CoursierModuleSuite extends munit.FunSuite with LazyLogging {
   }
 
   test("plugin resolution excludes the server and the scala libraries for every scala version") {
-    val excluded = CoursierModuleService.resolutionExclusions.map(e => s"${e._1.value}:${e._2.value}")
+    val excluded = CoursierModuleService.resolutionExclusions.map(
+      e => s"${e._1.value}:${e._2.value}"
+    )
     List("mongocamp-server_2.12", "mongocamp-server_2.13", "mongocamp-server_3").foreach(
       name => assert(excluded.contains(s"dev.mongocamp:$name"), s"$name is not excluded")
     )
@@ -32,7 +34,7 @@ class CoursierModuleSuite extends munit.FunSuite with LazyLogging {
 
   test("fetch dependencies for sample plugin with own repository") {
     System.setProperty("PLUGINS_MAVEN_REPOSITORIES", "[]")
-    val samplePlugin = "org.springframework:spring-core:6.0.0-M1"
+    val samplePlugin              = "org.springframework:spring-core:6.0.0-M1"
     val mavenFilesWithoutRegistry = CoursierModuleService.loadMavenConfiguredDependencies(List(samplePlugin))
     assertEquals(mavenFilesWithoutRegistry.size, 0)
     System.setProperty("PLUGINS_MAVEN_REPOSITORIES", "[\"https://repo.spring.io/milestone\"]")

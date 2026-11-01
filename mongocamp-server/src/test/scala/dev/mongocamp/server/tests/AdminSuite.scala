@@ -1,9 +1,10 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.model.ModelConstants
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.{AdminApi, AuthApi}
+import dev.mongocamp.server.test.client.api.AdminApi
+import dev.mongocamp.server.test.client.api.AuthApi
 import dev.mongocamp.server.test.client.model._
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import sttp.model.StatusCode
 
 class AdminSuite extends MongoCampBaseServerSuite {
@@ -105,18 +106,12 @@ class AdminSuite extends MongoCampBaseServerSuite {
     val role = executeRequestToResponse(
       adminApi.updateRole("", "", adminBearerToken, "")(
         "unitTestRole",
-        UpdateRoleRequest(
-          isAdmin = true,
-          List(Grant("random", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection))
-        )
+        UpdateRoleRequest(isAdmin = true, List(Grant("random", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection)))
       )
     )
     assertEquals(role.name, "unitTestRole")
     assertEquals(role.isAdmin, true)
-    assertEquals(
-      role.collectionGrants,
-      List(Grant("random", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection))
-    )
+    assertEquals(role.collectionGrants, List(Grant("random", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection)))
   }
 
   test("delete role as admin") {
@@ -197,10 +192,7 @@ class AdminSuite extends MongoCampBaseServerSuite {
     val response = executeRequest(
       adminApi.updateRole("", "", testUserBearerToken, "")(
         "unitTestRole",
-        UpdateRoleRequest(
-          isAdmin = true,
-          List(Grant("random", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection))
-        )
+        UpdateRoleRequest(isAdmin = true, List(Grant("random", read = true, write = true, administrate = true, ModelConstants.grantTypeCollection)))
       )
     )
     assertEquals(response.code.code, 401)

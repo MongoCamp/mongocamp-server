@@ -9,13 +9,13 @@ package dev.mongocamp.server.test.client.model
 import org.joda.time.DateTime
 
 case class JobInformation(
-    name: String,
-    group: String,
-    jobClassName: String,
-    description: Option[String],
-    cronExpression: String,
-    priority: Int,
-    lastScheduledFireTime: Option[DateTime] = None,
-    nextScheduledFireTime: Option[DateTime] = None,
-    scheduleInformation: Option[String] = None
+  name: String,
+  group: String,
+  jobClassName: String,
+  description: Option[String],
+  cronExpression: String,
+  priority: Int,
+  lastScheduledFireTime: Option[DateTime] = None,
+  nextScheduledFireTime: Option[DateTime] = None,
+  scheduleInformation: Option[String] = None
 )

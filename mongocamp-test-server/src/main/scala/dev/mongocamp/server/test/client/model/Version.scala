@@ -8,8 +8,4 @@ package dev.mongocamp.server.test.client.model
 
 import org.joda.time.DateTime
 
-case class Version(
-    name: String,
-    version: String,
-    builtAt: DateTime
-)
+case class Version(name: String, version: String, builtAt: DateTime)

@@ -1,12 +1,13 @@
 package dev.mongocamp.server.cli.service
 
 import com.vdurmont.semver4j.Semver
-import coursier.jvm.{ JavaHome, JvmCache }
+import coursier.jvm.JavaHome
+import coursier.jvm.JvmCache
 import dev.mongocamp.server.cli.BuildInfo
-
 import java.io.File
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ Await, ExecutionContext }
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
 
 object JvmService {
 

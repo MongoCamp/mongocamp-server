@@ -6,8 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class Role(
-    name: String,
-    isAdmin: Boolean,
-    collectionGrants: Seq[Grant]
-)
+case class Role(name: String, isAdmin: Boolean, collectionGrants: Seq[Grant])

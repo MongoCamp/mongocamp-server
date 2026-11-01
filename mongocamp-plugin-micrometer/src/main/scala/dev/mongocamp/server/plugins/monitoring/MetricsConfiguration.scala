@@ -1,15 +1,18 @@
 package dev.mongocamp.server.plugins.monitoring
 
 import com.typesafe.scalalogging.LazyLogging
-import io.micrometer.core.instrument.binder.MeterBinder
 import io.micrometer.core.instrument.binder.jvm._
-import io.micrometer.core.instrument.binder.system.{DiskSpaceMetrics, FileDescriptorMetrics, ProcessorMetrics, UptimeMetrics}
-import io.micrometer.core.instrument.{MeterRegistry, Metrics}
-
+import io.micrometer.core.instrument.binder.system.DiskSpaceMetrics
+import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics
+import io.micrometer.core.instrument.binder.system.UptimeMetrics
+import io.micrometer.core.instrument.binder.MeterBinder
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Metrics
 import java.io.File
 import scala.collection.mutable.ArrayBuffer
 
-object MetricsConfiguration extends LazyLogging{
+object MetricsConfiguration extends LazyLogging {
 
   private lazy val jvmMetricsRegistries: ArrayBuffer[MeterRegistry]     = ArrayBuffer()
   private lazy val systemMetricsRegistries: ArrayBuffer[MeterRegistry]  = ArrayBuffer()
@@ -25,12 +28,8 @@ object MetricsConfiguration extends LazyLogging{
     new JvmInfoMetrics(),
     new JvmCompilationMetrics()
   )
-  private lazy val systemMeterBinder: ArrayBuffer[MeterBinder] = ArrayBuffer(
-    new DiskSpaceMetrics(new File("/")),
-    new FileDescriptorMetrics(),
-    new ProcessorMetrics(),
-    new UptimeMetrics()
-  )
+  private lazy val systemMeterBinder: ArrayBuffer[MeterBinder] =
+    ArrayBuffer(new DiskSpaceMetrics(new File("/")), new FileDescriptorMetrics(), new ProcessorMetrics(), new UptimeMetrics())
 
   private lazy val mongoDbMeterBinder: ArrayBuffer[MeterBinder] = ArrayBuffer()
   private lazy val eventMeterBinder: ArrayBuffer[MeterBinder]   = ArrayBuffer()
@@ -79,9 +78,7 @@ object MetricsConfiguration extends LazyLogging{
       r => systemMeterBinder.foreach(bindMetricToRegistry(r, _))
     )
     getMongoDbMetricsRegistries.foreach(
-      r => {
-          mongoDbMeterBinder.foreach(bindMetricToRegistry(r, _))
-      }
+      r => mongoDbMeterBinder.foreach(bindMetricToRegistry(r, _))
     )
     getEventMetricsRegistries.foreach(
       r => eventMeterBinder.foreach(bindMetricToRegistry(r, _))
@@ -89,9 +86,9 @@ object MetricsConfiguration extends LazyLogging{
   }
 
   private def bindMetricToRegistry(registry: MeterRegistry, meterBinder: MeterBinder): Unit = {
-    try {
+    try
       meterBinder.bindTo(registry)
-    } catch {
+    catch {
       case e: Throwable =>
         logger.error(s"Error binding meter to registry: ${e.getMessage}")
     }

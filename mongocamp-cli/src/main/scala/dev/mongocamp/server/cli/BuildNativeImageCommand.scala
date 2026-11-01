@@ -4,19 +4,17 @@ import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.exception.NativeBuildException
 import dev.mongocamp.server.cli.service.NativeImageBuildService
-import dev.mongocamp.server.service.{ CoursierModuleService, PluginService }
-import lukfor.progress.Components.{ SPINNER, TASK_NAME }
-import lukfor.progress.TaskService
-import lukfor.progress.tasks.ITaskRunnable
+import dev.mongocamp.server.service.CoursierModuleService
+import dev.mongocamp.server.service.PluginService
+import java.util.concurrent.Callable
 import lukfor.progress.tasks.monitors.ITaskMonitor
+import lukfor.progress.tasks.ITaskRunnable
+import lukfor.progress.Components.SPINNER
+import lukfor.progress.Components.TASK_NAME
+import lukfor.progress.TaskService
 import picocli.CommandLine.Command
 import picocli.CommandLine.Help.Ansi
-
-import java.util.concurrent.Callable
-@Command(
-  name = "buildNative",
-  description = Array("Build native Image from Server Instance")
-)
+@Command(name = "buildNative", description = Array("Build native Image from Server Instance"))
 class BuildNativeImageCommand extends Callable[Integer] with LazyLogging {
 
   def call(): Integer = {

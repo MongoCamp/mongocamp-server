@@ -6,6 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class IndexCreateResponse(
-    name: String
-)
+case class IndexCreateResponse(name: String)

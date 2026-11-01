@@ -6,6 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class PasswordUpdateRequest(
-    password: String
-)
+case class PasswordUpdateRequest(password: String)

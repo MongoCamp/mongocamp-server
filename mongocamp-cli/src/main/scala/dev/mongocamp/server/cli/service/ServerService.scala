@@ -1,15 +1,17 @@
 package dev.mongocamp.server.cli.service
 
-import better.files.{ File, FileMonitor }
+import better.files.File
+import better.files.FileMonitor
 import dev.mongocamp.server.cli.Main
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.service.PluginService
 import io.circe.parser._
+import java.nio.file.{ StandardWatchEventKinds => EventType }
+import java.nio.file.Path
+import java.nio.file.WatchEvent
 import picocli.CommandLine.Help.Ansi
-
-import java.nio.file.{ Path, StandardWatchEventKinds => EventType, WatchEvent }
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
+import scala.concurrent.ExecutionContext
 import scala.sys.process
 import scala.sys.process.Process
 

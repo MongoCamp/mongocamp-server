@@ -2,12 +2,12 @@ package dev.mongocamp.server.exception
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.exception.ErrorDefinition.errorEndpointDefinition
+import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.monad.MonadError
-import sttp.tapir.server.interceptor.exception.{ ExceptionContext, ExceptionHandler }
+import sttp.tapir.server.interceptor.exception.ExceptionContext
+import sttp.tapir.server.interceptor.exception.ExceptionHandler
 import sttp.tapir.server.model.ValuedEndpointOutput
-
-import scala.concurrent.Future
 
 class MongoCampExceptionHandler extends ExceptionHandler[Future] with LazyLogging {
 

@@ -2,14 +2,15 @@ package dev.mongocamp.server.tests
 
 import better.files.File
 import dev.mongocamp.driver.mongodb.GenericObservable
+import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.database.TestAdditions.copyResourceFileToTempDir
-import dev.mongocamp.server.database.{MongoDatabase, TestAdditions}
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.FileApi
-import dev.mongocamp.server.test.client.model.{MongoFindRequest, UpdateFileInformationRequest}
+import dev.mongocamp.server.test.client.model.MongoFindRequest
+import dev.mongocamp.server.test.client.model.UpdateFileInformationRequest
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import io.circe.syntax.EncoderOps
-
 import scala.util.Random
 
 class FileSuite extends MongoCampBaseServerSuite {
@@ -89,9 +90,7 @@ class FileSuite extends MongoCampBaseServerSuite {
     val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
 
     val response =
-      executeRequestToResponse(
-        api.getFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId)
-      )
+      executeRequestToResponse(api.getFileInformation("", "", adminBearerToken, "")(BucketNameSample, fileId))
     assertEquals(response._id, fileId)
     assertEquals(response.filename, "myFileName.txt")
     assertEquals(response.metadata, Map("originalFilePath" -> geoFile.pathAsString))
@@ -101,7 +100,7 @@ class FileSuite extends MongoCampBaseServerSuite {
     val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
 
     val request        = api.getFile("", "", adminBearerToken, "")(BucketNameSample, fileId, File.newTemporaryFile().toJava)
-    val responseResult   = TestAdditions.backend.send(request)
+    val responseResult = TestAdditions.backend.send(request)
     val response: File = File(responseResult.body.getOrElse(throw new Exception("error")).getPath)
 
     assertEquals(response.size(), geoFile.size())
@@ -164,9 +163,7 @@ class FileSuite extends MongoCampBaseServerSuite {
   test("delete file of fileId as admin") {
     val countStart = MongoDatabase.databaseProvider.dao(s"$BucketNameSample$BucketCollectionSuffix").count().result()
     val response =
-      executeRequestToResponse(
-        api.deleteFile("", "", adminBearerToken, "")(BucketNameSample, fileId)
-      )
+      executeRequestToResponse(api.deleteFile("", "", adminBearerToken, "")(BucketNameSample, fileId))
     assertEquals(response.deletedCount, 1L)
     assertEquals(response.wasAcknowledged, true)
     val countEnd = MongoDatabase.databaseProvider.dao(s"$BucketNameSample$BucketCollectionSuffix").count().result()
@@ -236,9 +233,7 @@ class FileSuite extends MongoCampBaseServerSuite {
     val geoFile = File(getClass.getResource("/geodata.json").getPath)
 
     val response =
-      executeRequest(
-        api.getFileInformation("", "", testUserBearerToken, "")(BucketNameSample, fileId)
-      )
+      executeRequest(api.getFileInformation("", "", testUserBearerToken, "")(BucketNameSample, fileId))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")
@@ -248,7 +243,7 @@ class FileSuite extends MongoCampBaseServerSuite {
     val geoFile = File(getClass.getResource("/geodata.json").getPath)
 
     val request        = api.getFile("", "", testUserBearerToken, "")(BucketNameSample, fileId, File.newTemporaryFile().toJava)
-    val responseResult   = TestAdditions.backend.send(request)
+    val responseResult = TestAdditions.backend.send(request)
 
     assertEquals(responseResult.code.code, 401)
     assertEquals(responseResult.header("x-error-message").isDefined, true)
@@ -258,9 +253,7 @@ class FileSuite extends MongoCampBaseServerSuite {
 
   test("delete file of fileId as user") {
     val response =
-      executeRequest(
-        api.deleteFile("", "", testUserBearerToken, "")(BucketNameSample, fileId)
-      )
+      executeRequest(api.deleteFile("", "", testUserBearerToken, "")(BucketNameSample, fileId))
     assertEquals(response.code.code, 401)
     assertEquals(response.header("x-error-message").isDefined, true)
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")

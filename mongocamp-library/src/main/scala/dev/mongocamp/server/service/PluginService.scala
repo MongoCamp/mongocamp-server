@@ -4,7 +4,6 @@ import better.files.File
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.service.ReflectionService.registerClassLoaders
-
 import java.net.URL
 import java.net.URLClassLoader
 import scala.collection.mutable.ArrayBuffer

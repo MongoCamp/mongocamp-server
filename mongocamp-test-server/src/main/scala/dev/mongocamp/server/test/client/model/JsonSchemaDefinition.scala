@@ -7,9 +7,9 @@
 package dev.mongocamp.server.test.client.model
 
 case class JsonSchemaDefinition(
-    `type`: String,
-    title: String,
-    additionalProperties: Boolean,
-    required: Option[Seq[String]] = None,
-    properties: Map[String, Map[String, Any]] = Map.empty
+  `type`: String,
+  title: String,
+  additionalProperties: Boolean,
+  required: Option[Seq[String]] = None,
+  properties: Map[String, Map[String, Any]] = Map.empty
 )

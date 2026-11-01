@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class MongoAggregateRequest(
-    pipeline: Seq[PipelineStage],
-    allowDiskUse: Boolean
-)
+case class MongoAggregateRequest(pipeline: Seq[PipelineStage], allowDiskUse: Boolean)

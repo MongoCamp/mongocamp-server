@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class PipelineStage(
-    stage: String,
-    value: Any
-)
+case class PipelineStage(stage: String, value: Any)

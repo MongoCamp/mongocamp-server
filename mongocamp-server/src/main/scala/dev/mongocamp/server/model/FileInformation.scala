@@ -1,7 +1,6 @@
 package dev.mongocamp.server.model
-import org.mongodb.scala.bson.ObjectId
-
 import java.util.Date
+import org.mongodb.scala.bson.ObjectId
 
 case class FileInformation(_id: ObjectId, filename: String, length: Long, chunkSize: Long, uploadDate: Date, metadata: Map[String, Any] = Map())
 

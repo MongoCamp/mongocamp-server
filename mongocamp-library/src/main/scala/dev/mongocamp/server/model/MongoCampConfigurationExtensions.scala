@@ -2,9 +2,8 @@ package dev.mongocamp.server.model
 
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.MongoCampConfiguration._
-import sttp.model.StatusCode
-
 import scala.concurrent.duration.Duration
+import sttp.model.StatusCode
 
 object MongoCampConfigurationExtensions {
 

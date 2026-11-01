@@ -1,8 +1,9 @@
 package dev.mongocamp.server.logging
 
-import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.pattern.color.{ ANSIConstants, ForegroundCompositeConverterBase }
+import ch.qos.logback.classic.Level
+import ch.qos.logback.core.pattern.color.ANSIConstants
+import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase
 
 class HighlightingColorConverter extends ForegroundCompositeConverterBase[ILoggingEvent] {
 

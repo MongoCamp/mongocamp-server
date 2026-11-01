@@ -1,18 +1,19 @@
 package dev.mongocamp.server.database
 
-import better.files.{ File, Resource }
+import better.files.File
+import better.files.Resource
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.model.ModelConstants
 import dev.mongocamp.server.service.SystemFileService
-import dev.mongocamp.server.test.CountingTestJob
-import dev.mongocamp.server.test.client.api.{ AdminApi, JobsApi }
+import dev.mongocamp.server.test.client.api.AdminApi
+import dev.mongocamp.server.test.client.api.JobsApi
 import dev.mongocamp.server.test.client.model._
+import dev.mongocamp.server.test.CountingTestJob
 import org.joda.time.DateTime
-import sttp.client3.HttpClientSyncBackend
-
 import scala.collection.mutable
 import scala.util.Random
+import sttp.client3.HttpClientSyncBackend
 
 object TestAdditions extends CirceSchema {
 

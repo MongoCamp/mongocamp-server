@@ -9,17 +9,17 @@ package dev.mongocamp.server.test.client.model
 import org.joda.time.DateTime
 
 case class CollectionStatus(
-    ns: String,
-    collectionType: String,
-    scaleFactor: Int,
-    size: Double,
-    count: Int,
-    storageSize: Double,
-    avgObjSize: Int,
-    nindexes: Int,
-    indexSizes: Map[String, Int],
-    totalIndexSize: Int,
-    ok: Int,
-    fetched: DateTime,
-    map: Map[String, Any]
+  ns: String,
+  collectionType: String,
+  scaleFactor: Int,
+  size: Double,
+  count: Int,
+  storageSize: Double,
+  avgObjSize: Int,
+  nindexes: Int,
+  indexSizes: Map[String, Int],
+  totalIndexSize: Int,
+  ok: Int,
+  fetched: DateTime,
+  map: Map[String, Any]
 )

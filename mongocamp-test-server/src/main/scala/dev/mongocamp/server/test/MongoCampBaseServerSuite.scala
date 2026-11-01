@@ -2,12 +2,17 @@ package dev.mongocamp.server.test
 
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.server.config.DefaultConfigurations
-import dev.mongocamp.server.database.{ MongoDatabase, TestAdditions }
+import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.service.ConfigurationRead
 import dev.mongocamp.server.test.client.api.AuthApi
-import dev.mongocamp.server.test.client.model.{ Login, LoginResult }
+import dev.mongocamp.server.test.client.model.Login
+import dev.mongocamp.server.test.client.model.LoginResult
 import io.circe
-import sttp.client3.{ Identity, RequestT, Response, ResponseException }
+import sttp.client3.Identity
+import sttp.client3.RequestT
+import sttp.client3.Response
+import sttp.client3.ResponseException
 
 trait MongoCampBaseServerSuite extends munit.FunSuite {
   System.setProperty("PLUGINS_MODULES", "[\"dev.mongocamp:mongocamp-test-server_2.13:0.5.0\"]")
@@ -35,7 +40,7 @@ trait MongoCampBaseServerSuite extends munit.FunSuite {
   protected val indexCollection        = "indexTestCollection"
 
   def executeRequest[R <: Any](
-      request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]
+    request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]
   ): Response[Either[ResponseException[String, circe.Error], R]] = {
     val resultFuture = TestAdditions.backend.send(request)
     resultFuture
@@ -43,9 +48,9 @@ trait MongoCampBaseServerSuite extends munit.FunSuite {
 
   def executeRequestToResponse[R <: Any](request: RequestT[Identity, Either[ResponseException[String, circe.Error], R], Any]): R = {
     val responseResult = executeRequest(request)
-    val response = responseResult.body.getOrElse({
+    val response = responseResult.body.getOrElse {
       throw new Exception(responseResult.body.left.get.getMessage)
-    })
+    }
     response
   }
 

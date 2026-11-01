@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class UpdateRoleRequest(
-    isAdmin: Boolean,
-    collectionGrants: Seq[Grant]
-)
+case class UpdateRoleRequest(isAdmin: Boolean, collectionGrants: Seq[Grant])

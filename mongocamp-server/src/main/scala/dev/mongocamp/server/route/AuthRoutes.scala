@@ -1,23 +1,28 @@
 package dev.mongocamp.server.route
 
-import dev.mongocamp.server.auth.{ AuthHolder, MongoAuthHolder, TokenCache }
+import dev.mongocamp.server.auth.AuthHolder
+import dev.mongocamp.server.auth.MongoAuthHolder
+import dev.mongocamp.server.auth.TokenCache
 import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.event.user.LoginEvent
+import dev.mongocamp.server.event.user.LogoutEvent
+import dev.mongocamp.server.event.user.UpdateApiKeyEvent
+import dev.mongocamp.server.event.user.UpdatePasswordEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.user.{ LoginEvent, LogoutEvent, UpdateApiKeyEvent, UpdatePasswordEvent }
 import dev.mongocamp.server.exception.ErrorDescription
-import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.auth._
+import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.service.ConfigurationService
 import io.circe.generic.auto._
-import sttp.tapir.stringToPath
-import sttp.capabilities.WebSockets
+import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{ Method, StatusCode }
+import sttp.capabilities.WebSockets
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir.auth
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
+import sttp.tapir.stringToPath
 object AuthRoutes extends BaseRoute {
   private val authBase = securedEndpoint.in("auth").tag("Auth")
 
@@ -105,7 +110,9 @@ object AuthRoutes extends BaseRoute {
     .in("refresh")
     .out(jsonBody[LoginResult])
     .summary("Refresh User")
-    .description("Refresh Token and return Login Information. A new token is issued on every call, the previous tokens stay valid until they expire or the user logs out with them.")
+    .description(
+      "Refresh Token and return Login Information. A new token is issued on every call, the previous tokens stay valid until they expire or the user logs out with them."
+    )
     .method(Method.GET)
     .name("refreshToken")
     .serverLogic(
@@ -150,8 +157,8 @@ object AuthRoutes extends BaseRoute {
     )
 
   def updatePassword(
-      loggedInUser: UserInformation,
-      loginToUpdate: PasswordUpdateRequest
+    loggedInUser: UserInformation,
+    loginToUpdate: PasswordUpdateRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password)
@@ -174,9 +181,7 @@ object AuthRoutes extends BaseRoute {
       loggedInUser => _ => updateApiKey(loggedInUser)
     )
 
-  def updateApiKey(
-      loggedInUser: UserInformation
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
+  def updateApiKey(loggedInUser: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[String]]] = {
     Future.successful {
       val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updateApiKeyUser(loggedInUser.userId)
       EventSystem.publish(UpdateApiKeyEvent(loggedInUser, loggedInUser.userId))

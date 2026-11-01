@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.service.CoursierModuleService
 
-object JvmStartService extends LazyLogging{
+object JvmStartService extends LazyLogging {
 
   def startServer(): scala.sys.process.Process = {
     val jars       = CoursierModuleService.loadServerWithAllDependencies()

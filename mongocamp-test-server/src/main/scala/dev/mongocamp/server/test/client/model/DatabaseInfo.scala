@@ -8,10 +8,4 @@ package dev.mongocamp.server.test.client.model
 
 import org.joda.time.DateTime
 
-case class DatabaseInfo(
-    name: String,
-    sizeOnDisk: Double,
-    empty: Boolean,
-    fetched: DateTime,
-    map: Map[String, Any]
-)
+case class DatabaseInfo(name: String, sizeOnDisk: Double, empty: Boolean, fetched: DateTime, map: Map[String, Any])

@@ -7,9 +7,9 @@
 package dev.mongocamp.server.test.client.api
 
 import dev.mongocamp.server.test.client.core.ClientCirceSchema
-import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
+import dev.mongocamp.server.test.TestServer
 import sttp.client3._
 import sttp.model.Method
 
@@ -85,9 +85,7 @@ class AdminApi(baseUrl: String) extends ClientCirceSchema {
     * @param roleName
     *   RoleKey
     */
-  def deleteRole(username: String, password: String, bearerToken: String, apiKey: String)(
-      roleName: String
-  ) =
+  def deleteRole(username: String, password: String, bearerToken: String, apiKey: String)(roleName: String) =
     basicRequest
       .method(Method.DELETE, uri"$baseUrl/admin/roles/${roleName}")
       .contentType("application/json")
@@ -199,9 +197,9 @@ class AdminApi(baseUrl: String) extends ClientCirceSchema {
     *   Requested page of the ResultSets
     */
   def listRoles(username: String, password: String, bearerToken: String, apiKey: String)(
-      filter: Option[String] = None,
-      rowsPerPage: Option[Long] = None,
-      page: Option[Long] = None
+    filter: Option[String] = None,
+    rowsPerPage: Option[Long] = None,
+    page: Option[Long] = None
   ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/admin/roles?filter=${filter}&rowsPerPage=${rowsPerPage}&page=${page}")
@@ -230,9 +228,9 @@ class AdminApi(baseUrl: String) extends ClientCirceSchema {
     *   Requested page of the ResultSets
     */
   def listUsers(username: String, password: String, bearerToken: String, apiKey: String)(
-      filter: Option[String] = None,
-      rowsPerPage: Option[Long] = None,
-      page: Option[Long] = None
+    filter: Option[String] = None,
+    rowsPerPage: Option[Long] = None,
+    page: Option[Long] = None
   ) =
     basicRequest
       .method(Method.GET, uri"$baseUrl/admin/users?filter=${filter}&rowsPerPage=${rowsPerPage}&page=${page}")
@@ -256,8 +254,8 @@ class AdminApi(baseUrl: String) extends ClientCirceSchema {
     * @param passwordUpdateRequest
     */
   def updatePasswordForUser(username: String, password: String, bearerToken: String, apiKey: String)(
-      userId: String,
-      passwordUpdateRequest: PasswordUpdateRequest
+    userId: String,
+    passwordUpdateRequest: PasswordUpdateRequest
   ) = {
     var request = basicRequest
     if (apiKey != null) {
@@ -288,10 +286,7 @@ class AdminApi(baseUrl: String) extends ClientCirceSchema {
     *   RoleKey
     * @param updateRoleRequest
     */
-  def updateRole(username: String, password: String, bearerToken: String, apiKey: String)(
-      roleName: String,
-      updateRoleRequest: UpdateRoleRequest
-  ) =
+  def updateRole(username: String, password: String, bearerToken: String, apiKey: String)(roleName: String, updateRoleRequest: UpdateRoleRequest) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/admin/roles/${roleName}")
       .contentType("application/json")
@@ -314,10 +309,7 @@ class AdminApi(baseUrl: String) extends ClientCirceSchema {
     *   UserId to Update
     * @param requestBody
     */
-  def updateRolesForUser(username: String, password: String, bearerToken: String, apiKey: String)(
-      userId: String,
-      requestBody: Seq[String]
-  ) =
+  def updateRolesForUser(username: String, password: String, bearerToken: String, apiKey: String)(userId: String, requestBody: Seq[String]) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/admin/users/${userId}/roles")
       .contentType("application/json")

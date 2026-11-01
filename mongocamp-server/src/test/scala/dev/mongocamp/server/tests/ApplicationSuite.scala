@@ -1,8 +1,8 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.ApplicationApi
 import dev.mongocamp.server.test.client.model.JsonValueAny
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 
 class ApplicationSuite extends MongoCampBaseServerSuite {
 

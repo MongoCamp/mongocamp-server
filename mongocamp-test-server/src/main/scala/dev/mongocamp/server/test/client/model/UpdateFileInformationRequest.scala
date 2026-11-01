@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class UpdateFileInformationRequest(
-    filename: Option[String] = None,
-    metadata: Option[Map[String, Any]] = None
-)
+case class UpdateFileInformationRequest(filename: Option[String] = None, metadata: Option[Map[String, Any]] = None)

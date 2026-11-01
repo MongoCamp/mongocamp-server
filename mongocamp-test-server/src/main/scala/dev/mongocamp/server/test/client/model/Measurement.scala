@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class Measurement(
-    statisticType: String,
-    value: Double
-)
+case class Measurement(statisticType: String, value: Double)

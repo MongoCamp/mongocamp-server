@@ -2,12 +2,12 @@ package dev.mongocamp.server.test
 
 import better.files.File
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.RestServer
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.service.ReflectionService
 import dev.mongocamp.server.test.client.api.SystemApi
-
-import scala.concurrent.{ ExecutionContext, Future }
+import dev.mongocamp.server.RestServer
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 import scala.util.Random
 
 object TestServer extends LazyLogging {
@@ -40,9 +40,9 @@ object TestServer extends LazyLogging {
             MongoTestServer.startMongoDatabase()
             setPort()
             server.registerMongoCampServerDefaultConfigs()
-            server.registerServerShutdownCallBacks(() => {
-              _serverRunning = false
-            })
+            server.registerServerShutdownCallBacks(
+              () => _serverRunning = false
+            )
             server.startServer()(ExecutionContext.global)
           }
           mongoServerStarted = true

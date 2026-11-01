@@ -1,7 +1,8 @@
 package dev.mongocamp.server.graal.substitution
 
 import better.files.Resource
-import com.oracle.svm.core.annotate.{ Substitute, TargetClass }
+import com.oracle.svm.core.annotate.Substitute
+import com.oracle.svm.core.annotate.TargetClass
 import dev.mongocamp.server.service.reflection.ClassGraphService
 import io.github.classgraph.ScanResult
 

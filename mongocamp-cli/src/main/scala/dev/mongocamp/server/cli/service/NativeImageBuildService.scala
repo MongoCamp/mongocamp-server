@@ -23,7 +23,9 @@ object NativeImageBuildService {
         ProcessExecutorService.executeToString(s"$gu install native-image")
       }
       else {
-        throw new RuntimeException(s"native-image is not part of the JVM in ${JvmService.javaHome}, use a GraalVM distribution that includes it (GraalVM for JDK 21+)")
+        throw new RuntimeException(
+          s"native-image is not part of the JVM in ${JvmService.javaHome}, use a GraalVM distribution that includes it (GraalVM for JDK 21+)"
+        )
       }
     }
   }
@@ -61,7 +63,7 @@ object NativeImageBuildService {
     val runnableLinuxRegex          = "Build artifacts:\n(.*?) \\(executable\\)".r
     val matchesLinux                = runnableLinuxRegex.findAllMatchIn(result).toList
     val runnableLinuxResponseOption = matchesLinux.lastOption.map(_.matched.replaceAll("Produced artifacts:\n", "").replaceAll("\\(executable\\)", ""))
-    val runnableProcessList = runnableLinuxResponseOption.toList ++ runnableMacResponseOption.toList
+    val runnableProcessList         = runnableLinuxResponseOption.toList ++ runnableMacResponseOption.toList
 
     if (runnableProcessList.isEmpty) {
       println(s"Could not find process path.")

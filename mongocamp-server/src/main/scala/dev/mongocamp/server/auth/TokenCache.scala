@@ -6,14 +6,15 @@ import dev.mongocamp.server.auth.AuthHolder.handler
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.database.MongoDaoHolder.tokenCacheDao
 import dev.mongocamp.server.jobs.CleanUpTokenJob
-import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.model.auth.UserInformation
+import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.plugin.JobPlugin
 import dev.mongocamp.server.service.ConfigurationService
-import org.joda.time.DateTime
-
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
+import org.joda.time.DateTime
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.FiniteDuration
 
 object TokenCache {
   val keyToken   = "token"

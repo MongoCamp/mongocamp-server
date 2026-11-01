@@ -6,8 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class SchemaAnalysisFieldType(
-    fieldType: String,
-    count: Long,
-    percentageOfParent: Double
-)
+case class SchemaAnalysisFieldType(fieldType: String, count: Long, percentageOfParent: Double)

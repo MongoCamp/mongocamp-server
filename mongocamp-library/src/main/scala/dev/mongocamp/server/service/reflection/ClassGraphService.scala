@@ -1,8 +1,9 @@
 package dev.mongocamp.server.service.reflection
 
 import com.typesafe.scalalogging.LazyLogging
-import io.github.classgraph.{ ClassGraph, ClassInfo, ScanResult }
-
+import io.github.classgraph.ClassGraph
+import io.github.classgraph.ClassInfo
+import io.github.classgraph.ScanResult
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
@@ -53,13 +54,16 @@ class ClassGraphService extends LazyLogging {
         else {
           // Scala objects are compiled to a class with a static MODULE$ field holding the singleton
           val instance = Try(foundClazz.getField("MODULE$").get(null)).toOption
-          instance.map(i => {
-            if (i.isInstanceOf[T]) {
-              i.asInstanceOf[T]
-            } else {
+          instance.map(
+            i => {
+              if (i.isInstanceOf[T]) {
+                i.asInstanceOf[T]
+              }
+              else {
                 throw new ClassCastException(s"Class ${foundClazz.getName} is not a subclass")
+              }
             }
-          })
+          )
         }
       }
     )

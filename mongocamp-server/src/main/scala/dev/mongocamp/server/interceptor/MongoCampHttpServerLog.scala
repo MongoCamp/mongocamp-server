@@ -2,9 +2,8 @@ package dev.mongocamp.server.interceptor
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.exception.MongoCampException
-import sttp.tapir.server.interceptor.log.DefaultServerLog
-
 import scala.concurrent.Future
+import sttp.tapir.server.interceptor.log.DefaultServerLog
 
 object MongoCampHttpServerLog extends LazyLogging {
 

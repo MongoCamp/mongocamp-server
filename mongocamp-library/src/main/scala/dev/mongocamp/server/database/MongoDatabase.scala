@@ -1,12 +1,13 @@
 package dev.mongocamp.server.database
 
-import com.mongodb.event.{CommandListener, ConnectionPoolListener}
+import com.mongodb.event.CommandListener
+import com.mongodb.event.ConnectionPoolListener
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.database.MongoConfig
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.service.ConfigurationRead
-
 import scala.collection.mutable.ArrayBuffer
 
 object MongoDatabase extends LazyLogging {

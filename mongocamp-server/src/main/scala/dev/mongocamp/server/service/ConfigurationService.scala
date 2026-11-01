@@ -2,9 +2,11 @@ package dev.mongocamp.server.service
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.ConfigDao
+import dev.mongocamp.server.event.config.ConfigRegisterEvent
+import dev.mongocamp.server.event.config.ConfigUpdateEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.config.{ ConfigRegisterEvent, ConfigUpdateEvent }
-import dev.mongocamp.server.service.ConfigurationRead.{ configCache, nonPersistentConfigs }
+import dev.mongocamp.server.service.ConfigurationRead.configCache
+import dev.mongocamp.server.service.ConfigurationRead.nonPersistentConfigs
 
 object ConfigurationService extends ConfigurationRead {
 
@@ -44,12 +46,12 @@ object ConfigurationService extends ConfigurationRead {
   }
 
   override protected def publishConfigRegisterEvent(
-      persistent: Boolean,
-      configKey: String,
-      configType: String,
-      value: Option[Any],
-      comment: String,
-      needsRestartForActivation: Boolean
+    persistent: Boolean,
+    configKey: String,
+    configType: String,
+    value: Option[Any],
+    comment: String,
+    needsRestartForActivation: Boolean
   ): Unit = {
     EventSystem.publish(ConfigRegisterEvent(persistent, configKey, configType, value, comment, needsRestartForActivation))
   }

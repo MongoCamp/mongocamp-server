@@ -6,9 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class SettingsResponse(
-    routesPlugins: Seq[String],
-    filePlugins: Seq[String],
-    ignoredPlugins: Seq[String],
-    configurations: Map[String, Any]
-)
+case class SettingsResponse(routesPlugins: Seq[String], filePlugins: Seq[String], ignoredPlugins: Seq[String], configurations: Map[String, Any])

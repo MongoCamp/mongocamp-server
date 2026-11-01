@@ -8,9 +8,8 @@ import dev.mongocamp.server.model
 import dev.mongocamp.server.model._
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.service.AggregationService.convertToBsonPipeline
-import org.mongodb.scala.documentToUntypedDocument
 import org.bson.conversions.Bson
-
+import org.mongodb.scala.documentToUntypedDocument
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.DurationInt
@@ -125,12 +124,7 @@ object SchemaService extends TapirSchema {
     val stringBranch     = createBranch(Map("$eq" -> List(KeyFieldType, "string")), fieldValue(fullName, field.level))
     val arrayBranch      = createBranch(Map("$eq" -> List(KeyFieldType, "array")), processArrayField(maxLevel, fullName, field, parents))
     val objectBranch     = createBranch(Map("$eq" -> List(KeyFieldType, "object")), processObjectField(maxLevel, fullName, field, parents))
-    Map(
-      "$switch" -> Map(
-        "branches" -> List(stringBranch, arrayBranch, objectBranch),
-        "default"  -> fieldValue(fullName, field.level)
-      )
-    )
+    Map("$switch" -> Map("branches" -> List(stringBranch, arrayBranch, objectBranch), "default" -> fieldValue(fullName, field.level)))
   }
 
   def processArrayField(maxLevel: Int, fullName: String, field: AggregationField, parents: List[String]): Bson = {
@@ -176,12 +170,7 @@ object SchemaService extends TapirSchema {
     else {
       Map("$concatArrays" -> List(List(null), processObject(maxLevel, field.level + 1, field.value, addToParents(parents, field.name))))
     }
-    Map(
-      "_" -> nestedObject,
-      "n" -> generateFieldName(fullName),
-      "t" -> KeyFieldType,
-      "e" -> field.level
-    )
+    Map("_" -> nestedObject, "n" -> generateFieldName(fullName), "t" -> KeyFieldType, "e" -> field.level)
   }
 
   def processObject(maxLevel: Int, level: Int, objectName: String, parents: List[String]): Bson = {
@@ -206,11 +195,7 @@ object SchemaService extends TapirSchema {
   // and the fields of all earlier requests (and of all other collections) would be returned
   def emptyField = model.SchemaAnalysisField("ROOT", "", List(), -1, -1, ArrayBuffer())
 
-  def analyzeSchema(
-      authorizedCollectionRequest: AuthorizedCollectionRequest,
-      deepth: Int,
-      sample: Option[Int]
-  ): SchemaAnalysis = {
+  def analyzeSchema(authorizedCollectionRequest: AuthorizedCollectionRequest, deepth: Int, sample: Option[Int]): SchemaAnalysis = {
     val dao           = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
     val dbResponse    = dao.findAggregated(convertToBsonPipeline(schemaAggregation(deepth, sample)), allowDiskUse = true).resultList(3.minutes.toSeconds.toInt)
     val countResponse = dao.count().result()

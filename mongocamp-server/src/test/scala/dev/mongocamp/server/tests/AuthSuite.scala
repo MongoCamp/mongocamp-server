@@ -3,11 +3,12 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDaoHolder.tokenCacheDao
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.model.ModelConstants
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.AuthApi
 import dev.mongocamp.server.test.client.model
-import dev.mongocamp.server.test.client.model.{Grant, Login, PasswordUpdateRequest}
-
+import dev.mongocamp.server.test.client.model.Grant
+import dev.mongocamp.server.test.client.model.Login
+import dev.mongocamp.server.test.client.model.PasswordUpdateRequest
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import scala.concurrent.duration.DurationInt
 
 class AuthSuite extends MongoCampBaseServerSuite {

@@ -1,10 +1,10 @@
 package dev.mongocamp.server.cli.prepare
 
 import dev.mongocamp.server.cli.Main
-import picocli.CommandLine
-import picocli.CommandLine.{ Command, HelpCommand }
-
 import java.util.concurrent.Callable
+import picocli.CommandLine
+import picocli.CommandLine.Command
+import picocli.CommandLine.HelpCommand
 @Command(
   name = "prepare",
   mixinStandardHelpOptions = true,

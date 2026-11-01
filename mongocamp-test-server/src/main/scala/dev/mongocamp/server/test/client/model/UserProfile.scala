@@ -6,10 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class UserProfile(
-    user: String,
-    isAdmin: Boolean,
-    apiKey: Option[String],
-    roles: Seq[String],
-    grants: Seq[Grant]
-)
+case class UserProfile(user: String, isAdmin: Boolean, apiKey: Option[String], roles: Seq[String], grants: Seq[Grant])

@@ -2,9 +2,8 @@ package dev.mongocamp.server.interceptor
 
 import org.apache.pekko.http.scaladsl.model.AttributeKey
 import org.apache.pekko.http.scaladsl.server.RequestContext
-import sttp.tapir.model.ServerRequest
-
 import scala.jdk.OptionConverters._
+import sttp.tapir.model.ServerRequest
 
 object RequestFunctions {
   val mongoCampRequestIdKey = "x-request-id"

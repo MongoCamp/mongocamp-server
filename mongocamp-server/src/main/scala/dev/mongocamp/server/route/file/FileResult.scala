@@ -11,12 +11,7 @@ object FileResult {
     else {
       "attachment; "
     }
-    FileResult(
-      file.toJava,
-      file.byteArray.length,
-      contentDisposition + "filename=\"%s\"".format(fileName.getOrElse(file.name)),
-      contentType
-    )
+    FileResult(file.toJava, file.byteArray.length, contentDisposition + "filename=\"%s\"".format(fileName.getOrElse(file.name)), contentType)
   }
 
 }

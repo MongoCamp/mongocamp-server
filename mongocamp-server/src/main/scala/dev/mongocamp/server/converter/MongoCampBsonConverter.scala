@@ -1,11 +1,10 @@
 package dev.mongocamp.server.converter
 
-import org.mongodb.scala.bsonDocumentToDocument
-import org.bson.BsonValue
 import org.bson.types.ObjectId
+import org.bson.BsonValue
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.Document
-
+import org.mongodb.scala.bsonDocumentToDocument
 import scala.collection.mutable
 
 object MongoCampBsonConverter {
@@ -110,14 +109,13 @@ object MongoCampBsonConverter {
   // operators of a filter on _id, the values of these operators are ids
   private val idOperators = Set("$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$all")
 
-  /** Converts the value of an `_id` field of a document or filter. The id of a document can be any value, so only the values that are
-    * ObjectIds are converted: a string with 24 hex characters or the Extended JSON form `{"$oid": "..."}`, also in the values of the
-    * operators `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin` and `$all`. All other values (strings, numbers and operators like `$regex`
-    * or `$exists`) are used as they are.
+  /** Converts the value of an `_id` field of a document or filter. The id of a document can be any value, so only the values that are ObjectIds are converted:
+    * a string with 24 hex characters or the Extended JSON form `{"$oid": "..."}`, also in the values of the operators `$eq`, `$ne`, `$gt`, `$gte`, `$lt`,
+    * `$lte`, `$in`, `$nin` and `$all`. All other values (strings, numbers and operators like `$regex` or `$exists`) are used as they are.
     */
   def convertIdValue(id: Any): Any = {
     id match {
-      case objectId: ObjectId                      => objectId
+      case objectId: ObjectId                         => objectId
       case string: String if ObjectId.isValid(string) => new ObjectId(string)
       case map: Map[_, _] =>
         val operatorMap = map.asInstanceOf[Map[String, Any]]

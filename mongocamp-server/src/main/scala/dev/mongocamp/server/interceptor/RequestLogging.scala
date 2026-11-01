@@ -1,13 +1,18 @@
 package dev.mongocamp.server.interceptor
 
-import dev.mongocamp.server.auth.{ AuthHolder, TokenCache }
+import dev.mongocamp.server.auth.AuthHolder
+import dev.mongocamp.server.auth.TokenCache
+import dev.mongocamp.server.event.http.HttpRequestCompletedEvent
+import dev.mongocamp.server.event.http.HttpRequestStartEvent
 import dev.mongocamp.server.event.EventSystem
-import dev.mongocamp.server.event.http.{ HttpRequestCompletedEvent, HttpRequestStartEvent }
 import dev.mongocamp.server.exception.MongoCampException
-import dev.mongocamp.server.interceptor.RequestFunctions.{ requestHeaderKeyRealIp, requestHeaderKeyRemoteAddress }
+import dev.mongocamp.server.interceptor.RequestFunctions.requestHeaderKeyRealIp
+import dev.mongocamp.server.interceptor.RequestFunctions.requestHeaderKeyRemoteAddress
 import org.joda.time.DateTime
 import sttp.model.HeaderNames
-import sttp.tapir.server.metrics.{ EndpointMetric, Metric, MetricLabels }
+import sttp.tapir.server.metrics.EndpointMetric
+import sttp.tapir.server.metrics.Metric
+import sttp.tapir.server.metrics.MetricLabels
 
 object RequestLogging {
   def responsesDuration[F[_]](labels: MetricLabels = MetricLabels.Default): Metric[F, _] =
@@ -54,7 +59,7 @@ object RequestLogging {
             EndpointMetric()
               .onResponseBody {
                 (endpoint, response) =>
-                  m.eval({
+                  m.eval {
                     val headOfTags     = endpoint.info.tags.headOption.getOrElse("NOT_SET")
                     val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
                     val methodeName    = endpoint.info.name.getOrElse(headOfTags)
@@ -73,11 +78,11 @@ object RequestLogging {
                     )
                     EventSystem.publish(requestCompletedEvent)
                     histogram
-                  })
+                  }
               }
               .onException {
                 (endpoint, exception) =>
-                  m.eval({
+                  m.eval {
 
                     val statusCode: Int = exception match {
                       case e: MongoCampException =>
@@ -104,11 +109,11 @@ object RequestLogging {
                     )
                     EventSystem.publish(requestCompletedEvent)
                     histogram
-                  })
+                  }
               }
               .onEndpointRequest(
                 (endpoint) =>
-                  m.eval({
+                  m.eval {
                     val headOfTags     = endpoint.info.tags.headOption.getOrElse("NOT_SET")
                     val controllerName = headOfTags.replace("/", "").split(' ').map(_.capitalize).mkString("")
                     val methodeName    = endpoint.info.name.getOrElse(headOfTags)
@@ -128,7 +133,7 @@ object RequestLogging {
 
                     EventSystem.publish(requestStartEvent)
                     endpoint
-                  })
+                  }
               )
 
           }

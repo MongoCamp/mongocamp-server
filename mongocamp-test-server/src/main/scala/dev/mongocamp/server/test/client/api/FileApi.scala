@@ -7,13 +7,12 @@
 package dev.mongocamp.server.test.client.api
 
 import dev.mongocamp.server.test.client.core.ClientCirceSchema
-import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
+import dev.mongocamp.server.test.TestServer
+import java.io.File
 import sttp.client3._
 import sttp.model.Method
-
-import java.io.File
 
 object FileApi {
 
@@ -63,10 +62,10 @@ class FileApi(baseUrl: String) extends ClientCirceSchema {
     *   Requested page of the ResultSets
     */
   def findFiles(
-      username: String,
-      password: String,
-      bearerToken: String,
-      apiKey: String
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
   )(bucketName: String, mongoFindRequest: MongoFindRequest, rowsPerPage: Option[Long] = None, page: Option[Long] = None) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/buckets/${bucketName}/files?rowsPerPage=${rowsPerPage}&page=${page}")
@@ -142,10 +141,10 @@ class FileApi(baseUrl: String) extends ClientCirceSchema {
     *   override filename of uploaded file
     */
   def insertFile(
-      username: String,
-      password: String,
-      bearerToken: String,
-      apiKey: String
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
   )(bucketName: String, file: File, metaData: String, fileName: Option[String] = None) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/buckets/${bucketName}/files?fileName=${fileName}")
@@ -155,10 +154,7 @@ class FileApi(baseUrl: String) extends ClientCirceSchema {
       .auth
       .bearer(bearerToken)
       .header("X-AUTH-APIKEY", apiKey)
-      .multipartBody(
-        multipartFile("file", file),
-        multipart("metaData", metaData)
-      )
+      .multipartBody(multipartFile("file", file), multipart("metaData", metaData))
       .response(asJson[InsertResponse])
 
   /** Get Files paginated from given Bucket
@@ -185,12 +181,12 @@ class FileApi(baseUrl: String) extends ClientCirceSchema {
     *   Requested page of the ResultSets
     */
   def listFiles(username: String, password: String, bearerToken: String, apiKey: String)(
-      bucketName: String,
-      filter: Option[String] = None,
-      sort: Option[String] = None,
-      projection: Option[String] = None,
-      rowsPerPage: Option[Long] = None,
-      page: Option[Long] = None
+    bucketName: String,
+    filter: Option[String] = None,
+    sort: Option[String] = None,
+    projection: Option[String] = None,
+    rowsPerPage: Option[Long] = None,
+    page: Option[Long] = None
   ) =
     basicRequest
       .method(
@@ -219,9 +215,9 @@ class FileApi(baseUrl: String) extends ClientCirceSchema {
     * @param updateFileInformationRequest
     */
   def updateFileInformation(username: String, password: String, bearerToken: String, apiKey: String)(
-      bucketName: String,
-      fileId: String,
-      updateFileInformationRequest: UpdateFileInformationRequest
+    bucketName: String,
+    fileId: String,
+    updateFileInformationRequest: UpdateFileInformationRequest
   ) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/mongodb/buckets/${bucketName}/files/${fileId}")

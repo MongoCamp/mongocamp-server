@@ -6,14 +6,14 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.ClusterInformation
 import dev.mongocamp.server.plugin.RoutesPlugin
 import io.circe.generic.auto._
+import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
 
 object SystemRoutes extends BaseRoute with RoutesPlugin {
   private val systemApiBaseEndpoint = adminEndpoint.tag("System").in("system")
@@ -30,9 +30,9 @@ object SystemRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def viewCluster(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), ClusterInformation]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       ClusterInformation(EventSystem.listOfMembers.map(JGroupsConverter.convertAddress), JGroupsConverter.convertAddress(EventSystem.coordinator))
-    }))
+    })
   }
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =

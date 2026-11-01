@@ -1,19 +1,23 @@
 package dev.mongocamp.server.route
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.UserInformation
-import dev.mongocamp.server.model.{JobConfig, JobInformation, JsonValue, ModelConstants}
-import dev.mongocamp.server.plugin.{JobPlugin, RoutesPlugin}
+import dev.mongocamp.server.model.JobConfig
+import dev.mongocamp.server.model.JobInformation
+import dev.mongocamp.server.model.JsonValue
+import dev.mongocamp.server.model.ModelConstants
+import dev.mongocamp.server.plugin.JobPlugin
+import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.ReflectionService
 import io.circe.generic.auto._
 import org.quartz.Job
+import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
-import sttp.model.{Method, StatusCode}
+import sttp.model.Method
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
-
-import scala.concurrent.Future
 
 object JobRoutes extends BaseRoute with RoutesPlugin {
   private val jobApiBaseEndpoint = adminEndpoint.tag("Jobs").in("system" / "jobs")
@@ -29,9 +33,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def jobsList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[JobInformation]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       JobPlugin.jobsList()
-    }))
+    })
   }
 
   val registerJobRoutes = jobApiBaseEndpoint
@@ -46,7 +50,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def registerJob(auth: UserInformation, jobConfig: JobConfig): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val added = JobPlugin.addJob(jobConfig, Some(auth))
       if (added) {
         Some(JobPlugin.convertToJobInformation(jobConfig))
@@ -54,7 +58,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
       else {
         None
       }
-    }))
+    })
   }
 
   lazy val jobGroupParameter =
@@ -77,10 +81,10 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def updateJob(
-      auth: UserInformation,
-      parameter: (String, String, JobConfig)
+    auth: UserInformation,
+    parameter: (String, String, JobConfig)
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Option[JobInformation]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       val jobConfig = parameter._3
       val updated   = JobPlugin.updateJob(auth, parameter._1, parameter._2, jobConfig)
       if (updated) {
@@ -89,7 +93,7 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
       else {
         None
       }
-    }))
+    })
   }
 
   val deleteJobRoutes = jobApiBaseEndpoint
@@ -104,9 +108,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def deleteJob(auth: UserInformation, parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       JsonValue(JobPlugin.deleteJob(auth, parameter._1, parameter._2))
-    }))
+    })
   }
 
   val jobClassesRoutes = jobApiBaseEndpoint
@@ -121,9 +125,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def jobClassesList(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       ReflectionService.getSubClassesList(classOf[Job]).map(_.getName).filterNot(_.startsWith("org.quartz")).sorted
-    }))
+    })
   }
 
   val executeJobRoutes = jobApiBaseEndpoint
@@ -138,9 +142,9 @@ object JobRoutes extends BaseRoute with RoutesPlugin {
     )
 
   def executeJob(parameter: (String, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
-    Future.successful(Right({
+    Future.successful(Right {
       JsonValue(JobPlugin.executeJob(parameter._1, parameter._2))
-    }))
+    })
   }
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =

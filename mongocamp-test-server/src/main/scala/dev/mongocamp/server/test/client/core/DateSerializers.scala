@@ -1,10 +1,11 @@
 package dev.mongocamp.server.test.client.core
 
-import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
+import org.joda.time.DateTime
 
 trait DateSerializers {
-  import io.circe.{ Decoder, Encoder }
+  import io.circe.Decoder
+  import io.circe.Encoder
   implicit val dateTimeDecoder: Decoder[DateTime] = Decoder.decodeString.map(ISODateTimeFormat.dateOptionalTimeParser().parseDateTime(_))
   implicit val dateTimeEncoder: Encoder[DateTime] = Encoder.encodeString.contramap(ISODateTimeFormat.dateTime().print(_))
 

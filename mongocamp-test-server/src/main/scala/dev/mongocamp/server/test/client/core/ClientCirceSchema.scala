@@ -1,11 +1,12 @@
 package dev.mongocamp.server.test.client.core
 
 import dev.mongocamp.server.converter.CirceSchema
-import io.circe.{ Decoder, Encoder, Json }
+import io.circe.Decoder
+import io.circe.Encoder
+import io.circe.Json
+import java.util.Date
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
-
-import java.util.Date
 
 // Instances of CirceSchema for the generated client api classes, WITHOUT Encoder[Any].
 // sttp's BodySerializer is contravariant, so on Scala 3 an Encoder[Any] in lexical scope is chosen for every request body

@@ -15,13 +15,13 @@ import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.ModelConstants
 import dev.mongocamp.server.plugin.RoutesPlugin
 import scala.concurrent.Future
-import sttp.tapir.stringToPath
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.Method
 import sttp.model.StatusCode
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
+import sttp.tapir.stringToPath
 
 object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
 

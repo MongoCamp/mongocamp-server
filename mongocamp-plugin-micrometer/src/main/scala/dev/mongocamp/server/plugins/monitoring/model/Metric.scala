@@ -2,7 +2,6 @@ package dev.mongocamp.server.plugins.monitoring.model
 
 import com.typesafe.scalalogging.LazyLogging
 import io.micrometer.core.instrument.Meter
-
 import scala.jdk.CollectionConverters._
 
 case class Metric(name: String, metricsType: String, description: String, baseUnit: String, measurements: List[Measurement])

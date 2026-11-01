@@ -7,9 +7,9 @@
 package dev.mongocamp.server.test.client.api
 
 import dev.mongocamp.server.test.client.core.ClientCirceSchema
-import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
+import dev.mongocamp.server.test.TestServer
 import sttp.client3._
 import sttp.model.Method
 
@@ -40,10 +40,10 @@ class IndexApi(baseUrl: String) extends ClientCirceSchema {
     *   Name for your index
     */
   def createExpiringIndex(
-      username: String,
-      password: String,
-      bearerToken: String,
-      apiKey: String
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
   )(collectionName: String, fieldName: String, duration: String, sortAscending: Option[Boolean] = None, name: Option[String] = None) =
     basicRequest
       .method(
@@ -98,10 +98,10 @@ class IndexApi(baseUrl: String) extends ClientCirceSchema {
     * @param indexOptionsRequest
     */
   def createIndexForField(
-      username: String,
-      password: String,
-      bearerToken: String,
-      apiKey: String
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
   )(collectionName: String, fieldName: String, sortAscending: Option[Boolean] = None, indexOptionsRequest: Option[IndexOptionsRequest] = None) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/${collectionName}/index/field/${fieldName}?sortAscending=${sortAscending}")
@@ -128,9 +128,9 @@ class IndexApi(baseUrl: String) extends ClientCirceSchema {
     * @param indexOptionsRequest
     */
   def createTextIndex(username: String, password: String, bearerToken: String, apiKey: String)(
-      collectionName: String,
-      fieldName: String,
-      indexOptionsRequest: Option[IndexOptionsRequest] = None
+    collectionName: String,
+    fieldName: String,
+    indexOptionsRequest: Option[IndexOptionsRequest] = None
   ) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/${collectionName}/index/field/${fieldName}/text")
@@ -161,10 +161,10 @@ class IndexApi(baseUrl: String) extends ClientCirceSchema {
     *   Name for your index
     */
   def createUniqueIndex(
-      username: String,
-      password: String,
-      bearerToken: String,
-      apiKey: String
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
   )(collectionName: String, fieldName: String, sortAscending: Option[Boolean] = None, name: Option[String] = None) =
     basicRequest
       .method(Method.PUT, uri"$baseUrl/mongodb/collections/${collectionName}/index/field/${fieldName}/unique?sortAscending=${sortAscending}&name=${name}")

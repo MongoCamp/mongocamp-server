@@ -7,9 +7,9 @@
 package dev.mongocamp.server.test.client.api
 
 import dev.mongocamp.server.test.client.core.ClientCirceSchema
-import dev.mongocamp.server.test.TestServer
 import dev.mongocamp.server.test.client.core.JsonSupport._
 import dev.mongocamp.server.test.client.model._
+import dev.mongocamp.server.test.TestServer
 import sttp.client3._
 import sttp.model.Method
 
@@ -84,10 +84,10 @@ class DocumentApi(baseUrl: String) extends ClientCirceSchema {
     *   Requested page of the ResultSets
     */
   def find(
-      username: String,
-      password: String,
-      bearerToken: String,
-      apiKey: String
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
   )(collectionName: String, mongoFindRequest: MongoFindRequest, rowsPerPage: Option[Long] = None, page: Option[Long] = None) =
     basicRequest
       .method(Method.POST, uri"$baseUrl/mongodb/collections/${collectionName}/documents?rowsPerPage=${rowsPerPage}&page=${page}")
@@ -195,12 +195,12 @@ class DocumentApi(baseUrl: String) extends ClientCirceSchema {
     *   Requested page of the ResultSets
     */
   def listDocuments(username: String, password: String, bearerToken: String, apiKey: String)(
-      collectionName: String,
-      filter: Option[String] = None,
-      sort: Seq[String],
-      projection: Seq[String],
-      rowsPerPage: Option[Long] = None,
-      page: Option[Long] = None
+    collectionName: String,
+    filter: Option[String] = None,
+    sort: Seq[String],
+    projection: Seq[String],
+    rowsPerPage: Option[Long] = None,
+    page: Option[Long] = None
   ) =
     basicRequest
       .method(
@@ -229,9 +229,9 @@ class DocumentApi(baseUrl: String) extends ClientCirceSchema {
     * @param requestBody
     */
   def update(username: String, password: String, bearerToken: String, apiKey: String)(
-      collectionName: String,
-      documentId: String,
-      requestBody: Map[String, Any]
+    collectionName: String,
+    documentId: String,
+    requestBody: Map[String, Any]
   ) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/mongodb/collections/${collectionName}/documents/${documentId}")
@@ -258,9 +258,9 @@ class DocumentApi(baseUrl: String) extends ClientCirceSchema {
     * @param requestBody
     */
   def updateDocumentPartial(username: String, password: String, bearerToken: String, apiKey: String)(
-      collectionName: String,
-      documentId: String,
-      requestBody: Map[String, Any]
+    collectionName: String,
+    documentId: String,
+    requestBody: Map[String, Any]
   ) =
     basicRequest
       .method(Method.PATCH, uri"$baseUrl/mongodb/collections/${collectionName}/documents/${documentId}/partial")

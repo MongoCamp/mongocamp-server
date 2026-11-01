@@ -3,8 +3,8 @@ package dev.mongocamp.server.service
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.model.MongoCampConfiguration
 import dev.mongocamp.server.model.MongoCampConfigurationExtensions._
-import dev.mongocamp.server.service.ConfigurationService.{getConfig, registerNonPersistentConfig}
-
+import dev.mongocamp.server.service.ConfigurationService.getConfig
+import dev.mongocamp.server.service.ConfigurationService.registerNonPersistentConfig
 import scala.concurrent.duration.Duration
 
 class ConfigSuite extends munit.FunSuite with LazyLogging {

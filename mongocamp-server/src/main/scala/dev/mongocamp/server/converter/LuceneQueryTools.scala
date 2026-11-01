@@ -22,7 +22,7 @@ object LuceneQueryTools {
     LuceneQueryValidation(valid = false, luceneQueryInput, Some(e.getMessage))
   }
 
-  def luceneQueryValidator(defaultField: String): Validator[String] = Validator.custom({
+  def luceneQueryValidator(defaultField: String): Validator[String] = Validator.custom {
     (x: String) =>
       val validation = LuceneQueryTools.validateLuceneQuery(x, defaultField)
       if (validation.valid) {
@@ -31,7 +31,7 @@ object LuceneQueryTools {
       else {
         ValidationResult.Invalid(validation.validationError.get)
       }
-  })
+  }
 
   case class LuceneQueryValidation(valid: Boolean, queryString: String, validationError: Option[String])
 

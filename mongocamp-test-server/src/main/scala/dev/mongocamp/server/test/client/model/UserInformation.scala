@@ -6,9 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class UserInformation(
-    userId: String,
-    password: String,
-    apiKey: Option[String] = None,
-    roles: Seq[String] = Seq.empty
-)
+case class UserInformation(userId: String, password: String, apiKey: Option[String] = None, roles: Seq[String] = Seq.empty)

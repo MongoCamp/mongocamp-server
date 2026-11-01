@@ -6,9 +6,11 @@ import dev.mongocamp.server.plugin.requestlogging.client.api.TestEndpointApi
 import dev.mongocamp.server.plugin.requestlogging.database.RequestLoggingDatabase
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import org.joda.time.DateTime
-
-import scala.concurrent.duration.{Duration, DurationInt}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class TestLoggingSuite extends MongoCampBaseServerSuite {
 
@@ -18,7 +20,7 @@ class TestLoggingSuite extends MongoCampBaseServerSuite {
 
   test("check a request is logged as 'new' and acknowledge".flaky) {
     val testFuture = Future { TestAdditions.backend.send(api.blocking()) }(ExecutionContext.global)
-    val startTime = new DateTime()
+    val startTime  = new DateTime()
     var results    = RequestLoggingDatabase.requestLoggingDao.find(Map("methodName" -> "blocking"), Map("date" -> -1)).resultList()
     while (results.isEmpty && startTime.plusSeconds(15).isBeforeNow) {
       Thread.sleep(1.seconds.toMillis / 4)

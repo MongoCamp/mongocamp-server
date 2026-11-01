@@ -6,8 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class ErrorDescription(
-    code: Int,
-    msg: String,
-    additionalInfo: String
-)
+case class ErrorDescription(code: Int, msg: String, additionalInfo: String)

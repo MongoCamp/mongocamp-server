@@ -6,8 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class JsonSchema(
-    $schema: String,
-    $ref: String,
-    definitions: Map[String, JsonSchemaDefinition]
-)
+case class JsonSchema($schema: String, $ref: String, definitions: Map[String, JsonSchemaDefinition])

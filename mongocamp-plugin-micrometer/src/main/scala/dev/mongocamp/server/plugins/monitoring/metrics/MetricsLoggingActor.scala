@@ -1,12 +1,11 @@
 package dev.mongocamp.server.plugins.monitoring.metrics
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.server.event.Event
 import dev.mongocamp.server.event.http.HttpRequestCompletedEvent
+import dev.mongocamp.server.event.Event
 import dev.mongocamp.server.plugins.monitoring.MetricsConfiguration
-import org.apache.pekko.actor.Actor
-
 import java.time.Duration
+import org.apache.pekko.actor.Actor
 
 class MetricsLoggingActor extends Actor with LazyLogging {
   def receive: Receive = {

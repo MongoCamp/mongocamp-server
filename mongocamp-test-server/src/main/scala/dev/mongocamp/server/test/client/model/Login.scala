@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class Login(
-    userId: String,
-    password: String
-)
+case class Login(userId: String, password: String)

@@ -1,6 +1,7 @@
 package dev.mongocamp.server.graal.substitution
 
-import com.oracle.svm.core.annotate.{ Substitute, TargetClass }
+import com.oracle.svm.core.annotate.Substitute
+import com.oracle.svm.core.annotate.TargetClass
 import dev.mongocamp.server.service.PluginService
 
 @TargetClass(value = classOf[PluginService])

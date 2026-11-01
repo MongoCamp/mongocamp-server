@@ -2,9 +2,11 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.database.MongoDatabase
+import dev.mongocamp.server.test.client.api.CollectionApi
+import dev.mongocamp.server.test.client.api.DatabaseApi
+import dev.mongocamp.server.test.client.model.MongoAggregateRequest
+import dev.mongocamp.server.test.client.model.PipelineStage
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import dev.mongocamp.server.test.client.api.{CollectionApi, DatabaseApi}
-import dev.mongocamp.server.test.client.model.{MongoAggregateRequest, PipelineStage}
 
 class CollectionSuite extends MongoCampBaseServerSuite {
 
@@ -83,12 +85,7 @@ class CollectionSuite extends MongoCampBaseServerSuite {
       "includeLocs"   -> "dist.location",
       "spherical"     -> true
     )
-    val aggregateRequest = MongoAggregateRequest(
-      List(
-        PipelineStage("geoNear", geoNearMap)
-      ),
-      allowDiskUse = true
-    )
+    val aggregateRequest = MongoAggregateRequest(List(PipelineStage("geoNear", geoNearMap)), allowDiskUse = true)
     val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", "", adminBearerToken, "")("geodata:locations", aggregateRequest))
     assertEquals(aggreationResult.size, 1)
     val headResponse = aggreationResult.head
@@ -103,10 +100,8 @@ class CollectionSuite extends MongoCampBaseServerSuite {
     )
     assertEquals(matchOnly.size, 0)
     val matchAndCount = executeRequestToResponse(
-      collectionApi.aggregate("", "", adminBearerToken, "")(
-        "geodata:locations",
-        MongoAggregateRequest(List(noHit, PipelineStage("count", "total")), allowDiskUse = false)
-      )
+      collectionApi
+        .aggregate("", "", adminBearerToken, "")("geodata:locations", MongoAggregateRequest(List(noHit, PipelineStage("count", "total")), allowDiskUse = false))
     )
     assertEquals(matchAndCount.size, 0)
   }
@@ -176,12 +171,7 @@ class CollectionSuite extends MongoCampBaseServerSuite {
       "includeLocs"   -> "dist.location",
       "spherical"     -> true
     )
-    val aggregateRequest = MongoAggregateRequest(
-      List(
-        PipelineStage("geoNear", geoNearMap)
-      ),
-      allowDiskUse = true
-    )
+    val aggregateRequest = MongoAggregateRequest(List(PipelineStage("geoNear", geoNearMap)), allowDiskUse = true)
     val aggreationResult = executeRequestToResponse(collectionApi.aggregate("", "", testUserBearerToken, "")("geodata:locations", aggregateRequest))
     assertEquals(aggreationResult.size, 1)
     val headResponse = aggreationResult.head
@@ -202,8 +192,8 @@ class CollectionSuite extends MongoCampBaseServerSuite {
   }
 
   test("schema analysis only contains the fields of the requested collection") {
-    def analysis(collection: String) = executeRequestToResponse(collectionApi.getSchemaAnalysis("", "", adminBearerToken, "")(collection))
-    def fieldNames(collection: String) = analysis(collection).fields.getOrElse(Seq()).map(_.name).toSet
+    def analysis(collection: String)         = executeRequestToResponse(collectionApi.getSchemaAnalysis("", "", adminBearerToken, "")(collection))
+    def fieldNames(collection: String)       = analysis(collection).fields.getOrElse(Seq()).map(_.name).toSet
     def collectionFields(collection: String) = executeRequestToResponse(collectionApi.getCollectionFields("", "", adminBearerToken, "")(collection)).toSet
 
     val usersFirst = fieldNames("users")
@@ -219,8 +209,8 @@ class CollectionSuite extends MongoCampBaseServerSuite {
 
   test("json schema only contains the definitions of the requested collection") {
     def jsonSchema(collection: String) = executeRequestToResponse(collectionApi.getJsonSchema("", "", adminBearerToken, "")(collection))
-    val users   = jsonSchema("users")
-    val pokemon = jsonSchema("pokemon")
+    val users                          = jsonSchema("users")
+    val pokemon                        = jsonSchema("pokemon")
     assertEquals(pokemon.definitions.contains(users.$ref), false, s"definitions of `users` (${users.$ref}) are part of the schema of `pokemon`")
     assertEquals(users.definitions.contains(pokemon.$ref), false, s"definitions of `pokemon` (${pokemon.$ref}) are part of the schema of `users`")
     assertEquals(jsonSchema("users").definitions.keySet, users.definitions.keySet)

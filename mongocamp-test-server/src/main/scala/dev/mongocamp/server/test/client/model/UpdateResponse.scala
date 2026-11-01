@@ -6,9 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class UpdateResponse(
-    wasAcknowledged: Boolean,
-    upsertedIds: Seq[String],
-    modifiedCount: Long,
-    matchedCount: Long
-)
+case class UpdateResponse(wasAcknowledged: Boolean, upsertedIds: Seq[String], modifiedCount: Long, matchedCount: Long)

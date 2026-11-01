@@ -5,16 +5,16 @@ import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.converter.TapirSchema
 import dev.mongocamp.server.exception
 import dev.mongocamp.server.exception.ErrorDefinition.errorEndpointDefinition
-import dev.mongocamp.server.exception.{ ErrorDescription, MongoCampException }
+import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.service.ConfigurationService
-import sttp.model.StatusCode
+import scala.concurrent.Future
 import sttp.model.headers.WWWAuthenticateChallenge
+import sttp.model.StatusCode
 import sttp.tapir._
 import sttp.tapir.generic.auto.SchemaDerivation
 import sttp.tapir.model.UsernamePassword
-
-import scala.concurrent.Future
 
 abstract class BaseRoute extends TapirSchema with SchemaDerivation {
 
@@ -24,9 +24,7 @@ abstract class BaseRoute extends TapirSchema with SchemaDerivation {
   protected val baseEndpoint = endpoint.errorOut(errorEndpointDefinition)
 
   protected val securedEndpointDefinition = {
-    val token = auth.apiKey(
-      header[Option[String]]("X-AUTH-APIKEY").example(Some("secret1234")).description("Static API Key of the User")
-    )
+    val token               = auth.apiKey(header[Option[String]]("X-AUTH-APIKEY").example(Some("secret1234")).description("Static API Key of the User"))
     val bearer              = auth.bearer[Option[String]]()
     val basicAuth           = auth.basic[Option[UsernamePassword]](WWWAuthenticateChallenge.basic("mongocamp Login"))
     val isAuthBasicEnabled  = ConfigurationService.getConfigValue[Boolean](DefaultConfigurations.ConfigKeyAuthBasic)

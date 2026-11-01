@@ -1,13 +1,15 @@
 package dev.mongocamp.server.converter
 
 import dev.mongocamp.server.model.MongoCampConfiguration
+import io.circe.Decoder
 import io.circe.Decoder.Result
-import io.circe.{ Decoder, Encoder, HCursor, Json }
+import io.circe.Encoder
+import io.circe.HCursor
+import io.circe.Json
+import java.util.Date
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
-
-import java.util.Date
 
 // Encoder[Any] matches every type, so it has to rank below the more specific instances of CirceSchema (Scala 3 reports them as ambiguous otherwise)
 trait LowPriorityCirceSchema { self: CirceSchema =>

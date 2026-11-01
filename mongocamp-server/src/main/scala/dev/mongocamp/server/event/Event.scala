@@ -1,6 +1,7 @@
 package dev.mongocamp.server.event
 
-import java.util.{ Date, UUID }
+import java.util.Date
+import java.util.UUID
 
 abstract class Event {
   val eventDate  = new Date()

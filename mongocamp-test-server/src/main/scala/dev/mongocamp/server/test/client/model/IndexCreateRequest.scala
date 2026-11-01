@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class IndexCreateRequest(
-    keys: Map[String, Int],
-    indexOptionsRequest: Option[IndexOptionsRequest] = None
-)
+case class IndexCreateRequest(keys: Map[String, Int], indexOptionsRequest: Option[IndexOptionsRequest] = None)

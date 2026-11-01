@@ -1,15 +1,15 @@
 package dev.mongocamp.server.interceptor.cors
 
-import dev.mongocamp.server.ActorHandler
 import dev.mongocamp.server.interceptor.cors.Cors.KeyCorsHeaderOrigin
+import dev.mongocamp.server.ActorHandler
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 import sttp.model.Header
 import sttp.monad.MonadError
 import sttp.tapir.model.ServerRequest
 import sttp.tapir.server.interceptor._
 import sttp.tapir.server.interpreter.BodyListener
 import sttp.tapir.server.model.ServerResponse
-
-import scala.concurrent.{ ExecutionContext, Future }
 
 class CorsInterceptor extends EndpointInterceptor[Future] {
   implicit val ex: ExecutionContext = ActorHandler.requestExecutionContext
@@ -28,7 +28,7 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
     new EndpointHandler[Future, B] {
 
       override def onDecodeSuccess[A, U, I](
-          ctx: DecodeSuccessContext[Future, A, U, I]
+        ctx: DecodeSuccessContext[Future, A, U, I]
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onDecodeSuccess(ctx)
@@ -38,7 +38,7 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
       }
 
       override def onSecurityFailure[A](
-          ctx: SecurityFailureContext[Future, A]
+        ctx: SecurityFailureContext[Future, A]
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[ServerResponse[B]] = {
         endpointHandler
           .onSecurityFailure(ctx)
@@ -48,7 +48,7 @@ class CorsInterceptor extends EndpointInterceptor[Future] {
       }
 
       override def onDecodeFailure(
-          ctx: DecodeFailureContext
+        ctx: DecodeFailureContext
       )(implicit monad: MonadError[Future], bodyListener: BodyListener[Future, B]): Future[Option[ServerResponse[B]]] = {
         endpointHandler
           .onDecodeFailure(ctx)

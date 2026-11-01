@@ -4,15 +4,16 @@ import better.files.File
 import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.exception.MongoCampException
 import io.circe.parser.decode
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.Await
+import scala.concurrent.Future
+import scala.util.Random
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.client3._
 import sttp.client3.pekkohttp.PekkoHttpBackend
-import sttp.model.{ Method, StatusCode }
-
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ Await, Future }
-import scala.util.Random
+import sttp.model.Method
+import sttp.model.StatusCode
 
 object HttpClientService {
   private lazy val backend: SttpBackend[Future, PekkoStreams with capabilities.WebSockets] = PekkoHttpBackend()

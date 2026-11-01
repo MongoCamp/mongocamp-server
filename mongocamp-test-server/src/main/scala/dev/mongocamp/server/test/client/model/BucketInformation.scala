@@ -6,9 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class BucketInformation(
-    name: String,
-    files: Long,
-    size: Double,
-    avgObjectSize: Double
-)
+case class BucketInformation(name: String, files: Long, size: Double, avgObjectSize: Double)

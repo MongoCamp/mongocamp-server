@@ -2,18 +2,15 @@ package dev.mongocamp.server.cli.prepare
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.cli.service.JvmService
-import lukfor.progress.Components.{ SPINNER, TASK_NAME }
-import lukfor.progress.TaskService
-import lukfor.progress.tasks.ITaskRunnable
+import java.util.concurrent.Callable
 import lukfor.progress.tasks.monitors.ITaskMonitor
+import lukfor.progress.tasks.ITaskRunnable
+import lukfor.progress.Components.SPINNER
+import lukfor.progress.Components.TASK_NAME
+import lukfor.progress.TaskService
 import picocli.CommandLine.Command
 import picocli.CommandLine.Help.Ansi
-
-import java.util.concurrent.Callable
-@Command(
-  name = "jvm",
-  description = Array("Check or Install GraalVM for build and run Commands")
-)
+@Command(name = "jvm", description = Array("Check or Install GraalVM for build and run Commands"))
 class InstallJVMCommand extends Callable[Integer] with LazyLogging {
 
   def call(): Integer = {

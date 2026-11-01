@@ -6,6 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class JsonValueAny(
-    value: String
-)
+case class JsonValueAny(value: String)

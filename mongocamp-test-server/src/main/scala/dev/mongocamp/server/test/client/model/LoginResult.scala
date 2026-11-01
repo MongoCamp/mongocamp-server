@@ -8,8 +8,4 @@ package dev.mongocamp.server.test.client.model
 
 import org.joda.time.DateTime
 
-case class LoginResult(
-    authToken: String,
-    userProfile: UserProfile,
-    expirationDate: DateTime
-)
+case class LoginResult(authToken: String, userProfile: UserProfile, expirationDate: DateTime)

@@ -1,13 +1,13 @@
 package dev.mongocamp.server.plugins.monitoring
 
 import dev.mongocamp.server.client.api.MetricsApi
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.ApplicationApi
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
 
 class MetricsSuite extends MicrometerBaseServerSuite {
 
   lazy val applicationApi: ApplicationApi = ApplicationApi()
-  lazy val metricsApi: MetricsApi = MetricsApi()
+  lazy val metricsApi: MetricsApi         = MetricsApi()
 
   test("Show all JVM Metrics") {
     val jvmMetrics = executeRequestToResponse(metricsApi.jvmMetrics("", "", adminBearerToken, "")())

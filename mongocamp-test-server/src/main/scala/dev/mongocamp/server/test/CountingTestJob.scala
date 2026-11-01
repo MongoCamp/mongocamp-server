@@ -1,7 +1,8 @@
 package dev.mongocamp.server.test
 
 import dev.mongocamp.server.test.CountingTestJob.counter
-import org.quartz.{ Job, JobExecutionContext }
+import org.quartz.Job
+import org.quartz.JobExecutionContext
 class CountingTestJob extends Job {
 
   override def execute(context: JobExecutionContext): Unit = {

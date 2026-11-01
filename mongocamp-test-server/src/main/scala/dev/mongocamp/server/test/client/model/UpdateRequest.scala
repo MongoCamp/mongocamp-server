@@ -6,7 +6,4 @@
   */
 package dev.mongocamp.server.test.client.model
 
-case class UpdateRequest(
-    document: Map[String, Any],
-    filter: Map[String, Any]
-)
+case class UpdateRequest(document: Map[String, Any], filter: Map[String, Any])

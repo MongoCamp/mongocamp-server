@@ -1,8 +1,8 @@
 package dev.mongocamp.server.tests
 
-import dev.mongocamp.server.BuildInfo
-import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.client.api.SystemApi
+import dev.mongocamp.server.test.MongoCampBaseServerSuite
+import dev.mongocamp.server.BuildInfo
 import org.joda.time.DateTime
 
 class InformationSuite extends MongoCampBaseServerSuite {

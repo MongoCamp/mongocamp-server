@@ -9,16 +9,16 @@ package dev.mongocamp.server.test.client.model
 import org.joda.time.DateTime
 
 case class MongoIndex(
-    name: String,
-    fields: Seq[String],
-    unique: Boolean,
-    version: Int,
-    namespace: String,
-    keys: Map[String, Any],
-    weights: Map[String, Any],
-    expire: Boolean,
-    expireAfterSeconds: Long,
-    text: Boolean,
-    fetched: DateTime,
-    map: Map[String, Any]
+  name: String,
+  fields: Seq[String],
+  unique: Boolean,
+  version: Int,
+  namespace: String,
+  keys: Map[String, Any],
+  weights: Map[String, Any],
+  expire: Boolean,
+  expireAfterSeconds: Long,
+  text: Boolean,
+  fetched: DateTime,
+  map: Map[String, Any]
 )

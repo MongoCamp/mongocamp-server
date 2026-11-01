@@ -1,6 +1,7 @@
 package dev.mongocamp.server.database.paging
 
-import dev.mongocamp.driver.mongodb.{MongoDAO, _}
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.server.exception.MongoCampException
 import org.mongodb.scala.bson.conversions.Bson
 import sttp.model.StatusCode
