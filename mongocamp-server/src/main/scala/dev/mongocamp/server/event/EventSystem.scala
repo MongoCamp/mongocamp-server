@@ -1,6 +1,7 @@
 package dev.mongocamp.server.event
 
 import better.files.Resource
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.server.Server
 import org.apache.pekko.actor.ActorRef
 import org.apache.pekko.actor.ActorSystem
@@ -13,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
-object EventSystem {
+object EventSystem extends LazyLogging {
 
   private lazy val listeners: ArrayBuffer[(ActorRef, Class[_ <: Event])] = ArrayBuffer()
 
@@ -55,8 +56,12 @@ object EventSystem {
     system
   }
 
+  // an event is only a notification: a failure to send it (for example a class that is not registered for serialization in the
+  // native image) must never turn a request that already changed data into an error response
   def publish(event: Event): Unit = {
-    channel.send(new ObjectMessage(null, event))
+    Try(channel.send(new ObjectMessage(null, event))).failed.foreach(
+      ex => logger.error("could not publish event <%s>".format(event.getClass.getName), ex)
+    )
   }
 
   def subscribe(actorRef: ActorRef, clazz: Class[_ <: Event]): Unit = {

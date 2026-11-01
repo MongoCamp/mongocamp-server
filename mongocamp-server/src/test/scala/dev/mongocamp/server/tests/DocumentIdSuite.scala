@@ -93,4 +93,15 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     val deletedString = executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(collection, "doc-c"))
     assertEquals(deletedString.deletedCount, 1L)
   }
+
+  // #76: the old values of a changed document are published as an event, a document with two fields is a Map2 in the native image
+  test("change and delete documents with a string id and two fields") {
+    val other = collection
+    val docs: Seq[Map[String, Any]] = Seq(Map("_id" -> "abc", "n" -> 1), Map("_id" -> "12345", "n" -> 2))
+    executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(other, docs))
+    val partial = executeRequestToResponse(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(other, "abc", Map("x" -> 1)))
+    assertEquals(partial.modifiedCount, 1L)
+    assertEquals(executeRequestToResponse(documentsApi.delete("", "", adminBearerToken, "")(other, "12345")).deletedCount, 1L)
+    assertEquals(executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(other, Map("_id" -> "abc"))).deletedCount, 1L)
+  }
 }
