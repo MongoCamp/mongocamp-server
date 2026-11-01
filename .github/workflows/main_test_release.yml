@@ -67,6 +67,16 @@ jobs:
         uses: docker/setup-buildx-action@master
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
+      - name: Git checks of the release
+        # the checks of sbt-release (remote, tracking branch, local changes) with readable output, the thin client of sbt 2 hides their errors
+        run: |
+          git config --global user.email "ci@mongocamp.dev"
+          git config --global user.name "MongoCamp CI"
+          echo "--- branch and tracking"; git branch -vv; git rev-parse --abbrev-ref --symbolic-full-name '@{u}' || echo "no upstream configured"
+          echo "--- remote"; git remote -v; git ls-remote --heads origin main || echo "ls-remote failed"
+          echo "--- local vs remote"; git rev-parse HEAD; git rev-parse origin/main || true; git status -sb | head -5
+          echo "--- local changes"; git status --porcelain | head -20
+          echo "--- tags"; git tag | wc -l
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,7 +90,7 @@ jobs:
           docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
-          sbt --no-server ci-release
+          sbt ci-release
 
   sync-readme:
     needs: release
