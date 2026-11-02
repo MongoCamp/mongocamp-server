@@ -15,7 +15,9 @@ class LuceneFilterSuite extends MongoCampBaseServerSuite {
     executeRequest(documentsApi.listDocuments("", "", adminBearerToken, "")(collection, Some(filter), Seq(), Seq(), Some(100), Some(1)))
 
   test("prepare documents") {
-    val docs: Seq[Map[String, Any]] = cities.zipWithIndex.map(c => Map("city" -> c._1, "n" -> (c._2 * 10)))
+    val docs: Seq[Map[String, Any]] = cities.zipWithIndex.map(
+      c => Map("city" -> c._1, "n" -> (c._2 * 10))
+    )
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, docs))
   }
 

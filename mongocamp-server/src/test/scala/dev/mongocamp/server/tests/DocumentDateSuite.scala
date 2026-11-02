@@ -35,11 +35,9 @@ class DocumentDateSuite extends MongoCampBaseServerSuite {
     raw(
       Method.PUT,
       "/documents/many/insert",
-      Some(
-        """[{"k":"ms","d":"2024-06-15T12:00:00.000Z"},{"k":"nomillis","d":"2024-06-15T12:00:00Z"},{"k":"offset","d":"2024-06-15T14:00:00+02:00"},
+      Some("""[{"k":"ms","d":"2024-06-15T12:00:00.000Z"},{"k":"nomillis","d":"2024-06-15T12:00:00Z"},{"k":"offset","d":"2024-06-15T14:00:00+02:00"},
           |{"k":"fraction","d":"2024-06-15T12:00:00.5Z"},{"k":"dateonly","d":"2024-06-15"},{"k":"text","d":"not a date"},
-          |{"k":"big","n":12345678901234567}]""".stripMargin
-      )
+          |{"k":"big","n":12345678901234567}]""".stripMargin)
     )
   }
 
@@ -70,11 +68,9 @@ class DocumentDateSuite extends MongoCampBaseServerSuite {
     raw(
       Method.PUT,
       "/documents/many/insert",
-      Some(
-        """[{"k":"w1","d":{"$date":"2024-06-16T12:00:00Z"}},{"k":"w2","d":{"$date":1718539200000}},
+      Some("""[{"k":"w1","d":{"$date":"2024-06-16T12:00:00Z"}},{"k":"w2","d":{"$date":1718539200000}},
           |{"k":"w3","d":{"$date":{"$numberLong":"1718539200000"}}},
-          |{"k":"w4","n":{"$numberLong":"12345678901234567"},"nested":{"list":[{"$date":"2024-06-17T00:00:00Z"}]}}]""".stripMargin
-      )
+          |{"k":"w4","n":{"$numberLong":"12345678901234567"},"nested":{"list":[{"$date":"2024-06-17T00:00:00Z"}]}}]""".stripMargin)
     )
   }
 
@@ -90,11 +86,7 @@ class DocumentDateSuite extends MongoCampBaseServerSuite {
   }
 
   test("$date in a filter") {
-    val find = raw(
-      Method.POST,
-      "/documents",
-      Some("""{"filter":{"d":{"$gt":{"$date":"2024-06-16T00:00:00Z"}}},"sort":{},"projection":{}}""")
-    )
+    val find = raw(Method.POST, "/documents", Some("""{"filter":{"d":{"$gt":{"$date":"2024-06-16T00:00:00Z"}}},"sort":{},"projection":{}}"""))
     assertEquals(parse(find).toOption.get.asArray.get.map(_.hcursor.get[String]("k").toOption.get).toSet.filter(_.startsWith("w")), Set("w1", "w2", "w3"))
   }
 

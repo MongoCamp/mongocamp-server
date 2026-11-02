@@ -87,9 +87,7 @@ class AuthSuite extends MongoCampBaseServerSuite {
       assertEquals(executeRequest(adminApi.isAuthenticated("", "", first.authToken, "")()).code.code, 200, "new token")
       assertEquals(executeRequest(adminApi.isAuthenticated("", "", second.authToken, "")()).code.code, 200, "second new token")
     }
-    finally {
-      ConfigurationService.updateConfig(graceKey, "60s")
-    }
+    finally ConfigurationService.updateConfig(graceKey, "60s")
   }
 
   test("a refresh with an api key does not revoke a token") {

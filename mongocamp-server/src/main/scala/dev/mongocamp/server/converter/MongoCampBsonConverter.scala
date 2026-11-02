@@ -1,12 +1,12 @@
 package dev.mongocamp.server.converter
 
 import dev.mongocamp.server.exception.MongoCampException
+import java.util.Date
 import org.bson.types.ObjectId
 import org.bson.BsonValue
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.bsonDocumentToDocument
-import java.util.Date
 import scala.collection.mutable
 
 object MongoCampBsonConverter {
@@ -112,10 +112,12 @@ object MongoCampBsonConverter {
         IsoInstant
           .parse(s)
           .map(_.toDate)
-          .getOrElse(throw MongoCampException.badRequestException(s"""the value of "$$date" must be an ISO-8601 instant with a zone, for example 2024-06-15T12:00:00Z"""))
-      case l: Long                  => new Date(l)
-      case i: Int                   => new Date(i.toLong)
-      case d: Double                => new Date(d.toLong)
+          .getOrElse(
+            throw MongoCampException.badRequestException(s"""the value of "$$date" must be an ISO-8601 instant with a zone, for example 2024-06-15T12:00:00Z""")
+          )
+      case l: Long   => new Date(l)
+      case i: Int    => new Date(i.toLong)
+      case d: Double => new Date(d.toLong)
       case m: Map[_, _] =>
         val typed = m.asInstanceOf[Map[String, Any]]
         if (typed.size == 1 && typed.contains("$numberLong")) new Date(convertNumberLong(typed("$numberLong")))
@@ -163,9 +165,9 @@ object MongoCampBsonConverter {
 
   private val numberPattern = "-?\\d+(\\.\\d+)?".r
 
-  /** The filter for the id in the path of a request, which is always a string. A document can have an id of any type, so beside the ObjectId (24 hex characters)
-    * or the string itself an id that looks like a number is also searched as number: `12345` finds the document with the id `"12345"` and the one with the
-    * id `12345`. MongoDB compares numbers of different types by value.
+  /** The filter for the id in the path of a request, which is always a string. A document can have an id of any type, so beside the ObjectId (24 hex
+    * characters) or the string itself an id that looks like a number is also searched as number: `12345` finds the document with the id `"12345"` and the one
+    * with the id `12345`. MongoDB compares numbers of different types by value.
     */
   def pathIdFilter(id: String): Map[String, Any] = {
     val candidates: List[Any] = convertIdValue(id) match {

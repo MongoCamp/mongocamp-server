@@ -12,8 +12,8 @@ object ErrorCodes {
   val unauthorizedUser: Int             = 4011
   val unauthorizedUserForOtherUser: Int = 4012
 
-  val forbiddenStage: Int               = 4031
-  val forbiddenCollectionInStage: Int   = 4032
+  val forbiddenStage: Int             = 4031
+  val forbiddenCollectionInStage: Int = 4032
 
   val jobAlreadyAdded: Int    = 4121
   val jobCouldNotUpdated: Int = 4122

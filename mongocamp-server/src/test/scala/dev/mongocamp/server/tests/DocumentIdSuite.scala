@@ -111,8 +111,8 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
 
   // #72
   test("an empty filter is refused for update many and delete many unless matchAll is set") {
-    val before  = find(Map()).size
-    val update  = executeRequest(documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map())))
+    val before = find(Map()).size
+    val update = executeRequest(documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map())))
     assertEquals(update.code.code, 400)
     assertEquals(update.header("x-error-code"), Some("4003"))
     val delete = executeRequest(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map()))
@@ -120,9 +120,8 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
     assertEquals(find(Map()).size, before)
     assertEquals(find(Map("touched" -> true)).size, 0)
 
-    val updated = executeRequestToResponse(
-      documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map()), Some(true))
-    )
+    val updated =
+      executeRequestToResponse(documentsApi.updateMany("", "", adminBearerToken, "")(collection, UpdateRequest(Map("touched" -> true), Map()), Some(true)))
     assertEquals(updated.matchedCount, before.toLong)
     val deleted = executeRequestToResponse(documentsApi.deleteMany("", "", adminBearerToken, "")(collection, Map(), Some(true)))
     assertEquals(deleted.deletedCount, before.toLong)
@@ -131,10 +130,16 @@ class DocumentIdSuite extends MongoCampBaseServerSuite {
 
   // #76: the id in the path is a string, documents with a number as id are found too
   test("single document endpoints find a document with a number as id") {
-    val docs: Seq[Map[String, Any]] = Seq(Map("_id" -> 98765, "n" -> 1), Map("_id" -> 98766L, "n" -> 2), Map("_id" -> 1.5, "n" -> 3), Map("_id" -> "98767", "n" -> 4))
+    val docs: Seq[Map[String, Any]] =
+      Seq(Map("_id" -> 98765, "n" -> 1), Map("_id" -> 98766L, "n" -> 2), Map("_id" -> 1.5, "n" -> 3), Map("_id" -> "98767", "n" -> 4))
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, docs))
     List("98765" -> 1, "98766" -> 2, "1.5" -> 3, "98767" -> 4).foreach(
-      entry => assertEquals(executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collection, entry._1)).get("n"), Some(entry._2), s"get ${entry._1}")
+      entry =>
+        assertEquals(
+          executeRequestToResponse(documentsApi.getDocument("", "", adminBearerToken, "")(collection, entry._1)).get("n"),
+          Some(entry._2),
+          s"get ${entry._1}"
+        )
     )
     val partial = executeRequestToResponse(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collection, "98765", Map("x" -> 1)))
     assertEquals(partial.matchedCount, 1L)

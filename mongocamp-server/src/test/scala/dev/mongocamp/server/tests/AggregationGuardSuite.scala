@@ -33,7 +33,8 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
   }
 
   test("$accumulator inside $group is refused") {
-    val accumulator = Map("$accumulator" -> Map("init" -> "function(){return 0}", "accumulate" -> "function(){return 0}", "merge" -> "function(){return 0}", "lang" -> "js"))
+    val accumulator =
+      Map("$accumulator" -> Map("init" -> "function(){return 0}", "accumulate" -> "function(){return 0}", "merge" -> "function(){return 0}", "lang" -> "js"))
     assertRefused(aggregate(PipelineStage("group", Map("_id" -> "$type", "x" -> accumulator))), "$accumulator")
   }
 
@@ -57,12 +58,10 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
   test("the denied operators can be configured") {
     val key = DefaultConfigurations.ConfigKeyAggregationStagesDenied
     assertEquals(ConfigurationService.updateConfig(key, List("$limit")), true)
-    try {
+    try
       assertRefused(aggregate(PipelineStage("limit", 1)), "$limit")
-    }
-    finally {
+    finally
       ConfigurationService.updateConfig(key, List("$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions"))
-    }
     assertEquals(aggregate(PipelineStage("limit", 1)).code.code, 200)
   }
 
@@ -77,9 +76,9 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
   private def aggregateAs(token: String, mainCollection: String, stages: PipelineStage*) =
     executeRequest(collectionApi.aggregate("", "", token, "")(mainCollection, MongoAggregateRequest(stages.toList, allowDiskUse = false)))
 
-  private def lookup(from: Any)                 = PipelineStage("lookup", Map("from" -> from, "localField" -> "a", "foreignField" -> "b", "as" -> "x"))
-  private def unionWith(coll: Any)              = PipelineStage("unionWith", coll)
-  private def graphLookup(from: String)         =
+  private def lookup(from: Any)    = PipelineStage("lookup", Map("from" -> from, "localField" -> "a", "foreignField" -> "b", "as" -> "x"))
+  private def unionWith(coll: Any) = PipelineStage("unionWith", coll)
+  private def graphLookup(from: String) =
     PipelineStage("graphLookup", Map("from" -> from, "startWith" -> "$a", "connectFromField" -> "a", "connectToField" -> "b", "as" -> "x"))
   private def assertCollectionRefused(response: sttp.client3.Response[?]): Unit = {
     assertEquals(response.code.code, 403)

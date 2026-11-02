@@ -33,9 +33,7 @@ abstract class CollectionBaseRoute extends BaseRoute {
   def loginWrite(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] =
     authorize(loginInformation, _.canWrite(_))
 
-  def loginAdministrate(
-    loginInformation: (AuthInput, String)
-  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] =
+  def loginAdministrate(loginInformation: (AuthInput, String)): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), AuthorizedCollectionRequest]] =
     authorize(loginInformation, _.canAdministrate(_))
 
   private def authorize(

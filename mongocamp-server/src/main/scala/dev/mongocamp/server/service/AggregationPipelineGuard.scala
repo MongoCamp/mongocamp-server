@@ -8,9 +8,9 @@ import dev.mongocamp.server.model.PipelineStage
 
 /** Refuses pipelines with operators that an operator of the server denied (`AGGREGATION_STAGES_DENIED`).
   *
-  * The whole value tree is scanned and not only the names of the stages: `$function` and `$accumulator` are expressions inside `$project`, `$addFields`, `$group`
-  * or `$match.$expr`, `$where` is inside `$match` and a pipeline can be nested in `$lookup`, `$unionWith` and `$facet`. It is used for the pipelines of the
-  * clients, not for the internal pipelines (for example the schema analysis), which have no user and are not affected by the list.
+  * The whole value tree is scanned and not only the names of the stages: `$function` and `$accumulator` are expressions inside `$project`, `$addFields`,
+  * `$group` or `$match.$expr`, `$where` is inside `$match` and a pipeline can be nested in `$lookup`, `$unionWith` and `$facet`. It is used for the pipelines
+  * of the clients, not for the internal pipelines (for example the schema analysis), which have no user and are not affected by the list.
   */
 object AggregationPipelineGuard {
 
@@ -19,7 +19,8 @@ object AggregationPipelineGuard {
 
   def check(pipeline: List[PipelineStage]): Unit = check(pipeline, deniedOperators)
 
-  /** Checks the operators and the read grants of the user for every collection that a stage reads (`$lookup`, `$unionWith`, `$graphLookup`, nested ones too). */
+  /** Checks the operators and the read grants of the user for every collection that a stage reads (`$lookup`, `$unionWith`, `$graphLookup`, nested ones too).
+    */
   def check(authorizedCollectionRequest: AuthorizedCollectionRequest, pipeline: List[PipelineStage]): Unit = {
     check(pipeline)
     val user = authorizedCollectionRequest.userInformation
@@ -33,7 +34,10 @@ object AggregationPipelineGuard {
       .foreach {
         case Right(name) =>
           if (!user.canRead(prefix + name)) {
-            throw MongoCampException.forbiddenException(s"the user is not allowed to read the collection $name in an aggregation", ErrorCodes.forbiddenCollectionInStage)
+            throw MongoCampException.forbiddenException(
+              s"the user is not allowed to read the collection $name in an aggregation",
+              ErrorCodes.forbiddenCollectionInStage
+            )
           }
         case Left(description) =>
           throw MongoCampException.forbiddenException(s"$description is not supported in an aggregation", ErrorCodes.forbiddenCollectionInStage)

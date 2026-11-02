@@ -16,11 +16,15 @@ class OpenApiSuite extends MongoCampBaseServerSuite {
 
   // the lines of a block of the yaml: from the line `start` to the next line with the same or a smaller indentation
   private def block(start: String): List[String] = {
-    val lines  = yaml.linesIterator.toList
-    val index  = lines.indexWhere(_ == start)
+    val lines = yaml.linesIterator.toList
+    val index = lines.indexWhere(_ == start)
     assert(index >= 0, s"`$start` not found in the OpenAPI document")
     val indent = start.takeWhile(_ == ' ').length
-    lines.drop(index + 1).takeWhile(line => line.isBlank || line.takeWhile(_ == ' ').length > indent)
+    lines
+      .drop(index + 1)
+      .takeWhile(
+        line => line.isBlank || line.takeWhile(_ == ' ').length > indent
+      )
   }
 
   test("the value of a pipeline stage is any JSON value") {

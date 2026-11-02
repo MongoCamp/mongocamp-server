@@ -37,7 +37,8 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
       collectionGrant => {
         val grantName         = collectionGrant.name
         val isCollectionGrant = grantName.equalsIgnoreCase(collection) || grantName.equalsIgnoreCase(AuthorizedCollectionRequest.all)
-        val isBucketMetaGrant = s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(collection) && collection.endsWith(BucketCollectionSuffix)
+        val isBucketMetaGrant =
+          s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(collection) && collection.endsWith(BucketCollectionSuffix)
         (isCollectionGrant || isBucketMetaGrant) && right(collectionGrant)
       }
     )

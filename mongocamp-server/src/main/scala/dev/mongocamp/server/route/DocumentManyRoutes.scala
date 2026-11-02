@@ -101,8 +101,8 @@ object DocumentManyRoutes extends CollectionBaseRoute {
       val filter      = convertFields(parameter.filter)
       rejectEmptyFilter(filter, matchAll)
       // on a match all operation this loads every document for the event
-      val oldValues   = dao.find(filter).resultList()
-      val result      = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
+      val oldValues = dao.find(filter).resultList()
+      val result    = dao.updateMany(filter, documentFromScalaMap(convertToOperationMap(convertFields(documentMap)))).result()
       val updateResponse = UpdateResponse(
         result.wasAcknowledged(),
         Option(result.getUpsertedId)
@@ -140,8 +140,8 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     matchAll: Boolean = false
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(Right {
-      val dao            = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-      val deleteFilter   = convertFields(parameter)
+      val dao          = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val deleteFilter = convertFields(parameter)
       rejectEmptyFilter(deleteFilter, matchAll)
       // on a match all operation this loads every document for the event
       val oldValues      = dao.find(deleteFilter).resultList()

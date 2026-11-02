@@ -6,9 +6,9 @@ import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdValue
-import dev.mongocamp.server.converter.MongoCampBsonConverter.pathIdFilter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
 import dev.mongocamp.server.converter.MongoCampBsonConverter.idToString
+import dev.mongocamp.server.converter.MongoCampBsonConverter.pathIdFilter
 import dev.mongocamp.server.database.paging.MongoPaginatedFilter
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.database.MongoDatabase
@@ -43,9 +43,9 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   val findAllEndpoint = readCollectionEndpoint
     .in("documents")
     .in(
-      query[Option[Query]]("filter")(using
-        Codec.listHeadOption(LuceneQueryTools.filterCodec)
-      ).description("MongoDB Filter Query by Default all filter").default(None)
+      query[Option[Query]]("filter")(using Codec.listHeadOption(LuceneQueryTools.filterCodec))
+        .description("MongoDB Filter Query by Default all filter")
+        .default(None)
     )
     .in(query[List[String]]("sort").description("MongoDB sorting").default(List.empty).example(List.empty))
     .in(query[List[String]]("projection").description("MongoDB projection").default(List.empty).example(List.empty))

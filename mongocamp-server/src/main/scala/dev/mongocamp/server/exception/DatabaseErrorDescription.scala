@@ -8,9 +8,9 @@ import com.mongodb.MongoException
 import com.mongodb.MongoSocketException
 import com.mongodb.MongoTimeoutException
 import com.mongodb.MongoWriteException
+import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 import sttp.model.StatusCode
-import scala.annotation.tailrec
 
 /** Describes errors of the database driver for the clients of the API.
   *

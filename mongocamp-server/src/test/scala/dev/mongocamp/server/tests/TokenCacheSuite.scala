@@ -14,7 +14,9 @@ class TokenCacheSuite extends MongoCampBaseServerSuite {
   private def newToken(): String = executeRequestToResponse(AuthApi().login(Login(TestAdditions.adminUser, TestAdditions.adminPassword))).authToken
 
   test("tokens of the same user in the same second are different") {
-    val tokens = (1 to 5).map(_ => newToken())
+    val tokens = (1 to 5).map(
+      _ => newToken()
+    )
     assertEquals(tokens.distinct.size, tokens.size)
   }
 

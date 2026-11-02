@@ -22,8 +22,14 @@ class MongoCampExceptionSuite extends FunSuite {
 
   test("error codes are unique") {
     val codes = List(
-      ErrorCodes.emptyFilter, ErrorCodes.emptyBatch, ErrorCodes.badInsertRequest, ErrorCodes.idMissingForReplace, ErrorCodes.forbiddenStage,
-      ErrorCodes.forbiddenCollectionInStage, ErrorCodes.unauthorizedUser, ErrorCodes.unauthorizedUserForOtherUser
+      ErrorCodes.emptyFilter,
+      ErrorCodes.emptyBatch,
+      ErrorCodes.badInsertRequest,
+      ErrorCodes.idMissingForReplace,
+      ErrorCodes.forbiddenStage,
+      ErrorCodes.forbiddenCollectionInStage,
+      ErrorCodes.unauthorizedUser,
+      ErrorCodes.unauthorizedUserForOtherUser
     )
     assertEquals(codes.distinct.size, codes.size)
   }

@@ -259,7 +259,6 @@ class FileSuite extends MongoCampBaseServerSuite {
     assertEquals(response.header("x-error-message").get, "user not authorized for bucket")
   }
 
-
   test("delete a file with an invalid id answers 400") {
     val response = executeRequest(api.deleteFile("", "", adminBearerToken, "")(BucketNameSample, "not-an-object-id"))
     assertEquals(response.code.code, 400)

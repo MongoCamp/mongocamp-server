@@ -11,13 +11,13 @@ import scala.concurrent.Future
 import sttp.model.Header
 import sttp.model.StatusCode
 import sttp.monad.MonadError
-import sttp.tapir.DecodeResult
 import sttp.tapir.server.interceptor.decodefailure.DecodeFailureHandler
 import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.failureResponse
 import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.respond
 import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.FailureMessages
 import sttp.tapir.server.interceptor.DecodeFailureContext
 import sttp.tapir.server.model.ValuedEndpointOutput
+import sttp.tapir.DecodeResult
 
 case class MongoCampDefaultDecodeFailureHandler(
   respond: DecodeFailureContext => Option[(StatusCode, List[Header])],
@@ -28,7 +28,7 @@ case class MongoCampDefaultDecodeFailureHandler(
     monad.unit {
       respond(ctx) match {
         case Some((sc, hs)) =>
-          val failureMsg         = failureMessage(ctx)
+          val failureMsg = failureMessage(ctx)
           val additionalInfo = ctx.failure match {
             case DecodeResult.Error(_, InvalidFilterException(reason)) => reason
             case _                                                     => ""

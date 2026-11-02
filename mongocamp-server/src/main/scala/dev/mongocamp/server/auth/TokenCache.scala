@@ -101,11 +101,23 @@ object TokenCache {
     val revokeAt = now + grace.toMillis
     // tokens that are never presented again would stay in the map
     // (the token is invalidated, not only forgotten, otherwise it would be valid again)
-    supersededTokens.entrySet().asScala.toList.filter(_.getValue.longValue() <= now).foreach(entry => invalidateToken(entry.getKey))
+    supersededTokens
+      .entrySet()
+      .asScala
+      .toList
+      .filter(_.getValue.longValue() <= now)
+      .foreach(
+        entry => invalidateToken(entry.getKey)
+      )
     supersededTokens.merge(token, revokeAt, (old, new_) => math.min(old.longValue(), new_.longValue()))
     if (authTokenCacheDB) {
       // the other instances read the token from the database when their local copy is gone
-      tokenCacheDao.updateOne(Map(keyToken -> token, keyValidTo -> Map("$gt" -> new DateTime(revokeAt).toDate)), Map("$set" -> Map(keyValidTo -> new DateTime(revokeAt).toDate))).asFuture()
+      tokenCacheDao
+        .updateOne(
+          Map(keyToken -> token, keyValidTo -> Map("$gt" -> new DateTime(revokeAt).toDate)),
+          Map("$set"   -> Map(keyValidTo -> new DateTime(revokeAt).toDate))
+        )
+        .asFuture()
     }
   }
 
