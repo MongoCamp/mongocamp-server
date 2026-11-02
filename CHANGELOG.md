@@ -1,3 +1,33 @@
+## [v1.6.3] - 2026-11-02
+### :sparkles: New Features
+- [`4066d79`](https://github.com/MongoCamp/mongocamp-server/commit/4066d79fa7a1cb5228eec64243c90cd21632674c) - refuse an empty filter for update many and delete many unless matchAll=true is set *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`0978ec6`](https://github.com/MongoCamp/mongocamp-server/commit/0978ec6e437d472e05e8f1bd84b29075412e56c2) - unique tokens and a way to shorten the life of a single token *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`b3cb2c3`](https://github.com/MongoCamp/mongocamp-server/commit/b3cb2c3b555b0a73444f964c93a4ab981bcb2364) - read the Extended JSON wrappers $date and $numberLong in writes and filters *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :bug: Bug Fixes
+- [`4d6cef5`](https://github.com/MongoCamp/mongocamp-server/commit/4d6cef5fd2bc0354f0bb79828d2c02334f0a19ee) - answer 400 for an empty batch and an invalid file id, 409 for a duplicate key *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`157feec`](https://github.com/MongoCamp/mongocamp-server/commit/157feecd536abfec6ff2a8b4fb0e70631296b1e6) - do not reuse the error code of the decode failure handler for empty filters *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`e546f5d`](https://github.com/MongoCamp/mongocamp-server/commit/e546f5d6cd34998c3f6c339b09f3bc571bffe5cc) - decode the lucene filter once and answer 400 with the reason for filters that cannot be converted *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`57ee723`](https://github.com/MongoCamp/mongocamp-server/commit/57ee72356850f6d27bb562235276b74270add8ce) - the token used for /auth/token/refresh stops working after a grace period *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`65e00b0`](https://github.com/MongoCamp/mongocamp-server/commit/65e00b0f14699ecdffe29446b12035750cff510f) - refuse aggregation pipelines with operators that run JavaScript or write to collections *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`8905b9a`](https://github.com/MongoCamp/mongocamp-server/commit/8905b9a3757b6fe0638937cb54fa15d03a0691a4) - check the read grant of the user for every collection that an aggregation stage reads *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`d99eae3`](https://github.com/MongoCamp/mongocamp-server/commit/d99eae3df10d5256ad658cd64502452fee701cbf) - find documents with a number as id by the id in the path *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`c825cc7`](https://github.com/MongoCamp/mongocamp-server/commit/c825cc76d0225621508b7388f589c2b3474e37c0) - describe free-form JSON values as any type in the OpenAPI document *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`87bddaa`](https://github.com/MongoCamp/mongocamp-server/commit/87bddaa3a7552e7d477a0a4e9b1f976952f6a115) - store every full ISO-8601 instant in a JSON body as date *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :recycle: Refactors
+- [`5d0af27`](https://github.com/MongoCamp/mongocamp-server/commit/5d0af27d89943228686a93d07c3de01c09d93b1c) - add helpers and error codes for 400 and 403 answers *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`2a3d5bc`](https://github.com/MongoCamp/mongocamp-server/commit/2a3d5bca43254964e3ab17a58cc039310a6dc903) - one check for the grant of a user on a collection *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :white_check_mark: Tests
+- [`bc907c9`](https://github.com/MongoCamp/mongocamp-server/commit/bc907c9f0ba1948028975f4501563bfaaa22771c) - count the two new configuration keys *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`5f66364`](https://github.com/MongoCamp/mongocamp-server/commit/5f66364c641ccea54b43a34fa2515ecc60d5ef7b) - do not depend on the order of the suites for the quartz collection *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :wrench: Chores
+- [`643da6b`](https://github.com/MongoCamp/mongocamp-server/commit/643da6bde4251ac27bcc1c7aa91b0e8e27bb7896) - run the checks of the pull request *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`a0e4bd3`](https://github.com/MongoCamp/mongocamp-server/commit/a0e4bd37bff6f188a9c5cbf9b5701517ba6f874a) - start the checks of the pull request *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.6.2] - 2026-11-01
 ### :bug: Bug Fixes
 - [`d03e20f`](https://github.com/MongoCamp/mongocamp-server/commit/d03e20f847fe48179bbfd252c6e97f5053009842) - register all events for serialization in the native image and do not fail requests when an event cannot be sent *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -387,3 +417,4 @@
 [v1.6.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.5.10...v1.6.0
 [v1.6.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.0...v1.6.1
 [v1.6.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.1...v1.6.2
+[v1.6.3]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.2...v1.6.3
