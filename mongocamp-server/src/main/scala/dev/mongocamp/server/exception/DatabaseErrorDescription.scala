@@ -21,7 +21,7 @@ object DatabaseErrorDescription {
 
   val ConnectionErrorMessage = "The database could not be reached"
 
-  private val serverAddress    = """\s+on server\s+\S+?(?=\.\s|\.$|\s|$)""".r
+  private val serverAddress    = """\s+on (?:MongoDB )?server\s+\S+?(?=\.\s|\.$|\s|$)""".r
   private val completeResponse = """(?s)\.?\s*The full response is.*$""".r
 
   @tailrec

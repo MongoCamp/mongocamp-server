@@ -47,6 +47,10 @@ class DatabaseErrorDescriptionSuite extends munit.FunSuite {
       DatabaseErrorDescription.removeInternalDetails(s"Query failed with error code 2 on server $internalHost:27017. The full response is {\"ok\": 0.0}"),
       "Query failed with error code 2"
     )
+    assertEquals(
+      DatabaseErrorDescription.removeInternalDetails(s"Write failed: E11000 duplicate key on MongoDB server $internalHost:27017"),
+      "Write failed: E11000 duplicate key"
+    )
     assertEquals(DatabaseErrorDescription.removeInternalDetails("Index 0 out of bounds"), "Index 0 out of bounds")
   }
 }
