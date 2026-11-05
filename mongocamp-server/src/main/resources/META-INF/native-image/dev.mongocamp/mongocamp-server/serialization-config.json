@@ -130,6 +130,9 @@
       "name":"dev.mongocamp.server.model.DeleteResponse"
     },
     {
+      "name":"dev.mongocamp.server.model.InsertError"
+    },
+    {
       "name":"dev.mongocamp.server.model.InsertResponse"
     },
     {
