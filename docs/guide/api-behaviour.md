@@ -59,3 +59,7 @@ invalid afterwards. A call with basic auth or an API key has no bearer token and
 ```
 
 Without a parameter only the collections of the default database with at least one right are listed. With `?collection=name` exactly that collection is answered, also when the user has no right (all flags `false`). The collection lists (`GET /mongodb/collections`, `GET /mongodb/databases/{db}/collections`) use the same matching, so a collection that is listed can be opened.
+
+## Counting documents
+
+`GET /mongodb/collections/{name}/documents/count?filter=` returns `{ "count": n }` for the documents that match the Lucene filter (all documents without a filter). It needs the read grant and uses the same filter parser as the list, so an invalid filter is a 400. The path `documents/count` belongs to this route: a document whose `_id` is the string `count` cannot be fetched with `GET .../documents/count` any more, use the list with `filter=_id:count` or the find route.
