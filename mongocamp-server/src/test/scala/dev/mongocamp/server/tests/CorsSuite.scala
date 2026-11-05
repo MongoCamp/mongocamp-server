@@ -2,8 +2,10 @@ package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.database.TestAdditions
 import dev.mongocamp.server.test.client.api.CollectionApi
+import dev.mongocamp.server.test.client.api.DocumentSearchApi
 import dev.mongocamp.server.test.client.model.MongoAggregateRequest
 import dev.mongocamp.server.test.client.model.PipelineStage
+import dev.mongocamp.server.test.client.model.SearchRequest
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
 import dev.mongocamp.server.test.TestServer
 import sttp.client3._
@@ -54,5 +56,14 @@ class CorsSuite extends MongoCampBaseServerSuite {
     val response     = executeRequest(request)
     assertEquals(response.code.code, 400)
     assertCorsHeaders(response, "failed request")
+  }
+
+  test("the search route has cors headers, also for an invalid filter") {
+    val ok = executeRequest(DocumentSearchApi().searchDocuments("", "", adminBearerToken, "")("accounts", SearchRequest(None)).header("Origin", origin))
+    assertEquals(ok.code.code, 200)
+    assertCorsHeaders(ok, "search")
+    val invalid = executeRequest(DocumentSearchApi().searchDocuments("", "", adminBearerToken, "")("accounts", SearchRequest(Some("name:("))).header("Origin", origin))
+    assertEquals(invalid.code.code, 400)
+    assertCorsHeaders(invalid, "search with an invalid filter")
   }
 }

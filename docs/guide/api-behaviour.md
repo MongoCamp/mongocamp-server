@@ -96,3 +96,13 @@ The messages of these errors do not name the database, the collection, the id of
 ```
 
 The details of the collection (`GET /mongodb/collections/{name}?includeDetails=true`) do not contain `host`, `ns` and `localTime` any more.
+
+## Search in the request body
+
+`POST /mongodb/collections/{name}/documents/search` is the list of documents with the parameters in the request body, for filters that do not fit in a URL: the server refuses a URL of more than 2048 characters before the request is handled (`414`, without CORS headers, so a browser reports a network error).
+
+```json
+{ "filter": "name:John AND age:[18 TO 65]", "sort": ["-age"], "projection": ["name", "age"] }
+```
+
+`filter` is a Lucene query like in the list, `sort` and `projection` are lists of field names like the query parameters (a leading `-` sorts descending), `rowsPerPage` and `page` are query parameters. The answer and the `x-pagination-*` headers are the same as for the list, an invalid filter is a `400` with code `4001` and the reason in `x-error-additional-info`. The route `POST .../documents` with a MongoDB filter in the body stays as it is.

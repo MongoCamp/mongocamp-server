@@ -21,6 +21,7 @@ import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.CountResponse
 import dev.mongocamp.server.model.DeleteResponse
 import dev.mongocamp.server.model.InsertResponse
+import dev.mongocamp.server.model.SearchRequest
 import dev.mongocamp.server.model.MongoFindRequest
 import dev.mongocamp.server.model.UpdateResponse
 import dev.mongocamp.server.plugin.RoutesPlugin
@@ -64,19 +65,67 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   def findAllInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     parameter: (Option[Query], List[String], List[String], Paging)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] =
+    findByLuceneFilter(authorizedCollectionRequest, parameter._1, parameter._2, parameter._3, parameter._4)
+
+  private def findByLuceneFilter(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    luceneFilter: Option[Query],
+    sortFields: List[String],
+    projectionFields: List[String],
+    paging: Paging
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
-    val sort: Map[String, Any] = parameter._2
+    val sort: Map[String, Any] = sortFields
       .map(
         s => if (s.startsWith("-")) (s.substring(1) -> -1) else (s -> 1)
       )
       .toMap
-    val projection: Map[String, Any] = parameter._3
+    val projection: Map[String, Any] = projectionFields
       .map(
         value => (value -> 1)
       )
       .toMap
-    val filter: Map[String, Any] = LuceneQueryTools.toFilterMap(parameter._1)
-    findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), parameter._4))
+    val filter: Map[String, Any] = LuceneQueryTools.toFilterMap(luceneFilter)
+    findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), paging))
+  }
+
+  val searchEndpoint = readCollectionEndpoint
+    .in("documents")
+    .in("search")
+    .in(
+      jsonBody[SearchRequest].example(SearchRequest(Some("name:John AND age:[18 TO 65]"), List("-age"), List("name", "age")))
+    )
+    .in(PagingFunctions.pagingParameter)
+    .out(jsonBody[List[Map[String, Any]]])
+    .out(PagingFunctions.pagingHeaderOutput)
+    .summary("Search Documents in Collection")
+    .description(
+      "The list of documents with the parameters in the request body: for filters that are too long for the URL (a URL of more than 2048 characters is refused by the server before the request is handled, without CORS headers). The filter is a Lucene query like in the list, the answer and the pagination headers are the same."
+    )
+    .tag(apiName)
+    .method(Method.POST)
+    .name("searchDocuments")
+    .serverLogic(
+      collectionRequest => parameter => searchInCollection(collectionRequest, parameter._1, parameter._2)
+    )
+
+  def searchInCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    request: SearchRequest,
+    paging: Paging
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
+    val luceneFilter = request.filter
+      .filter(!_.isBlank)
+      .map(
+        input =>
+          try LuceneQueryTools.parseFilter(input)
+          catch {
+            case LuceneQueryTools.InvalidFilterException(reason) =>
+              // the same answer as for an invalid query parameter
+              throw MongoCampException("Invalid value for: filter", StatusCode.BadRequest, 4001, reason)
+          }
+      )
+    findByLuceneFilter(authorizedCollectionRequest, luceneFilter, request.sort, request.projection, paging)
   }
 
   val countEndpoint = readCollectionEndpoint
@@ -313,7 +362,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   }
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
-    List(findAllEndpoint, countEndpoint, findPostEndpoint) ++
+    List(findAllEndpoint, countEndpoint, searchEndpoint, findPostEndpoint) ++
       DocumentManyRoutes.listOfManyEndpoints() ++
       List(insertEndpoint, getDocumentEndpoint, updateSingleDocumentEndpoint, updateDocumentFieldsEndpoint, deleteDocumentEndpoint)
 
