@@ -1,7 +1,6 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
@@ -75,12 +74,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
         value => (value -> 1)
       )
       .toMap
-    val filter: Map[String, Any] =
-      parameter._1
-        .map(
-          query => MongoCampBsonConverter.documentToMap(LuceneQueryConverter.toDocument(query).toBsonDocument)
-        )
-        .getOrElse(Map())
+    val filter: Map[String, Any] = LuceneQueryTools.toFilterMap(parameter._1)
     findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), parameter._4))
   }
 
