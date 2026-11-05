@@ -22,6 +22,14 @@ class DatabaseErrorStatusSuite extends MongoCampBaseServerSuite {
   private def aggregate(stage: String, value: Any) =
     executeRequest(colApi.aggregate("", "", adminBearerToken, "")(collection, MongoAggregateRequest(Seq(PipelineStage(stage, value)), allowDiskUse = false)))
 
+  private def assertNoInternalNames(response: sttp.client3.Response[_], hint: String): Unit = {
+    val text = response.header("x-error-message").getOrElse("") + response.body.toString
+    assertEquals(text.contains(collection), false, s"$hint: the collection is named: $text")
+    assertEquals(text.contains("same-id-secret"), false, s"$hint: the value is shown: $text")
+    assertEquals(text.matches("(?s).*[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}.*"), false, s"$hint: an id is shown: $text")
+    assertEquals(text.contains("test."), false, s"$hint: the database is named: $text")
+  }
+
   test("prepare") {
     executeRequestToResponse(documents.insertMany("", "", adminBearerToken, "")(collection, Seq(Map("a" -> 1, "b" -> "x"), Map("a" -> 1, "b" -> "y"))))
   }
@@ -36,6 +44,15 @@ class DatabaseErrorStatusSuite extends MongoCampBaseServerSuite {
     )
     assertEquals(response.code.code, 409)
     assertEquals(response.header("x-error-code"), Some("11000"))
+    assertNoInternalNames(response, "unique index over duplicates")
+  }
+
+  test("a duplicate id does not reveal the database, the collection or the values") {
+    executeRequestToResponse(documents.insert("", "", adminBearerToken, "")(collection, Map("_id" -> "same-id-secret", "a" -> 9)))
+    val response = executeRequest(documents.insert("", "", adminBearerToken, "")(collection, Map("_id" -> "same-id-secret", "a" -> 9)))
+    assertEquals(response.code.code, 409)
+    assertEquals(response.header("x-error-code").isDefined, true)
+    assertNoInternalNames(response, "duplicate id")
   }
 
   test("the index of the id cannot be dropped") {

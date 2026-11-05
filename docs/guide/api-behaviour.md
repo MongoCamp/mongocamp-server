@@ -84,3 +84,5 @@ A request that the database refuses because of its content is answered with the 
 | `500` | everything else, for example a database that shuts down or a lost connection |
 
 The status is derived from the error code of the database, so a case that is not listed stays a `500` until its code is known to be a mistake of the client.
+
+The messages of these errors do not name the database, the collection, the id of an index build or the values of a duplicate key: `E11000 duplicate key error collection: shop.customers index: email_1 dup key: { email: "a@b.c" }` is answered as `E11000 duplicate key error, index: email_1`.

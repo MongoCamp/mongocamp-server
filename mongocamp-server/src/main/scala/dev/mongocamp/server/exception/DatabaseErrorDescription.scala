@@ -24,6 +24,13 @@ object DatabaseErrorDescription {
   private val serverAddress    = """\s+on (?:MongoDB )?server\s+\S+?(?=\.\s|\.$|\s|$)""".r
   private val completeResponse = """(?s)\.?\s*The full response is.*$""".r
 
+  // the messages of the database name the database and the collection, the id of an index build and the value of the duplicate key, that is data of
+  // the server and of other users
+  private val uuid                = """[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}"""
+  private val indexBuildPrefix    = s"""(Index build failed): $uuid: Collection \\S+ \\(\\s*$uuid\\s*\\) :: caused by :: """.r
+  private val duplicateKey        = """(?s)(E11000 duplicate key error) collection: \S+ index: (\S+)(?: dup key: \{.*\})?""".r
+  private val remainingIdentifier = s"""\\s*\\(?\\s*$uuid\\s*\\)?""".r
+
   @tailrec
   def findDatabaseException(throwable: Throwable, depth: Int = 0): Option[MongoException] = {
     throwable match {
@@ -88,7 +95,7 @@ object DatabaseErrorDescription {
   def describe(exception: MongoException): ErrorDescription = {
     exception match {
       case command: MongoCommandException =>
-        ErrorDescription(command.getErrorCode, command.getErrorMessage)
+        ErrorDescription(command.getErrorCode, removeInternalNames(command.getErrorMessage))
       case _: MongoTimeoutException | _: MongoSocketException | _: MongoConfigurationException =>
         ErrorDescription(-1, ConnectionErrorMessage)
       case other =>
@@ -97,6 +104,13 @@ object DatabaseErrorDescription {
   }
 
   def removeInternalDetails(message: String): String = {
-    completeResponse.replaceAllIn(serverAddress.replaceAllIn(message, ""), "")
+    removeInternalNames(completeResponse.replaceAllIn(serverAddress.replaceAllIn(message, ""), ""))
+  }
+
+  /** Removes the names of the database and the collection, the ids of index builds and the values of a duplicate key from a message of the database. */
+  def removeInternalNames(message: String): String = {
+    val withoutBuild     = indexBuildPrefix.replaceAllIn(message, m => scala.util.matching.Regex.quoteReplacement(s"${m.group(1)}: "))
+    val withoutDuplicate = duplicateKey.replaceAllIn(withoutBuild, m => scala.util.matching.Regex.quoteReplacement(s"${m.group(1)}, index: ${m.group(2)}"))
+    remainingIdentifier.replaceAllIn(withoutDuplicate, "")
   }
 }

@@ -70,4 +70,33 @@ class DatabaseErrorDescriptionSuite extends munit.FunSuite {
     assertEquals(DatabaseErrorDescription.statusCode(command(13, "Unauthorized")), StatusCode.InternalServerError)
     assertEquals(DatabaseErrorDescription.statusCode(new MongoTimeoutException("timeout")), StatusCode.InternalServerError)
   }
+
+  test("the names of the database and the collection, the ids of an index build and the duplicate values are removed") {
+    val indexBuild =
+      "Write failed with error code 11000 and error message 'Index build failed: c70f2a29-4a10-449d-bcaa-e86ed870d80a: Collection test.errorProbe ( 1a9f2066-0770-4eb9-9da4-1b333a16056b ) :: caused by :: E11000 duplicate key error collection: test.errorProbe index: dupIdx dup key: { a: 1 }'"
+    assertEquals(
+      DatabaseErrorDescription.removeInternalDetails(indexBuild),
+      "Write failed with error code 11000 and error message 'Index build failed: E11000 duplicate key error, index: dupIdx'"
+    )
+    assertEquals(
+      DatabaseErrorDescription.removeInternalNames("E11000 duplicate key error collection: shop.customers index: _id_ dup key: { _id: \"secret-id\" }"),
+      "E11000 duplicate key error, index: _id_"
+    )
+    assertEquals(
+      DatabaseErrorDescription.removeInternalNames("E11000 duplicate key error collection: shop.customers index: email_1 dup key: { email: { a: 1 } }"),
+      "E11000 duplicate key error, index: email_1"
+    )
+    assertEquals(DatabaseErrorDescription.removeInternalNames("Unrecognized pipeline stage name: '$bogus'"), "Unrecognized pipeline stage name: '$bogus'")
+  }
+
+  test("the message of a command exception is cleaned too") {
+    val exception = new MongoCommandException(
+      BsonDocument.parse(
+        """{"ok": 0.0, "errmsg": "E11000 duplicate key error collection: shop.customers index: email_1 dup key: { email: \"a@b.c\" }", "code": 11000, "codeName": "DuplicateKey"}"""
+      ),
+      address
+    )
+    val message = DatabaseErrorDescription.describe(exception).msg
+    assertEquals(message, "E11000 duplicate key error, index: email_1")
+  }
 }
