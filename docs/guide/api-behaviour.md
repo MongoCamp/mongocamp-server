@@ -71,3 +71,16 @@ Without a parameter only the collections of the default database with at least o
 ## Missing grants
 
 A user who is logged in but has no grant for a collection, a bucket or an admin route is refused with the status of `AUTH_GRANT_DENIED_STATUS`, `401` by default. A client such as the UI clears its session on `401`, so a user who only lacks one grant is logged out; set the value to `403` to avoid that. The error code `4011` and the message (`user not authorized for collection`, `... for bucket`, `... for request`) are the same for both. A missing or invalid token is always `401`. The default changes to `403` in the next major version.
+
+## Errors of the database
+
+A request that the database refuses because of its content is answered with the status that fits, the `code` is the error code of the database (also in the header `x-error-code`) and the message does not contain the address of the server:
+
+| Status | Cases |
+|---|---|
+| `400` | an invalid pipeline (unknown stage, `$unwind` without `$`, `$limit` that is not a number, `$group` without `_id`, unknown operator), an empty field name in `sort` or `projection`, an index without keys, dropping the index of `_id` |
+| `404` | the database reports that an index or a collection does not exist (whether it does that for dropping an index that does not exist depends on the database, some versions answer with success) |
+| `409` | a duplicate key, also when a unique index is created over duplicate data, an index that conflicts with an existing one |
+| `500` | everything else, for example a database that shuts down or a lost connection |
+
+The status is derived from the error code of the database, so a case that is not listed stays a `500` until its code is known to be a mistake of the client.

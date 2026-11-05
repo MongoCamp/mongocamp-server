@@ -36,15 +36,53 @@ object DatabaseErrorDescription {
 
   private val duplicateKeyCode = 11000
 
-  /** Status code for a database error: a duplicate key is a conflict with the data of the client, everything else stays an internal error. */
+  // Error codes of the database for requests that the client got wrong. Everything else stays an internal error, because it is not known to be the fault of the
+  // client (a shutdown, a lost primary, a resource limit).
+  private val notFoundCodes = Set(
+    26, // NamespaceNotFound
+    27  // IndexNotFound
+  )
+  private val conflictCodes = Set(
+    duplicateKeyCode,
+    11001, // duplicate key on update
+    12582, // duplicate key (legacy)
+    68,    // NamespaceExists
+    85,    // IndexOptionsConflict
+    86     // IndexKeySpecsConflict
+  )
+  private val badRequestCodes = Set(
+    2,  // BadValue
+    9,  // FailedToParse
+    14, // TypeMismatch
+    40, // ConflictingUpdateOperators
+    52, // DollarPrefixedFieldName
+    67, // CannotCreateIndex
+    72, // InvalidOptions
+    73  // InvalidNamespace
+  )
+  // the server reports the checks of a stage or an expression ("a group specification must include an _id") with a code of the form Location<number>
+  private val locationCodeName = """Location\d+""".r
+
+  private def isBadRequest(code: Int, codeName: String): Boolean =
+    badRequestCodes.contains(code) || (codeName != null && locationCodeName.matches(codeName))
+
+  /** Status code for a database error: a duplicate key or a conflicting index is a conflict with the data of the client, a missing index or collection is
+    * not found, a request that the database cannot parse or execute because of its content is a bad request, everything else stays an internal error.
+    */
   def statusCode(exception: MongoException): StatusCode = {
-    val duplicateKey = exception match {
-      case write: MongoWriteException     => write.getError.getCategory == ErrorCategory.DUPLICATE_KEY
-      case bulk: MongoBulkWriteException  => bulk.getWriteErrors.asScala.exists(_.getCategory == ErrorCategory.DUPLICATE_KEY)
-      case command: MongoCommandException => command.getErrorCode == duplicateKeyCode
-      case _                              => false
+    val bulkDuplicate = exception match {
+      case write: MongoWriteException    => write.getError.getCategory == ErrorCategory.DUPLICATE_KEY
+      case bulk: MongoBulkWriteException => bulk.getWriteErrors.asScala.exists(_.getCategory == ErrorCategory.DUPLICATE_KEY)
+      case _                             => false
     }
-    if (duplicateKey) StatusCode.Conflict else StatusCode.InternalServerError
+    val (code, codeName) = exception match {
+      case command: MongoCommandException => (command.getErrorCode, command.getErrorCodeName)
+      case other                          => (other.getCode, null)
+    }
+    if (bulkDuplicate || conflictCodes.contains(code)) StatusCode.Conflict
+    else if (notFoundCodes.contains(code)) StatusCode.NotFound
+    else if (isBadRequest(code, codeName)) StatusCode.BadRequest
+    else StatusCode.InternalServerError
   }
 
   def describe(exception: MongoException): ErrorDescription = {
@@ -54,7 +92,7 @@ object DatabaseErrorDescription {
       case _: MongoTimeoutException | _: MongoSocketException | _: MongoConfigurationException =>
         ErrorDescription(-1, ConnectionErrorMessage)
       case other =>
-        ErrorDescription(-1, removeInternalDetails(Option(other.getMessage).getOrElse("Error on database request")))
+        ErrorDescription(if (other.getCode > 0) other.getCode else -1, removeInternalDetails(Option(other.getMessage).getOrElse("Error on database request")))
     }
   }
 

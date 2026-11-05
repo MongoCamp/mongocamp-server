@@ -47,11 +47,12 @@ class CorsSuite extends MongoCampBaseServerSuite {
     assertCorsHeaders(response, "login with a wrong password")
   }
 
-  test("500 has cors headers") {
+  // a request that the database refuses because of its content is a 400, a real internal error cannot be provoked from outside
+  test("a failed database request has cors headers") {
     val invalidLimit = MongoAggregateRequest(List(PipelineStage("limit", "abc")), allowDiskUse = false)
     val request      = CollectionApi().aggregate("", "", adminBearerToken, "")("geodata:locations", invalidLimit).header("Origin", origin)
     val response     = executeRequest(request)
-    assertEquals(response.code.code, 500)
+    assertEquals(response.code.code, 400)
     assertCorsHeaders(response, "failed request")
   }
 }

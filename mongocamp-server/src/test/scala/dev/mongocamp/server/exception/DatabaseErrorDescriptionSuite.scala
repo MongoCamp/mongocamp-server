@@ -53,4 +53,21 @@ class DatabaseErrorDescriptionSuite extends munit.FunSuite {
     )
     assertEquals(DatabaseErrorDescription.removeInternalDetails("Index 0 out of bounds"), "Index 0 out of bounds")
   }
+
+  private def command(code: Int, codeName: String) =
+    new MongoCommandException(BsonDocument.parse(s"""{"ok": 0.0, "errmsg": "failed", "code": $code, "codeName": "$codeName"}"""), address)
+
+  test("the status follows the code of the database") {
+    import sttp.model.StatusCode
+    assertEquals(DatabaseErrorDescription.statusCode(command(11000, "DuplicateKey")), StatusCode.Conflict)
+    assertEquals(DatabaseErrorDescription.statusCode(command(85, "IndexOptionsConflict")), StatusCode.Conflict)
+    assertEquals(DatabaseErrorDescription.statusCode(command(27, "IndexNotFound")), StatusCode.NotFound)
+    assertEquals(DatabaseErrorDescription.statusCode(command(26, "NamespaceNotFound")), StatusCode.NotFound)
+    assertEquals(DatabaseErrorDescription.statusCode(command(72, "InvalidOptions")), StatusCode.BadRequest)
+    assertEquals(DatabaseErrorDescription.statusCode(command(40324, "Location40324")), StatusCode.BadRequest)
+    // not known to be the fault of the client
+    assertEquals(DatabaseErrorDescription.statusCode(command(91, "ShutdownInProgress")), StatusCode.InternalServerError)
+    assertEquals(DatabaseErrorDescription.statusCode(command(13, "Unauthorized")), StatusCode.InternalServerError)
+    assertEquals(DatabaseErrorDescription.statusCode(new MongoTimeoutException("timeout")), StatusCode.InternalServerError)
+  }
 }
