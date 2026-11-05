@@ -50,15 +50,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right {
       val result           = MongoDatabase.databaseProvider.collectionNames()
-      val collectionGrants = userInformation.getCollectionGrants
-      result.filter(
-        collection => {
-          val readCollections = collectionGrants.filter(_.read).map(_.name)
-          val allBucketMetaFilter =
-            readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
-          userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
-        }
-      )
+      result.filter(userInformation.canRead)
     })
   }
 

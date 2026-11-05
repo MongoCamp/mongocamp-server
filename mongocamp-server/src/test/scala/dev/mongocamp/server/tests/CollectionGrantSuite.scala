@@ -30,4 +30,10 @@ class CollectionGrantSuite extends MongoCampBaseServerSuite {
     assertEquals(user.canWrite("other"), false)
     assertEquals(user.canAdministrate("other"), false)
   }
+
+  test("the permissions of a collection are resolved with the same matcher") {
+    assertEquals(user.permissionsFor("ACCOUNTS").copy(name = "accounts"), dev.mongocamp.server.model.auth.CollectionPermission("accounts", true, true, false))
+    assertEquals(admin.permissionsFor("anything").administrate, true)
+    assertEquals(user.permissionsFor(List("accounts", "other")).map(_.name), List("accounts"))
+  }
 }

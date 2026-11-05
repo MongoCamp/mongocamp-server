@@ -37,12 +37,20 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
       collectionGrant => {
         val grantName         = collectionGrant.name
         val isCollectionGrant = grantName.equalsIgnoreCase(collection) || grantName.equalsIgnoreCase(AuthorizedCollectionRequest.all)
+        // a bucket meta grant for all buckets ("*.files") covers every bucket meta collection
         val isBucketMetaGrant =
-          s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix".equalsIgnoreCase(collection) && collection.endsWith(BucketCollectionSuffix)
+          grantName.equalsIgnoreCase(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
         (isCollectionGrant || isBucketMetaGrant) && right(collectionGrant)
       }
     )
   }
+
+  def permissionsFor(collection: String): CollectionPermission =
+    CollectionPermission(collection, canRead(collection), canWrite(collection), canAdministrate(collection))
+
+  /** Every given collection the user may use in some way, with the resolved rights. */
+  def permissionsFor(collections: List[String]): List[CollectionPermission] =
+    collections.map(permissionsFor).filter(p => p.read || p.write || p.administrate)
 
   def canRead(collection: String): Boolean = hasCollectionGrant(collection, _.read)
 

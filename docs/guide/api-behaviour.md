@@ -49,3 +49,13 @@ Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` on fields that 
 ## Tokens
 `GET /auth/token/refresh` issues a new token. The bearer token that was used for the call stays valid for a grace period (`AUTH_REFRESH_GRACE_DURATION`, default 60 seconds, for concurrent requests) and is
 invalid afterwards. A call with basic auth or an API key has no bearer token and revokes nothing. The token does not contain the API key of the user, `/auth/profile` returns it.
+
+## Permissions
+
+`GET /auth/permissions` returns what the logged in user may do, resolved by the server with the same matching that protects the routes (case-insensitive names, the `*` wildcard, admins may do everything):
+
+```json
+[{ "name": "accounts", "read": true, "write": true, "administrate": false }]
+```
+
+Without a parameter only the collections of the default database with at least one right are listed. With `?collection=name` exactly that collection is answered, also when the user has no right (all flags `false`). The collection lists (`GET /mongodb/collections`, `GET /mongodb/databases/{db}/collections`) use the same matching, so a collection that is listed can be opened.
