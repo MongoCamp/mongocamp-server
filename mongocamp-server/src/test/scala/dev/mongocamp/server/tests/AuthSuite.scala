@@ -142,18 +142,42 @@ class AuthSuite extends MongoCampBaseServerSuite {
   test("permissions of an admin are resolved for every collection") {
     val permissions = executeRequestToResponse(adminApi.userPermissions("", "", adminBearerToken, "")())
     assert(permissions.nonEmpty)
-    assert(permissions.forall(p => p.read && p.write && p.administrate))
+    assert(
+      permissions.forall(
+        p => p.read && p.write && p.administrate
+      )
+    )
     val single = executeRequestToResponse(adminApi.userPermissions("", "", adminBearerToken, "")(Some("does_not_exist")))
-    assertEquals(single.map(p => (p.name, p.read, p.write, p.administrate)), List(("does_not_exist", true, true, true)))
+    assertEquals(
+      single.map(
+        p => (p.name, p.read, p.write, p.administrate)
+      ),
+      List(("does_not_exist", true, true, true))
+    )
   }
 
   test("permissions of a user follow the grants, ignoring the case of the name") {
     val accounts = executeRequestToResponse(adminApi.userPermissions("", "", testUserBearerToken, "")(Some("ACCOUNTS")))
-    assertEquals(accounts.map(p => (p.read, p.write, p.administrate)), List((true, true, false)))
+    assertEquals(
+      accounts.map(
+        p => (p.read, p.write, p.administrate)
+      ),
+      List((true, true, false))
+    )
     val other = executeRequestToResponse(adminApi.userPermissions("", "", testUserBearerToken, "")(Some("other")))
-    assertEquals(other.map(p => (p.read, p.write, p.administrate)), List((false, false, false)))
+    assertEquals(
+      other.map(
+        p => (p.read, p.write, p.administrate)
+      ),
+      List((false, false, false))
+    )
     val all = executeRequestToResponse(adminApi.userPermissions("", "", testUserBearerToken, "")())
-    assert(all.forall(p => p.read || p.write || p.administrate), "only collections with a right are listed")
+    assert(
+      all.forall(
+        p => p.read || p.write || p.administrate
+      ),
+      "only collections with a right are listed"
+    )
     assert(!all.exists(_.name == "other"))
   }
 

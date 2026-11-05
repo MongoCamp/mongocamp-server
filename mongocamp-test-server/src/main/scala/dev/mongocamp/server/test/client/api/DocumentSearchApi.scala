@@ -22,17 +22,19 @@ class DocumentSearchApi(baseUrl: String) extends ClientCirceSchema {
     *
     * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
     */
-  def searchDocuments(username: String, password: String, bearerToken: String, apiKey: String)(
-    collectionName: String,
-    searchRequest: SearchRequest,
-    rowsPerPage: Option[Long] = None,
-    page: Option[Long] = None
-  ) = {
+  def searchDocuments(
+    username: String,
+    password: String,
+    bearerToken: String,
+    apiKey: String
+  )(collectionName: String, searchRequest: SearchRequest, rowsPerPage: Option[Long] = None, page: Option[Long] = None) = {
     // the body is built by hand: None must not be sent as {}
     val body = Json
       .obj(
         List(
-          searchRequest.filter.map(f => "filter" -> Json.fromString(f)),
+          searchRequest.filter.map(
+            f => "filter" -> Json.fromString(f)
+          ),
           Some("sort"       -> Json.arr(searchRequest.sort.map(Json.fromString): _*)),
           Some("projection" -> Json.arr(searchRequest.projection.map(Json.fromString): _*))
         ).flatten: _*

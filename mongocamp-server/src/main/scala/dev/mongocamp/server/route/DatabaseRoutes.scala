@@ -118,7 +118,7 @@ object DatabaseRoutes extends RoutesPlugin {
 
   def collectionList(userInformation: UserInformation, database: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right {
-      val result           = MongoDatabase.databaseProvider.collectionNames(database)
+      val result = MongoDatabase.databaseProvider.collectionNames(database)
       result.filter(
         coll => userInformation.canRead(if (database.equalsIgnoreCase(MongoDatabase.databaseProvider.DefaultDatabaseName)) coll else s"$database:$coll")
       )

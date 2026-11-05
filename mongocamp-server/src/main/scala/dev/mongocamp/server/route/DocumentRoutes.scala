@@ -21,8 +21,8 @@ import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.CountResponse
 import dev.mongocamp.server.model.DeleteResponse
 import dev.mongocamp.server.model.InsertResponse
-import dev.mongocamp.server.model.SearchRequest
 import dev.mongocamp.server.model.MongoFindRequest
+import dev.mongocamp.server.model.SearchRequest
 import dev.mongocamp.server.model.UpdateResponse
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.route.parameter.paging.Paging
@@ -92,9 +92,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   val searchEndpoint = readCollectionEndpoint
     .in("documents")
     .in("search")
-    .in(
-      jsonBody[SearchRequest].example(SearchRequest(Some("name:John AND age:[18 TO 65]"), List("-age"), List("name", "age")))
-    )
+    .in(jsonBody[SearchRequest].example(SearchRequest(Some("name:John AND age:[18 TO 65]"), List("-age"), List("name", "age"))))
     .in(PagingFunctions.pagingParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)

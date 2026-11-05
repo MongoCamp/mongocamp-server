@@ -36,7 +36,7 @@ object LuceneQueryTools {
     }
     catch {
       case e: InvalidFilterException => throw e
-      case e: Exception =>
+      case e: Exception              =>
         // a header cannot carry a multi line message, and the parser messages have several lines
         val reason = Option(e.getMessage).flatMap(_.linesIterator.map(_.trim).find(_.nonEmpty)).getOrElse("the filter syntax is not supported")
         throw InvalidFilterException(reason)
@@ -46,7 +46,11 @@ object LuceneQueryTools {
     * afterwards by `MongoCampBsonConverter.convertFields`, as for every other filter.
     */
   def toFilterMap(query: Option[Query]): Map[String, Any] =
-    query.map(q => MongoCampBsonConverter.documentToMap(LuceneQueryConverter.toDocument(q).toBsonDocument)).getOrElse(Map())
+    query
+      .map(
+        q => MongoCampBsonConverter.documentToMap(LuceneQueryConverter.toDocument(q).toBsonDocument)
+      )
+      .getOrElse(Map())
 
   /** Decodes the raw filter string. The result of the parse is not validated again: a tapir validator would run on the decoded query, which renders without the
     * quotes of the original (`city:"x:y"` becomes `city:x:y`) and does not parse again.

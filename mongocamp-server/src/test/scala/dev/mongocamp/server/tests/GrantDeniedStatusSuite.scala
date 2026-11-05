@@ -18,7 +18,11 @@ class GrantDeniedStatusSuite extends MongoCampBaseServerSuite {
   lazy val adminApi: AdminApi        = AdminApi()
 
   private def deniedResponses() = List(
-    ("collection", "user not authorized for collection", executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")("other", None, Seq(), Seq()))),
+    (
+      "collection",
+      "user not authorized for collection",
+      executeRequest(documentsApi.listDocuments("", "", testUserBearerToken, "")("other", None, Seq(), Seq()))
+    ),
     ("bucket", "user not authorized for bucket", executeRequest(bucketApi.getBucket("", "", testUserBearerToken, "")("sample-files"))),
     ("admin", "user not authorized for request", executeRequest(adminApi.listUsers("", "", testUserBearerToken, "")()))
   )

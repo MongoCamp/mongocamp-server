@@ -41,7 +41,8 @@ object AggregationService {
   // stages that have to be the first stage of a pipeline, a $match before them is not possible
   private val firstStageOnly = Set("$geoNear", "$search", "$searchMeta", "$vectorSearch", "$collStats", "$indexStats", "$documents")
 
-  /** The filter of the request as the first stage of the pipeline: the aggregation works on the documents that the filter matches (and uses an index for it). */
+  /** The filter of the request as the first stage of the pipeline: the aggregation works on the documents that the filter matches (and uses an index for it).
+    */
   private def prependMatch(matchFilter: Map[String, Any], pipeline: List[PipelineStage]): Seq[Bson] = {
     if (matchFilter.isEmpty) {
       Seq()

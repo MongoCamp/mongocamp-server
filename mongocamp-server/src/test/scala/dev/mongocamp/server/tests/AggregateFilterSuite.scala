@@ -16,17 +16,22 @@ class AggregateFilterSuite extends MongoCampBaseServerSuite {
 
   private val collection = "aggregateFilterTest"
 
-  private val groupByType = List(
-    PipelineStage("group", Map("_id" -> "$type", "n" -> Map("$sum" -> 1))),
-    PipelineStage("sort", Map("_id" -> 1))
-  )
+  private val groupByType = List(PipelineStage("group", Map("_id" -> "$type", "n" -> Map("$sum" -> 1))), PipelineStage("sort", Map("_id" -> 1)))
 
-  private def run(pipeline: List[PipelineStage], filter: Option[String], rows: Option[Long] = Some(100), name: String = collection, token: String = adminBearerToken) =
+  private def run(
+    pipeline: List[PipelineStage],
+    filter: Option[String],
+    rows: Option[Long] = Some(100),
+    name: String = collection,
+    token: String = adminBearerToken
+  ) =
     executeRequest(aggregateApi.aggregate("", "", token, "")(name, MongoAggregateRequest(pipeline, allowDiskUse = false), filter, rows, Some(1)))
 
   test("prepare") {
     val documents: Seq[Map[String, Any]] =
-      (1 to 30).map(i => Map("name" -> s"doc$i", "type" -> (if (i <= 10) "a" else if (i <= 20) "b" else "c"), "age" -> i))
+      (1 to 30).map(
+        i => Map("name" -> s"doc$i", "type" -> (if (i <= 10) "a" else if (i <= 20) "b" else "c"), "age" -> i)
+      )
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, documents))
   }
 
@@ -41,7 +46,14 @@ class AggregateFilterSuite extends MongoCampBaseServerSuite {
     val viaMatch  = run(PipelineStage("match", Map("age" -> Map("$gte" -> 5, "$lte" -> 15))) :: groupByType, None)
     assertEquals(viaFilter.code.code, 200, viaFilter.body.fold(_.getMessage, _ => ""))
     assertEquals(viaFilter.body.getOrElse(Nil), viaMatch.body.getOrElse(Nil))
-    assertEquals(viaFilter.body.getOrElse(Nil).map(e => (e("_id").toString, e("n").toString)), List(("a", "6"), ("b", "5")))
+    assertEquals(
+      viaFilter.body
+        .getOrElse(Nil)
+        .map(
+          e => (e("_id").toString, e("n").toString)
+        ),
+      List(("a", "6"), ("b", "5"))
+    )
   }
 
   test("the pagination counts the result of the filtered pipeline") {
@@ -60,7 +72,8 @@ class AggregateFilterSuite extends MongoCampBaseServerSuite {
   }
 
   test("a pipeline that has to start with a special stage cannot have a filter") {
-    val geoNear = PipelineStage("geoNear", Map("near" -> Map("type" -> "Point", "coordinates" -> List(0, 0)), "distanceField" -> "distance", "spherical" -> true))
+    val geoNear =
+      PipelineStage("geoNear", Map("near" -> Map("type" -> "Point", "coordinates" -> List(0, 0)), "distanceField" -> "distance", "spherical" -> true))
     val response = run(List(geoNear), Some("type:company"), name = "geodata:locations")
     assertEquals(response.code.code, 400)
     assertEquals(response.header("x-error-code"), Some(ErrorCodes.filterNotSupported.toString))

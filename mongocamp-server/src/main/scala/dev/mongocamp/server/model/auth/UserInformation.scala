@@ -50,7 +50,11 @@ case class UserInformation(userId: String, password: String, apiKey: Option[Stri
 
   /** Every given collection the user may use in some way, with the resolved rights. */
   def permissionsFor(collections: List[String]): List[CollectionPermission] =
-    collections.map(permissionsFor).filter(p => p.read || p.write || p.administrate)
+    collections
+      .map(permissionsFor)
+      .filter(
+        p => p.read || p.write || p.administrate
+      )
 
   def canRead(collection: String): Boolean = hasCollectionGrant(collection, _.read)
 

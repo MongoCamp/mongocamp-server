@@ -21,7 +21,9 @@ class DocumentManyFilterSuite extends MongoCampBaseServerSuite {
   private def errorCode(response: sttp.client3.Response[_]): Option[String] = response.header("x-error-code")
 
   test("prepare the documents") {
-    val documents: Seq[Map[String, Any]] = (1 to 10).map(i => Map("name" -> s"doc$i", "group" -> (if (i <= 6) "a" else "b"), "age" -> i * 10))
+    val documents: Seq[Map[String, Any]] = (1 to 10).map(
+      i => Map("name" -> s"doc$i", "group" -> (if (i <= 6) "a" else "b"), "age" -> i * 10)
+    )
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, documents))
     assertEquals(count(), 10L)
   }

@@ -8,7 +8,7 @@ import dev.mongocamp.server.test.MongoCampBaseServerSuite
 
 // a request that the database refuses because of its content is answered with a 4xx and the code of the database, not with a 500
 class DatabaseErrorStatusSuite extends MongoCampBaseServerSuite {
-  private val collection = "errorStatus"
+  private val collection     = "errorStatus"
   private lazy val index     = IndexApi()
   private lazy val documents = DocumentApi()
   private lazy val colApi    = CollectionApi()
@@ -18,7 +18,8 @@ class DatabaseErrorStatusSuite extends MongoCampBaseServerSuite {
     assertEquals(response.code.code, status, s"$hint: ${response.body.toString.take(300)}")
     databaseCode match {
       case Some(code) => assertEquals(response.header("x-error-code"), Some(code.toString), hint)
-      case None       => assertEquals(response.header("x-error-code").exists(_.matches("[0-9]+")), true, s"$hint: no numeric code: ${response.header("x-error-code")}")
+      case None =>
+        assertEquals(response.header("x-error-code").exists(_.matches("[0-9]+")), true, s"$hint: no numeric code: ${response.header("x-error-code")}")
     }
     assertEquals(response.header("x-error-message").exists(!_.isBlank), true, s"$hint: no message")
   }
@@ -44,7 +45,10 @@ class DatabaseErrorStatusSuite extends MongoCampBaseServerSuite {
 
   test("a unique index over duplicate data is a conflict without the internal names") {
     val response = executeRequest(
-      index.createIndex("", "", adminBearerToken, "")(collection, IndexCreateRequest(Map("a" -> 1), Some(IndexOptionsRequest(Some("dupIdx"), unique = Some(true)))))
+      index.createIndex("", "", adminBearerToken, "")(
+        collection,
+        IndexCreateRequest(Map("a" -> 1), Some(IndexOptionsRequest(Some("dupIdx"), unique = Some(true))))
+      )
     )
     assertEquals(response.code.code, 409)
     assertEquals(response.header("x-error-code"), Some("11000"))

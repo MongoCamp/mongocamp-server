@@ -66,7 +66,10 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
     try
       assertRefused(aggregate(PipelineStage("limit", 1)), "$limit")
     finally
-      ConfigurationService.updateConfig(key, List("$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions", "$collStats", "$indexStats"))
+      ConfigurationService.updateConfig(
+        key,
+        List("$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions", "$collStats", "$indexStats")
+      )
     assertEquals(aggregate(PipelineStage("limit", 1)).code.code, 200)
   }
 

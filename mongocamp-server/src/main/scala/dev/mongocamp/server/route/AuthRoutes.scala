@@ -24,8 +24,8 @@ import sttp.capabilities.WebSockets
 import sttp.model.Method
 import sttp.model.StatusCode
 import sttp.tapir.auth
-import sttp.tapir.query
 import sttp.tapir.json.circe.jsonBody
+import sttp.tapir.query
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.stringToPath
 object AuthRoutes extends BaseRoute {
@@ -169,8 +169,8 @@ object AuthRoutes extends BaseRoute {
     )
 
   def userPermissions(
-      loginInformation: UserInformation,
-      collection: Option[String]
+    loginInformation: UserInformation,
+    collection: Option[String]
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[CollectionPermission]]] = {
     Future.successful {
       val user = AuthHolder.handler.findUser(loginInformation.userId)

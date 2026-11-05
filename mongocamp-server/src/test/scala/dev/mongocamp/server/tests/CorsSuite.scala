@@ -62,7 +62,8 @@ class CorsSuite extends MongoCampBaseServerSuite {
     val ok = executeRequest(DocumentSearchApi().searchDocuments("", "", adminBearerToken, "")("accounts", SearchRequest(None)).header("Origin", origin))
     assertEquals(ok.code.code, 200)
     assertCorsHeaders(ok, "search")
-    val invalid = executeRequest(DocumentSearchApi().searchDocuments("", "", adminBearerToken, "")("accounts", SearchRequest(Some("name:("))).header("Origin", origin))
+    val invalid =
+      executeRequest(DocumentSearchApi().searchDocuments("", "", adminBearerToken, "")("accounts", SearchRequest(Some("name:("))).header("Origin", origin))
     assertEquals(invalid.code.code, 400)
     assertCorsHeaders(invalid, "search with an invalid filter")
   }

@@ -18,7 +18,14 @@ class IndexStatsSuite extends MongoCampBaseServerSuite {
   private val collection = "indexStatsTest"
 
   test("prepare") {
-    executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, (1 to 20).map(i => Map("a" -> i, "b" -> s"v$i"))))
+    executeRequestToResponse(
+      documentsApi.insertMany("", "", adminBearerToken, "")(
+        collection,
+        (1 to 20).map(
+          i => Map("a" -> i, "b" -> s"v$i")
+        )
+      )
+    )
     executeRequestToResponse(indexApi.createIndex("", "", adminBearerToken, "")(collection, IndexCreateRequest(Map("a" -> 1), None)))
     // use the index
     executeRequestToResponse(documentsApi.listDocuments("", "", adminBearerToken, "")(collection, Some("a:5"), Seq(), Seq(), Some(10), Some(1)))
@@ -41,9 +48,14 @@ class IndexStatsSuite extends MongoCampBaseServerSuite {
     val status = executeRequestToResponse(colApi.getCollectionInformation("", "", adminBearerToken, "")(collection, Some(true)))
     assertEquals(status.map.nonEmpty, true, "the details are empty")
     def keys(value: Any): Set[String] = value match {
-      case m: Map[_, _]      => m.asInstanceOf[Map[String, Any]].flatMap(e => keys(e._2) + e._1).toSet
-      case l: Iterable[_]    => l.flatMap(keys).toSet
-      case _                 => Set()
+      case m: Map[_, _] =>
+        m.asInstanceOf[Map[String, Any]]
+          .flatMap(
+            e => keys(e._2) + e._1
+          )
+          .toSet
+      case l: Iterable[_] => l.flatMap(keys).toSet
+      case _              => Set()
     }
     val all = keys(status.map)
     assertEquals(all.intersect(Set("host", "ns", "localTime")), Set[String]())

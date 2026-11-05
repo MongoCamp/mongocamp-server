@@ -16,14 +16,28 @@ class DocumentSearchSuite extends MongoCampBaseServerSuite {
 
   private val paginationHeaders = List("x-pagination-count-rows", "x-pagination-rows-per-page", "x-pagination-current-page", "x-pagination-count-pages")
 
-  private def search(request: SearchRequest, rows: Option[Long] = Some(100), page: Option[Long] = Some(1), token: String = adminBearerToken, name: String = collection) =
+  private def search(
+    request: SearchRequest,
+    rows: Option[Long] = Some(100),
+    page: Option[Long] = Some(1),
+    token: String = adminBearerToken,
+    name: String = collection
+  ) =
     executeRequest(searchApi.searchDocuments("", "", token, "")(name, request, rows, page))
 
-  private def list(filter: Option[String], sort: Seq[String] = Seq(), projection: Seq[String] = Seq(), rows: Option[Long] = Some(100), page: Option[Long] = Some(1)) =
+  private def list(
+    filter: Option[String],
+    sort: Seq[String] = Seq(),
+    projection: Seq[String] = Seq(),
+    rows: Option[Long] = Some(100),
+    page: Option[Long] = Some(1)
+  ) =
     executeRequest(documentsApi.listDocuments("", "", adminBearerToken, "")(collection, filter, sort, projection, rows, page))
 
   test("prepare") {
-    val documents: Seq[Map[String, Any]] = (1 to 30).map(i => Map("name" -> s"doc$i", "group" -> (if (i % 3 == 0) "a" else "b"), "age" -> i))
+    val documents: Seq[Map[String, Any]] = (1 to 30).map(
+      i => Map("name" -> s"doc$i", "group" -> (if (i % 3 == 0) "a" else "b"), "age" -> i)
+    )
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, documents))
   }
 
@@ -39,7 +53,9 @@ class DocumentSearchSuite extends MongoCampBaseServerSuite {
         val viaSearch = search(SearchRequest(filter, sort, projection))
         assertEquals(viaSearch.code.code, 200, s"search for $filter failed: ${viaSearch.body.fold(_.getMessage, _ => "")}")
         assertEquals(viaSearch.body.getOrElse(Nil), viaList.body.getOrElse(Nil), s"filter $filter")
-        paginationHeaders.foreach(h => assertEquals(viaSearch.header(h), viaList.header(h), s"header $h for $filter"))
+        paginationHeaders.foreach(
+          h => assertEquals(viaSearch.header(h), viaList.header(h), s"header $h for $filter")
+        )
     }
   }
 
@@ -52,7 +68,11 @@ class DocumentSearchSuite extends MongoCampBaseServerSuite {
 
   test("a filter that does not fit in a URL works") {
     // more than 2500 characters, a URL of this length is refused by the server (414)
-    val filter   = (1 to 400).map(i => s"name:nobody$i").mkString("(", " OR ", ") OR group:a")
+    val filter = (1 to 400)
+      .map(
+        i => s"name:nobody$i"
+      )
+      .mkString("(", " OR ", ") OR group:a")
     assert(filter.length > 2500)
     val response = search(SearchRequest(Some(filter)))
     assertEquals(response.code.code, 200)

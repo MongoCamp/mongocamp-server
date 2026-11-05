@@ -4,9 +4,9 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
-import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.collection.ClearCollectionEvent
 import dev.mongocamp.server.event.collection.DropCollectionEvent
@@ -25,12 +25,12 @@ import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import dev.mongocamp.server.service.AggregationService
 import dev.mongocamp.server.service.SchemaService
+import org.apache.lucene.search.Query
 import scala.concurrent.Future
 import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.Method
 import sttp.model.StatusCode
-import org.apache.lucene.search.Query
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -52,7 +52,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right {
-      val result           = MongoDatabase.databaseProvider.collectionNames()
+      val result = MongoDatabase.databaseProvider.collectionNames()
       result.filter(userInformation.canRead)
     })
   }
@@ -74,7 +74,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   private def removeServerFields(value: Any): Any = value match {
     case map: Map[_, _] =>
-      map.asInstanceOf[Map[String, Any]].view.filterKeys(!serverFields.contains(_)).map(entry => (entry._1, removeServerFields(entry._2))).toMap
+      map
+        .asInstanceOf[Map[String, Any]]
+        .view
+        .filterKeys(!serverFields.contains(_))
+        .map(
+          entry => (entry._1, removeServerFields(entry._2))
+        )
+        .toMap
     case list: Iterable[_] => list.map(removeServerFields).toList
     case other             => other
   }
@@ -308,7 +315,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in(PagingFunctions.pagingParameter)
     .in(
       query[Option[Query]]("filter")(using Codec.listHeadOption(LuceneQueryTools.filterCodec))
-        .description("Filter Query like on the list of documents, applied as the first stage of the pipeline. Not possible for a pipeline that starts with $geoNear, $search or $vectorSearch.")
+        .description(
+          "Filter Query like on the list of documents, applied as the first stage of the pipeline. Not possible for a pipeline that starts with $geoNear, $search or $vectorSearch."
+        )
         .default(None)
     )
     .out(jsonBody[List[Map[String, Any]]])

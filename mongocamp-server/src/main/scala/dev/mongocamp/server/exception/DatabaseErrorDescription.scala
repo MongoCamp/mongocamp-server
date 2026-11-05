@@ -73,8 +73,8 @@ object DatabaseErrorDescription {
   private def isBadRequest(code: Int, codeName: String): Boolean =
     badRequestCodes.contains(code) || (codeName != null && locationCodeName.matches(codeName))
 
-  /** Status code for a database error: a duplicate key or a conflicting index is a conflict with the data of the client, a missing index or collection is
-    * not found, a request that the database cannot parse or execute because of its content is a bad request, everything else stays an internal error.
+  /** Status code for a database error: a duplicate key or a conflicting index is a conflict with the data of the client, a missing index or collection is not
+    * found, a request that the database cannot parse or execute because of its content is a bad request, everything else stays an internal error.
     */
   def statusCode(exception: MongoException): StatusCode = {
     val bulkDuplicate = exception match {

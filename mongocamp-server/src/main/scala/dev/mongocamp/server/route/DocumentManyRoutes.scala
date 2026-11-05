@@ -32,11 +32,11 @@ import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
 import sttp.model.Method
 import sttp.model.StatusCode
-import sttp.tapir.Codec
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.query
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.stringToPath
+import sttp.tapir.Codec
 object DocumentManyRoutes extends CollectionBaseRoute {
 
   val insertManyEndpoint = writeCollectionEndpoint
@@ -93,7 +93,9 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     )
     try {
       dao.insertMany(withIds, new InsertManyOptions().ordered(false)).result()
-      val ids = withIds.map(document => idToString(document.get("_id").get))
+      val ids = withIds.map(
+        document => idToString(document.get("_id").get)
+      )
       InsertResponse(wasAcknowledged = true, ids, Some(ids.size.toLong), Some(List()))
     }
     catch {
@@ -104,7 +106,13 @@ object DocumentManyRoutes extends CollectionBaseRoute {
               error => InsertError(error.getIndex, error.getCode, DatabaseErrorDescription.removeInternalNames(error.getMessage))
             )
             val failed = errors.map(_.index).toSet
-            val ids    = withIds.zipWithIndex.filter(entry => !failed.contains(entry._2)).map(entry => idToString(entry._1.get("_id").get))
+            val ids = withIds.zipWithIndex
+              .filter(
+                entry => !failed.contains(entry._2)
+              )
+              .map(
+                entry => idToString(entry._1.get("_id").get)
+              )
             InsertResponse(wasAcknowledged = true, ids, Some(ids.size.toLong), Some(errors))
           case _ => throw ex
         }
@@ -129,10 +137,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
   // the filter of the request body or the Lucene filter of the query, not both: a filter that is silently ignored would touch more documents than intended
   private def effectiveFilter(bodyFilter: Map[String, Any], luceneFilter: Option[Query]): Map[String, Any] = {
     if (luceneFilter.isDefined && bodyFilter.nonEmpty) {
-      throw MongoCampException.badRequestException(
-        "send the filter in the request body or as query parameter filter, not both",
-        ErrorCodes.ambiguousFilter
-      )
+      throw MongoCampException.badRequestException("send the filter in the request body or as query parameter filter, not both", ErrorCodes.ambiguousFilter)
     }
     if (luceneFilter.isDefined) LuceneQueryTools.toFilterMap(luceneFilter) else bodyFilter
   }

@@ -32,13 +32,23 @@ class DocumentInsertManySuite extends MongoCampBaseServerSuite {
   }
 
   test("unordered: the documents that can be stored are stored, the others are reported") {
-    val before   = count
-    val response = insert(Seq(Map("_id" -> "u1", "v" -> 2), Map("_id" -> "d1", "v" -> 2), Map("_id" -> "u3", "v" -> 2), Map("_id" -> "d3", "v" -> 2), Map("_id" -> "u5", "v" -> 2)), Some(false))
+    val before = count
+    val response = insert(
+      Seq(Map("_id" -> "u1", "v" -> 2), Map("_id" -> "d1", "v" -> 2), Map("_id" -> "u3", "v" -> 2), Map("_id" -> "d3", "v" -> 2), Map("_id" -> "u5", "v" -> 2)),
+      Some(false)
+    )
     assertEquals(response.code.code, 200, response.body.fold(_.getMessage, _ => ""))
     val body = response.body.getOrElse(throw new Exception("no body"))
     assertEquals(body.insertedIds.toSet, Set("u1", "u3", "u5"))
     assertEquals(body.insertedCount, Some(3L))
-    assertEquals(body.errors.getOrElse(Nil).map(e => (e.index, e.code)), List((1, 11000), (3, 11000)))
+    assertEquals(
+      body.errors
+        .getOrElse(Nil)
+        .map(
+          e => (e.index, e.code)
+        ),
+      List((1, 11000), (3, 11000))
+    )
     assertEquals(count, before + 3)
   }
 

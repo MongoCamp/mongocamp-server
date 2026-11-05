@@ -47,7 +47,11 @@ class CollectionInfoSuite extends MongoCampBaseServerSuite {
     try {
       val view = info(adminBearerToken).find(_.name == "accountsView").getOrElse(fail("the view is missing"))
       assertEquals(view.available, false)
-      assert(info(adminBearerToken).exists(c => c.name == "accounts" && c.available))
+      assert(
+        info(adminBearerToken).exists(
+          c => c.name == "accounts" && c.available
+        )
+      )
     }
     finally database.getCollection("accountsView").drop().result()
   }

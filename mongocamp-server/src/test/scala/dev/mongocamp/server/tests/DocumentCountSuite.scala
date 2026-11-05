@@ -7,7 +7,7 @@ import dev.mongocamp.server.test.MongoCampBaseServerSuite
 
 class DocumentCountSuite extends MongoCampBaseServerSuite {
 
-  lazy val documentsApi: DocumentApi   = DocumentApi()
+  lazy val documentsApi: DocumentApi  = DocumentApi()
   lazy val countApi: DocumentCountApi = DocumentCountApi()
 
   private val collection = "countTest"
@@ -24,11 +24,11 @@ class DocumentCountSuite extends MongoCampBaseServerSuite {
   test("prepare the documents") {
     val documents: Seq[Map[String, Any]] =
       Seq(
-        Map("_id" -> "count", "name" -> "literal id", "age" -> 10),
-        Map("name" -> "a", "age" -> 20),
-        Map("name" -> "b", "age" -> 30),
-        Map("name" -> "c", "age" -> 40),
-        Map("name" -> "d", "age" -> 50)
+        Map("_id"  -> "count", "name" -> "literal id", "age" -> 10),
+        Map("name" -> "a", "age"      -> 20),
+        Map("name" -> "b", "age"      -> 30),
+        Map("name" -> "c", "age"      -> 40),
+        Map("name" -> "d", "age"      -> 50)
       )
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, documents))
   }

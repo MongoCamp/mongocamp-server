@@ -2,10 +2,10 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.exception.ErrorDescription
-import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.model.auth.AuthInput
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
+import dev.mongocamp.server.service.GrantDenied
 import scala.concurrent.Future
 import sttp.model.StatusCode
 import sttp.tapir._
