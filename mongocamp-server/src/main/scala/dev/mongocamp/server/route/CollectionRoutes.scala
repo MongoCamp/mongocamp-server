@@ -15,6 +15,7 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
+import dev.mongocamp.server.model.CollectionSummary
 import dev.mongocamp.server.model.JsonSchema
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.MongoAggregateRequest
@@ -78,26 +79,76 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     case other             => other
   }
 
+  private def collectionStatusOf(collectionName: String): CollectionStatus = {
+    val mongoDatabase = if (collectionName.contains(CollectionSeparator)) {
+      MongoDatabase.databaseProvider.database(collectionName.split(CollectionSeparator).head)
+    }
+    else {
+      MongoDatabase.databaseProvider.database()
+    }
+    val collection = collectionName.split(CollectionSeparator).last
+    mongoDatabase
+      .runCommand(Map("collStats" -> collection))
+      .map(
+        document => CollectionStatus(document)
+      )
+      .result()
+  }
+
+  // registered before the collection routes: the path /collections/info would be the information of a collection with the name info otherwise
+  val collectionsInfoEndpoint = securedEndpoint
+    .in(mongoDbPath)
+    .in("collections")
+    .in("info")
+    .in(query[List[String]]("name").description("Only the Collections with these names, by default all Collections that the user may read").default(List()))
+    .out(jsonBody[List[CollectionSummary]])
+    .summary("Information of all Collections")
+    .description(
+      "The numbers of all Collections of the default database that the user may read in one request (count, size, storage size, average size of a document, number and size of the indices). A Collection without statistics, for example a view, is listed with available false."
+    )
+    .tag("Collection")
+    .method(Method.GET)
+    .name("listCollectionInformation")
+    .serverLogic(
+      user => names => collectionInformationList(user, names)
+    )
+
+  def collectionInformationList(
+    userInformation: UserInformation,
+    names: List[String]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[CollectionSummary]]] = {
+    Future.successful(Right {
+      val readable = MongoDatabase.databaseProvider.collectionNames().filter(userInformation.canRead)
+      val selected = if (names.isEmpty) readable else readable.filter(names.contains)
+      selected.map(
+        name =>
+          try {
+            val status = collectionStatusOf(name)
+            CollectionSummary(
+              name,
+              status.collectionType,
+              status.count.toLong,
+              status.size,
+              status.storageSize,
+              status.avgObjSize.toLong,
+              status.nindexes,
+              status.totalIndexSize.toLong,
+              available = true
+            )
+          }
+          catch {
+            case _: Exception => CollectionSummary(name, "unknown", 0, 0, 0, 0, 0, 0, available = false)
+          }
+      )
+    })
+  }
+
   def collectionStatus(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     parameter: Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
     Future.successful(Right {
-      val mongoDatabase = if (authorizedCollectionRequest.collection.contains(CollectionSeparator)) {
-        MongoDatabase.databaseProvider.database(authorizedCollectionRequest.collection.split(CollectionSeparator).head)
-      }
-      else {
-        MongoDatabase.databaseProvider.database()
-      }
-
-      val collection = authorizedCollectionRequest.collection.split(CollectionSeparator).last
-
-      val result = mongoDatabase
-        .runCommand(Map("collStats" -> collection))
-        .map(
-          document => CollectionStatus(document)
-        )
-        .result()
+      val result = collectionStatusOf(authorizedCollectionRequest.collection)
 
       if (parameter) {
         result.copy(map = removeServerFields(result.map).asInstanceOf[Map[String, Any]])
@@ -331,6 +382,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(
       collectionsEndpoint,
+      collectionsInfoEndpoint,
       getCollectionStatusEndpoint,
       getCollectionFieldsEndpoint,
       getSchemaEndpoint,

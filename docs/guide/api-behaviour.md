@@ -127,3 +127,13 @@ A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$sear
 ```
 
 `index` is the position of the document in the request, `code` the error code of the database. Documents without an `_id` get an ObjectId from the server, so that `insertedIds` is complete. With `ordered=true` (the default) nothing changes: the insert stops at the first document that fails, a duplicate key is a `409`, the documents before it are stored. `insertedCount` and `errors` (empty) are part of that answer too.
+
+## Information of all collections
+
+`GET /mongodb/collections/info` returns the numbers of all collections of the default database that the user may read in one request, instead of one `GET /mongodb/collections/{name}` per collection:
+
+```json
+[{ "name": "accounts", "collectionType": "Standard", "count": 1000, "size": 480000, "storageSize": 215000, "avgObjSize": 480, "nindexes": 1, "totalIndexSize": 36000, "available": true }]
+```
+
+With `?name=a&name=b` only these collections are given (a collection that the user may not read is never given). A collection without statistics, for example a view, is listed with `available: false` and zeros. The database is asked once per collection, so on a server with very many collections restrict the answer with `name`. A collection with the name `info` is shadowed for `GET /mongodb/collections/info`, its information is available with the other routes of the collection.
