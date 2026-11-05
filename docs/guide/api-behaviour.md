@@ -112,3 +112,18 @@ The details of the collection (`GET /mongodb/collections/{name}?includeDetails=t
 `POST /mongodb/collections/{name}/aggregate?filter=` takes the Lucene filter of the list and puts it in front of the pipeline as a `$match` stage, so the aggregation works on exactly the documents that the list shows (and the database can use an index for it). The filter is converted like the filter of the list (`_id`, dates), an invalid filter is a `400`, the read grant of the collection applies as before.
 
 A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$searchMeta`, `$vectorSearch`, `$documents`) cannot get a stage in front of it: with a filter it is refused with `400` and code `4005`, put the conditions into the stage itself (`query` of `$geoNear`). The count of the pagination headers is the count of the result of the filtered pipeline.
+
+## Insert many without stopping at the first error
+
+`PUT /mongodb/collections/{name}/documents/many/insert?ordered=false` stores every document that can be stored and lists the others, so that a retry can send exactly these:
+
+```json
+{
+  "wasAcknowledged": true,
+  "insertedIds": ["u1", "u3", "u5"],
+  "insertedCount": 3,
+  "errors": [{ "index": 1, "code": 11000, "message": "E11000 duplicate key error, index: _id_" }]
+}
+```
+
+`index` is the position of the document in the request, `code` the error code of the database. Documents without an `_id` get an ObjectId from the server, so that `insertedIds` is complete. With `ordered=true` (the default) nothing changes: the insert stops at the first document that fails, a duplicate key is a `409`, the documents before it are stored. `insertedCount` and `errors` (empty) are part of that answer too.

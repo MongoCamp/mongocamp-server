@@ -1,6 +1,8 @@
 package dev.mongocamp.server.route
 
+import com.mongodb.MongoBulkWriteException
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
@@ -10,15 +12,20 @@ import dev.mongocamp.server.event.document.CreateDocumentEvent
 import dev.mongocamp.server.event.document.DeleteDocumentEvent
 import dev.mongocamp.server.event.document.UpdateDocumentEvent
 import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.exception.DatabaseErrorDescription
 import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.DeleteResponse
+import dev.mongocamp.server.model.InsertError
 import dev.mongocamp.server.model.InsertResponse
 import dev.mongocamp.server.model.UpdateRequest
 import dev.mongocamp.server.model.UpdateResponse
 import org.apache.lucene.search.Query
+import org.bson.types.ObjectId
+import org.mongodb.scala.bson.Document
+import org.mongodb.scala.model.InsertManyOptions
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 import sttp.capabilities.pekko.PekkoStreams
@@ -37,6 +44,13 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .in("many")
     .in("insert")
     .in(jsonBody[List[Map[String, Any]]])
+    .in(
+      query[Boolean]("ordered")
+        .description(
+          "true (default): the insert stops at the first document that fails (answer 409 for a duplicate key). false: all documents that can be stored are stored, the others are listed in `errors` of the answer."
+        )
+        .default(true)
+    )
     .out(jsonBody[InsertResponse])
     .summary("Insert many Documents")
     .description("Insert many documents in given Collection")
@@ -44,12 +58,13 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .method(Method.PUT)
     .name("insertMany")
     .serverLogic(
-      connection => insertList => insertManyInCollection(connection, insertList)
+      connection => insertList => insertManyInCollection(connection, insertList._1, insertList._2)
     )
 
   def insertManyInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (List[Map[String, Any]])
+    parameter: List[Map[String, Any]],
+    ordered: Boolean = true
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), InsertResponse]] = {
     Future.successful(Right {
       if (parameter.isEmpty) {
@@ -59,12 +74,41 @@ object DocumentManyRoutes extends CollectionBaseRoute {
       val listOfDocuments = parameter.map(
         map => documentFromScalaMap(convertFields(map))
       )
-      val result                         = dao.insertMany(listOfDocuments).result()
-      val listOfIds                      = result.getInsertedIds.values().asScala.map(idToString).toList
-      val insertedResult: InsertResponse = InsertResponse(result.wasAcknowledged(), listOfIds)
+      val insertedResult: InsertResponse = if (ordered) insertOrdered(dao, listOfDocuments) else insertUnordered(dao, listOfDocuments)
       EventSystem.publish(CreateDocumentEvent(authorizedCollectionRequest.userInformation, insertedResult))
       insertedResult
     })
+  }
+
+  private def insertOrdered(dao: MongoDAO[Document], documents: List[Document]): InsertResponse = {
+    val result    = dao.insertMany(documents).result()
+    val listOfIds = result.getInsertedIds.values().asScala.map(idToString).toList
+    InsertResponse(result.wasAcknowledged(), listOfIds, Some(listOfIds.size.toLong), Some(List()))
+  }
+
+  // the ids are set here, the database does not report the ids of the documents that were stored when others failed
+  private def insertUnordered(dao: MongoDAO[Document], documents: List[Document]): InsertResponse = {
+    val withIds = documents.map(
+      document => if (document.contains("_id")) document else document + ("_id" -> new ObjectId())
+    )
+    try {
+      dao.insertMany(withIds, new InsertManyOptions().ordered(false)).result()
+      val ids = withIds.map(document => idToString(document.get("_id").get))
+      InsertResponse(wasAcknowledged = true, ids, Some(ids.size.toLong), Some(List()))
+    }
+    catch {
+      case ex: Exception =>
+        DatabaseErrorDescription.findDatabaseException(ex) match {
+          case Some(bulk: MongoBulkWriteException) if !bulk.getWriteErrors.isEmpty =>
+            val errors = bulk.getWriteErrors.asScala.toList.map(
+              error => InsertError(error.getIndex, error.getCode, DatabaseErrorDescription.removeInternalNames(error.getMessage))
+            )
+            val failed = errors.map(_.index).toSet
+            val ids    = withIds.zipWithIndex.filter(entry => !failed.contains(entry._2)).map(entry => idToString(entry._1.get("_id").get))
+            InsertResponse(wasAcknowledged = true, ids, Some(ids.size.toLong), Some(errors))
+          case _ => throw ex
+        }
+    }
   }
 
   // an empty filter matches every document, for an HTTP API that is too easy to do by accident (a filter built from an empty list of ids)
