@@ -1,3 +1,8 @@
+## [v1.6.4] - 2026-11-05
+### :bug: Bug Fixes
+- [`c8f5b4f`](https://github.com/MongoCamp/mongocamp-server/commit/c8f5b4f62d2c1607d9035431e35ea18396f977c6) - strip 'on MongoDB server host:port' from database error messages *(PR [#79](https://github.com/MongoCamp/mongocamp-server/pull/79) by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.6.3] - 2026-11-02
 ### :sparkles: New Features
 - [`4066d79`](https://github.com/MongoCamp/mongocamp-server/commit/4066d79fa7a1cb5228eec64243c90cd21632674c) - refuse an empty filter for update many and delete many unless matchAll=true is set *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -418,3 +423,4 @@
 [v1.6.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.0...v1.6.1
 [v1.6.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.1...v1.6.2
 [v1.6.3]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.2...v1.6.3
+[v1.6.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.3...v1.6.4
