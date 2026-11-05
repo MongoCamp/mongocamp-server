@@ -9,6 +9,7 @@ import dev.mongocamp.server.model.index.IndexCreateRequest
 import dev.mongocamp.server.model.index.IndexCreateResponse
 import dev.mongocamp.server.model.index.IndexDropResponse
 import dev.mongocamp.server.model.index.IndexOptionsRequest
+import dev.mongocamp.server.model.index.IndexUsage
 import dev.mongocamp.server.plugin.RoutesPlugin
 import org.mongodb.scala.model.IndexOptions
 import scala.concurrent.duration.durationToPair
@@ -43,6 +44,44 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
       val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val response = dao.indexList()
       response
+    })
+  }
+
+  val indexStatsEndpoint = administrateCollectionEndpoint
+    .in("index")
+    .in("stats")
+    .out(jsonBody[List[IndexUsage]])
+    .summary("Index usage for Collection")
+    .description(
+      "How often every Index of the given Collection was used since the counting started. Replaces the aggregation stage $indexStats, which is denied by default because its result contains the address of the database server."
+    )
+    .tag("Index")
+    .method(Method.GET)
+    .name("indexStats")
+    .serverLogic(
+      collectionRequest => _ => indexStatsInCollection(collectionRequest)
+    )
+
+  def indexStatsInCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[IndexUsage]]] = {
+    Future.successful(Right {
+      val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      dao
+        .findAggregated(Seq(org.mongodb.scala.bson.Document("$indexStats" -> org.mongodb.scala.bson.Document())))
+        .resultList()
+        .map(
+          document => {
+            val plain    = document.asPlainMap
+            val accesses = plain("accesses").asInstanceOf[Map[String, Any]]
+            IndexUsage(
+              plain("name").toString,
+              plain("key").asInstanceOf[Map[String, Any]],
+              accesses("ops").asInstanceOf[Number].longValue(),
+              accesses("since").asInstanceOf[java.util.Date]
+            )
+          }
+        )
     })
   }
 
@@ -271,6 +310,7 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
     listIndexEndpoint,
+    indexStatsEndpoint,
     indexByNameEndpoint,
     createIndexEndpoint,
     createIndexForFieldEndpoint,

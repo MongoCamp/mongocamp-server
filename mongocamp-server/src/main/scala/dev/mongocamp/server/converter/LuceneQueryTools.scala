@@ -27,22 +27,36 @@ object LuceneQueryTools {
   /** A filter that cannot be parsed or that the driver cannot convert (for example open ranges, which fail with a NullPointerException there). */
   case class InvalidFilterException(reason: String) extends RuntimeException(reason)
 
+  /** Parses a filter string. The conversion is part of the check, it is run again for the request. Every failure is an [[InvalidFilterException]]. */
+  def parseFilter(input: String): Query =
+    try {
+      val query = LuceneQueryConverter.parse(input, "")
+      LuceneQueryConverter.toDocument(query)
+      query
+    }
+    catch {
+      case e: InvalidFilterException => throw e
+      case e: Exception =>
+        // a header cannot carry a multi line message, and the parser messages have several lines
+        val reason = Option(e.getMessage).flatMap(_.linesIterator.map(_.trim).find(_.nonEmpty)).getOrElse("the filter syntax is not supported")
+        throw InvalidFilterException(reason)
+    }
+
+  /** The filter of a parsed query as a map for the database, an empty map without a query. The `_id` and date conversion of the document routes is applied
+    * afterwards by `MongoCampBsonConverter.convertFields`, as for every other filter.
+    */
+  def toFilterMap(query: Option[Query]): Map[String, Any] =
+    query.map(q => MongoCampBsonConverter.documentToMap(LuceneQueryConverter.toDocument(q).toBsonDocument)).getOrElse(Map())
+
   /** Decodes the raw filter string. The result of the parse is not validated again: a tapir validator would run on the decoded query, which renders without the
     * quotes of the original (`city:"x:y"` becomes `city:x:y`) and does not parse again.
     */
   val filterCodec: Codec[String, Query, TextPlain] =
     Codec.string.mapDecode(
       (input: String) =>
-        try {
-          val query = LuceneQueryConverter.parse(input, "")
-          // the conversion is part of the check, it is run again for the request
-          LuceneQueryConverter.toDocument(query)
-          DecodeResult.Value(query)
-        }
+        try DecodeResult.Value(parseFilter(input))
         catch {
           case e: InvalidFilterException => DecodeResult.Error(input, e)
-          case e: RuntimeException =>
-            DecodeResult.Error(input, InvalidFilterException(Option(e.getMessage).filter(_.nonEmpty).getOrElse("the filter syntax is not supported")))
         }
     )(_.toString)
 

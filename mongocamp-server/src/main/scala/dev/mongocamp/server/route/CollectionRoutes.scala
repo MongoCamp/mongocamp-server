@@ -6,6 +6,7 @@ import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
+import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.collection.ClearCollectionEvent
 import dev.mongocamp.server.event.collection.DropCollectionEvent
@@ -14,6 +15,7 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
+import dev.mongocamp.server.model.CollectionSummary
 import dev.mongocamp.server.model.JsonSchema
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.MongoAggregateRequest
@@ -28,6 +30,7 @@ import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.Method
 import sttp.model.StatusCode
+import org.apache.lucene.search.Query
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -50,15 +53,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
   def collectionList(userInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right {
       val result           = MongoDatabase.databaseProvider.collectionNames()
-      val collectionGrants = userInformation.getCollectionGrants
-      result.filter(
-        collection => {
-          val readCollections = collectionGrants.filter(_.read).map(_.name)
-          val allBucketMetaFilter =
-            readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
-          userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
-        }
-      )
+      result.filter(userInformation.canRead)
     })
   }
 
@@ -74,29 +69,89 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       collectionRequest => filter => collectionStatus(collectionRequest, filter)
     )
 
+  // the details of the database name the host of the server and the namespace, that is internal topology
+  private val serverFields = Set("host", "ns", "localTime")
+
+  private def removeServerFields(value: Any): Any = value match {
+    case map: Map[_, _] =>
+      map.asInstanceOf[Map[String, Any]].view.filterKeys(!serverFields.contains(_)).map(entry => (entry._1, removeServerFields(entry._2))).toMap
+    case list: Iterable[_] => list.map(removeServerFields).toList
+    case other             => other
+  }
+
+  private def collectionStatusOf(collectionName: String): CollectionStatus = {
+    val mongoDatabase = if (collectionName.contains(CollectionSeparator)) {
+      MongoDatabase.databaseProvider.database(collectionName.split(CollectionSeparator).head)
+    }
+    else {
+      MongoDatabase.databaseProvider.database()
+    }
+    val collection = collectionName.split(CollectionSeparator).last
+    mongoDatabase
+      .runCommand(Map("collStats" -> collection))
+      .map(
+        document => CollectionStatus(document)
+      )
+      .result()
+  }
+
+  // registered before the collection routes: the path /collections/info would be the information of a collection with the name info otherwise
+  val collectionsInfoEndpoint = securedEndpoint
+    .in(mongoDbPath)
+    .in("collections")
+    .in("info")
+    .in(query[List[String]]("name").description("Only the Collections with these names, by default all Collections that the user may read").default(List()))
+    .out(jsonBody[List[CollectionSummary]])
+    .summary("Information of all Collections")
+    .description(
+      "The numbers of all Collections of the default database that the user may read in one request (count, size, storage size, average size of a document, number and size of the indices). A Collection without statistics, for example a view, is listed with available false."
+    )
+    .tag("Collection")
+    .method(Method.GET)
+    .name("listCollectionInformation")
+    .serverLogic(
+      user => names => collectionInformationList(user, names)
+    )
+
+  def collectionInformationList(
+    userInformation: UserInformation,
+    names: List[String]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[CollectionSummary]]] = {
+    Future.successful(Right {
+      val readable = MongoDatabase.databaseProvider.collectionNames().filter(userInformation.canRead)
+      val selected = if (names.isEmpty) readable else readable.filter(names.contains)
+      selected.map(
+        name =>
+          try {
+            val status = collectionStatusOf(name)
+            CollectionSummary(
+              name,
+              status.collectionType,
+              status.count.toLong,
+              status.size,
+              status.storageSize,
+              status.avgObjSize.toLong,
+              status.nindexes,
+              status.totalIndexSize.toLong,
+              available = true
+            )
+          }
+          catch {
+            case _: Exception => CollectionSummary(name, "unknown", 0, 0, 0, 0, 0, 0, available = false)
+          }
+      )
+    })
+  }
+
   def collectionStatus(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     parameter: Boolean
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionStatus]] = {
     Future.successful(Right {
-      val mongoDatabase = if (authorizedCollectionRequest.collection.contains(CollectionSeparator)) {
-        MongoDatabase.databaseProvider.database(authorizedCollectionRequest.collection.split(CollectionSeparator).head)
-      }
-      else {
-        MongoDatabase.databaseProvider.database()
-      }
-
-      val collection = authorizedCollectionRequest.collection.split(CollectionSeparator).last
-
-      val result = mongoDatabase
-        .runCommand(Map("collStats" -> collection))
-        .map(
-          document => CollectionStatus(document)
-        )
-        .result()
+      val result = collectionStatusOf(authorizedCollectionRequest.collection)
 
       if (parameter) {
-        result
+        result.copy(map = removeServerFields(result.map).asInstanceOf[Map[String, Any]])
       }
       else {
         result.copy(map = Map())
@@ -251,11 +306,16 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       //        )
     )
     .in(PagingFunctions.pagingParameter)
+    .in(
+      query[Option[Query]]("filter")(using Codec.listHeadOption(LuceneQueryTools.filterCodec))
+        .description("Filter Query like on the list of documents, applied as the first stage of the pipeline. Not possible for a pipeline that starts with $geoNear, $search or $vectorSearch.")
+        .default(None)
+    )
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
     .description(
-      "Aggregate in a given Collection. The value of a stage is any JSON value. Operators that run JavaScript on the database server or write to collections (`$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions` by default, configured with AGGREGATION_STAGES_DENIED) are refused with 403."
+      "Aggregate in a given Collection. The value of a stage is any JSON value. Operators that run JavaScript on the database server or write to collections (`$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions`, `$collStats`, `$indexStats` by default, configured with AGGREGATION_STAGES_DENIED) are refused with 403."
     )
     .tag("Collection")
     .method(Method.POST)
@@ -266,7 +326,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def aggregateInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (MongoAggregateRequest, Paging)
+    parameter: (MongoAggregateRequest, Paging, Option[Query])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(Right {
       val mongoAggregateRequest = parameter._1
@@ -274,7 +334,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
       val page                  = pagingInfo.page.getOrElse(1L)
 
-      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page)
+      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3))
 
     })
   }
@@ -322,6 +382,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(
       collectionsEndpoint,
+      collectionsInfoEndpoint,
       getCollectionStatusEndpoint,
       getCollectionFieldsEndpoint,
       getSchemaEndpoint,

@@ -4,6 +4,7 @@ import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.auth.MongoAuthHolder
 import dev.mongocamp.server.auth.TokenCache
 import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.user.LoginEvent
 import dev.mongocamp.server.event.user.LogoutEvent
 import dev.mongocamp.server.event.user.UpdateApiKeyEvent
@@ -23,6 +24,7 @@ import sttp.capabilities.WebSockets
 import sttp.model.Method
 import sttp.model.StatusCode
 import sttp.tapir.auth
+import sttp.tapir.query
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.stringToPath
@@ -154,6 +156,31 @@ object AuthRoutes extends BaseRoute {
       loginInformation => _ => userProfile(loginInformation)
     )
 
+  val permissionsEndpoint = authBase
+    .in("permissions")
+    .in(query[Option[String]]("collection").description("Resolve the rights for this collection only (also if the user has none)"))
+    .out(jsonBody[List[CollectionPermission]])
+    .summary("Collection permissions")
+    .description("Return the resolved rights (read, write, administrate) of the loggedin user for the collections of the default database")
+    .method(Method.GET)
+    .name("userPermissions")
+    .serverLogic(
+      loginInformation => collection => userPermissions(loginInformation, collection)
+    )
+
+  def userPermissions(
+      loginInformation: UserInformation,
+      collection: Option[String]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[CollectionPermission]]] = {
+    Future.successful {
+      val user = AuthHolder.handler.findUser(loginInformation.userId)
+      Right(collection match {
+        case Some(name) => List(user.permissionsFor(name))
+        case None       => user.permissionsFor(MongoDatabase.databaseProvider.collectionNames())
+      })
+    }
+  }
+
   def userProfile(loginInformation: UserInformation): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UserProfile]] = {
     Future.successful {
       Right(AuthHolder.handler.findUser(loginInformation.userId).toResultUser)
@@ -225,7 +252,7 @@ object AuthRoutes extends BaseRoute {
   }
 
   lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = {
-    onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint, checkAuthEndpoint)
+    onlyBearerEndpoints ++ onlyMongoEndpoints ++ List(profileEndpoint, permissionsEndpoint, checkAuthEndpoint)
   }
 
 }

@@ -163,4 +163,19 @@ class AuthApi(baseUrl: String) extends ClientCirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .response(asJson[UserProfile])
 
+  /** Return the resolved rights (read, write, administrate) of the loggedin user for the collections of the default database
+    *
+    * Available security schemes: httpAuth1 (http) httpAuth (http) apiKeyAuth (apiKey)
+    */
+  def userPermissions(username: String, password: String, bearerToken: String, apiKey: String)(collection: Option[String] = None) =
+    basicRequest
+      .method(Method.GET, uri"$baseUrl/auth/permissions?collection=$collection")
+      .contentType("application/json")
+      .auth
+      .basic(username, password)
+      .auth
+      .bearer(bearerToken)
+      .header("X-AUTH-APIKEY", apiKey)
+      .response(asJson[List[CollectionPermission]])
+
 }

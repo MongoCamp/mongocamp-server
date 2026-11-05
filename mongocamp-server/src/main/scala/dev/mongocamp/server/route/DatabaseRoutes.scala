@@ -119,15 +119,8 @@ object DatabaseRoutes extends RoutesPlugin {
   def collectionList(userInformation: UserInformation, database: String): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[String]]] = {
     Future.successful(Right {
       val result           = MongoDatabase.databaseProvider.collectionNames(database)
-      val collectionGrants = userInformation.getCollectionGrants
       result.filter(
-        coll => {
-          val collection      = if (database.equalsIgnoreCase(MongoDatabase.databaseProvider.DefaultDatabaseName)) coll else s"$database:$coll"
-          val readCollections = collectionGrants.filter(_.read).map(_.name)
-          val allBucketMetaFilter =
-            readCollections.contains(s"${AuthorizedCollectionRequest.all}$BucketCollectionSuffix") && collection.endsWith(BucketCollectionSuffix)
-          userInformation.isAdmin || readCollections.contains(AuthorizedCollectionRequest.all) || readCollections.contains(collection) || allBucketMetaFilter
-        }
+        coll => userInformation.canRead(if (database.equalsIgnoreCase(MongoDatabase.databaseProvider.DefaultDatabaseName)) coll else s"$database:$coll")
       )
     })
   }

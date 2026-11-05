@@ -3,6 +3,8 @@ package dev.mongocamp.server.exception
 object ErrorCodes {
   val emptyFilter: Int         = 4003
   val emptyBatch: Int          = 4002
+  val ambiguousFilter: Int     = 4004
+  val filterNotSupported: Int  = 4005
   val badInsertRequest: Int    = 4401
   val idMissingForReplace: Int = 4402
 

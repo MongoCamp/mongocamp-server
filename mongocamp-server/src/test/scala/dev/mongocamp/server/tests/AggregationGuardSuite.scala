@@ -55,13 +55,18 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
     assertEquals(response.code.code, 200)
   }
 
+  test("the statistics stages are denied by default, their result contains the address of the server") {
+    assertRefused(aggregate(PipelineStage("collStats", Map("storageStats" -> Map()))), "$collStats")
+    assertRefused(aggregate(PipelineStage("indexStats", Map())), "$indexStats")
+  }
+
   test("the denied operators can be configured") {
     val key = DefaultConfigurations.ConfigKeyAggregationStagesDenied
     assertEquals(ConfigurationService.updateConfig(key, List("$limit")), true)
     try
       assertRefused(aggregate(PipelineStage("limit", 1)), "$limit")
     finally
-      ConfigurationService.updateConfig(key, List("$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions"))
+      ConfigurationService.updateConfig(key, List("$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions", "$collStats", "$indexStats"))
     assertEquals(aggregate(PipelineStage("limit", 1)).code.code, 200)
   }
 

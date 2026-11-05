@@ -110,7 +110,7 @@ class CollectionSuite extends MongoCampBaseServerSuite {
   test("database errors do not contain the address of the database server") {
     val invalidLimit = MongoAggregateRequest(List(PipelineStage("limit", "abc")), allowDiskUse = false)
     val response     = executeRequest(collectionApi.aggregate("", "", adminBearerToken, "")("geodata:locations", invalidLimit))
-    assertEquals(response.code.code, 500)
+    assertEquals(response.code.code, 400)
     val message = response.body.left.map(_.getMessage).left.getOrElse("")
     assertEquals(message.isBlank, false, "the error response has no message")
     assertEquals(message.contains("on server"), false, s"the error response contains the server address: $message")

@@ -91,6 +91,7 @@ trait ConfigurationRead extends LazyLogging {
     registerConfig(ConfigKeyAuthCacheDb, MongoCampConfiguration.confTypeBoolean)
     registerConfig(ConfigKeyAuthExpiringDuration, MongoCampConfiguration.confTypeDuration)
     registerConfig(ConfigKeyAuthRefreshGraceDuration, MongoCampConfiguration.confTypeDuration)
+    registerConfig(ConfigKeyAuthGrantDeniedStatus, MongoCampConfiguration.confTypeLong)
 
     registerConfig(ConfigKeyAuthBearer, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)
     registerConfig(ConfigKeyAuthBasic, MongoCampConfiguration.confTypeBoolean, needsRestartForActivation = true)

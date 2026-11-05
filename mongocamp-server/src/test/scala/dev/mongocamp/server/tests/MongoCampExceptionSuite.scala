@@ -24,6 +24,8 @@ class MongoCampExceptionSuite extends FunSuite {
     val codes = List(
       ErrorCodes.emptyFilter,
       ErrorCodes.emptyBatch,
+      ErrorCodes.ambiguousFilter,
+      ErrorCodes.filterNotSupported,
       ErrorCodes.badInsertRequest,
       ErrorCodes.idMissingForReplace,
       ErrorCodes.forbiddenStage,

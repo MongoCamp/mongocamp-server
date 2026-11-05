@@ -55,14 +55,17 @@ class DocumentApi(baseUrl: String) extends ClientCirceSchema {
     * @param requestBody
     * @param matchAll
     *   Allow an empty filter, that matches all documents of the collection
+    * @param filter
+    *   Filter Query like on the list of documents, as an alternative to the filter of the request body. Use only one of both.
     */
   def deleteMany(username: String, password: String, bearerToken: String, apiKey: String)(
     collectionName: String,
     requestBody: Map[String, Any],
-    matchAll: Option[Boolean] = None
+    matchAll: Option[Boolean] = None,
+    filter: Option[String] = None
   ) =
     basicRequest
-      .method(Method.DELETE, uri"$baseUrl/mongodb/collections/${collectionName}/documents/many/delete?matchAll=${matchAll}")
+      .method(Method.DELETE, uri"$baseUrl/mongodb/collections/${collectionName}/documents/many/delete?matchAll=${matchAll}&filter=${filter}")
       .contentType("application/json")
       .auth
       .basic(username, password)
@@ -291,14 +294,17 @@ class DocumentApi(baseUrl: String) extends ClientCirceSchema {
     * @param updateRequest
     * @param matchAll
     *   Allow an empty filter, that matches all documents of the collection
+    * @param filter
+    *   Filter Query like on the list of documents, as an alternative to the filter of the request body. Use only one of both.
     */
   def updateMany(username: String, password: String, bearerToken: String, apiKey: String)(
     collectionName: String,
     updateRequest: UpdateRequest,
-    matchAll: Option[Boolean] = None
+    matchAll: Option[Boolean] = None,
+    filter: Option[String] = None
   ) =
     basicRequest
-      .method(Method.PATCH, uri"$baseUrl/mongodb/collections/${collectionName}/documents/many/update?matchAll=${matchAll}")
+      .method(Method.PATCH, uri"$baseUrl/mongodb/collections/${collectionName}/documents/many/update?matchAll=${matchAll}&filter=${filter}")
       .contentType("application/json")
       .auth
       .basic(username, password)

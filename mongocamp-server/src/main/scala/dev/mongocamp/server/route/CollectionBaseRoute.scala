@@ -2,7 +2,7 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.exception.ErrorDescription
-import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.model.auth.AuthInput
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
@@ -43,7 +43,7 @@ abstract class CollectionBaseRoute extends BaseRoute {
     Future.successful {
       val userInformation = AuthHolder.findUserInformationByLoginRequest(loginInformation._1)
       if (!allowed(userInformation, loginInformation._2)) {
-        throw MongoCampException.unauthorizedException("user not authorized for collection")
+        throw GrantDenied.exception("user not authorized for collection")
       }
       Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
     }

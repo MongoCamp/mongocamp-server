@@ -13,13 +13,13 @@ class ApplicationSuite extends MongoCampBaseServerSuite {
     assertEquals(systemSettings.filePlugins.size, 1)
     assertEquals(systemSettings.routesPlugins.size, 11)
     assertEquals(systemSettings.ignoredPlugins.size, 0)
-    assertEquals(systemSettings.configurations.size, 34)
+    assertEquals(systemSettings.configurations.size, 35)
     assertEquals(systemSettings.configurations("CORS_HEADERS_ALLOWED"), List("Authorization", "Content-Type", "X-Requested-With", "X-AUTH-APIKEY"))
   }
 
   test("List Configurations for Application") {
     val configurationsList = executeRequestToResponse(applicationApi.listConfigurations("", "", adminBearerToken, "")())
-    assertEquals(configurationsList.size, 34)
+    assertEquals(configurationsList.size, 35)
     val config = configurationsList.find(_.key.equalsIgnoreCase("SERVER_INTERFACE")).get
     assertEquals(config.configType, "String")
     assertEquals(config.key, "SERVER_INTERFACE")

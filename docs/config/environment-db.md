@@ -15,6 +15,7 @@ The configurations can also change by using the configuration routes.
 | AUTH_CACHE_DB          | Should the JWT cached to the DB to keep it after application restart.         |    true    |
 | AUTH_EXPIRING_DURATION | Lifetime of generated JWT                                                     |     6h     |
 | AUTH_REFRESH_GRACE_DURATION | How long a JWT stays valid after it was replaced by `/auth/token/refresh`      |    60s     |
+| AUTH_GRANT_DENIED_STATUS | HTTP status of a request that is refused because the user has no grant for the collection, bucket or admin route: `401` or `403`. A client such as the UI clears its session on `401`, so `403` keeps the session of a user who only lacks a grant. A missing or invalid token is always `401`. |    401     |
 | AUTH_BEARER            | Enable Bearer Header Token for secured routes.                                |    true    |
 | AUTH_BASIC             | Enable HttpBasicAuth for secured routes.                                      |    true    |
 | AUTH_TOKEN             | Enable Api Key Token for secured routes.                                      |    true    |
@@ -49,7 +50,7 @@ The aggregation endpoint refuses a pipeline that contains one of the denied oper
 
 | Configuration             | Description                                                      |                                                    Default                                                    |
 |---------------------------|------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------:|
-| AGGREGATION_STAGES_DENIED | List of operators that are refused in the pipeline of an aggregation. | `["$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions"]` |
+| AGGREGATION_STAGES_DENIED | List of operators that are refused in the pipeline of an aggregation. | `["$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions", "$collStats", "$indexStats"]` |
 
 ## Plugins
 ::: info
