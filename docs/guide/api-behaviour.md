@@ -42,7 +42,7 @@ Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` on fields that 
 `POST .../aggregate` takes stages as `{"stage": "match", "value": {...}}`, the value is any JSON value.
 
 - Operators that run JavaScript on the database server or write to collections are refused with `403`, anywhere in the pipeline (also in `$project`, `$addFields`, `$group`, `$match`, `$lookup` and `$facet`).
-  The list is configured with [`AGGREGATION_STAGES_DENIED`](../config/environment-db.md#aggregation), the default is `$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp` and `$listSessions`.
+  The list is configured with [`AGGREGATION_STAGES_DENIED`](../config/environment-db.md#aggregation), the default is `$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions`, `$collStats` and `$indexStats`. The statistics stages are denied because their result contains the address of the database server (`host`) and the namespace (`ns`); the usage of the indexes is available from `GET .../index/stats`. A deployment that saved its own list keeps it, add the two stages to it.
 - `$lookup`, `$unionWith` and `$graphLookup` read other collections: the user needs the read grant for each of them, otherwise the answer is `403`. The collection of a stage is in the database of the collection of
   the request (`geodata:locations` with `from: "accounts"` reads `geodata:accounts`). A reference to a collection of another database (`{"db": ..., "coll": ...}`) is not supported.
 
@@ -86,3 +86,13 @@ A request that the database refuses because of its content is answered with the 
 The status is derived from the error code of the database, so a case that is not listed stays a `500` until its code is known to be a mistake of the client.
 
 The messages of these errors do not name the database, the collection, the id of an index build or the values of a duplicate key: `E11000 duplicate key error collection: shop.customers index: email_1 dup key: { email: "a@b.c" }` is answered as `E11000 duplicate key error, index: email_1`.
+
+## Index usage
+
+`GET /mongodb/collections/{name}/index/stats` (administrate grant) returns how often every index was used since the counting started, without the address of the database server:
+
+```json
+[{ "name": "email_1", "key": { "email": 1 }, "ops": 42, "since": "2026-11-05T08:00:00Z" }]
+```
+
+The details of the collection (`GET /mongodb/collections/{name}?includeDetails=true`) do not contain `host`, `ns` and `localTime` any more.

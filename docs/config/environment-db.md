@@ -50,7 +50,7 @@ The aggregation endpoint refuses a pipeline that contains one of the denied oper
 
 | Configuration             | Description                                                      |                                                    Default                                                    |
 |---------------------------|------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------:|
-| AGGREGATION_STAGES_DENIED | List of operators that are refused in the pipeline of an aggregation. | `["$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions"]` |
+| AGGREGATION_STAGES_DENIED | List of operators that are refused in the pipeline of an aggregation. | `["$function", "$accumulator", "$where", "$out", "$merge", "$currentOp", "$listSessions", "$collStats", "$indexStats"]` |
 
 ## Plugins
 ::: info

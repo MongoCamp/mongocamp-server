@@ -66,6 +66,16 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       collectionRequest => filter => collectionStatus(collectionRequest, filter)
     )
 
+  // the details of the database name the host of the server and the namespace, that is internal topology
+  private val serverFields = Set("host", "ns", "localTime")
+
+  private def removeServerFields(value: Any): Any = value match {
+    case map: Map[_, _] =>
+      map.asInstanceOf[Map[String, Any]].view.filterKeys(!serverFields.contains(_)).map(entry => (entry._1, removeServerFields(entry._2))).toMap
+    case list: Iterable[_] => list.map(removeServerFields).toList
+    case other             => other
+  }
+
   def collectionStatus(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     parameter: Boolean
@@ -88,7 +98,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
         .result()
 
       if (parameter) {
-        result
+        result.copy(map = removeServerFields(result.map).asInstanceOf[Map[String, Any]])
       }
       else {
         result.copy(map = Map())
@@ -247,7 +257,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
     .description(
-      "Aggregate in a given Collection. The value of a stage is any JSON value. Operators that run JavaScript on the database server or write to collections (`$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions` by default, configured with AGGREGATION_STAGES_DENIED) are refused with 403."
+      "Aggregate in a given Collection. The value of a stage is any JSON value. Operators that run JavaScript on the database server or write to collections (`$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions`, `$collStats`, `$indexStats` by default, configured with AGGREGATION_STAGES_DENIED) are refused with 403."
     )
     .tag("Collection")
     .method(Method.POST)
