@@ -12,8 +12,8 @@ object DocumentCountApi {
   def apply(baseUrl: String = TestServer.serverBaseUrl) = new DocumentCountApi(baseUrl)
 }
 
-/** Count the Documents of a Collection. A class of its own, because inside the generated DocumentApi the new method makes the implicit search of the body
-  * serializer of `insertMany` fail (Scala 3), see [[ClientCirceSchema]].
+/** Count the Documents of a Collection. Kept out of the generated DocumentApi: when sbt recompiles only that file (incremental build) the implicit search of the
+  * body serializer of its `insertMany` fails (Scala 3), a full compile (`mongocamp-test-server/clean`) works. A new class does not touch that file.
   */
 class DocumentCountApi(baseUrl: String) extends ClientCirceSchema {
 

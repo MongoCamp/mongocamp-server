@@ -63,3 +63,7 @@ Without a parameter only the collections of the default database with at least o
 ## Counting documents
 
 `GET /mongodb/collections/{name}/documents/count?filter=` returns `{ "count": n }` for the documents that match the Lucene filter (all documents without a filter). It needs the read grant and uses the same filter parser as the list, so an invalid filter is a 400. The path `documents/count` belongs to this route: a document whose `_id` is the string `count` cannot be fetched with `GET .../documents/count` any more, use the list with `filter=_id:count` or the find route.
+
+## Update and delete by filter string
+
+`PATCH .../documents/many/update` and `DELETE .../documents/many/delete` accept the Lucene filter of the list as query parameter `filter`, as an alternative to the MongoDB filter of the request body (send `{}` as the body of a delete). Use only one of them: both together answer 400 with code `4004`, because a filter that is silently ignored would touch more documents than intended. A filter string that matches no document changes nothing, an empty filter still needs `matchAll=true` (code `4003`). Both operations load the matching documents for the events, so very large matches use memory in proportion.

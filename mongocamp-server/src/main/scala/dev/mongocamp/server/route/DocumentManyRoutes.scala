@@ -1,6 +1,7 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertToOperationMap
 import dev.mongocamp.server.converter.MongoCampBsonConverter.idToString
@@ -17,12 +18,14 @@ import dev.mongocamp.server.model.DeleteResponse
 import dev.mongocamp.server.model.InsertResponse
 import dev.mongocamp.server.model.UpdateRequest
 import dev.mongocamp.server.model.UpdateResponse
+import org.apache.lucene.search.Query
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.capabilities.WebSockets
 import sttp.model.Method
 import sttp.model.StatusCode
+import sttp.tapir.Codec
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.query
 import sttp.tapir.server.ServerEndpoint
@@ -74,12 +77,29 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     }
   }
 
+  private val luceneFilterInput =
+    query[Option[Query]]("filter")(using Codec.listHeadOption(LuceneQueryTools.filterCodec))
+      .description("Filter Query like on the list of documents, as an alternative to the filter of the request body. Use only one of both.")
+      .default(None)
+
+  // the filter of the request body or the Lucene filter of the query, not both: a filter that is silently ignored would touch more documents than intended
+  private def effectiveFilter(bodyFilter: Map[String, Any], luceneFilter: Option[Query]): Map[String, Any] = {
+    if (luceneFilter.isDefined && bodyFilter.nonEmpty) {
+      throw MongoCampException.badRequestException(
+        "send the filter in the request body or as query parameter filter, not both",
+        ErrorCodes.ambiguousFilter
+      )
+    }
+    if (luceneFilter.isDefined) LuceneQueryTools.toFilterMap(luceneFilter) else bodyFilter
+  }
+
   val updateManyEndpoint = writeCollectionEndpoint
     .in("documents")
     .in("many")
     .in("update")
     .in(jsonBody[UpdateRequest])
     .in(query[Boolean]("matchAll").description("Allow an empty filter, that matches all documents of the collection").default(false))
+    .in(luceneFilterInput)
     .out(jsonBody[UpdateResponse])
     .summary("Update many in Collection")
     .description("Update many Document in given Collection")
@@ -87,18 +107,19 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .method(Method.PATCH)
     .name("updateMany")
     .serverLogic(
-      collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter._1, parameter._2)
+      collectionRequest => parameter => updateManyInCollection(collectionRequest, parameter._1, parameter._2, parameter._3)
     )
 
   def updateManyInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     parameter: UpdateRequest,
-    matchAll: Boolean = false
+    matchAll: Boolean = false,
+    luceneFilter: Option[Query] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), UpdateResponse]] = {
     Future.successful(Right {
       val dao         = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val documentMap = parameter.document
-      val filter      = convertFields(parameter.filter)
+      val filter      = convertFields(effectiveFilter(parameter.filter, luceneFilter))
       rejectEmptyFilter(filter, matchAll)
       // on a match all operation this loads every document for the event
       val oldValues = dao.find(filter).resultList()
@@ -124,6 +145,7 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .in("delete")
     .in(jsonBody[Map[String, Any]])
     .in(query[Boolean]("matchAll").description("Allow an empty filter, that matches all documents of the collection").default(false))
+    .in(luceneFilterInput)
     .out(jsonBody[DeleteResponse])
     .summary("Delete Many in Collection")
     .description("Delete many Document in given Collection")
@@ -131,17 +153,18 @@ object DocumentManyRoutes extends CollectionBaseRoute {
     .method(Method.DELETE)
     .name("deleteMany")
     .serverLogic(
-      collectionRequest => search => deleteManyInCollection(collectionRequest, search._1, search._2)
+      collectionRequest => search => deleteManyInCollection(collectionRequest, search._1, search._2, search._3)
     )
 
   def deleteManyInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     parameter: Map[String, Any],
-    matchAll: Boolean = false
+    matchAll: Boolean = false,
+    luceneFilter: Option[Query] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), DeleteResponse]] = {
     Future.successful(Right {
       val dao          = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-      val deleteFilter = convertFields(parameter)
+      val deleteFilter = convertFields(effectiveFilter(parameter, luceneFilter))
       rejectEmptyFilter(deleteFilter, matchAll)
       // on a match all operation this loads every document for the event
       val oldValues      = dao.find(deleteFilter).resultList()
