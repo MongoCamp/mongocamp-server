@@ -67,3 +67,7 @@ Without a parameter only the collections of the default database with at least o
 ## Update and delete by filter string
 
 `PATCH .../documents/many/update` and `DELETE .../documents/many/delete` accept the Lucene filter of the list as query parameter `filter`, as an alternative to the MongoDB filter of the request body (send `{}` as the body of a delete). Use only one of them: both together answer 400 with code `4004`, because a filter that is silently ignored would touch more documents than intended. A filter string that matches no document changes nothing, an empty filter still needs `matchAll=true` (code `4003`). Both operations load the matching documents for the events, so very large matches use memory in proportion.
+
+## Missing grants
+
+A user who is logged in but has no grant for a collection, a bucket or an admin route is refused with the status of `AUTH_GRANT_DENIED_STATUS`, `401` by default. A client such as the UI clears its session on `401`, so a user who only lacks one grant is logged out; set the value to `403` to avoid that. The error code `4011` and the message (`user not authorized for collection`, `... for bucket`, `... for request`) are the same for both. A missing or invalid token is always `401`. The default changes to `403` in the next major version.

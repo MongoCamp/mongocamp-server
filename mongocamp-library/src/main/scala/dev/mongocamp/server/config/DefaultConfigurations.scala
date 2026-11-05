@@ -16,6 +16,7 @@ object DefaultConfigurations {
   lazy val ConfigKeyAuthCacheDb              = "AUTH_CACHE_DB"
   lazy val ConfigKeyAuthExpiringDuration     = "AUTH_EXPIRING_DURATION"
   lazy val ConfigKeyAuthRefreshGraceDuration = "AUTH_REFRESH_GRACE_DURATION"
+  lazy val ConfigKeyAuthGrantDeniedStatus    = "AUTH_GRANT_DENIED_STATUS"
   lazy val ConfigKeyAuthPrefix               = "AUTH_PREFIX"
   lazy val ConfigKeyAuthBearer               = "AUTH_BEARER"
   lazy val ConfigKeyAuthBasic                = "AUTH_BASIC"

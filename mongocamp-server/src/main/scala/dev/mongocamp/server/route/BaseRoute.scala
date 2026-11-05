@@ -9,6 +9,7 @@ import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.service.GrantDenied
 import scala.concurrent.Future
 import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.model.StatusCode
@@ -81,7 +82,7 @@ abstract class BaseRoute extends TapirSchema with SchemaDerivation {
         Right(userInformation)
       }
       else {
-        throw MongoCampException.unauthorizedException("user not authorized for request")
+        throw GrantDenied.exception("user not authorized for request")
       }
     }
   }

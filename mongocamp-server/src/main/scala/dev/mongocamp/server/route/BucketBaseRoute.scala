@@ -2,7 +2,7 @@ package dev.mongocamp.server.route
 
 import dev.mongocamp.server.auth.AuthHolder
 import dev.mongocamp.server.exception.ErrorDescription
-import dev.mongocamp.server.exception.MongoCampException
+import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.model.auth.AuthInput
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
@@ -42,7 +42,7 @@ abstract class BucketBaseRoute extends BaseRoute {
               isBucketGrant && bucketGrant.read
             }
           )
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for bucket"))
+          .getOrElse(throw GrantDenied.exception("user not authorized for bucket"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
     }
@@ -63,7 +63,7 @@ abstract class BucketBaseRoute extends BaseRoute {
               isBucketGrant && bucketGrant.write
             }
           )
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for bucket"))
+          .getOrElse(throw GrantDenied.exception("user not authorized for bucket"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
     }
@@ -86,7 +86,7 @@ abstract class BucketBaseRoute extends BaseRoute {
               isBucketGrant && bucketGrant.administrate
             }
           )
-          .getOrElse(throw MongoCampException.unauthorizedException("user not authorized for bucket"))
+          .getOrElse(throw GrantDenied.exception("user not authorized for bucket"))
         Right(AuthorizedCollectionRequest(userInformation, loginInformation._2))
       }
     }
