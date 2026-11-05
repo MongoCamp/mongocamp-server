@@ -106,3 +106,9 @@ The details of the collection (`GET /mongodb/collections/{name}?includeDetails=t
 ```
 
 `filter` is a Lucene query like in the list, `sort` and `projection` are lists of field names like the query parameters (a leading `-` sorts descending), `rowsPerPage` and `page` are query parameters. The answer and the `x-pagination-*` headers are the same as for the list, an invalid filter is a `400` with code `4001` and the reason in `x-error-additional-info`. The route `POST .../documents` with a MongoDB filter in the body stays as it is.
+
+## Aggregation with a filter
+
+`POST /mongodb/collections/{name}/aggregate?filter=` takes the Lucene filter of the list and puts it in front of the pipeline as a `$match` stage, so the aggregation works on exactly the documents that the list shows (and the database can use an index for it). The filter is converted like the filter of the list (`_id`, dates), an invalid filter is a `400`, the read grant of the collection applies as before.
+
+A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$searchMeta`, `$vectorSearch`, `$documents`) cannot get a stage in front of it: with a filter it is refused with `400` and code `4005`, put the conditions into the stage itself (`query` of `$geoNear`). The count of the pagination headers is the count of the result of the filtered pipeline.

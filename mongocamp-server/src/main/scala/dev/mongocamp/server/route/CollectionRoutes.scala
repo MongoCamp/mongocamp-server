@@ -6,6 +6,7 @@ import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
+import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.collection.ClearCollectionEvent
 import dev.mongocamp.server.event.collection.DropCollectionEvent
@@ -28,6 +29,7 @@ import sttp.capabilities
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.model.Method
 import sttp.model.StatusCode
+import org.apache.lucene.search.Query
 import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
@@ -253,6 +255,11 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       //        )
     )
     .in(PagingFunctions.pagingParameter)
+    .in(
+      query[Option[Query]]("filter")(using Codec.listHeadOption(LuceneQueryTools.filterCodec))
+        .description("Filter Query like on the list of documents, applied as the first stage of the pipeline. Not possible for a pipeline that starts with $geoNear, $search or $vectorSearch.")
+        .default(None)
+    )
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
@@ -268,7 +275,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def aggregateInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (MongoAggregateRequest, Paging)
+    parameter: (MongoAggregateRequest, Paging, Option[Query])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(Right {
       val mongoAggregateRequest = parameter._1
@@ -276,7 +283,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
       val page                  = pagingInfo.page.getOrElse(1L)
 
-      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page)
+      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3))
 
     })
   }
