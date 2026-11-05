@@ -1,3 +1,26 @@
+## [v1.7.0] - 2026-11-05
+### :sparkles: New Features
+- [`a1faf3c`](https://github.com/MongoCamp/mongocamp-server/commit/a1faf3cbb5c1dec5536377088c76d89dd507a3e3) - resolve collection permissions on the server (GET /auth/permissions) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`b77518c`](https://github.com/MongoCamp/mongocamp-server/commit/b77518c273b6f2e8b3fb8e2860f318957ab2ed3b) - count the documents of a collection (GET .../documents/count) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`b5b0891`](https://github.com/MongoCamp/mongocamp-server/commit/b5b0891e5cf079201284105386c0567ee3801340) - Lucene filter for updateMany and deleteMany *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`fd12f5a`](https://github.com/MongoCamp/mongocamp-server/commit/fd12f5aaa8a0f28ea59700207ef22a9398362def) - configurable status for a missing grant (AUTH_GRANT_DENIED_STATUS) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`a1c105a`](https://github.com/MongoCamp/mongocamp-server/commit/a1c105a54396861112126614259c2b5f61c77229) - list documents with the parameters in the request body (POST .../documents/search) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`e908011`](https://github.com/MongoCamp/mongocamp-server/commit/e9080110d2130296b8e3bc850d3ebd77589a13cc) - Lucene filter for aggregations (POST .../aggregate?filter=) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`8ea798e`](https://github.com/MongoCamp/mongocamp-server/commit/8ea798e639c1e14c69ec879340f752262f156e00) - insert many documents without stopping at the first error (ordered=false) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`24b3254`](https://github.com/MongoCamp/mongocamp-server/commit/24b325433f68632d3c4233be08d3785d06d1017c) - the numbers of all collections in one request (GET /mongodb/collections/info) *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :bug: Bug Fixes
+- [`138c8ed`](https://github.com/MongoCamp/mongocamp-server/commit/138c8ed4d480d929e5d59d4f70558e4f152aaabd) - answer 4xx for requests that the database refuses because of their content *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`8056892`](https://github.com/MongoCamp/mongocamp-server/commit/8056892bfc6807eda3104717ea750a005d45ebeb) - remove database and collection names, ids and values from database error messages *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`5f73b7d`](https://github.com/MongoCamp/mongocamp-server/commit/5f73b7d7e86933c03b02bfd8d4a4d547ab001704) - do not leak the address of the database server through statistics *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :recycle: Refactors
+- [`97e9ae1`](https://github.com/MongoCamp/mongocamp-server/commit/97e9ae13e14382f513d4833753b8a8610f9608f7) - share the conversion of Lucene filters between the routes *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :white_check_mark: Tests
+- [`1854b2d`](https://github.com/MongoCamp/mongocamp-server/commit/1854b2db1d2c6b14b61f45ae6db455c104f5d3ca) - do not depend on the error codes of the database for pipelines *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.6.4] - 2026-11-05
 ### :bug: Bug Fixes
 - [`c8f5b4f`](https://github.com/MongoCamp/mongocamp-server/commit/c8f5b4f62d2c1607d9035431e35ea18396f977c6) - strip 'on MongoDB server host:port' from database error messages *(PR [#79](https://github.com/MongoCamp/mongocamp-server/pull/79) by [@sfxcode](https://github.com/sfxcode))*
@@ -424,3 +447,4 @@
 [v1.6.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.1...v1.6.2
 [v1.6.3]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.2...v1.6.3
 [v1.6.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.3...v1.6.4
+[v1.7.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.4...v1.7.0
