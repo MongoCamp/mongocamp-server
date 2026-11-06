@@ -264,3 +264,27 @@ In the request body of `POST .../documents/search` every field is optional (`{"f
 The header `Content-Disposition: attachment; filename="name.ndjson"` names the file. In `csv` the first line is the header, the next lines end with `\r\n`; a cell with a comma, a quote or a line break is in quotes (quotes doubled), `null` is an empty cell, nested objects and lists are JSON text. Without `projection` the columns are the fields of the first 1000 documents (`_id` first), a field that only later documents have is not a column: name the columns with `projection` for such a collection.
 
 A wrong `format`, `filter`, `limit` or `extendedJson` is a `400` before anything is written. A failure while the stream is running (the database goes away) can only end the stream: the status `200` is sent by then, so a client has to check that a `json` export ends with `]` or count the lines.
+
+## Import
+
+`POST /mongodb/collections/{name}/documents/import` (write grant) stores the documents of the request body, one JSON document per line (NDJSON, the format that the export writes). The body is read as a stream, the memory of the server does not depend on its size.
+
+```
+{"_id": "a", "n": 1}
+{"_id": {"$numberInt": "7"}, "when": "2024-06-15T12:00:00Z", "text": {"$string": "2024-06-15T12:00:00Z"}}
+```
+
+- A line is read like a document in the body of an insert: Extended JSON wrappers, dates and `$string` work, a document without an `_id` gets an ObjectId. A blank line is skipped, a line ends with LF or CRLF, the last line needs no line break. What canonical export (`extendedJson=canonical`) writes can be imported and gives documents with the same types.
+- The documents are stored in batches of 1000 without ordering: a line that cannot be stored (not JSON, not an object, a wrapper with a content that is not valid, a duplicate key) does not stop the others. The answer counts and names what failed:
+
+```json
+{
+  "read": 4, "inserted": 3, "failed": 1,
+  "errors": [{ "index": 5, "code": 4008, "message": "the line is not valid JSON: ..." }],
+  "errorsTruncated": false
+}
+```
+
+`index` is the number of the line (1 based, blank lines are counted, so it is the line of the file), `code` is `4008` for a line that is not a document or the error code of the database (`11000` for a duplicate key, without database and collection in the message). At most 1000 errors are listed (`errorsTruncated`), `failed` is always the number of all.
+- The size of the body is limited by the configuration `IMPORT_MAX_BYTES` (default 1 GiB, read for every request): above it the answer is `413` and what was stored before stays stored. The import has no request timeout, the 8 MB limit and the 20 seconds of the HTTP server do not apply to it. A line can be 17 MB at most (`400` for a longer one).
+- A failure that is not a bad line (the database goes away) ends the import with an error, the batches before it are stored: an import is not a transaction. The event `CreateDocumentEvent` is published for every batch with the ids that were stored.
