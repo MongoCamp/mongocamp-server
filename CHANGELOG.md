@@ -1,3 +1,8 @@
+## [v1.7.1] - 2026-11-06
+### :bug: Bug Fixes
+- [`7da2c08`](https://github.com/MongoCamp/mongocamp-server/commit/7da2c083db79ec30a0bd9e071a05d11232f78b8b) - register InsertError for the serialization of events in the native image *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.7.0] - 2026-11-05
 ### :sparkles: New Features
 - [`a1faf3c`](https://github.com/MongoCamp/mongocamp-server/commit/a1faf3cbb5c1dec5536377088c76d89dd507a3e3) - resolve collection permissions on the server (GET /auth/permissions) *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -448,3 +453,4 @@
 [v1.6.3]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.2...v1.6.3
 [v1.6.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.3...v1.6.4
 [v1.7.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.4...v1.7.0
+[v1.7.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.0...v1.7.1
