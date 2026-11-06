@@ -137,3 +137,18 @@ A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$sear
 ```
 
 With `?name=a&name=b` only these collections are given (a collection that the user may not read is never given). A collection without statistics, for example a view, is listed with `available: false` and zeros. The database is asked once per collection, so on a server with very many collections restrict the answer with `name`. A collection with the name `info` is shadowed for `GET /mongodb/collections/info`, its information is available with the other routes of the collection.
+
+## Fields with types
+
+`GET /mongodb/collections/{name}/fields/detail?sampleSize=&depth=` returns all fields as a flat list, one entry per path, with the types of the values and how often every type was found in the analysed documents:
+
+```json
+[
+  { "path": "address", "types": [{ "type": "object", "count": 20 }] },
+  { "path": "address.city", "types": [{ "type": "string", "count": 20 }] },
+  { "path": "age", "types": [{ "type": "long", "count": 15 }, { "type": "string", "count": 5 }] },
+  { "path": "tags[]", "types": [{ "type": "string", "count": 40 }] }
+]
+```
+
+The elements of an array are the path with `[]` (`tags[]`), the type names are the ones of the database (`$type`). `sampleSize` is 1000 by default, the analysis of a big collection with a greater sample is more exact and slower. `depth` (default 3) limits how deep objects are followed. `GET .../schema/analysis` returned `percentageOfAnalysed` as 0 for every sample that is smaller than the collection (an integer division), it is the share now (`0.25` for 5 of 20 documents).

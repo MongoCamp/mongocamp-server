@@ -16,6 +16,7 @@ import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.CollectionSummary
+import dev.mongocamp.server.model.FieldInfo
 import dev.mongocamp.server.model.JsonSchema
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.MongoAggregateRequest
@@ -217,6 +218,40 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     })
   }
 
+  // before the endpoint: the vals of an object are initialised in the order of the source
+  private val FieldDetailsDefaultSample = 1000
+
+  val getFieldDetailsEndpoint = readCollectionEndpoint
+    .in("fields")
+    .in("detail")
+    .in(
+      query[Option[Int]]("sampleSize")
+        .example(Some(1000))
+        .default(Some(FieldDetailsDefaultSample))
+        .description(s"Number of documents that are analysed, $FieldDetailsDefaultSample by default. A greater sample is more exact and slower on big collections.")
+    )
+    .in(query[Int]("depth").default(3).description("How deep should the objects extracted"))
+    .out(jsonBody[List[FieldInfo]])
+    .summary("Fields of a Collection with types")
+    .description(
+      "All fields of a collection as a flat list, one entry per path (`address.city`, `tags[]` for the elements of an array) with the types of the values and how often every type was found in the analysed documents."
+    )
+    .tag("Collection")
+    .method(Method.GET)
+    .name("getFieldDetails")
+    .serverLogic(
+      collectionRequest => parameter => fieldDetails(collectionRequest, parameter)
+    )
+
+  def fieldDetails(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (Option[Int], Int)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[FieldInfo]]] = {
+    Future.successful(Right {
+      SchemaService.fieldInfos(authorizedCollectionRequest, parameter._2, parameter._1)
+    })
+  }
+
   val getSchemaAnalysisEndpoint = readCollectionEndpoint
     .in("schema")
     .in("analysis")
@@ -394,6 +429,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       collectionsInfoEndpoint,
       getCollectionStatusEndpoint,
       getCollectionFieldsEndpoint,
+      getFieldDetailsEndpoint,
       getSchemaEndpoint,
       getSchemaAnalysisEndpoint,
       deleteCollectionStatusEndpoint,
