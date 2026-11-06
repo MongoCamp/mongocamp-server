@@ -248,3 +248,19 @@ A plain string like `"2024-06-15T12:00:00Z"` in a request body is stored as a da
 ### Search without sort and projection
 
 In the request body of `POST .../documents/search` every field is optional (`{"filter": "name:John"}` is enough). A request that sends all three works as before.
+
+## Export
+
+`GET /mongodb/collections/{name}/documents/export` downloads the documents of a collection (read grant). The answer is a stream: every document is written when the database delivers it, so the size of the collection does not matter for the memory of the server, and a client that stops reading stops the export.
+
+| Parameter | |
+|---|---|
+| `format` | `ndjson` (default, one JSON document per line), `json` (one array, `[]` for an empty collection) or `csv` |
+| `filter` | a Lucene filter like in the list |
+| `sort`, `limit` | sorting like in the list (`-field` descending), the greatest number of documents |
+| `projection` | the fields to export, for `csv` the columns in this order |
+| `extendedJson` | `relaxed` or `canonical`, the types of the values are explicit (see above) |
+
+The header `Content-Disposition: attachment; filename="name.ndjson"` names the file. In `csv` the first line is the header, the next lines end with `\r\n`; a cell with a comma, a quote or a line break is in quotes (quotes doubled), `null` is an empty cell, nested objects and lists are JSON text. Without `projection` the columns are the fields of the first 1000 documents (`_id` first), a field that only later documents have is not a column: name the columns with `projection` for such a collection.
+
+A wrong `format`, `filter`, `limit` or `extendedJson` is a `400` before anything is written. A failure while the stream is running (the database goes away) can only end the stream: the status `200` is sent by then, so a client has to check that a `json` export ends with `]` or count the lines.

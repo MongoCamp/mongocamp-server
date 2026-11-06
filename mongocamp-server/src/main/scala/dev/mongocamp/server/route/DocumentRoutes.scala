@@ -375,6 +375,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(findAllEndpoint, countEndpoint, searchEndpoint, findPostEndpoint) ++
+      DocumentExportRoutes.endpoints ++
       DocumentManyRoutes.listOfManyEndpoints() ++
       List(insertEndpoint, getDocumentEndpoint, updateSingleDocumentEndpoint, updateDocumentFieldsEndpoint, deleteDocumentEndpoint)
 
