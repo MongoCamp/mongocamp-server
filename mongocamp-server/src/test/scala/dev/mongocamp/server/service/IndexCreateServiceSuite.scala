@@ -79,4 +79,30 @@ class IndexCreateServiceSuite extends munit.FunSuite {
     assertEquals(converted.getWeights.toBsonDocument().getInt32("a").getValue, 5)
     assertEquals(converted.getPartialFilterExpression.toBsonDocument().containsKey("a"), true)
   }
+
+  // the documents are the ones that the database returns for listIndexes, they are created again on another collection
+  private def fromDatabase(json: String) = org.bson.BsonDocument.parse(json)
+
+  test("the keys of an index of the database: a text index is created again with its fields") {
+    val text = fromDatabase("""{"v": 2, "key": {"category": 1, "_fts": "text", "_ftsx": 1}, "name": "t", "weights": {"title": 5, "body": 1}}""")
+    val keys = IndexCreateService.keysFromIndexDocument(text)
+    assertEquals(keys.keySet().toArray.toList, List("category", "title", "body"))
+    assertEquals(keys.get("title"), new BsonString("text"))
+    assertEquals(IndexCreateService.keysFromIndexDocument(fromDatabase("""{"key": {"b": -1, "a": 1}, "name": "x"}""")).keySet().toArray.toList, List("b", "a"))
+  }
+
+  test("the options of an index of the database") {
+    val options = IndexCreateService.optionsFromIndexDocument(
+      fromDatabase(
+        """{"v": 2, "key": {"email": 1}, "name": "mail", "unique": true, "sparse": true, "hidden": true, "expireAfterSeconds": 3600,
+          |"partialFilterExpression": {"active": true}, "collation": {"locale": "de", "caseLevel": false, "caseFirst": "off", "strength": 2, "numericOrdering": false,
+          |"alternate": "non-ignorable", "maxVariable": "punct", "normalization": false, "backwards": false, "version": "57.1"}}""".stripMargin
+      )
+    )
+    assertEquals(options.getName, "mail")
+    assertEquals((options.isUnique, options.isSparse, options.isHidden), (true, true, true))
+    assertEquals(options.getExpireAfter(java.util.concurrent.TimeUnit.SECONDS).longValue(), 3600L)
+    assertEquals(options.getCollation.getLocale, "de")
+    assertEquals(options.getPartialFilterExpression.toBsonDocument().getBoolean("active").getValue, true)
+  }
 }

@@ -56,6 +56,8 @@ object IndexInfoService {
 
   private def optionalMap(document: BsonDocument, name: String): Option[Map[String, Any]] = optionalDocument(document, name).map(toMap)
 
+  def toPlainMap(document: BsonDocument): Map[String, Any] = toMap(document)
+
   private def toMap(document: BsonDocument): Map[String, Any] =
     document.entrySet().asScala.map(entry => (entry.getKey, BsonConverter.fromBson(entry.getValue))).toMap
 }

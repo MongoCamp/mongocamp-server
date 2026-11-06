@@ -26,4 +26,16 @@ class CollectionRenameApi(baseUrl: String) extends ClientCirceSchema {
       .header("X-AUTH-APIKEY", apiKey)
       .body(body.noSpaces)
       .response(asJson[Json])
+
+  def copyCollection(username: String, password: String, bearerToken: String, apiKey: String)(collectionName: String, body: Json) =
+    basicRequest
+      .method(Method.POST, uri"$baseUrl/mongodb/collections/${collectionName}/copy")
+      .contentType("application/json")
+      .auth
+      .basic(username, password)
+      .auth
+      .bearer(bearerToken)
+      .header("X-AUTH-APIKEY", apiKey)
+      .body(body.noSpaces)
+      .response(asJson[Json])
 }

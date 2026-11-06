@@ -191,3 +191,16 @@ The map `keys` (`{"a": 1, "b": -1}`) of the older versions still works, send one
 - The administrate grant for the collection and the write grant for the target are needed. An existing target is a `409` (code `4091`) and nothing changes, with `dropTarget` it is replaced; that needs the administrate grant for the target, too.
 - A bad name is a `400` with code `4007`: empty, longer than 120 characters, with `$` or control characters, starting with `system.` or with the prefix of the server (`mc_`), ending with `.files` or `.chunks` (the collections of a bucket have their own routes), or the collection itself. The collections of the server and of a bucket cannot be renamed, either.
 - A collection that does not exist is a `404`. The event `RenameCollectionEvent` is published.
+
+## Copying a collection
+
+`POST /mongodb/collections/{name}/copy` copies a collection in the database. Nothing is read into the server and the aggregation stage `$out`, which the aggregation route refuses, is not opened for the clients:
+
+```json
+{ "target": "customersBackup", "filter": "country:DE", "withIndexes": true, "dropTarget": false }
+```
+
+- `filter` is a Lucene filter like in the list, only the matching documents are copied (a filter without a match gives an empty collection). `withIndexes` (default true) creates the indices of the collection for the copy again, also text indices, unique, partial and expiring ones and collations.
+- The read grant for the collection and the write grant for the target are needed, the target is a name in the database of the collection. An existing target is a `409` (code `4091`), with `dropTarget` it is replaced; that needs the administrate grant for the target, too. The rules for the names are the ones of the rename (`400`, code `4007`), a collection that does not exist is a `404`.
+- The copy is made in a temporary collection and renamed to the target at the end: a target that is replaced is only touched when the copy is complete, a failure leaves it as it was and the temporary collection is dropped. The answer is `{ "name": ..., "count": ..., "indexes": ... }`.
+- The copy runs in the request, a big collection takes its time (the HTTP timeout of the client applies). The event `CopyCollectionEvent` is published.

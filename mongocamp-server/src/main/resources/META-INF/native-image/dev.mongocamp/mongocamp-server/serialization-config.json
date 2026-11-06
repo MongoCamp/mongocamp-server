@@ -4,6 +4,9 @@
       "name":"byte[]"
     },
     {
+      "name":"dev.mongocamp.server.event.collection.CopyCollectionEvent"
+    },
+    {
       "name":"dev.mongocamp.server.event.collection.DropCollectionEvent"
     },
     {

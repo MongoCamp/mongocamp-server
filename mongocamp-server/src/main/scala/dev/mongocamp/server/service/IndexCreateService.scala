@@ -102,6 +102,35 @@ object IndexCreateService {
     builder.build()
   }
 
+  /** The keys of an index as the database lists it, to create it again: the internal keys of a text index are replaced by its fields. */
+  def keysFromIndexDocument(index: BsonDocument): BsonDocument = {
+    val weights = Option(index.get("weights")).filter(_.isDocument).map(_.asDocument())
+    keysDocument(None, Some(IndexInfoService.indexKeys(index.getDocument("key"), weights)))
+  }
+
+  /** The options of an index as the database lists it, to create it again on another collection. */
+  def optionsFromIndexDocument(index: BsonDocument): IndexOptions = {
+    def flag(name: String) = Option(index.get(name)).exists(_.isBoolean) && index.getBoolean(name).getValue
+    var options            = IndexOptions().name(index.getString("name").getValue)
+    if (flag("unique")) options = options.unique(true)
+    if (flag("sparse")) options = options.sparse(true)
+    if (flag("hidden")) options = options.hidden(true)
+    Option(index.get("expireAfterSeconds")).filter(_.isNumber).foreach(seconds => options = options.expireAfter(seconds.asNumber().longValue(), java.util.concurrent.TimeUnit.SECONDS))
+    Option(index.get("partialFilterExpression")).filter(_.isDocument).foreach(filter => options = options.partialFilterExpression(filter.asDocument()))
+    Option(index.get("weights")).filter(_.isDocument).foreach(weights => options = options.weights(weights.asDocument()))
+    Option(index.get("default_language")).filter(_.isString).foreach(language => options = options.defaultLanguage(language.asString().getValue))
+    Option(index.get("language_override")).filter(_.isString).foreach(field => options = options.languageOverride(field.asString().getValue))
+    Option(index.get("textIndexVersion")).filter(_.isNumber).foreach(version => options = options.textVersion(version.asNumber().intValue()))
+    Option(index.get("collation")).filter(_.isDocument).foreach(
+      collation => {
+        // the database adds the version of the collation library to what was asked for
+        val map = IndexInfoService.toPlainMap(collation.asDocument()).removed("version")
+        options = options.collation(this.collation(map))
+      }
+    )
+    options
+  }
+
   def indexOptions(request: Option[IndexOptionsRequest]): IndexOptions = {
     var indexOptions = IndexOptions()
     request.foreach(
