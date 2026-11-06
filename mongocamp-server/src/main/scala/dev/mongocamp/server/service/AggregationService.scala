@@ -1,5 +1,6 @@
 package dev.mongocamp.server.service
 import dev.mongocamp.driver.mongodb.mapToBson
+import dev.mongocamp.server.converter.ExtendedJsonWriter
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
@@ -18,12 +19,13 @@ object AggregationService {
     pipeline: Seq[Bson],
     allowDiskUse: Boolean,
     rowsPerPage: Long,
-    page: Long
+    page: Long,
+    extendedJson: Option[ExtendedJsonWriter.Mode]
   ): (List[Map[String, Any]], PaginationInfo) = {
     val mongoPaginatedFilter =
       MongoPaginatedAggregation(MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection), allowDiskUse, pipeline.toList)
     val aggregateResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
-    (aggregateResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), aggregateResult.paginationInfo)
+    (aggregateResult.databaseObjects.map(MongoCampBsonConverter.documentToMap(_, extendedJson)), aggregateResult.paginationInfo)
   }
 
   def paginatedAggregation(
@@ -31,11 +33,12 @@ object AggregationService {
     mongoAggregateRequest: MongoAggregateRequest,
     rowsPerPage: Long,
     page: Long,
-    matchFilter: Map[String, Any] = Map()
+    matchFilter: Map[String, Any] = Map(),
+    extendedJson: Option[ExtendedJsonWriter.Mode] = None
   ): (List[Map[String, Any]], PaginationInfo) = {
     AggregationPipelineGuard.check(authorizedCollectionRequest, mongoAggregateRequest.pipeline)
     val pipeline: Seq[Bson] = prependMatch(matchFilter, mongoAggregateRequest.pipeline) ++ convertToBsonPipeline(mongoAggregateRequest.pipeline)
-    paginatedAggregation(authorizedCollectionRequest, pipeline, mongoAggregateRequest.allowDiskUse, rowsPerPage, page)
+    paginatedAggregation(authorizedCollectionRequest, pipeline, mongoAggregateRequest.allowDiskUse, rowsPerPage, page, extendedJson)
   }
 
   // stages that have to be the first stage of a pipeline, a $match before them is not possible

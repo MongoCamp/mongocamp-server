@@ -1,29 +1,47 @@
 package dev.mongocamp.server.route
 
+import com.mongodb.client.model.RenameCollectionOptions
+import com.mongodb.MongoNamespace
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.converter.ExtendedJsonWriter
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.collection.ClearCollectionEvent
+import dev.mongocamp.server.event.collection.CopyCollectionEvent
 import dev.mongocamp.server.event.collection.DropCollectionEvent
+import dev.mongocamp.server.event.collection.RenameCollectionEvent
 import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.CollectionSummary
+import dev.mongocamp.server.model.CopyRequest
+import dev.mongocamp.server.model.CopyResponse
+import dev.mongocamp.server.model.FieldInfo
 import dev.mongocamp.server.model.JsonSchema
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.MongoAggregateRequest
+import dev.mongocamp.server.model.RenameRequest
+import dev.mongocamp.server.model.RenameResponse
 import dev.mongocamp.server.model.SchemaAnalysis
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import dev.mongocamp.server.service.AggregationService
+import dev.mongocamp.server.service.CollectionCopyService
+import dev.mongocamp.server.service.CollectionNameService
+import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.service.SchemaService
 import org.apache.lucene.search.Query
 import scala.concurrent.Future
@@ -217,6 +235,40 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     })
   }
 
+  // before the endpoint: the vals of an object are initialised in the order of the source
+  private val FieldDetailsDefaultSample = 1000
+
+  val getFieldDetailsEndpoint = readCollectionEndpoint
+    .in("fields")
+    .in("detail")
+    .in(
+      query[Option[Int]]("sampleSize")
+        .example(Some(1000))
+        .default(Some(FieldDetailsDefaultSample))
+        .description(s"Number of documents that are analysed, $FieldDetailsDefaultSample by default. A greater sample is more exact and slower on big collections.")
+    )
+    .in(query[Int]("depth").default(3).description("How deep should the objects extracted"))
+    .out(jsonBody[List[FieldInfo]])
+    .summary("Fields of a Collection with types")
+    .description(
+      "All fields of a collection as a flat list, one entry per path (`address.city`, `tags[]` for the elements of an array) with the types of the values and how often every type was found in the analysed documents."
+    )
+    .tag("Collection")
+    .method(Method.GET)
+    .name("getFieldDetails")
+    .serverLogic(
+      collectionRequest => parameter => fieldDetails(collectionRequest, parameter)
+    )
+
+  def fieldDetails(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    parameter: (Option[Int], Int)
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[FieldInfo]]] = {
+    Future.successful(Right {
+      SchemaService.fieldInfos(authorizedCollectionRequest, parameter._2, parameter._1)
+    })
+  }
+
   val getSchemaAnalysisEndpoint = readCollectionEndpoint
     .in("schema")
     .in("analysis")
@@ -262,6 +314,110 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       dao.drop().result()
       EventSystem.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue(true)
+    })
+  }
+
+  val renameCollectionEndpoint = administrateCollectionEndpoint
+    .in("rename")
+    .in(jsonBody[RenameRequest].example(RenameRequest("newName", Some(false))))
+    .out(jsonBody[RenameResponse])
+    .summary("Rename Collection")
+    .description(
+      "Rename a Collection in the database, with its Documents and Indices. The target is a name in the database of the Collection. The administrate grant for the Collection and the write grant for the target are needed. An existing target is a conflict (409), unless dropTarget is true and the user has the administrate grant for it: it is replaced then."
+    )
+    .tag("Collection")
+    .method(Method.POST)
+    .name("renameCollection")
+    .serverLogic(
+      collectionRequest => request => renameCollection(collectionRequest, request)
+    )
+
+  def renameCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    request: RenameRequest
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), RenameResponse]] = {
+    Future.successful(Right {
+      val user       = authorizedCollectionRequest.userInformation
+      val prefix     = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val source     = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      CollectionNameService.checkSource(source, prefix)
+      val provider   = MongoDatabase.databaseProvider
+      val target     = CollectionNameService.resolveTarget(source, request.target, provider.DefaultDatabaseName, prefix)
+      val dropTarget = request.dropTarget.getOrElse(false)
+      val database   = source.database.getOrElse(provider.DefaultDatabaseName)
+      if (!user.canWrite(target.full)) {
+        throw GrantDenied.exception("user not authorized for collection")
+      }
+      if (provider.collectionNames(database).contains(target.name)) {
+        if (!dropTarget) {
+          throw MongoCampException(s"the collection ${target.full} exists, send dropTarget true to replace it", StatusCode.Conflict, ErrorCodes.collectionExists)
+        }
+        if (!user.canAdministrate(target.full)) {
+          throw GrantDenied.exception("user not authorized for collection")
+        }
+      }
+      provider
+        .collection(authorizedCollectionRequest.collection)
+        .renameCollection(new MongoNamespace(database, target.name), new RenameCollectionOptions().dropTarget(dropTarget))
+        .result()
+      EventSystem.publish(RenameCollectionEvent(user, source.full, target.full))
+      RenameResponse(target.full)
+    })
+  }
+
+  val copyCollectionEndpoint = readCollectionEndpoint
+    .in("copy")
+    .in(jsonBody[CopyRequest].example(CopyRequest("copyOfCollection", Some("type:company"), Some(true), Some(false))))
+    .out(jsonBody[CopyResponse])
+    .summary("Copy Collection")
+    .description(
+      "Copy a Collection in the database, optionally only the documents that match a Lucene filter, with its indices (withIndexes, true by default). The target is a name in the database of the Collection. The read grant for the Collection and the write grant for the target are needed. An existing target is a conflict (409), unless dropTarget is true and the user has the administrate grant for it: it is replaced when the copy is complete. The copy is made in one request, a big collection takes its time."
+    )
+    .tag("Collection")
+    .method(Method.POST)
+    .name("copyCollection")
+    .serverLogic(
+      collectionRequest => request => copyCollection(collectionRequest, request)
+    )
+
+  def copyCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    request: CopyRequest
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CopyResponse]] = {
+    Future.successful(Right {
+      val user       = authorizedCollectionRequest.userInformation
+      val prefix     = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val source     = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      CollectionNameService.checkSource(source, prefix)
+      val provider   = MongoDatabase.databaseProvider
+      val target     = CollectionNameService.resolveTarget(source, request.target, provider.DefaultDatabaseName, prefix)
+      val dropTarget = request.dropTarget.getOrElse(false)
+      // an aggregation with $out on a collection that does not exist would give an empty copy
+      if (!provider.collectionNames(source.database.getOrElse(provider.DefaultDatabaseName)).contains(source.name)) {
+        throw MongoCampException(s"the collection ${source.full} does not exist", StatusCode.NotFound, ErrorCodes.invalidCollectionName)
+      }
+      val filter = request.filter.filter(!_.isBlank).map(
+        input =>
+          try LuceneQueryTools.parseFilter(input)
+          catch {
+            case LuceneQueryTools.InvalidFilterException(reason) => throw MongoCampException("Invalid value for: filter", StatusCode.BadRequest, 4001, reason)
+          }
+      )
+      if (!user.canWrite(target.full)) {
+        throw GrantDenied.exception("user not authorized for collection")
+      }
+      val targetExists = provider.collectionNames(source.database.getOrElse(provider.DefaultDatabaseName)).contains(target.name)
+      if (targetExists) {
+        if (!dropTarget) {
+          throw MongoCampException(s"the collection ${target.full} exists, send dropTarget true to replace it", StatusCode.Conflict, ErrorCodes.collectionExists)
+        }
+        if (!user.canAdministrate(target.full)) {
+          throw GrantDenied.exception("user not authorized for collection")
+        }
+      }
+      val result = CollectionCopyService.copy(source, target, LuceneQueryTools.toFilterMap(filter), request.withIndexes.getOrElse(true), targetExists, prefix)
+      EventSystem.publish(CopyCollectionEvent(user, source.full, target.full))
+      CopyResponse(target.full, result.count, result.indexes)
     })
   }
 
@@ -320,6 +476,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
         )
         .default(None)
     )
+    .in(ExtendedJsonFunctions.extendedJsonParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
@@ -335,7 +492,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def aggregateInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (MongoAggregateRequest, Paging, Option[Query])
+    parameter: (MongoAggregateRequest, Paging, Option[Query], Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(Right {
       val mongoAggregateRequest = parameter._1
@@ -343,7 +500,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
       val page                  = pagingInfo.page.getOrElse(1L)
 
-      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3))
+      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3), ExtendedJsonWriter.parseMode(parameter._4))
 
     })
   }
@@ -394,9 +551,12 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       collectionsInfoEndpoint,
       getCollectionStatusEndpoint,
       getCollectionFieldsEndpoint,
+      getFieldDetailsEndpoint,
       getSchemaEndpoint,
       getSchemaAnalysisEndpoint,
       deleteCollectionStatusEndpoint,
+      renameCollectionEndpoint,
+      copyCollectionEndpoint,
       deleteAllEndpoint,
       aggregateEndpoint,
       distinctEndpoint

@@ -257,9 +257,25 @@ object SchemaService extends TapirSchema {
       }
     )
 
-    val fieldPercentage: Double = if (countResponse != 0) sampledDataCount / countResponse else 0
+    // both are Long: without toDouble every sample that is smaller than the collection gave 0
+    val fieldPercentage: Double = if (countResponse != 0) sampledDataCount.toDouble / countResponse else 0
     model.SchemaAnalysis(countResponse, sampledDataCount, fieldPercentage, fieldsMap.get("ROOT").map(_.subFields).getOrElse(ArrayBuffer()))
   }
+
+  /** The fields of the analysis as a flat list: one entry per path with the types of its values and how often they were found. */
+  def flattenFields(fields: Iterable[SchemaAnalysisField]): List[FieldInfo] =
+    fields.toList.flatMap(
+      field =>
+        FieldInfo(
+          field.fullName.replace(NameSeparator + ArrayItemMark, ArrayItemMark),
+          field.fieldTypes.map(
+            fieldType => FieldTypeCount(fieldType.fieldType, fieldType.count)
+          )
+        ) :: flattenFields(field.subFields)
+    )
+
+  def fieldInfos(authorizedCollectionRequest: AuthorizedCollectionRequest, depth: Int, sample: Option[Int]): List[FieldInfo] =
+    flattenFields(analyzeSchema(authorizedCollectionRequest, depth, sample).fields)
 
   def detectSchema(authorizedCollectionRequest: AuthorizedCollectionRequest, deepth: Int, sample: Option[Int]): JsonSchema = {
     val objectName = camelCaseObjectName(authorizedCollectionRequest.collection)

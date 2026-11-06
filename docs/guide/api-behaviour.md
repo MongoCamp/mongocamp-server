@@ -137,3 +137,154 @@ A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$sear
 ```
 
 With `?name=a&name=b` only these collections are given (a collection that the user may not read is never given). A collection without statistics, for example a view, is listed with `available: false` and zeros. The database is asked once per collection, so on a server with very many collections restrict the answer with `name`. A collection with the name `info` is shadowed for `GET /mongodb/collections/info`, its information is available with the other routes of the collection.
+
+## Fields with types
+
+`GET /mongodb/collections/{name}/fields/detail?sampleSize=&depth=` returns all fields as a flat list, one entry per path, with the types of the values and how often every type was found in the analysed documents:
+
+```json
+[
+  { "path": "address", "types": [{ "type": "object", "count": 20 }] },
+  { "path": "address.city", "types": [{ "type": "string", "count": 20 }] },
+  { "path": "age", "types": [{ "type": "long", "count": 15 }, { "type": "string", "count": 5 }] },
+  { "path": "tags[]", "types": [{ "type": "string", "count": 40 }] }
+]
+```
+
+The elements of an array are the path with `[]` (`tags[]`), the type names are the ones of the database (`$type`). `sampleSize` is 1000 by default, the analysis of a big collection with a greater sample is more exact and slower. `depth` (default 3) limits how deep objects are followed. `GET .../schema/analysis` returned `percentageOfAnalysed` as 0 for every sample that is smaller than the collection (an integer division), it is the share now (`0.25` for 5 of 20 documents).
+
+## Indices with details
+
+`GET /mongodb/collections/{name}/index/details` (administrate grant) lists the indices as the database reports them. The older `GET .../index` returns the keys as a map without a reliable order and a text index with the internal keys `_fts` and `_ftsx`.
+
+```json
+[
+  { "name": "compound", "keys": [{ "field": "c", "direction": "1" }, { "field": "b", "direction": "-1" }], "unique": false, "sparse": false, "hidden": false, "version": 2 },
+  { "name": "texts", "keys": [{ "field": "title", "direction": "text" }, { "field": "body", "direction": "text" }], "weights": { "title": 10, "body": 1 }, "defaultLanguage": "german" }
+]
+```
+
+`keys` is in the order of the index (the order of a compound index matters), `direction` is `1` or `-1` for a sorted key, otherwise the type of the key (`text`, `2dsphere`, `2d`, `hashed`). A text index lists its fields, `weights` has their weight. Also given when the index has them: `partialFilterExpression`, `collation`, `defaultLanguage`, `expireAfterSeconds`. An index with the name `details` is not reachable by name with `GET .../index/{indexName}`.
+
+## Creating indices
+
+`PUT /mongodb/collections/{name}/index` takes the keys of the index as `orderedKeys`, a list in the order of the index. `direction` is `1`, `-1` or the type of the key (`text`, `2dsphere`, `2d`, `hashed`), so a compound index with several text fields is possible:
+
+```json
+{
+  "orderedKeys": [{ "field": "category", "direction": "1" }, { "field": "title", "direction": "text" }, { "field": "body", "direction": "text" }],
+  "indexOptionsRequest": { "name": "texts", "weights": { "title": 5, "body": 1 }, "defaultLanguage": "german" }
+}
+```
+
+The map `keys` (`{"a": 1, "b": -1}`) of the older versions still works, send one of both (both is a `400`). The options have `sparse`, `hidden`, `partialFilterExpression`, `weights` and `collation` (`locale` is required, also `strength`, `caseLevel`, `caseFirst`, `numericOrdering`, `alternate`, `maxVariable`, `backwards`, `normalization`) besides the older ones. A request that cannot be an index is a `400` with code `4006` and nothing is created: no key, a direction that is not allowed (`{"z": 5}` used to create the index `z_5`), a field twice, an unknown collation option. A combination that only the database knows to be wrong (`sparse` together with `partialFilterExpression`) is answered by the database, also as `400`.
+
+## Renaming a collection
+
+`POST /mongodb/collections/{name}/rename` renames a collection in the database, with its documents and indices:
+
+```json
+{ "target": "customers2024", "dropTarget": false }
+```
+
+- The target is a name in the database of the collection (`geodata:places` for the collection `geodata:locations`), another database is refused: the database cannot rename into another one.
+- The administrate grant for the collection and the write grant for the target are needed. An existing target is a `409` (code `4091`) and nothing changes, with `dropTarget` it is replaced; that needs the administrate grant for the target, too.
+- A bad name is a `400` with code `4007`: empty, longer than 120 characters, with `$` or control characters, starting with `system.` or with the prefix of the server (`mc_`), ending with `.files` or `.chunks` (the collections of a bucket have their own routes), or the collection itself. The collections of the server and of a bucket cannot be renamed, either.
+- A collection that does not exist is a `404`. The event `RenameCollectionEvent` is published.
+
+## Copying a collection
+
+`POST /mongodb/collections/{name}/copy` copies a collection in the database. Nothing is read into the server and the aggregation stage `$out`, which the aggregation route refuses, is not opened for the clients:
+
+```json
+{ "target": "customersBackup", "filter": "country:DE", "withIndexes": true, "dropTarget": false }
+```
+
+- `filter` is a Lucene filter like in the list, only the matching documents are copied (a filter without a match gives an empty collection). `withIndexes` (default true) creates the indices of the collection for the copy again, also text indices, unique, partial and expiring ones and collations.
+- The read grant for the collection and the write grant for the target are needed, the target is a name in the database of the collection. An existing target is a `409` (code `4091`), with `dropTarget` it is replaced; that needs the administrate grant for the target, too. The rules for the names are the ones of the rename (`400`, code `4007`), a collection that does not exist is a `404`.
+- The copy is made in a temporary collection and renamed to the target at the end: a target that is replaced is only touched when the copy is complete, a failure leaves it as it was and the temporary collection is dropped. The answer is `{ "name": ..., "count": ..., "indexes": ... }`.
+- The copy runs in the request, a big collection takes its time (the HTTP timeout of the client applies). The event `CopyCollectionEvent` is published.
+
+## Extended JSON wrappers in a request body
+
+A JSON body only knows strings, numbers, booleans, lists and objects. A value gets its BSON type with the MongoDB Extended JSON wrapper, in documents (insert, update), nested in objects and lists, in the values of a filter (`$in`, `$gt`, ...) and as `_id`:
+
+| Wrapper | Stored as |
+|---|---|
+| `{"$date": "2024-06-15T12:00:00Z"}` | date (also epoch milliseconds or `{"$numberLong": ...}` as value) |
+| `{"$numberLong": "9007199254740993"}` | 64 bit integer |
+| `{"$numberInt": "5"}` | 32 bit integer |
+| `{"$numberDouble": "1.5"}` | double (`"NaN"`, `"Infinity"`, `"-Infinity"` are allowed) |
+| `{"$numberDecimal": "10.25"}` | decimal128 |
+| `{"$oid": "507f1f77bcf86cd799439011"}` | ObjectId |
+| `{"$binary": {"base64": "AQID", "subType": "00"}}` | binary with the sub type (hexadecimal, one byte) |
+| `{"$uuid": "123e4567-e89b-12d3-a456-426614174000"}` | binary of the sub type 4 |
+| `{"$timestamp": {"t": 1700000000, "i": 1}}` | timestamp (internal type of the database) |
+| `{"$regularExpression": {"pattern": "^a", "options": "i"}}` | regular expression |
+| `{"$minKey": 1}`, `{"$maxKey": 1}` | the smallest and the greatest value of the sort order |
+
+Only an object with exactly one of these keys is a wrapper, any other object is a document (before, all of them except `$date` and `$numberLong` were stored as objects with the wrapper as key). A wrapper with a content that is not valid (`{"$numberInt": "12.5"}`, `{"$oid": "xyz"}`, a timestamp without `i`) is a `400` that names the key, nothing is stored. The wrappers are read in documents and filters, not in the pipeline of an aggregation, and responses do not contain them (reading with types is `extendedJson`, a later change).
+
+## Typed reads: extendedJson
+
+The routes that return documents (`GET .../documents`, `POST .../documents`, `POST .../documents/search`, `GET .../documents/{id}` and `POST .../aggregate`) take the query parameter `extendedJson` with `relaxed` or `canonical`. Without it the documents are returned as before (an ObjectId as text, a date as ISO text, a number as number). With it the types of the values are explicit, as MongoDB Extended JSON:
+
+| | `relaxed` | `canonical` |
+|---|---|---|
+| 32 bit integer | `5` | `{"$numberInt": "5"}` |
+| 64 bit integer | `9007199254740993` | `{"$numberLong": "9007199254740993"}` |
+| double | `1.5` (a whole number like `2.0` is `2`) | `{"$numberDouble": "2.0"}` |
+| decimal | `{"$numberDecimal": "10.25"}` | the same |
+| date | `{"$date": "2024-06-15T12:00:00Z"}` | `{"$date": {"$numberLong": "1718452800000"}}` |
+| ObjectId (also `_id`) | `{"$oid": "..."}` | the same |
+| binary, timestamp, regular expression, min and max key | wrappers | the same |
+
+A text that looks like an ISO-8601 instant is `{"$string": "2024-06-15T12:00:00Z"}` in both modes: a plain ISO string in a request body is read as a date, so what is read can be sent back unchanged. **What canonical returns can be written as it is** (insert or update), the document in the database has the same types. Another value of `extendedJson` is a `400`.
+
+### A text that looks like a date
+
+A plain string like `"2024-06-15T12:00:00Z"` in a request body is stored as a date (see above). To store it as a text, send it as `{"$string": "2024-06-15T12:00:00Z"}`, also in a list, a nested object or a filter (`{"title": {"$string": "..."}}` finds the text). The value of `$string` has to be a text (`400` otherwise).
+
+### Search without sort and projection
+
+In the request body of `POST .../documents/search` every field is optional (`{"filter": "name:John"}` is enough). A request that sends all three works as before.
+
+## Export
+
+`GET /mongodb/collections/{name}/documents/export` downloads the documents of a collection (read grant). The answer is a stream: every document is written when the database delivers it, so the size of the collection does not matter for the memory of the server, and a client that stops reading stops the export.
+
+| Parameter | |
+|---|---|
+| `format` | `ndjson` (default, one JSON document per line), `json` (one array, `[]` for an empty collection) or `csv` |
+| `filter` | a Lucene filter like in the list |
+| `sort`, `limit` | sorting like in the list (`-field` descending), the greatest number of documents |
+| `projection` | the fields to export, for `csv` the columns in this order |
+| `extendedJson` | `relaxed` or `canonical`, the types of the values are explicit (see above) |
+
+The header `Content-Disposition: attachment; filename="name.ndjson"` names the file. In `csv` the first line is the header, the next lines end with `\r\n`; a cell with a comma, a quote or a line break is in quotes (quotes doubled), `null` is an empty cell, nested objects and lists are JSON text. Without `projection` the columns are the fields of the first 1000 documents (`_id` first), a field that only later documents have is not a column: name the columns with `projection` for such a collection.
+
+A wrong `format`, `filter`, `limit` or `extendedJson` is a `400` before anything is written. A failure while the stream is running (the database goes away) can only end the stream: the status `200` is sent by then, so a client has to check that a `json` export ends with `]` or count the lines.
+
+## Import
+
+`POST /mongodb/collections/{name}/documents/import` (write grant) stores the documents of the request body, one JSON document per line (NDJSON, the format that the export writes). The body is read as a stream, the memory of the server does not depend on its size.
+
+```
+{"_id": "a", "n": 1}
+{"_id": {"$numberInt": "7"}, "when": "2024-06-15T12:00:00Z", "text": {"$string": "2024-06-15T12:00:00Z"}}
+```
+
+- A line is read like a document in the body of an insert: Extended JSON wrappers, dates and `$string` work, a document without an `_id` gets an ObjectId. A blank line is skipped, a line ends with LF or CRLF, the last line needs no line break. What canonical export (`extendedJson=canonical`) writes can be imported and gives documents with the same types.
+- The documents are stored in batches of 1000 without ordering: a line that cannot be stored (not JSON, not an object, a wrapper with a content that is not valid, a duplicate key) does not stop the others. The answer counts and names what failed:
+
+```json
+{
+  "read": 4, "inserted": 3, "failed": 1,
+  "errors": [{ "index": 5, "code": 4008, "message": "the line is not valid JSON: ..." }],
+  "errorsTruncated": false
+}
+```
+
+`index` is the number of the line (1 based, blank lines are counted, so it is the line of the file), `code` is `4008` for a line that is not a document or the error code of the database (`11000` for a duplicate key, without database and collection in the message). At most 1000 errors are listed (`errorsTruncated`), `failed` is always the number of all.
+- The size of the body is limited by the configuration `IMPORT_MAX_BYTES` (default 1 GiB, read for every request): above it the answer is `413` and what was stored before stays stored. The import has no request timeout, the 8 MB limit and the 20 seconds of the HTTP server do not apply to it. A line can be 17 MB at most (`400` for a longer one).
+- A failure that is not a bad line (the database goes away) ends the import with an error, the batches before it are stored: an import is not a transaction. The event `CreateDocumentEvent` is published for every batch with the ids that were stored.

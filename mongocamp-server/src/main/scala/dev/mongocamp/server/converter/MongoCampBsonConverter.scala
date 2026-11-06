@@ -38,6 +38,13 @@ object MongoCampBsonConverter {
     )
   }
 
+  /** The document for a response: as before, or as Extended JSON for the query parameter `extendedJson`. */
+  def documentToMap(document: Document, extendedJson: Option[ExtendedJsonWriter.Mode]): Map[String, Any] =
+    extendedJson.map(mode => ExtendedJsonWriter.toMap(document.toBsonDocument, mode)).getOrElse(documentToMap(document))
+
+  def documentToMap(document: org.bson.BsonDocument, extendedJson: Option[ExtendedJsonWriter.Mode]): Map[String, Any] =
+    extendedJson.map(mode => ExtendedJsonWriter.toMap(document, mode)).getOrElse(documentToMap(document))
+
   def convertToOperationMap(conversionMap: Map[String, Any]): Map[String, Any] = {
 
     val document = mutable.Map[String, Any]()
@@ -81,7 +88,7 @@ object MongoCampBsonConverter {
   }
 
   /** Converts the values of a document or filter: dates (`DateTime` to `Date`) and the Extended JSON wrappers `{"$date": ...}` (an ISO-8601 instant, epoch
-    * milliseconds or `{"$numberLong": "..."}`) and `{"$numberLong": "..."}`, also nested in objects, lists and the operators of a filter. The wrappers are only
+    * milliseconds or `{"$numberLong": "..."}`), `{"$numberLong": "..."}` and the other wrappers of [[ExtendedJsonConverter]], also nested in objects, lists and the operators of a filter. The wrappers are only
     * read, responses never contain them. The `_id` is converted by [[convertIdValue]].
     */
   def convertFields(map: Map[String, Any]): Map[String, Any] = {
@@ -98,7 +105,8 @@ object MongoCampBsonConverter {
         val typed = map.asInstanceOf[Map[String, Any]]
         if (typed.size == 1 && typed.contains("$date")) convertDateWrapper(typed("$date"))
         else if (typed.size == 1 && typed.contains("$numberLong")) convertNumberLong(typed("$numberLong"))
-        else convertFields(typed)
+        else if (typed.size == 1 && typed.contains(CirceSchema.TextMarker)) convertText(typed(CirceSchema.TextMarker))
+        else ExtendedJsonConverter.convertWrapper(typed).getOrElse(convertFields(typed))
       case d: DateTime           => d.toDate
       case iterable: Iterable[_] => iterable.map(convertValue).toList
       case other                 => other
@@ -127,6 +135,13 @@ object MongoCampBsonConverter {
     }
   }
 
+  // a text that looks like a date is a date as a plain value, the marker makes it a text
+  private def convertText(value: Any): String =
+    value match {
+      case s: String => s
+      case _         => throw MongoCampException.badRequestException(s"""the value of "$$string" must be a text""")
+    }
+
   private def convertNumberLong(value: Any): Long = {
     value match {
       case s: String =>
@@ -152,6 +167,10 @@ object MongoCampBsonConverter {
         val operatorMap = map.asInstanceOf[Map[String, Any]]
         if (operatorMap.size == 1 && operatorMap.contains("$oid")) {
           convertIdField(operatorMap("$oid"))
+        }
+        // the id can be any value: a wrapper gives it its type (`{"$numberInt": "5"}`, `{"$uuid": "..."}`)
+        else if (operatorMap.size == 1 && (ExtendedJsonConverter.WrapperKeys.contains(operatorMap.head._1) || Set("$date", "$numberLong", CirceSchema.TextMarker).contains(operatorMap.head._1))) {
+          convertValue(operatorMap)
         }
         else {
           operatorMap.map(

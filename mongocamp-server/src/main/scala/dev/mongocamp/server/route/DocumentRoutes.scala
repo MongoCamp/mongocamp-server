@@ -1,6 +1,7 @@
 package dev.mongocamp.server.route
 
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.server.converter.ExtendedJsonWriter
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.converter.MongoCampBsonConverter.convertFields
@@ -25,6 +26,7 @@ import dev.mongocamp.server.model.MongoFindRequest
 import dev.mongocamp.server.model.SearchRequest
 import dev.mongocamp.server.model.UpdateResponse
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import java.util.Date
@@ -51,6 +53,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in(query[List[String]]("sort").description("MongoDB sorting").default(List.empty).example(List.empty))
     .in(query[List[String]]("projection").description("MongoDB projection").default(List.empty).example(List.empty))
     .in(PagingFunctions.pagingParameter)
+    .in(ExtendedJsonFunctions.extendedJsonParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Documents in Collection")
@@ -59,21 +62,23 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .method(Method.GET)
     .name("listDocuments")
     .serverLogic(
-      collectionRequest => parameter => findAllInCollection(collectionRequest, parameter)
+      collectionRequest => parameter => findAllInCollection(collectionRequest, (parameter._1, parameter._2, parameter._3, parameter._4), parameter._5)
     )
 
   def findAllInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (Option[Query], List[String], List[String], Paging)
+    parameter: (Option[Query], List[String], List[String], Paging),
+    extendedJson: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] =
-    findByLuceneFilter(authorizedCollectionRequest, parameter._1, parameter._2, parameter._3, parameter._4)
+    findByLuceneFilter(authorizedCollectionRequest, parameter._1, parameter._2, parameter._3, parameter._4, extendedJson)
 
   private def findByLuceneFilter(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     luceneFilter: Option[Query],
     sortFields: List[String],
     projectionFields: List[String],
-    paging: Paging
+    paging: Paging,
+    extendedJson: Option[String]
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     val sort: Map[String, Any] = sortFields
       .map(
@@ -86,14 +91,15 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
       )
       .toMap
     val filter: Map[String, Any] = LuceneQueryTools.toFilterMap(luceneFilter)
-    findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), paging))
+    findInCollection(authorizedCollectionRequest, (MongoFindRequest(filter, sort, projection), paging), extendedJson)
   }
 
   val searchEndpoint = readCollectionEndpoint
     .in("documents")
     .in("search")
-    .in(jsonBody[SearchRequest].example(SearchRequest(Some("name:John AND age:[18 TO 65]"), List("-age"), List("name", "age"))))
+    .in(jsonBody[SearchRequest].example(SearchRequest(Some("name:John AND age:[18 TO 65]"), Some(List("-age")), Some(List("name", "age")))))
     .in(PagingFunctions.pagingParameter)
+    .in(ExtendedJsonFunctions.extendedJsonParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Search Documents in Collection")
@@ -104,13 +110,14 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .method(Method.POST)
     .name("searchDocuments")
     .serverLogic(
-      collectionRequest => parameter => searchInCollection(collectionRequest, parameter._1, parameter._2)
+      collectionRequest => parameter => searchInCollection(collectionRequest, parameter._1, parameter._2, parameter._3)
     )
 
   def searchInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
     request: SearchRequest,
-    paging: Paging
+    paging: Paging,
+    extendedJson: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     val luceneFilter = request.filter
       .filter(!_.isBlank)
@@ -123,7 +130,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
               throw MongoCampException("Invalid value for: filter", StatusCode.BadRequest, 4001, reason)
           }
       )
-    findByLuceneFilter(authorizedCollectionRequest, luceneFilter, request.sort, request.projection, paging)
+    findByLuceneFilter(authorizedCollectionRequest, luceneFilter, request.sort.getOrElse(List()), request.projection.getOrElse(List()), paging, extendedJson)
   }
 
   val countEndpoint = readCollectionEndpoint
@@ -165,6 +172,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
       )
     )
     .in(PagingFunctions.pagingParameter)
+    .in(ExtendedJsonFunctions.extendedJsonParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Documents in Collection")
@@ -173,14 +181,16 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .method(Method.POST)
     .name("find")
     .serverLogic(
-      collectionRequest => parameter => findInCollection(collectionRequest, parameter)
+      collectionRequest => parameter => findInCollection(collectionRequest, (parameter._1, parameter._2), parameter._3)
     )
 
   def findInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (MongoFindRequest, Paging)
+    parameter: (MongoFindRequest, Paging),
+    extendedJson: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(Right {
+      val mode          = ExtendedJsonWriter.parseMode(extendedJson)
       val searchRequest = parameter._1
       val pagingInfo    = parameter._2
       val rowsPerPage   = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
@@ -194,7 +204,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
       )
 
       val findResult = mongoPaginatedFilter.paginate(rowsPerPage, page)
-      (findResult.databaseObjects.map(MongoCampBsonConverter.documentToMap), findResult.paginationInfo)
+      (findResult.databaseObjects.map(MongoCampBsonConverter.documentToMap(_, mode)), findResult.paginationInfo)
     })
   }
 
@@ -231,6 +241,7 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
   val getDocumentEndpoint = readCollectionEndpoint
     .in("documents")
     .in(path[String]("documentId").description("DocumentId to read"))
+    .in(ExtendedJsonFunctions.extendedJsonParameter)
     .out(jsonBody[Map[String, Any]])
     .summary("Document from Collection")
     .description("Get one Document from given Collection")
@@ -238,17 +249,20 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     .method(Method.GET)
     .name("getDocument")
     .serverLogic(
-      collectionRequest => parameter => findById(collectionRequest, parameter)
+      collectionRequest => parameter => findById(collectionRequest, parameter._1, parameter._2)
     )
 
   def findById(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: String
+    parameter: String,
+    extendedJson: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Map[String, Any]]] = {
     Future.successful(Right {
+      val mode = ExtendedJsonWriter.parseMode(extendedJson)
       // not dao.findById: it only accepts the hex string of an ObjectId, but a document can have any value as id
       val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(pathIdFilter(parameter)).resultOption()
-      result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
+      val document = result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
+      mode.map(m => ExtendedJsonWriter.toMap(document.toBsonDocument, m)).getOrElse(document)
     })
   }
 
@@ -361,6 +375,8 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
     List(findAllEndpoint, countEndpoint, searchEndpoint, findPostEndpoint) ++
+      DocumentExportRoutes.endpoints ++
+      DocumentImportRoutes.endpoints ++
       DocumentManyRoutes.listOfManyEndpoints() ++
       List(insertEndpoint, getDocumentEndpoint, updateSingleDocumentEndpoint, updateDocumentFieldsEndpoint, deleteDocumentEndpoint)
 

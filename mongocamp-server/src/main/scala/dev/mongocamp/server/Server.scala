@@ -26,13 +26,17 @@ import org.apache.pekko.http.scaladsl.model.HttpMethods._
 import org.apache.pekko.http.scaladsl.model.HttpResponse
 import org.apache.pekko.http.scaladsl.model.StatusCodes
 import org.apache.pekko.http.scaladsl.server.Directives.complete
+import org.apache.pekko.http.scaladsl.server.Directives.extract
 import org.apache.pekko.http.scaladsl.server.Directives.extractRequestContext
 import org.apache.pekko.http.scaladsl.server.Directives.options
 import org.apache.pekko.http.scaladsl.server.Directives.reject
+import org.apache.pekko.http.scaladsl.server.Directives.withRequestTimeout
+import org.apache.pekko.http.scaladsl.server.Directives.withSizeLimit
 import org.apache.pekko.http.scaladsl.server.Route
 import org.apache.pekko.http.scaladsl.server.RouteConcatenation
 import org.apache.pekko.http.scaladsl.Http
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams
@@ -77,10 +81,25 @@ object Server extends LazyLogging with RouteConcatenation with RestServer {
   private def routes: Route = {
     val internalEndPoints = serverEndpoints ++ ApiDocsRoutes.addDocsRoutes(serverEndpoints)
     val allEndpoints = internalEndPoints.map(
-      ep => HttpServer.httpServerInterpreter.toRoute(ep)
+      ep => {
+        val route = HttpServer.httpServerInterpreter.toRoute(ep)
+        if (ep.endpoint.info.name.contains(DocumentImportRoutes.EndpointName)) importRoute(route) else route
+      }
     )
     concat(allEndpoints: _*)
   }
+
+  // an import is a stream that is read for as long as the client sends it: the size limit of the HTTP server (8 MB) and its request timeout (20 seconds) would
+  // end every real import. The limit is the configuration IMPORT_MAX_BYTES, read for every request.
+  private def importRoute(route: Route): Route =
+    extract(_ => ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyImportMaxBytes)) {
+      maxBytes =>
+        withRequestTimeout(Duration.Inf) {
+          withSizeLimit(maxBytes) {
+            route
+          }
+        }
+    }
 
   private def preflightRequestHandler: Route = {
     extractRequestContext {
