@@ -6,6 +6,8 @@ object ErrorCodes {
   val ambiguousFilter: Int     = 4004
   val filterNotSupported: Int  = 4005
   val invalidIndexKey: Int     = 4006
+  val invalidCollectionName: Int = 4007
+  val collectionExists: Int      = 4091
   val badInsertRequest: Int    = 4401
   val idMissingForReplace: Int = 4402
 

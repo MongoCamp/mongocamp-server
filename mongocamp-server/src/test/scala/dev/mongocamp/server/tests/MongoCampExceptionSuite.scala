@@ -27,6 +27,8 @@ class MongoCampExceptionSuite extends FunSuite {
       ErrorCodes.ambiguousFilter,
       ErrorCodes.filterNotSupported,
       ErrorCodes.invalidIndexKey,
+      ErrorCodes.invalidCollectionName,
+      ErrorCodes.collectionExists,
       ErrorCodes.badInsertRequest,
       ErrorCodes.idMissingForReplace,
       ErrorCodes.forbiddenStage,

@@ -7,6 +7,9 @@
       "name":"dev.mongocamp.server.event.collection.DropCollectionEvent"
     },
     {
+      "name":"dev.mongocamp.server.event.collection.RenameCollectionEvent"
+    },
+    {
       "name":"dev.mongocamp.server.event.database.DropDatabaseEvent"
     },
     {

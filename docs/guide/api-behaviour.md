@@ -178,3 +178,16 @@ The elements of an array are the path with `[]` (`tags[]`), the type names are t
 ```
 
 The map `keys` (`{"a": 1, "b": -1}`) of the older versions still works, send one of both (both is a `400`). The options have `sparse`, `hidden`, `partialFilterExpression`, `weights` and `collation` (`locale` is required, also `strength`, `caseLevel`, `caseFirst`, `numericOrdering`, `alternate`, `maxVariable`, `backwards`, `normalization`) besides the older ones. A request that cannot be an index is a `400` with code `4006` and nothing is created: no key, a direction that is not allowed (`{"z": 5}` used to create the index `z_5`), a field twice, an unknown collation option. A combination that only the database knows to be wrong (`sparse` together with `partialFilterExpression`) is answered by the database, also as `400`.
+
+## Renaming a collection
+
+`POST /mongodb/collections/{name}/rename` renames a collection in the database, with its documents and indices:
+
+```json
+{ "target": "customers2024", "dropTarget": false }
+```
+
+- The target is a name in the database of the collection (`geodata:places` for the collection `geodata:locations`), another database is refused: the database cannot rename into another one.
+- The administrate grant for the collection and the write grant for the target are needed. An existing target is a `409` (code `4091`) and nothing changes, with `dropTarget` it is replaced; that needs the administrate grant for the target, too.
+- A bad name is a `400` with code `4007`: empty, longer than 120 characters, with `$` or control characters, starting with `system.` or with the prefix of the server (`mc_`), ending with `.files` or `.chunks` (the collections of a bucket have their own routes), or the collection itself. The collections of the server and of a bucket cannot be renamed, either.
+- A collection that does not exist is a `404`. The event `RenameCollectionEvent` is published.

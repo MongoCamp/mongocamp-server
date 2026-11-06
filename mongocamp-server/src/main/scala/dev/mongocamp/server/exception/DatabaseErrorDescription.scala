@@ -53,6 +53,7 @@ object DatabaseErrorDescription {
     duplicateKeyCode,
     11001, // duplicate key on update
     12582, // duplicate key (legacy)
+    48,    // NamespaceExists (also the target of a rename)
     68,    // NamespaceExists
     85,    // IndexOptionsConflict
     86     // IndexKeySpecsConflict

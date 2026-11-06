@@ -1,17 +1,23 @@
 package dev.mongocamp.server.route
 
+import com.mongodb.client.model.RenameCollectionOptions
+import com.mongodb.MongoNamespace
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.collection.ClearCollectionEvent
 import dev.mongocamp.server.event.collection.DropCollectionEvent
+import dev.mongocamp.server.event.collection.RenameCollectionEvent
 import dev.mongocamp.server.event.EventSystem
+import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
@@ -20,11 +26,16 @@ import dev.mongocamp.server.model.FieldInfo
 import dev.mongocamp.server.model.JsonSchema
 import dev.mongocamp.server.model.JsonValue
 import dev.mongocamp.server.model.MongoAggregateRequest
+import dev.mongocamp.server.model.RenameRequest
+import dev.mongocamp.server.model.RenameResponse
 import dev.mongocamp.server.model.SchemaAnalysis
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import dev.mongocamp.server.service.AggregationService
+import dev.mongocamp.server.service.CollectionNameService
+import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.service.SchemaService
 import org.apache.lucene.search.Query
 import scala.concurrent.Future
@@ -300,6 +311,54 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     })
   }
 
+  val renameCollectionEndpoint = administrateCollectionEndpoint
+    .in("rename")
+    .in(jsonBody[RenameRequest].example(RenameRequest("newName", Some(false))))
+    .out(jsonBody[RenameResponse])
+    .summary("Rename Collection")
+    .description(
+      "Rename a Collection in the database, with its Documents and Indices. The target is a name in the database of the Collection. The administrate grant for the Collection and the write grant for the target are needed. An existing target is a conflict (409), unless dropTarget is true and the user has the administrate grant for it: it is replaced then."
+    )
+    .tag("Collection")
+    .method(Method.POST)
+    .name("renameCollection")
+    .serverLogic(
+      collectionRequest => request => renameCollection(collectionRequest, request)
+    )
+
+  def renameCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    request: RenameRequest
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), RenameResponse]] = {
+    Future.successful(Right {
+      val user       = authorizedCollectionRequest.userInformation
+      val prefix     = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val source     = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      CollectionNameService.checkSource(source, prefix)
+      val provider   = MongoDatabase.databaseProvider
+      val target     = CollectionNameService.resolveTarget(source, request.target, provider.DefaultDatabaseName, prefix)
+      val dropTarget = request.dropTarget.getOrElse(false)
+      val database   = source.database.getOrElse(provider.DefaultDatabaseName)
+      if (!user.canWrite(target.full)) {
+        throw GrantDenied.exception("user not authorized for collection")
+      }
+      if (provider.collectionNames(database).contains(target.name)) {
+        if (!dropTarget) {
+          throw MongoCampException(s"the collection ${target.full} exists, send dropTarget true to replace it", StatusCode.Conflict, ErrorCodes.collectionExists)
+        }
+        if (!user.canAdministrate(target.full)) {
+          throw GrantDenied.exception("user not authorized for collection")
+        }
+      }
+      provider
+        .collection(authorizedCollectionRequest.collection)
+        .renameCollection(new MongoNamespace(database, target.name), new RenameCollectionOptions().dropTarget(dropTarget))
+        .result()
+      EventSystem.publish(RenameCollectionEvent(user, source.full, target.full))
+      RenameResponse(target.full)
+    })
+  }
+
   val deleteAllEndpoint = writeCollectionEndpoint
     .in("clear")
     .out(jsonBody[JsonValue[Boolean]])
@@ -433,6 +492,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       getSchemaEndpoint,
       getSchemaAnalysisEndpoint,
       deleteCollectionStatusEndpoint,
+      renameCollectionEndpoint,
       deleteAllEndpoint,
       aggregateEndpoint,
       distinctEndpoint
