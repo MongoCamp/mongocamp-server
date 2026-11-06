@@ -165,3 +165,16 @@ The elements of an array are the path with `[]` (`tags[]`), the type names are t
 ```
 
 `keys` is in the order of the index (the order of a compound index matters), `direction` is `1` or `-1` for a sorted key, otherwise the type of the key (`text`, `2dsphere`, `2d`, `hashed`). A text index lists its fields, `weights` has their weight. Also given when the index has them: `partialFilterExpression`, `collation`, `defaultLanguage`, `expireAfterSeconds`. An index with the name `details` is not reachable by name with `GET .../index/{indexName}`.
+
+## Creating indices
+
+`PUT /mongodb/collections/{name}/index` takes the keys of the index as `orderedKeys`, a list in the order of the index. `direction` is `1`, `-1` or the type of the key (`text`, `2dsphere`, `2d`, `hashed`), so a compound index with several text fields is possible:
+
+```json
+{
+  "orderedKeys": [{ "field": "category", "direction": "1" }, { "field": "title", "direction": "text" }, { "field": "body", "direction": "text" }],
+  "indexOptionsRequest": { "name": "texts", "weights": { "title": 5, "body": 1 }, "defaultLanguage": "german" }
+}
+```
+
+The map `keys` (`{"a": 1, "b": -1}`) of the older versions still works, send one of both (both is a `400`). The options have `sparse`, `hidden`, `partialFilterExpression`, `weights` and `collation` (`locale` is required, also `strength`, `caseLevel`, `caseFirst`, `numericOrdering`, `alternate`, `maxVariable`, `backwards`, `normalization`) besides the older ones. A request that cannot be an index is a `400` with code `4006` and nothing is created: no key, a direction that is not allowed (`{"z": 5}` used to create the index `z_5`), a field twice, an unknown collation option. A combination that only the database knows to be wrong (`sparse` together with `partialFilterExpression`) is answered by the database, also as `400`.

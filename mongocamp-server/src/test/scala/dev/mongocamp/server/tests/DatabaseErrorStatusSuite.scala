@@ -39,8 +39,9 @@ class DatabaseErrorStatusSuite extends MongoCampBaseServerSuite {
     executeRequestToResponse(documents.insertMany("", "", adminBearerToken, "")(collection, Seq(Map("a" -> 1, "b" -> "x"), Map("a" -> 1, "b" -> "y"))))
   }
 
+  // the server refuses it before the database does (code 67 CannotCreateIndex, mapped to 400 as well)
   test("an index without keys is a bad request") {
-    assertStatus(executeRequest(index.createIndex("", "", adminBearerToken, "")(collection, IndexCreateRequest(Map(), None))), 400, Some(67), "empty keys")
+    assertStatus(executeRequest(index.createIndex("", "", adminBearerToken, "")(collection, IndexCreateRequest(Map(), None))), 400, Some(dev.mongocamp.server.exception.ErrorCodes.invalidIndexKey), "empty keys")
   }
 
   test("a unique index over duplicate data is a conflict without the internal names") {

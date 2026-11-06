@@ -12,10 +12,10 @@ import dev.mongocamp.server.model.index.IndexInfo
 import dev.mongocamp.server.model.index.IndexOptionsRequest
 import dev.mongocamp.server.model.index.IndexUsage
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.service.IndexCreateService
 import dev.mongocamp.server.service.IndexInfoService
 import org.bson.BsonDocument
 import org.mongodb.scala.model.IndexOptions
-import scala.concurrent.duration.durationToPair
 import scala.concurrent.duration.Duration
 import scala.concurrent.Future
 import sttp.capabilities.pekko.PekkoStreams
@@ -159,7 +159,8 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), IndexCreateResponse]] = {
     Future.successful(Right {
       val dao      = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
-      val response = dao.createIndex(parameter.keys, requestToDBIndexOptions(parameter.indexOptionsRequest)).result()
+      val keys     = IndexCreateService.keysDocument(parameter.keys, parameter.orderedKeys)
+      val response = dao.createIndex(keys, requestToDBIndexOptions(parameter.indexOptionsRequest)).result()
       IndexCreateResponse(response)
     })
   }
@@ -303,41 +304,7 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
     })
   }
 
-  def requestToDBIndexOptions(indexOptionsRequestOption: Option[IndexOptionsRequest]): IndexOptions = {
-    var indexOptions = IndexOptions()
-    indexOptionsRequestOption.foreach(
-      indexOptionsRequest => {
-        indexOptionsRequest.name.foreach(
-          name => indexOptions = indexOptions.name(name)
-        )
-        indexOptionsRequest.background.foreach(
-          background => indexOptions = indexOptions.background(background)
-        )
-        indexOptionsRequest.defaultLanguage.foreach(
-          defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage)
-        )
-        indexOptionsRequest.unique.foreach(
-          unique => indexOptions = indexOptions.unique(unique)
-        )
-        indexOptionsRequest.textVersion.foreach(
-          textVersion => indexOptions = indexOptions.textVersion(textVersion)
-        )
-        indexOptionsRequest.max.foreach(
-          max => indexOptions = indexOptions.max(max)
-        )
-        indexOptionsRequest.min.foreach(
-          min => indexOptions = indexOptions.min(min)
-        )
-        indexOptionsRequest.expireAfter.foreach(
-          expireAfter => {
-            val expire = scala.concurrent.duration.Duration(expireAfter)
-            indexOptions = indexOptions.expireAfter(expire._1, expire._2)
-          }
-        )
-      }
-    )
-    indexOptions
-  }
+  def requestToDBIndexOptions(indexOptionsRequestOption: Option[IndexOptionsRequest]): IndexOptions = IndexCreateService.indexOptions(indexOptionsRequestOption)
 
   lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
     listIndexEndpoint,

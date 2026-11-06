@@ -8,5 +8,10 @@ case class IndexOptionsRequest(
   expireAfter: Option[String],
   unique: Option[Boolean],
   max: Option[Double],
-  min: Option[Double]
+  min: Option[Double],
+  sparse: Option[Boolean] = None,
+  hidden: Option[Boolean] = None,
+  partialFilterExpression: Option[Map[String, Any]] = None,
+  weights: Option[Map[String, Int]] = None,
+  collation: Option[Map[String, Any]] = None
 )
