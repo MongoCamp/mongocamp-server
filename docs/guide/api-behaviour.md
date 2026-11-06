@@ -224,3 +224,27 @@ A JSON body only knows strings, numbers, booleans, lists and objects. A value ge
 | `{"$minKey": 1}`, `{"$maxKey": 1}` | the smallest and the greatest value of the sort order |
 
 Only an object with exactly one of these keys is a wrapper, any other object is a document (before, all of them except `$date` and `$numberLong` were stored as objects with the wrapper as key). A wrapper with a content that is not valid (`{"$numberInt": "12.5"}`, `{"$oid": "xyz"}`, a timestamp without `i`) is a `400` that names the key, nothing is stored. The wrappers are read in documents and filters, not in the pipeline of an aggregation, and responses do not contain them (reading with types is `extendedJson`, a later change).
+
+## Typed reads: extendedJson
+
+The routes that return documents (`GET .../documents`, `POST .../documents`, `POST .../documents/search`, `GET .../documents/{id}` and `POST .../aggregate`) take the query parameter `extendedJson` with `relaxed` or `canonical`. Without it the documents are returned as before (an ObjectId as text, a date as ISO text, a number as number). With it the types of the values are explicit, as MongoDB Extended JSON:
+
+| | `relaxed` | `canonical` |
+|---|---|---|
+| 32 bit integer | `5` | `{"$numberInt": "5"}` |
+| 64 bit integer | `9007199254740993` | `{"$numberLong": "9007199254740993"}` |
+| double | `1.5` (a whole number like `2.0` is `2`) | `{"$numberDouble": "2.0"}` |
+| decimal | `{"$numberDecimal": "10.25"}` | the same |
+| date | `{"$date": "2024-06-15T12:00:00Z"}` | `{"$date": {"$numberLong": "1718452800000"}}` |
+| ObjectId (also `_id`) | `{"$oid": "..."}` | the same |
+| binary, timestamp, regular expression, min and max key | wrappers | the same |
+
+A text that looks like an ISO-8601 instant is `{"$string": "2024-06-15T12:00:00Z"}` in both modes: a plain ISO string in a request body is read as a date, so what is read can be sent back unchanged. **What canonical returns can be written as it is** (insert or update), the document in the database has the same types. Another value of `extendedJson` is a `400`.
+
+### A text that looks like a date
+
+A plain string like `"2024-06-15T12:00:00Z"` in a request body is stored as a date (see above). To store it as a text, send it as `{"$string": "2024-06-15T12:00:00Z"}`, also in a list, a nested object or a filter (`{"title": {"$string": "..."}}` finds the text). The value of `$string` has to be a text (`400` otherwise).
+
+### Search without sort and projection
+
+In the request body of `POST .../documents/search` every field is optional (`{"filter": "name:John"}` is enough). A request that sends all three works as before.

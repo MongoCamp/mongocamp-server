@@ -28,6 +28,12 @@ trait LowPriorityCirceSchema { self: CirceSchema =>
 
 }
 
+object CirceSchema {
+
+  /** The key of the wrapper `{"$string": "..."}`: a text that looks like a date stays a text. */
+  val TextMarker = "$string"
+}
+
 trait CirceSchema extends LowPriorityCirceSchema {
 
   implicit val DateFormat: Encoder[Date] & Decoder[Date] = new Encoder[Date] with Decoder[Date] {
@@ -100,9 +106,16 @@ trait CirceSchema extends LowPriorityCirceSchema {
           e => decodeFromJson(e)
         )
       case a if a.isObject =>
-        a.asObject.get.toMap.map(
-          e => (e._1, decodeFromJson(e._2))
-        )
+        val fields = a.asObject.get.toMap
+        // {"$string": "..."} is a text that must stay a text: the value is not read as a date, MongoCampBsonConverter unwraps it
+        if (fields.size == 1 && fields.contains(CirceSchema.TextMarker) && fields(CirceSchema.TextMarker).isString) {
+          Map(CirceSchema.TextMarker -> fields(CirceSchema.TextMarker).asString.get)
+        }
+        else {
+          fields.map(
+            e => (e._1, decodeFromJson(e._2))
+          )
+        }
       case a if a.isNull => null
       case _             => null
     }

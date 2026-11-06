@@ -7,6 +7,7 @@ import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.converter.ExtendedJsonWriter
 import dev.mongocamp.server.converter.LuceneQueryTools
 import dev.mongocamp.server.database.paging.MongoPaginatedAggregation
 import dev.mongocamp.server.database.paging.PaginationInfo
@@ -33,6 +34,7 @@ import dev.mongocamp.server.model.RenameRequest
 import dev.mongocamp.server.model.RenameResponse
 import dev.mongocamp.server.model.SchemaAnalysis
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import dev.mongocamp.server.service.AggregationService
@@ -474,6 +476,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
         )
         .default(None)
     )
+    .in(ExtendedJsonFunctions.extendedJsonParameter)
     .out(jsonBody[List[Map[String, Any]]])
     .out(PagingFunctions.pagingHeaderOutput)
     .summary("Aggregate in Collection")
@@ -489,7 +492,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
 
   def aggregateInCollection(
     authorizedCollectionRequest: AuthorizedCollectionRequest,
-    parameter: (MongoAggregateRequest, Paging, Option[Query])
+    parameter: (MongoAggregateRequest, Paging, Option[Query], Option[String])
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (List[Map[String, Any]], PaginationInfo)]] = {
     Future.successful(Right {
       val mongoAggregateRequest = parameter._1
@@ -497,7 +500,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
       val page                  = pagingInfo.page.getOrElse(1L)
 
-      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3))
+      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3), ExtendedJsonWriter.parseMode(parameter._4))
 
     })
   }
