@@ -81,7 +81,7 @@ object MongoCampBsonConverter {
   }
 
   /** Converts the values of a document or filter: dates (`DateTime` to `Date`) and the Extended JSON wrappers `{"$date": ...}` (an ISO-8601 instant, epoch
-    * milliseconds or `{"$numberLong": "..."}`) and `{"$numberLong": "..."}`, also nested in objects, lists and the operators of a filter. The wrappers are only
+    * milliseconds or `{"$numberLong": "..."}`), `{"$numberLong": "..."}` and the other wrappers of [[ExtendedJsonConverter]], also nested in objects, lists and the operators of a filter. The wrappers are only
     * read, responses never contain them. The `_id` is converted by [[convertIdValue]].
     */
   def convertFields(map: Map[String, Any]): Map[String, Any] = {
@@ -98,7 +98,7 @@ object MongoCampBsonConverter {
         val typed = map.asInstanceOf[Map[String, Any]]
         if (typed.size == 1 && typed.contains("$date")) convertDateWrapper(typed("$date"))
         else if (typed.size == 1 && typed.contains("$numberLong")) convertNumberLong(typed("$numberLong"))
-        else convertFields(typed)
+        else ExtendedJsonConverter.convertWrapper(typed).getOrElse(convertFields(typed))
       case d: DateTime           => d.toDate
       case iterable: Iterable[_] => iterable.map(convertValue).toList
       case other                 => other
@@ -152,6 +152,10 @@ object MongoCampBsonConverter {
         val operatorMap = map.asInstanceOf[Map[String, Any]]
         if (operatorMap.size == 1 && operatorMap.contains("$oid")) {
           convertIdField(operatorMap("$oid"))
+        }
+        // the id can be any value: a wrapper gives it its type (`{"$numberInt": "5"}`, `{"$uuid": "..."}`)
+        else if (operatorMap.size == 1 && (ExtendedJsonConverter.WrapperKeys.contains(operatorMap.head._1) || Set("$date", "$numberLong").contains(operatorMap.head._1))) {
+          convertValue(operatorMap)
         }
         else {
           operatorMap.map(

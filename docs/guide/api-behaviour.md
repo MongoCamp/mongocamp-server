@@ -204,3 +204,23 @@ The map `keys` (`{"a": 1, "b": -1}`) of the older versions still works, send one
 - The read grant for the collection and the write grant for the target are needed, the target is a name in the database of the collection. An existing target is a `409` (code `4091`), with `dropTarget` it is replaced; that needs the administrate grant for the target, too. The rules for the names are the ones of the rename (`400`, code `4007`), a collection that does not exist is a `404`.
 - The copy is made in a temporary collection and renamed to the target at the end: a target that is replaced is only touched when the copy is complete, a failure leaves it as it was and the temporary collection is dropped. The answer is `{ "name": ..., "count": ..., "indexes": ... }`.
 - The copy runs in the request, a big collection takes its time (the HTTP timeout of the client applies). The event `CopyCollectionEvent` is published.
+
+## Extended JSON wrappers in a request body
+
+A JSON body only knows strings, numbers, booleans, lists and objects. A value gets its BSON type with the MongoDB Extended JSON wrapper, in documents (insert, update), nested in objects and lists, in the values of a filter (`$in`, `$gt`, ...) and as `_id`:
+
+| Wrapper | Stored as |
+|---|---|
+| `{"$date": "2024-06-15T12:00:00Z"}` | date (also epoch milliseconds or `{"$numberLong": ...}` as value) |
+| `{"$numberLong": "9007199254740993"}` | 64 bit integer |
+| `{"$numberInt": "5"}` | 32 bit integer |
+| `{"$numberDouble": "1.5"}` | double (`"NaN"`, `"Infinity"`, `"-Infinity"` are allowed) |
+| `{"$numberDecimal": "10.25"}` | decimal128 |
+| `{"$oid": "507f1f77bcf86cd799439011"}` | ObjectId |
+| `{"$binary": {"base64": "AQID", "subType": "00"}}` | binary with the sub type (hexadecimal, one byte) |
+| `{"$uuid": "123e4567-e89b-12d3-a456-426614174000"}` | binary of the sub type 4 |
+| `{"$timestamp": {"t": 1700000000, "i": 1}}` | timestamp (internal type of the database) |
+| `{"$regularExpression": {"pattern": "^a", "options": "i"}}` | regular expression |
+| `{"$minKey": 1}`, `{"$maxKey": 1}` | the smallest and the greatest value of the sort order |
+
+Only an object with exactly one of these keys is a wrapper, any other object is a document (before, all of them except `$date` and `$numberLong` were stored as objects with the wrapper as key). A wrapper with a content that is not valid (`{"$numberInt": "12.5"}`, `{"$oid": "xyz"}`, a timestamp without `i`) is a `400` that names the key, nothing is stored. The wrappers are read in documents and filters, not in the pipeline of an aggregation, and responses do not contain them (reading with types is `extendedJson`, a later change).
