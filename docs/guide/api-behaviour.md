@@ -152,3 +152,16 @@ With `?name=a&name=b` only these collections are given (a collection that the us
 ```
 
 The elements of an array are the path with `[]` (`tags[]`), the type names are the ones of the database (`$type`). `sampleSize` is 1000 by default, the analysis of a big collection with a greater sample is more exact and slower. `depth` (default 3) limits how deep objects are followed. `GET .../schema/analysis` returned `percentageOfAnalysed` as 0 for every sample that is smaller than the collection (an integer division), it is the share now (`0.25` for 5 of 20 documents).
+
+## Indices with details
+
+`GET /mongodb/collections/{name}/index/details` (administrate grant) lists the indices as the database reports them. The older `GET .../index` returns the keys as a map without a reliable order and a text index with the internal keys `_fts` and `_ftsx`.
+
+```json
+[
+  { "name": "compound", "keys": [{ "field": "c", "direction": "1" }, { "field": "b", "direction": "-1" }], "unique": false, "sparse": false, "hidden": false, "version": 2 },
+  { "name": "texts", "keys": [{ "field": "title", "direction": "text" }, { "field": "body", "direction": "text" }], "weights": { "title": 10, "body": 1 }, "defaultLanguage": "german" }
+]
+```
+
+`keys` is in the order of the index (the order of a compound index matters), `direction` is `1` or `-1` for a sorted key, otherwise the type of the key (`text`, `2dsphere`, `2d`, `hashed`). A text index lists its fields, `weights` has their weight. Also given when the index has them: `partialFilterExpression`, `collation`, `defaultLanguage`, `expireAfterSeconds`. An index with the name `details` is not reachable by name with `GET .../index/{indexName}`.

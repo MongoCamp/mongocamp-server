@@ -8,9 +8,12 @@ import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.index.IndexCreateRequest
 import dev.mongocamp.server.model.index.IndexCreateResponse
 import dev.mongocamp.server.model.index.IndexDropResponse
+import dev.mongocamp.server.model.index.IndexInfo
 import dev.mongocamp.server.model.index.IndexOptionsRequest
 import dev.mongocamp.server.model.index.IndexUsage
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.service.IndexInfoService
+import org.bson.BsonDocument
 import org.mongodb.scala.model.IndexOptions
 import scala.concurrent.duration.durationToPair
 import scala.concurrent.duration.Duration
@@ -82,6 +85,34 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
             )
           }
         )
+    })
+  }
+
+  // registered before the index by name: an index with the name details is not reachable by name
+  val indexDetailsEndpoint = administrateCollectionEndpoint
+    .in("index")
+    .in("details")
+    .out(jsonBody[List[IndexInfo]])
+    .summary("Indices with details for Collection")
+    .description(
+      "All Indices of the given Collection as the database reports them: the keys in the order of the index (`direction` is 1, -1 or the type of the key, a text index lists its fields), unique, sparse, hidden, partial filter, collation, weights, default language and expiration."
+    )
+    .tag("Index")
+    .method(Method.GET)
+    .name("indexDetails")
+    .serverLogic(
+      collectionRequest => _ => indexDetailsInCollection(collectionRequest)
+    )
+
+  def indexDetailsInCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[IndexInfo]]] = {
+    Future.successful(Right {
+      MongoDatabase.databaseProvider
+        .collection(authorizedCollectionRequest.collection)
+        .listIndexes[BsonDocument]()
+        .resultList()
+        .map(IndexInfoService.indexInfo)
     })
   }
 
@@ -311,6 +342,7 @@ object IndexRoutes extends CollectionBaseRoute with RoutesPlugin {
   lazy val endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(
     listIndexEndpoint,
     indexStatsEndpoint,
+    indexDetailsEndpoint,
     indexByNameEndpoint,
     createIndexEndpoint,
     createIndexForFieldEndpoint,
