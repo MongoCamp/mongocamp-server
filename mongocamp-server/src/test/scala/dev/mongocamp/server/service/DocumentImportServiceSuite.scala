@@ -48,8 +48,10 @@ class DocumentImportServiceSuite extends munit.FunSuite {
   }
 
   test("the errors that are listed are limited, the number of failed lines is not") {
-    val errors = (1 to MaxReportedErrors + 50).map(i => InsertError(i, ErrorCodes.invalidImportLine, "x"))
-    val state  = State(failed = errors.size).withErrors(errors)
+    val errors = (1 to MaxReportedErrors + 50).map(
+      i => InsertError(i, ErrorCodes.invalidImportLine, "x")
+    )
+    val state = State(failed = errors.size).withErrors(errors)
     assertEquals(state.errors.size, MaxReportedErrors)
     assertEquals(state.errorsTruncated, true)
     assertEquals(state.response.failed, (MaxReportedErrors + 50).toLong)

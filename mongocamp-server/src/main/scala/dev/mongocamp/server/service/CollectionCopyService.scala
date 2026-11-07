@@ -3,10 +3,10 @@ package dev.mongocamp.server.service
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.converter.MongoCampBsonConverter
 import dev.mongocamp.server.database.MongoDatabase
+import java.util.UUID
 import org.bson.conversions.Bson
 import org.bson.BsonDocument
 import org.bson.BsonString
-import java.util.UUID
 
 /** Copies a collection in the database. The copy is made in a temporary collection and renamed to the target at the end: the target (when it is replaced) is
   * only touched when the copy is complete, a failure leaves it as it was and the temporary collection is dropped.
@@ -39,7 +39,10 @@ object CollectionCopyService {
       val indexCount = if (withIndexes) copyIndexes(source, temporary) else 0
       provider
         .collection(temporary.full)
-        .renameCollection(new com.mongodb.MongoNamespace(database, target.name), new com.mongodb.client.model.RenameCollectionOptions().dropTarget(replaceTarget))
+        .renameCollection(
+          new com.mongodb.MongoNamespace(database, target.name),
+          new com.mongodb.client.model.RenameCollectionOptions().dropTarget(replaceTarget)
+        )
         .result()
       CopyResult(provider.dao(target.full).count().result(), indexCount)
     }
@@ -54,7 +57,11 @@ object CollectionCopyService {
     val provider = MongoDatabase.databaseProvider
     val indices  = provider.collection(source.full).listIndexes[BsonDocument]().resultList().filterNot(_.getString("name").getValue == "_id_")
     indices.foreach(
-      index => provider.collection(temporary.full).createIndex(IndexCreateService.keysFromIndexDocument(index), IndexCreateService.optionsFromIndexDocument(index)).result()
+      index =>
+        provider
+          .collection(temporary.full)
+          .createIndex(IndexCreateService.keysFromIndexDocument(index), IndexCreateService.optionsFromIndexDocument(index))
+          .result()
     )
     indices.size
   }

@@ -26,9 +26,9 @@ import dev.mongocamp.server.model.MongoFindRequest
 import dev.mongocamp.server.model.SearchRequest
 import dev.mongocamp.server.model.UpdateResponse
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
+import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import java.util.Date
 import org.apache.lucene.search.Query
 import scala.concurrent.Future
@@ -260,9 +260,13 @@ object DocumentRoutes extends CollectionBaseRoute with RoutesPlugin {
     Future.successful(Right {
       val mode = ExtendedJsonWriter.parseMode(extendedJson)
       // not dao.findById: it only accepts the hex string of an ObjectId, but a document can have any value as id
-      val result = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(pathIdFilter(parameter)).resultOption()
+      val result   = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection).find(pathIdFilter(parameter)).resultOption()
       val document = result.getOrElse(throw MongoCampException("could not find document", StatusCode.NotFound))
-      mode.map(m => ExtendedJsonWriter.toMap(document.toBsonDocument, m)).getOrElse(document)
+      mode
+        .map(
+          m => ExtendedJsonWriter.toMap(document.toBsonDocument, m)
+        )
+        .getOrElse(document)
     })
   }
 

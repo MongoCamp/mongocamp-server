@@ -43,7 +43,7 @@ object DocumentImportService extends CirceSchema {
   /** The document of a line. A document without an `_id` gets an ObjectId here, so that the events can name the ids of what was stored. */
   def parseLine(number: Long, text: String): Either[InsertError, Document] =
     parse(text) match {
-      case Left(failure) => Left(lineError(number, "the line is not valid JSON: " + failure.message.linesIterator.next().take(160)))
+      case Left(failure)                 => Left(lineError(number, "the line is not valid JSON: " + failure.message.linesIterator.next().take(160)))
       case Right(json) if !json.isObject => Left(lineError(number, "the line has to be a JSON object"))
       case Right(json) =>
         try {
@@ -58,8 +58,12 @@ object DocumentImportService extends CirceSchema {
 
   /** Stores a batch of the numbered lines. */
   def importBatch(dao: MongoDAO[Document], user: UserInformation, batch: Seq[(Long, Either[InsertError, Document])], state: State): State = {
-    val parseErrors = batch.collect { case (_, Left(error)) => error }
-    val valid       = batch.collect { case (number, Right(document)) => (number, document) }
+    val parseErrors = batch.collect {
+      case (_, Left(error)) => error
+    }
+    val valid = batch.collect {
+      case (number, Right(document)) => (number, document)
+    }
     val dbErrors =
       if (valid.isEmpty) Seq()
       else
@@ -72,13 +76,23 @@ object DocumentImportService extends CirceSchema {
             DatabaseErrorDescription.findDatabaseException(ex) match {
               case Some(bulk: MongoBulkWriteException) if !bulk.getWriteErrors.isEmpty =>
                 bulk.getWriteErrors.asScala.toList.map(
-                  error => (valid(error.getIndex)._1, InsertError(valid(error.getIndex)._1.toInt, error.getCode, DatabaseErrorDescription.removeInternalNames(error.getMessage)))
+                  error =>
+                    (
+                      valid(error.getIndex)._1,
+                      InsertError(valid(error.getIndex)._1.toInt, error.getCode, DatabaseErrorDescription.removeInternalNames(error.getMessage))
+                    )
                 )
               case _ => throw ex
             }
         }
     val failedLines = dbErrors.map(_._1).toSet
-    val storedIds   = valid.filterNot(entry => failedLines.contains(entry._1)).map(entry => MongoCampBsonConverter.idToString(entry._2.get("_id").get))
+    val storedIds = valid
+      .filterNot(
+        entry => failedLines.contains(entry._1)
+      )
+      .map(
+        entry => MongoCampBsonConverter.idToString(entry._2.get("_id").get)
+      )
     if (storedIds.nonEmpty) {
       EventSystem.publish(CreateDocumentEvent(user, InsertResponse(wasAcknowledged = true, storedIds.toList, Some(storedIds.size.toLong), Some(List()))))
     }

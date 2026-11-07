@@ -34,7 +34,14 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
   private def count(name: String = target) = provider.dao(name).count().result()
 
   private def raw(id: String, name: String = target): BsonDocument =
-    provider.collection(name).find[BsonDocument]().resultList().find(d => d.get("_id").toString.contains(id)).getOrElse(fail(s"no document $id"))
+    provider
+      .collection(name)
+      .find[BsonDocument]()
+      .resultList()
+      .find(
+        d => d.get("_id").toString.contains(id)
+      )
+      .getOrElse(fail(s"no document $id"))
 
   private def numbers(json: Json) = {
     val cursor = json.hcursor
@@ -61,11 +68,24 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
   }
 
   test("a line that cannot be stored does not stop the others, it is named with its line") {
-    val body            = List("""{"_id": "a", "again": true}""", """{"_id": "g"}""", """[1]""", """{"_id": "h", "n": {"$numberInt": "1.5"}}""", """{"_id": "b"}""", """{"_id": "i"}""").mkString("\n")
+    val body = List(
+      """{"_id": "a", "again": true}""",
+      """{"_id": "g"}""",
+      """[1]""",
+      """{"_id": "h", "n": {"$numberInt": "1.5"}}""",
+      """{"_id": "b"}""",
+      """{"_id": "i"}"""
+    ).mkString("\n")
     val (code, json, _) = importLines(body)
     assertEquals(code, 200, json.noSpaces)
     assertEquals(numbers(json), (6L, 2L, 4L))
-    val errors = json.hcursor.get[List[Json]]("errors").toOption.get.map(e => (e.hcursor.get[Int]("index").toOption.get, e.hcursor.get[Int]("code").toOption.get))
+    val errors = json.hcursor
+      .get[List[Json]]("errors")
+      .toOption
+      .get
+      .map(
+        e => (e.hcursor.get[Int]("index").toOption.get, e.hcursor.get[Int]("code").toOption.get)
+      )
     assertEquals(errors.map(_._1), List(1, 3, 4, 5))
     assertEquals(errors.find(_._1 == 1).map(_._2), Some(11000))
     assertEquals(errors.find(_._1 == 3).map(_._2), Some(ErrorCodes.invalidImportLine))
@@ -76,7 +96,8 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
   }
 
   test("the values are read like in an insert: wrappers, dates and the text marker") {
-    val line = """{"_id": "typed", "int": {"$numberInt": "5"}, "dec": {"$numberDecimal": "10.25"}, "when": "2024-06-15T12:00:00Z", "asText": {"$string": "2024-06-15T12:00:00Z"}}"""
+    val line =
+      """{"_id": "typed", "int": {"$numberInt": "5"}, "dec": {"$numberDecimal": "10.25"}, "when": "2024-06-15T12:00:00Z", "asText": {"$string": "2024-06-15T12:00:00Z"}}"""
     assertEquals(numbers(importLines(line)._2), (1L, 1L, 0L))
     val stored = raw("typed")
     assertEquals(stored.get("int").getBsonType, BsonType.INT32)
@@ -99,10 +120,17 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
 
   test("what the export writes can be imported: the documents have the same types") {
     val source = "importRoundTripSource"
-    provider.dao(source).insertMany(Seq(Document("_id" -> "r1", "n" -> 5, "big" -> 9007199254740993L, "d" -> 1.5, "when" -> new java.util.Date(1718452800000L), "text" -> "plain"))).result()
+    provider
+      .dao(source)
+      .insertMany(
+        Seq(Document("_id" -> "r1", "n" -> 5, "big" -> 9007199254740993L, "d" -> 1.5, "when" -> new java.util.Date(1718452800000L), "text" -> "plain"))
+      )
+      .result()
     provider.dao(source).insertOne(Document("_id" -> "r2", "list" -> Seq(1, 2), "nested" -> Document("x" -> 1L))).result()
-    val exported   = TestAdditions.backend.send(
-      basicRequest.get(Uri.unsafeParse(TestServer.serverBaseUrl + "/mongodb/collections/" + source + "/documents/export?extendedJson=canonical")).header("Authorization", "Bearer " + adminBearerToken)
+    val exported = TestAdditions.backend.send(
+      basicRequest
+        .get(Uri.unsafeParse(TestServer.serverBaseUrl + "/mongodb/collections/" + source + "/documents/export?extendedJson=canonical"))
+        .header("Authorization", "Bearer " + adminBearerToken)
     )
     val (code, json, _) = importLines(exported.body.fold(identity, identity), name = "importRoundTripTarget")
     assertEquals(code, 200, json.noSpaces)
@@ -115,9 +143,15 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
   }
 
   test("a body that is greater than the limit of the HTTP server (8 MB) is imported, in many batches") {
-    val line   = (1 to 20).map(i => s""""f$i": "${"x" * 20}"""").mkString("{\"n\": %d, ", ", ", "}")
-    val lines  = (1 to 30000).map(i => line.format(i))
-    val body   = lines.mkString("\n")
+    val line = (1 to 20)
+      .map(
+        i => s""""f$i": "${"x" * 20}""""
+      )
+      .mkString("{\"n\": %d, ", ", ", "}")
+    val lines = (1 to 30000).map(
+      i => line.format(i)
+    )
+    val body = lines.mkString("\n")
     assert(body.length > 12 * 1024 * 1024, s"the body has ${body.length} characters")
     val before          = count()
     val (code, json, _) = importLines(body)
@@ -131,7 +165,11 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
     assertEquals(ConfigurationService.updateConfig(key, 2000L), true)
     try {
       val before = count()
-      val big    = (1 to 200).map(i => s"""{"n": $i, "text": "${"y" * 50}"}""").mkString("\n")
+      val big = (1 to 200)
+        .map(
+          i => s"""{"n": $i, "text": "${"y" * 50}"}"""
+        )
+        .mkString("\n")
       assert(big.length > 2000)
       val (code, _, _) = importLines(big)
       assertEquals(code, 413)
@@ -144,7 +182,11 @@ class DocumentImportSuite extends MongoCampBaseServerSuite {
   }
 
   test("the errors that are listed are limited, the number of failed lines is not") {
-    val body            = (1 to 1500).map(i => s"broken $i").mkString("\n")
+    val body = (1 to 1500)
+      .map(
+        i => s"broken $i"
+      )
+      .mkString("\n")
     val (code, json, _) = importLines(body)
     assertEquals(code, 200)
     assertEquals(numbers(json), (1500L, 0L, 1500L))

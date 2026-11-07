@@ -62,15 +62,23 @@ object DocumentExportRoutes extends CollectionBaseRoute {
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), (String, Source[ByteString, Any])]] =
     Future.successful(Right {
       val (formatName, luceneFilter, sortFields, projectionFields, limit, extendedJson) = parameter
-      val format = DocumentExportService.parseFormat(formatName)
-      val mode   = ExtendedJsonWriter.parseMode(extendedJson)
+      val format                                                                        = DocumentExportService.parseFormat(formatName)
+      val mode                                                                          = ExtendedJsonWriter.parseMode(extendedJson)
       limit.foreach(
         value => if (value <= 0) throw MongoCampException.badRequestException("limit has to be greater than 0")
       )
-      val filter     = convertFields(LuceneQueryTools.toFilterMap(luceneFilter))
-      val sort       = sortFields.map(field => if (field.startsWith("-")) (field.substring(1) -> -1) else (field -> 1)).toMap[String, Any]
-      val projection = projectionFields.map(field => (field -> 1)).toMap[String, Any]
-      val dao        = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
+      val filter = convertFields(LuceneQueryTools.toFilterMap(luceneFilter))
+      val sort = sortFields
+        .map(
+          field => if (field.startsWith("-")) (field.substring(1) -> -1) else (field -> 1)
+        )
+        .toMap[String, Any]
+      val projection = projectionFields
+        .map(
+          field => (field -> 1)
+        )
+        .toMap[String, Any]
+      val dao = MongoDatabase.databaseProvider.dao(authorizedCollectionRequest.collection)
       val columns =
         if (format != DocumentExportService.Csv) List()
         else if (projectionFields.nonEmpty) projectionFields
@@ -79,9 +87,20 @@ object DocumentExportRoutes extends CollectionBaseRoute {
           if (names.contains("_id")) "_id" :: names.filterNot(_ == "_id") else names
         }
       // the observable of the driver is a reactive streams publisher: the documents are requested as fast as the client reads them, the cursor is closed when the stream ends or the client is gone
-      val documents = Source.fromPublisher(dao.find(filter, sort, projection, limit.getOrElse(0), 0)).map(document => MongoCampBsonConverter.documentToMap(document, mode))
-      val fileName  = authorizedCollectionRequest.collection.replaceAll("[^A-Za-z0-9._-]", "_") + "." + format.extension
-      (s"""attachment; filename="$fileName"""", DocumentExportService.render(format, documents, columns).map(text => ByteString(text, StandardCharsets.UTF_8)))
+      val documents = Source
+        .fromPublisher(dao.find(filter, sort, projection, limit.getOrElse(0), 0))
+        .map(
+          document => MongoCampBsonConverter.documentToMap(document, mode)
+        )
+      val fileName = authorizedCollectionRequest.collection.replaceAll("[^A-Za-z0-9._-]", "_") + "." + format.extension
+      (
+        s"""attachment; filename="$fileName"""",
+        DocumentExportService
+          .render(format, documents, columns)
+          .map(
+            text => ByteString(text, StandardCharsets.UTF_8)
+          )
+      )
     })
 
   def endpoints: List[ServerEndpoint[PekkoStreams with WebSockets, Future]] = List(exportEndpoint)

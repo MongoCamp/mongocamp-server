@@ -33,14 +33,18 @@ object IndexInfoService {
   }
 
   def indexKeys(key: BsonDocument, weights: Option[BsonDocument]): List[IndexKey] =
-    key.entrySet().asScala.toList.flatMap(
-      entry =>
-        entry.getKey match {
-          case TextKey      => weights.map(_.keySet().asScala.toList.map(IndexKey(_, "text"))).getOrElse(List(IndexKey(TextKey, "text")))
-          case TextOrderKey => Nil
-          case field        => List(IndexKey(field, direction(entry.getValue)))
-        }
-    )
+    key
+      .entrySet()
+      .asScala
+      .toList
+      .flatMap(
+        entry =>
+          entry.getKey match {
+            case TextKey      => weights.map(_.keySet().asScala.toList.map(IndexKey(_, "text"))).getOrElse(List(IndexKey(TextKey, "text")))
+            case TextOrderKey => Nil
+            case field        => List(IndexKey(field, direction(entry.getValue)))
+          }
+      )
 
   private def direction(value: BsonValue): String =
     if (value.isNumber) {
@@ -59,5 +63,11 @@ object IndexInfoService {
   def toPlainMap(document: BsonDocument): Map[String, Any] = toMap(document)
 
   private def toMap(document: BsonDocument): Map[String, Any] =
-    document.entrySet().asScala.map(entry => (entry.getKey, BsonConverter.fromBson(entry.getValue))).toMap
+    document
+      .entrySet()
+      .asScala
+      .map(
+        entry => (entry.getKey, BsonConverter.fromBson(entry.getValue))
+      )
+      .toMap
 }

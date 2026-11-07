@@ -5,8 +5,8 @@ import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.test.client.api.CollectionRenameApi
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import io.circe.Json
 import io.circe.parser.parse
+import io.circe.Json
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.IndexOptions
 
@@ -25,11 +25,20 @@ class CollectionRenameSuite extends MongoCampBaseServerSuite {
   private def count(name: String) = provider.dao(name).count().result()
 
   private def fill(name: String, documents: Int, marker: String): Unit = {
-    provider.dao(name).insertMany((1 to documents).map(i => Document("i" -> i, "marker" -> marker))).result()
+    provider
+      .dao(name)
+      .insertMany(
+        (1 to documents).map(
+          i => Document("i" -> i, "marker" -> marker)
+        )
+      )
+      .result()
     provider.dao(name).createIndex(Document("i" -> 1), IndexOptions().name(s"${name}_i")).result()
   }
 
-  private def cleanup(names: String*): Unit = names.foreach(name => if (exists(name)) provider.dao(name).drop().result())
+  private def cleanup(names: String*): Unit = names.foreach(
+    name => if (exists(name)) provider.dao(name).drop().result()
+  )
 
   test("a collection is renamed with its documents and indices") {
     fill("renameSource", 7, "source")

@@ -73,7 +73,8 @@ class IndexCreateServiceSuite extends munit.FunSuite {
   }
 
   test("the options are converted") {
-    val converted = options(_.copy(sparse = Some(true), hidden = Some(true), weights = Some(Map("a" -> 5)), partialFilterExpression = Some(Map("a" -> Map("$gt" -> 1)))))
+    val converted =
+      options(_.copy(sparse = Some(true), hidden = Some(true), weights = Some(Map("a" -> 5)), partialFilterExpression = Some(Map("a" -> Map("$gt" -> 1)))))
     assertEquals(converted.isSparse, true)
     assertEquals(converted.isHidden, true)
     assertEquals(converted.getWeights.toBsonDocument().getInt32("a").getValue, 5)
@@ -93,11 +94,9 @@ class IndexCreateServiceSuite extends munit.FunSuite {
 
   test("the options of an index of the database") {
     val options = IndexCreateService.optionsFromIndexDocument(
-      fromDatabase(
-        """{"v": 2, "key": {"email": 1}, "name": "mail", "unique": true, "sparse": true, "hidden": true, "expireAfterSeconds": 3600,
+      fromDatabase("""{"v": 2, "key": {"email": 1}, "name": "mail", "unique": true, "sparse": true, "hidden": true, "expireAfterSeconds": 3600,
           |"partialFilterExpression": {"active": true}, "collation": {"locale": "de", "caseLevel": false, "caseFirst": "off", "strength": 2, "numericOrdering": false,
-          |"alternate": "non-ignorable", "maxVariable": "punct", "normalization": false, "backwards": false, "version": "57.1"}}""".stripMargin
-      )
+          |"alternate": "non-ignorable", "maxVariable": "punct", "normalization": false, "backwards": false, "version": "57.1"}}""".stripMargin)
     )
     assertEquals(options.getName, "mail")
     assertEquals((options.isUnique, options.isSparse, options.isHidden), (true, true, true))

@@ -8,8 +8,8 @@ import dev.mongocamp.server.test.MongoCampBaseServerSuite
 // the fields of a collection as a flat list with the types of the values
 class FieldDetailsSuite extends MongoCampBaseServerSuite {
 
-  private lazy val fieldsApi    = CollectionFieldsApi()
-  private lazy val documentsApi = DocumentApi()
+  private lazy val fieldsApi     = CollectionFieldsApi()
+  private lazy val documentsApi  = DocumentApi()
   private lazy val collectionApi = CollectionApi()
 
   private val collection = "fieldDetailsTest"
@@ -20,18 +20,25 @@ class FieldDetailsSuite extends MongoCampBaseServerSuite {
   private def byPath(sample: Option[Int] = None, depth: Option[Int] = None) = {
     val response = details(sample, depth)
     assertEquals(response.code.code, 200, response.body.fold(_.getMessage, _ => ""))
-    response.body.getOrElse(Nil).map(f => (f.path, f.types.map(t => (t.`type`, t.count)).toMap)).toMap
+    response.body
+      .getOrElse(Nil)
+      .map(
+        f =>
+          (
+            f.path,
+            f.types
+              .map(
+                t => (t.`type`, t.count)
+              )
+              .toMap
+          )
+      )
+      .toMap
   }
 
   test("prepare") {
     val documents: Seq[Map[String, Any]] = (1 to 20).map(
-      i =>
-        Map[String, Any](
-          "name"    -> s"doc$i",
-          "age"     -> (if (i <= 15) i else s"$i"),
-          "address" -> Map("city" -> "c", "zip" -> i),
-          "tags"    -> List("a", "b")
-        )
+      i => Map[String, Any]("name" -> s"doc$i", "age" -> (if (i <= 15) i else s"$i"), "address" -> Map("city" -> "c", "zip" -> i), "tags" -> List("a", "b"))
     )
     executeRequestToResponse(documentsApi.insertMany("", "", adminBearerToken, "")(collection, documents))
   }

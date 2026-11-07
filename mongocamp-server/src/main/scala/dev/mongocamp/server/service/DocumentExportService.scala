@@ -3,8 +3,8 @@ package dev.mongocamp.server.service
 import dev.mongocamp.server.converter.CirceSchema
 import dev.mongocamp.server.exception.MongoCampException
 import io.circe.Json
-import org.apache.pekko.NotUsed
 import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.NotUsed
 
 /** The documents of a collection as a stream of text in one of the formats of an export. Nothing is collected: every document is written when the database
   * delivers it, so the size of the collection does not matter for the memory of the server.
@@ -37,7 +37,9 @@ object DocumentExportService extends CirceSchema {
   val Formats: List[ExportFormat] = List(Ndjson, JsonArray, Csv)
 
   def parseFormat(value: String): ExportFormat =
-    Formats.find(_.name.equalsIgnoreCase(value.trim)).getOrElse(throw MongoCampException.badRequestException(s"format has to be ${Formats.map(_.name).mkString(", ")}, not `$value`"))
+    Formats
+      .find(_.name.equalsIgnoreCase(value.trim))
+      .getOrElse(throw MongoCampException.badRequestException(s"format has to be ${Formats.map(_.name).mkString(", ")}, not `$value`"))
 
   def jsonText(document: Map[String, Any]): String = encodeAnyToJson(document).noSpaces
 
@@ -53,17 +55,29 @@ object DocumentExportService extends CirceSchema {
           }
       )
       .getOrElse("")
-    if (text.exists(c => c == ',' || c == '"' || c == '\n' || c == '\r')) "\"" + text.replace("\"", "\"\"") + "\"" else text
+    if (
+      text.exists(
+        c => c == ',' || c == '"' || c == '\n' || c == '\r'
+      )
+    ) "\"" + text.replace("\"", "\"\"") + "\""
+    else text
   }
 
   def csvHeader(columns: List[String]): String = columns.map(csvCell).mkString(",") + "\r\n"
 
-  def csvRow(columns: List[String], document: Map[String, Any]): String = columns.map(column => csvCell(document.getOrElse(column, null))).mkString(",") + "\r\n"
+  def csvRow(columns: List[String], document: Map[String, Any]): String = columns
+    .map(
+      column => csvCell(document.getOrElse(column, null))
+    )
+    .mkString(",") + "\r\n"
 
   /** The text of the export. For csv `columns` are the columns, for the other formats they are not used. */
   def render(format: ExportFormat, documents: Source[Map[String, Any], NotUsed], columns: List[String]): Source[String, NotUsed] =
     format match {
-      case Ndjson    => documents.map(document => jsonText(document) + "\n")
+      case Ndjson =>
+        documents.map(
+          document => jsonText(document) + "\n"
+        )
       case JsonArray => documents.map(jsonText).intersperse("[", ",", "]")
       case Csv       => Source.single(csvHeader(columns)).concat(documents.map(csvRow(columns, _)))
     }

@@ -5,8 +5,8 @@ import dev.mongocamp.server.service.DocumentExportService._
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.scaladsl.Sink
 import org.apache.pekko.stream.scaladsl.Source
-import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.concurrent.Await
 
 class DocumentExportServiceSuite extends munit.FunSuite {
 

@@ -22,7 +22,12 @@ class IndexDetailsSuite extends MongoCampBaseServerSuite {
   private def indices = {
     val response = details()
     assertEquals(response.code.code, 200, response.body.fold(_.getMessage, _ => ""))
-    response.body.getOrElse(Nil).map(i => (i.name, i)).toMap
+    response.body
+      .getOrElse(Nil)
+      .map(
+        i => (i.name, i)
+      )
+      .toMap
   }
 
   test("prepare: the indices are created in the database") {
@@ -37,9 +42,19 @@ class IndexDetailsSuite extends MongoCampBaseServerSuite {
 
   test("the keys of a compound index are in the order of the index") {
     val all = indices
-    assertEquals(all("compound").keys.map(k => (k.field, k.direction)), Seq(("c", "1"), ("b", "-1")))
+    assertEquals(
+      all("compound").keys.map(
+        k => (k.field, k.direction)
+      ),
+      Seq(("c", "1"), ("b", "-1"))
+    )
     assertEquals(all("six").keys.map(_.field), Seq("c", "a", "z", "y", "x", "w"))
-    assertEquals(all("_id_").keys.map(k => (k.field, k.direction)), Seq(("_id", "1")))
+    assertEquals(
+      all("_id_").keys.map(
+        k => (k.field, k.direction)
+      ),
+      Seq(("_id", "1"))
+    )
   }
 
   test("the options of an index") {
@@ -53,7 +68,14 @@ class IndexDetailsSuite extends MongoCampBaseServerSuite {
 
   test("a text index lists its fields, the weights and the language") {
     val text = indices("texts")
-    assertEquals(text.keys.map(k => (k.field, k.direction)).toSet, Set(("title", "text"), ("body", "text")))
+    assertEquals(
+      text.keys
+        .map(
+          k => (k.field, k.direction)
+        )
+        .toSet,
+      Set(("title", "text"), ("body", "text"))
+    )
     assertEquals(text.weights.map(_.keySet), Some(Set("title", "body")))
     assertEquals(text.defaultLanguage, Some("german"))
     assertEquals(text.keys.exists(_.field.startsWith("_fts")), false)

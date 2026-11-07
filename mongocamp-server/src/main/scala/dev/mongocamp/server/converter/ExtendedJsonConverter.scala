@@ -18,8 +18,8 @@ import scala.util.Try
 
 /** The MongoDB Extended JSON wrappers in a request body, that give a value its BSON type: `{"$numberInt": "5"}`, `{"$numberDouble": "1.5"}`,
   * `{"$numberDecimal": "1.10"}`, `{"$oid": "..."}`, `{"$binary": {"base64": "...", "subType": "00"}}`, `{"$timestamp": {"t": 1, "i": 2}}`,
-  * `{"$regularExpression": {"pattern": "a.*", "options": "i"}}`, `{"$uuid": "..."}`, `{"$minKey": 1}` and `{"$maxKey": 1}`. A map with exactly one of these keys
-  * is a wrapper, every other map is a document. Content that is not valid is a bad request (the value would be a sub document with the wrapper as key
+  * `{"$regularExpression": {"pattern": "a.*", "options": "i"}}`, `{"$uuid": "..."}`, `{"$minKey": 1}` and `{"$maxKey": 1}`. A map with exactly one of these
+  * keys is a wrapper, every other map is a document. Content that is not valid is a bad request (the value would be a sub document with the wrapper as key
   * otherwise). `$date` and `$numberLong` are converted by [[MongoCampBsonConverter]], they give a `Date` and a `Long`.
   */
 object ExtendedJsonConverter {
@@ -36,16 +36,16 @@ object ExtendedJsonConverter {
 
   private def convert(key: String, value: Any): Any =
     key match {
-      case "$numberInt"          => new BsonInt32(numberInt(value))
-      case "$numberDouble"       => new BsonDouble(numberDouble(value))
-      case "$numberDecimal"      => new BsonDecimal128(numberDecimal(value))
-      case "$oid"                => objectId(value)
-      case "$binary"             => binary(value)
-      case "$timestamp"          => timestamp(value)
-      case "$regularExpression"  => regularExpression(value)
-      case "$uuid"               => uuid(value)
-      case "$minKey"             => minMaxKey(key, value, new BsonMinKey())
-      case "$maxKey"             => minMaxKey(key, value, new BsonMaxKey())
+      case "$numberInt"         => new BsonInt32(numberInt(value))
+      case "$numberDouble"      => new BsonDouble(numberDouble(value))
+      case "$numberDecimal"     => new BsonDecimal128(numberDecimal(value))
+      case "$oid"               => objectId(value)
+      case "$binary"            => binary(value)
+      case "$timestamp"         => timestamp(value)
+      case "$regularExpression" => regularExpression(value)
+      case "$uuid"              => uuid(value)
+      case "$minKey"            => minMaxKey(key, value, new BsonMinKey())
+      case "$maxKey"            => minMaxKey(key, value, new BsonMaxKey())
     }
 
   private def numberInt(value: Any): Int =
@@ -90,11 +90,25 @@ object ExtendedJsonConverter {
   private def binary(value: Any): BsonBinary = {
     val expected = """an object with "base64" and "subType"""""
     val map      = fields("$binary", value, expected)
-    val base64   = map.get("base64").collect { case s: String => s }.getOrElse(throw invalid("$binary", expected, value))
-    val subType  = map.get("subType").collect { case s: String => s }.getOrElse(throw invalid("$binary", expected, value))
-    val bytes    = Try(Base64.getDecoder.decode(base64)).getOrElse(throw invalid("$binary", "valid base64 in base64", base64))
+    val base64 = map
+      .get("base64")
+      .collect {
+        case s: String => s
+      }
+      .getOrElse(throw invalid("$binary", expected, value))
+    val subType = map
+      .get("subType")
+      .collect {
+        case s: String => s
+      }
+      .getOrElse(throw invalid("$binary", expected, value))
+    val bytes = Try(Base64.getDecoder.decode(base64)).getOrElse(throw invalid("$binary", "valid base64 in base64", base64))
     val subTypeByte =
-      Try(Integer.parseInt(subType, 16)).toOption.filter(code => code >= 0 && code <= 255).getOrElse(throw invalid("$binary", "a subType of one byte as hexadecimal text", subType))
+      Try(Integer.parseInt(subType, 16)).toOption
+        .filter(
+          code => code >= 0 && code <= 255
+        )
+        .getOrElse(throw invalid("$binary", "a subType of one byte as hexadecimal text", subType))
     new BsonBinary(subTypeByte.toByte, bytes)
   }
 
@@ -104,7 +118,7 @@ object ExtendedJsonConverter {
     def unsigned(name: String): Int =
       map.get(name) match {
         case Some(n: Number) if n.longValue() >= 0 && n.longValue() <= 4294967295L => n.longValue().toInt
-        case _                                                                      => throw invalid("$timestamp", s"""a number from 0 to 4294967295 in "$name"""", value)
+        case _ => throw invalid("$timestamp", s"""a number from 0 to 4294967295 in "$name"""", value)
       }
     if (map.size != 2) throw invalid("$timestamp", expected, value)
     new BsonTimestamp(unsigned("t"), unsigned("i"))
@@ -113,22 +127,36 @@ object ExtendedJsonConverter {
   private def regularExpression(value: Any): BsonRegularExpression = {
     val expected = """an object with "pattern" and "options"""""
     val map      = fields("$regularExpression", value, expected)
-    val pattern  = map.get("pattern").collect { case s: String => s }.getOrElse(throw invalid("$regularExpression", expected, value))
-    val options  = map.get("options").collect { case s: String => s }.getOrElse("")
+    val pattern = map
+      .get("pattern")
+      .collect {
+        case s: String => s
+      }
+      .getOrElse(throw invalid("$regularExpression", expected, value))
+    val options = map
+      .get("options")
+      .collect {
+        case s: String => s
+      }
+      .getOrElse("")
     if (!options.forall("imsxlu".contains(_))) throw invalid("$regularExpression", "options of the letters i m s x l u", options)
     new BsonRegularExpression(pattern, options)
   }
 
   private def uuid(value: Any): BsonBinary =
     value match {
-      case s: String => new BsonBinary(Try(UUID.fromString(s)).getOrElse(throw invalid("$uuid", "a UUID like 123e4567-e89b-12d3-a456-426614174000", s)), UuidRepresentation.STANDARD)
-      case other     => throw invalid("$uuid", "a string with a UUID", other)
+      case s: String =>
+        new BsonBinary(
+          Try(UUID.fromString(s)).getOrElse(throw invalid("$uuid", "a UUID like 123e4567-e89b-12d3-a456-426614174000", s)),
+          UuidRepresentation.STANDARD
+        )
+      case other => throw invalid("$uuid", "a string with a UUID", other)
     }
 
   private def minMaxKey[T](key: String, value: Any, result: T): T =
     value match {
       case n: Number if n.intValue() == 1 && n.doubleValue() == 1.0 => result
-      case s: String if s == "1"                                  => result
-      case other                                                  => throw invalid(key, "1", other)
+      case s: String if s == "1"                                    => result
+      case other                                                    => throw invalid(key, "1", other)
     }
 }

@@ -1,12 +1,12 @@
 package dev.mongocamp.server.route
 
-import dev.mongocamp.server.ActorHandler
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.ImportResponse
 import dev.mongocamp.server.service.DocumentImportService
+import dev.mongocamp.server.ActorHandler
 import io.circe.generic.auto._
 import java.nio.charset.StandardCharsets
 import org.apache.pekko.actor.ActorSystem
@@ -27,7 +27,8 @@ import sttp.tapir._
 import sttp.tapir.json.circe.jsonBody
 import sttp.tapir.server.ServerEndpoint
 
-/** The import of documents from a stream of lines (NDJSON). The body of the request is read as a stream, the memory of the server does not depend on its size. */
+/** The import of documents from a stream of lines (NDJSON). The body of the request is read as a stream, the memory of the server does not depend on its size.
+  */
 object DocumentImportRoutes extends CollectionBaseRoute {
 
   /** The name of the endpoint: the server lifts the size limit and the request timeout of the HTTP server for it (see `Server`). */
@@ -65,16 +66,26 @@ object DocumentImportRoutes extends CollectionBaseRoute {
       .via(Framing.delimiter(ByteString("\n"), MaxLineBytes, allowTruncation = true))
       .map(_.utf8String)
       .zipWithIndex
-      .map(entry => (entry._2 + 1, entry._1.stripSuffix("\r")))
+      .map(
+        entry => (entry._2 + 1, entry._1.stripSuffix("\r"))
+      )
       .filter(_._2.trim.nonEmpty)
-      .map(entry => (entry._1, DocumentImportService.parseLine(entry._1, entry._2)))
+      .map(
+        entry => (entry._1, DocumentImportService.parseLine(entry._1, entry._2))
+      )
       .grouped(DocumentImportService.BatchSize)
       // the database is asked in blocking calls, one batch at a time: the body is only read as fast as the batches are stored
-      .via(org.apache.pekko.stream.scaladsl.Flow[Seq[(Long, Either[dev.mongocamp.server.model.InsertError, org.mongodb.scala.bson.collection.immutable.Document])]].foldAsync(DocumentImportService.State())(
-        (state, batch) => Future(blocking(DocumentImportService.importBatch(dao, user, batch, state)))
-      ))
+      .via(
+        org.apache.pekko.stream.scaladsl
+          .Flow[Seq[(Long, Either[dev.mongocamp.server.model.InsertError, org.mongodb.scala.bson.collection.immutable.Document])]]
+          .foldAsync(DocumentImportService.State())(
+            (state, batch) => Future(blocking(DocumentImportService.importBatch(dao, user, batch, state)))
+          )
+      )
       .runWith(Sink.headOption)(materializer)
-      .map(state => Right(state.getOrElse(DocumentImportService.State()).response))
+      .map(
+        state => Right(state.getOrElse(DocumentImportService.State()).response)
+      )
       .recoverWith {
         case _: EntityStreamSizeException =>
           Future.failed(MongoCampException("the body of the request is greater than IMPORT_MAX_BYTES", StatusCode.PayloadTooLarge))

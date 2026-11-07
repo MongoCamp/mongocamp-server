@@ -5,8 +5,8 @@ import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.test.client.api.CollectionRenameApi
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import io.circe.Json
 import io.circe.parser.parse
+import io.circe.Json
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.IndexOptions
 
@@ -26,13 +26,21 @@ class CollectionCopySuite extends MongoCampBaseServerSuite {
 
   private def indexNames(name: String) = provider.dao(name).indexList().map(_.name).toSet
 
-  private def cleanup(names: String*): Unit = names.foreach(name => if (exists(name)) provider.dao(name).drop().result())
+  private def cleanup(names: String*): Unit = names.foreach(
+    name => if (exists(name)) provider.dao(name).drop().result()
+  )
 
   private def temporaryCollections = provider.collectionNames().filter(_.startsWith("mc_copy_"))
 
   test("prepare") {
     val dao = provider.dao("copySource")
-    dao.insertMany((1 to 12).map(i => Document("i" -> i, "type" -> (if (i <= 5) "a" else "b"), "title" -> s"t$i", "body" -> "b"))).result()
+    dao
+      .insertMany(
+        (1 to 12).map(
+          i => Document("i" -> i, "type" -> (if (i <= 5) "a" else "b"), "title" -> s"t$i", "body" -> "b")
+        )
+      )
+      .result()
     dao.createIndex(Document("type" -> 1, "i" -> -1), IndexOptions().name("compound")).result()
     dao.createIndex(Document("i" -> 1), IndexOptions().name("uniqueI").unique(true).partialFilterExpression(Document("i" -> Document("$gt" -> 0)))).result()
     dao.createIndex(Document("title" -> "text", "body" -> "text"), IndexOptions().name("texts").defaultLanguage("german")).result()

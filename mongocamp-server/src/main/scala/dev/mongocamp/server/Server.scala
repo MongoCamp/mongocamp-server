@@ -92,7 +92,9 @@ object Server extends LazyLogging with RouteConcatenation with RestServer {
   // an import is a stream that is read for as long as the client sends it: the size limit of the HTTP server (8 MB) and its request timeout (20 seconds) would
   // end every real import. The limit is the configuration IMPORT_MAX_BYTES, read for every request.
   private def importRoute(route: Route): Route =
-    extract(_ => ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyImportMaxBytes)) {
+    extract(
+      _ => ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyImportMaxBytes)
+    ) {
       maxBytes =>
         withRequestTimeout(Duration.Inf) {
           withSizeLimit(maxBytes) {

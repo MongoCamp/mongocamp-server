@@ -40,10 +40,18 @@ object MongoCampBsonConverter {
 
   /** The document for a response: as before, or as Extended JSON for the query parameter `extendedJson`. */
   def documentToMap(document: Document, extendedJson: Option[ExtendedJsonWriter.Mode]): Map[String, Any] =
-    extendedJson.map(mode => ExtendedJsonWriter.toMap(document.toBsonDocument, mode)).getOrElse(documentToMap(document))
+    extendedJson
+      .map(
+        mode => ExtendedJsonWriter.toMap(document.toBsonDocument, mode)
+      )
+      .getOrElse(documentToMap(document))
 
   def documentToMap(document: org.bson.BsonDocument, extendedJson: Option[ExtendedJsonWriter.Mode]): Map[String, Any] =
-    extendedJson.map(mode => ExtendedJsonWriter.toMap(document, mode)).getOrElse(documentToMap(document))
+    extendedJson
+      .map(
+        mode => ExtendedJsonWriter.toMap(document, mode)
+      )
+      .getOrElse(documentToMap(document))
 
   def convertToOperationMap(conversionMap: Map[String, Any]): Map[String, Any] = {
 
@@ -88,8 +96,8 @@ object MongoCampBsonConverter {
   }
 
   /** Converts the values of a document or filter: dates (`DateTime` to `Date`) and the Extended JSON wrappers `{"$date": ...}` (an ISO-8601 instant, epoch
-    * milliseconds or `{"$numberLong": "..."}`), `{"$numberLong": "..."}` and the other wrappers of [[ExtendedJsonConverter]], also nested in objects, lists and the operators of a filter. The wrappers are only
-    * read, responses never contain them. The `_id` is converted by [[convertIdValue]].
+    * milliseconds or `{"$numberLong": "..."}`), `{"$numberLong": "..."}` and the other wrappers of [[ExtendedJsonConverter]], also nested in objects, lists and
+    * the operators of a filter. The wrappers are only read, responses never contain them. The `_id` is converted by [[convertIdValue]].
     */
   def convertFields(map: Map[String, Any]): Map[String, Any] = {
     map.map(
@@ -169,7 +177,10 @@ object MongoCampBsonConverter {
           convertIdField(operatorMap("$oid"))
         }
         // the id can be any value: a wrapper gives it its type (`{"$numberInt": "5"}`, `{"$uuid": "..."}`)
-        else if (operatorMap.size == 1 && (ExtendedJsonConverter.WrapperKeys.contains(operatorMap.head._1) || Set("$date", "$numberLong", CirceSchema.TextMarker).contains(operatorMap.head._1))) {
+        else if (
+          operatorMap.size == 1 && (ExtendedJsonConverter.WrapperKeys.contains(operatorMap.head._1) || Set("$date", "$numberLong", CirceSchema.TextMarker)
+            .contains(operatorMap.head._1))
+        ) {
           convertValue(operatorMap)
         }
         else {

@@ -1,16 +1,16 @@
 package dev.mongocamp.server.exception
 
 object ErrorCodes {
-  val emptyFilter: Int         = 4003
-  val emptyBatch: Int          = 4002
-  val ambiguousFilter: Int     = 4004
-  val filterNotSupported: Int  = 4005
-  val invalidIndexKey: Int     = 4006
+  val emptyFilter: Int           = 4003
+  val emptyBatch: Int            = 4002
+  val ambiguousFilter: Int       = 4004
+  val filterNotSupported: Int    = 4005
+  val invalidIndexKey: Int       = 4006
   val invalidCollectionName: Int = 4007
   val collectionExists: Int      = 4091
   val invalidImportLine: Int     = 4008
-  val badInsertRequest: Int    = 4401
-  val idMissingForReplace: Int = 4402
+  val badInsertRequest: Int      = 4401
+  val idMissingForReplace: Int   = 4402
 
   val authMethodNotImplemented: Int          = 5001
   val mvnRepositoryConfigurationInvalid: Int = 5002

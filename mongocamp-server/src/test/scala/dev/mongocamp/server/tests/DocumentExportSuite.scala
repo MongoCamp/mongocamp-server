@@ -31,21 +31,31 @@ class DocumentExportSuite extends MongoCampBaseServerSuite {
 
   test("prepare") {
     val dao = provider.dao(collection)
-    dao.insertMany((1 to 1000).map(i => Document("i" -> i, "name" -> s"doc$i", "group" -> (if (i % 4 == 0) "a" else "b"), "when" -> new java.util.Date(1718452800000L)))).result()
-    dao.insertMany(
-      Seq(
-        Document("i" -> 1001, "name" -> "with, comma", "group" -> "c"),
-        Document("i" -> 1002, "name" -> "with \"quote\"", "group" -> "c"),
-        Document("i" -> 1003, "name" -> "two\nlines", "group" -> "c", "nested" -> Document("x" -> 1))
+    dao
+      .insertMany(
+        (1 to 1000).map(
+          i => Document("i" -> i, "name" -> s"doc$i", "group" -> (if (i % 4 == 0) "a" else "b"), "when" -> new java.util.Date(1718452800000L))
+        )
       )
-    ).result()
+      .result()
+    dao
+      .insertMany(
+        Seq(
+          Document("i" -> 1001, "name" -> "with, comma", "group"    -> "c"),
+          Document("i" -> 1002, "name" -> "with \"quote\"", "group" -> "c"),
+          Document("i" -> 1003, "name" -> "two\nlines", "group"     -> "c", "nested" -> Document("x" -> 1))
+        )
+      )
+      .result()
   }
 
   test("ndjson is the default: one document per line, with a file name for the download") {
     val (code, body, response) = download("")
     assertEquals(code, 200)
     assertEquals(response.header("Content-Disposition"), Some("attachment; filename=\"exportTest.ndjson\""))
-    val documents = lines(body).map(line => parse(line).getOrElse(fail(s"not JSON: $line")))
+    val documents = lines(body).map(
+      line => parse(line).getOrElse(fail(s"not JSON: $line"))
+    )
     assertEquals(documents.size, 1003)
     assertEquals(documents.map(_.hcursor.get[Int]("i").toOption.get).toSet, (1 to 1003).toSet)
   }
@@ -77,7 +87,12 @@ class DocumentExportSuite extends MongoCampBaseServerSuite {
     val (_, filtered, _) = download("filter=group:a")
     assertEquals(lines(filtered).size, 250)
     val (_, sorted, _) = download("sort=-i&limit=3")
-    assertEquals(lines(sorted).map(line => parse(line).toOption.get.hcursor.get[Int]("i").toOption.get), List(1003, 1002, 1001))
+    assertEquals(
+      lines(sorted).map(
+        line => parse(line).toOption.get.hcursor.get[Int]("i").toOption.get
+      ),
+      List(1003, 1002, 1001)
+    )
     val (_, projected, _) = download("projection=name&limit=1&sort=i")
     assertEquals(parse(lines(projected).head).toOption.get.asObject.map(_.keys.toSet), Some(Set("_id", "name")))
   }
@@ -110,7 +125,14 @@ class DocumentExportSuite extends MongoCampBaseServerSuite {
   test("a big collection is exported completely") {
     val dao = provider.dao(big)
     (0 until 20).foreach(
-      part => dao.insertMany((1 to 1000).map(i => Document("n" -> (part * 1000 + i), "text" -> ("x" * 200)))).result()
+      part =>
+        dao
+          .insertMany(
+            (1 to 1000).map(
+              i => Document("n" -> (part * 1000 + i), "text" -> ("x" * 200))
+            )
+          )
+          .result()
     )
     val (code, body, _) = download("", name = big)
     assertEquals(code, 200)

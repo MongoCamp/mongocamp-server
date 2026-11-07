@@ -18,7 +18,11 @@ class DocumentExtendedJsonSuite extends MongoCampBaseServerSuite {
 
   private def raw(id: Any): BsonDocument = {
     val documents = MongoDatabase.databaseProvider.collection(collection).find[BsonDocument]().resultList()
-    documents.find(d => d.get("_id").toString.contains(id.toString)).getOrElse(fail(s"no document with the id $id in ${documents.map(_.get("_id"))}"))
+    documents
+      .find(
+        d => d.get("_id").toString.contains(id.toString)
+      )
+      .getOrElse(fail(s"no document with the id $id in ${documents.map(_.get("_id"))}"))
   }
 
   private def insert(document: Map[String, Any]) = executeRequest(documentsApi.insert("", "", adminBearerToken, "")(collection, document))
@@ -42,7 +46,11 @@ class DocumentExtendedJsonSuite extends MongoCampBaseServerSuite {
     )
     assertEquals(response.code.code, 200, response.body.fold(_.getMessage, _ => ""))
     val stored = raw("all")
-    val types  = List("int", "double", "dec", "oid", "bin", "ts", "re", "uuid", "min", "max").map(f => f -> stored.get(f).getBsonType).toMap
+    val types = List("int", "double", "dec", "oid", "bin", "ts", "re", "uuid", "min", "max")
+      .map(
+        f => f -> stored.get(f).getBsonType
+      )
+      .toMap
     assertEquals(
       types,
       Map(
@@ -68,16 +76,23 @@ class DocumentExtendedJsonSuite extends MongoCampBaseServerSuite {
   }
 
   test("insertMany and update use the wrappers too") {
-    val many = executeRequest(documentsApi.insertMany("", "", adminBearerToken, "")(collection, Seq(Map("_id" -> "m1", "n" -> Map("$numberInt" -> "1")), Map("_id" -> "m2", "n" -> Map("$numberInt" -> "2")))))
+    val many = executeRequest(
+      documentsApi.insertMany("", "", adminBearerToken, "")(
+        collection,
+        Seq(Map("_id" -> "m1", "n" -> Map("$numberInt" -> "1")), Map("_id" -> "m2", "n" -> Map("$numberInt" -> "2")))
+      )
+    )
     assertEquals(many.code.code, 200, many.body.fold(_.getMessage, _ => ""))
     assertEquals(raw("m1").get("n").getBsonType, BsonType.INT32)
-    val update = executeRequest(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collection, "m1", Map("later" -> Map("$numberDecimal" -> "3.5"))))
+    val update =
+      executeRequest(documentsApi.updateDocumentPartial("", "", adminBearerToken, "")(collection, "m1", Map("later" -> Map("$numberDecimal" -> "3.5"))))
     assertEquals(update.code.code, 200, update.body.fold(_.getMessage, _ => ""))
     assertEquals(raw("m1").get("later").getBsonType, BsonType.DECIMAL128)
   }
 
   test("a wrapper in a filter has its type, also in operators") {
-    def find(filter: Map[String, Any]) = executeRequestToResponse(documentsApi.find("", "", adminBearerToken, "")(collection, MongoFindRequest(filter, Map(), Map())))
+    def find(filter: Map[String, Any]) =
+      executeRequestToResponse(documentsApi.find("", "", adminBearerToken, "")(collection, MongoFindRequest(filter, Map(), Map())))
     assertEquals(find(Map("n" -> Map("$numberInt" -> "2"))).map(_("_id").toString), List("m2"))
     assertEquals(find(Map("n" -> Map("$in" -> List(Map("$numberInt" -> "1"), Map("$numberInt" -> "2"))))).map(_("_id").toString).toSet, Set("m1", "m2"))
     assertEquals(find(Map("n" -> Map("$gt" -> Map("$numberInt" -> "1")))).map(_("_id").toString), List("m2"))
@@ -85,16 +100,19 @@ class DocumentExtendedJsonSuite extends MongoCampBaseServerSuite {
 
   test("the id can have a type by a wrapper") {
     assertEquals(insert(Map("_id" -> Map("$numberInt" -> "77"), "idTest" -> true)).code.code, 200)
-    assertEquals(MongoDatabase.databaseProvider.collection(collection).find[BsonDocument]().resultList().find(_.containsKey("idTest")).get.get("_id").getBsonType, BsonType.INT32)
+    assertEquals(
+      MongoDatabase.databaseProvider.collection(collection).find[BsonDocument]().resultList().find(_.containsKey("idTest")).get.get("_id").getBsonType,
+      BsonType.INT32
+    )
   }
 
   test("a wrapper that is not valid is a bad request and nothing is stored") {
     val before = MongoDatabase.databaseProvider.dao(collection).count().result()
     List(
-      Map("_id" -> "bad1", "v" -> Map("$numberInt" -> "12.5")),
-      Map("_id" -> "bad2", "v" -> Map("$oid" -> "xyz")),
+      Map("_id" -> "bad1", "v"      -> Map("$numberInt" -> "12.5")),
+      Map("_id" -> "bad2", "v"      -> Map("$oid" -> "xyz")),
       Map("_id" -> "bad3", "nested" -> Map("v" -> Map("$timestamp" -> Map("t" -> 1)))),
-      Map("_id" -> "bad4", "v" -> List(Map("$uuid" -> "no")))
+      Map("_id" -> "bad4", "v"      -> List(Map("$uuid" -> "no")))
     ).foreach(
       document => {
         val response = insert(document)

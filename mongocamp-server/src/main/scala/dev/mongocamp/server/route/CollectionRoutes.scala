@@ -34,9 +34,9 @@ import dev.mongocamp.server.model.RenameRequest
 import dev.mongocamp.server.model.RenameResponse
 import dev.mongocamp.server.model.SchemaAnalysis
 import dev.mongocamp.server.plugin.RoutesPlugin
-import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.route.parameter.paging.PagingFunctions
+import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.service.AggregationService
 import dev.mongocamp.server.service.CollectionCopyService
 import dev.mongocamp.server.service.CollectionNameService
@@ -245,7 +245,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       query[Option[Int]]("sampleSize")
         .example(Some(1000))
         .default(Some(FieldDetailsDefaultSample))
-        .description(s"Number of documents that are analysed, $FieldDetailsDefaultSample by default. A greater sample is more exact and slower on big collections.")
+        .description(
+          s"Number of documents that are analysed, $FieldDetailsDefaultSample by default. A greater sample is more exact and slower on big collections."
+        )
     )
     .in(query[Int]("depth").default(3).description("How deep should the objects extracted"))
     .out(jsonBody[List[FieldInfo]])
@@ -337,9 +339,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     request: RenameRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), RenameResponse]] = {
     Future.successful(Right {
-      val user       = authorizedCollectionRequest.userInformation
-      val prefix     = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
-      val source     = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      val user   = authorizedCollectionRequest.userInformation
+      val prefix = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val source = CollectionNameService.parse(authorizedCollectionRequest.collection)
       CollectionNameService.checkSource(source, prefix)
       val provider   = MongoDatabase.databaseProvider
       val target     = CollectionNameService.resolveTarget(source, request.target, provider.DefaultDatabaseName, prefix)
@@ -350,7 +352,11 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       }
       if (provider.collectionNames(database).contains(target.name)) {
         if (!dropTarget) {
-          throw MongoCampException(s"the collection ${target.full} exists, send dropTarget true to replace it", StatusCode.Conflict, ErrorCodes.collectionExists)
+          throw MongoCampException(
+            s"the collection ${target.full} exists, send dropTarget true to replace it",
+            StatusCode.Conflict,
+            ErrorCodes.collectionExists
+          )
         }
         if (!user.canAdministrate(target.full)) {
           throw GrantDenied.exception("user not authorized for collection")
@@ -385,9 +391,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     request: CopyRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CopyResponse]] = {
     Future.successful(Right {
-      val user       = authorizedCollectionRequest.userInformation
-      val prefix     = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
-      val source     = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      val user   = authorizedCollectionRequest.userInformation
+      val prefix = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val source = CollectionNameService.parse(authorizedCollectionRequest.collection)
       CollectionNameService.checkSource(source, prefix)
       val provider   = MongoDatabase.databaseProvider
       val target     = CollectionNameService.resolveTarget(source, request.target, provider.DefaultDatabaseName, prefix)
@@ -396,20 +402,26 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       if (!provider.collectionNames(source.database.getOrElse(provider.DefaultDatabaseName)).contains(source.name)) {
         throw MongoCampException(s"the collection ${source.full} does not exist", StatusCode.NotFound, ErrorCodes.invalidCollectionName)
       }
-      val filter = request.filter.filter(!_.isBlank).map(
-        input =>
-          try LuceneQueryTools.parseFilter(input)
-          catch {
-            case LuceneQueryTools.InvalidFilterException(reason) => throw MongoCampException("Invalid value for: filter", StatusCode.BadRequest, 4001, reason)
-          }
-      )
+      val filter = request.filter
+        .filter(!_.isBlank)
+        .map(
+          input =>
+            try LuceneQueryTools.parseFilter(input)
+            catch {
+              case LuceneQueryTools.InvalidFilterException(reason) => throw MongoCampException("Invalid value for: filter", StatusCode.BadRequest, 4001, reason)
+            }
+        )
       if (!user.canWrite(target.full)) {
         throw GrantDenied.exception("user not authorized for collection")
       }
       val targetExists = provider.collectionNames(source.database.getOrElse(provider.DefaultDatabaseName)).contains(target.name)
       if (targetExists) {
         if (!dropTarget) {
-          throw MongoCampException(s"the collection ${target.full} exists, send dropTarget true to replace it", StatusCode.Conflict, ErrorCodes.collectionExists)
+          throw MongoCampException(
+            s"the collection ${target.full} exists, send dropTarget true to replace it",
+            StatusCode.Conflict,
+            ErrorCodes.collectionExists
+          )
         }
         if (!user.canAdministrate(target.full)) {
           throw GrantDenied.exception("user not authorized for collection")
@@ -500,7 +512,14 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       val rowsPerPage           = pagingInfo.rowsPerPage.getOrElse(PagingFunctions.DefaultRowsPerPage)
       val page                  = pagingInfo.page.getOrElse(1L)
 
-      AggregationService.paginatedAggregation(authorizedCollectionRequest, mongoAggregateRequest, rowsPerPage, page, LuceneQueryTools.toFilterMap(parameter._3), ExtendedJsonWriter.parseMode(parameter._4))
+      AggregationService.paginatedAggregation(
+        authorizedCollectionRequest,
+        mongoAggregateRequest,
+        rowsPerPage,
+        page,
+        LuceneQueryTools.toFilterMap(parameter._3),
+        ExtendedJsonWriter.parseMode(parameter._4)
+      )
 
     })
   }

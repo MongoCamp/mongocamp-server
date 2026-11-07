@@ -60,10 +60,10 @@ object IndexCreateService {
   }
 
   private def keyValue(key: IndexKey) = key.direction match {
-    case "1"                        => new BsonInt32(1)
-    case "-1"                       => new BsonInt32(-1)
+    case "1"                               => new BsonInt32(1)
+    case "-1"                              => new BsonInt32(-1)
     case other if KeyTypes.contains(other) => new BsonString(other)
-    case other                      => throw invalid(s"the direction of the field ${key.field} is `$other`, it has to be 1, -1 or one of ${KeyTypes.mkString(", ")}")
+    case other => throw invalid(s"the direction of the field ${key.field} is `$other`, it has to be 1, -1 or one of ${KeyTypes.mkString(", ")}")
   }
 
   def collation(map: Map[String, Any]): Collation = {
@@ -87,10 +87,13 @@ object IndexCreateService {
     map.foreach(
       entry =>
         entry._1 match {
-          case "locale"          => builder.locale(text("locale", entry._2))
-          case "caseLevel"       => builder.caseLevel(flag("caseLevel", entry._2))
-          case "caseFirst"       => builder.collationCaseFirst(enumeration("caseFirst", entry._2)(CollationCaseFirst.fromString))
-          case "strength"        => builder.collationStrength(Try(CollationStrength.fromInt(number("strength", entry._2))).getOrElse(throw invalid("the collation strength has to be 1 to 5")))
+          case "locale"    => builder.locale(text("locale", entry._2))
+          case "caseLevel" => builder.caseLevel(flag("caseLevel", entry._2))
+          case "caseFirst" => builder.collationCaseFirst(enumeration("caseFirst", entry._2)(CollationCaseFirst.fromString))
+          case "strength" =>
+            builder.collationStrength(
+              Try(CollationStrength.fromInt(number("strength", entry._2))).getOrElse(throw invalid("the collation strength has to be 1 to 5"))
+            )
           case "numericOrdering" => builder.numericOrdering(flag("numericOrdering", entry._2))
           case "alternate"       => builder.collationAlternate(enumeration("alternate", entry._2)(CollationAlternate.fromString))
           case "maxVariable"     => builder.collationMaxVariable(enumeration("maxVariable", entry._2)(CollationMaxVariable.fromString))
@@ -115,19 +118,45 @@ object IndexCreateService {
     if (flag("unique")) options = options.unique(true)
     if (flag("sparse")) options = options.sparse(true)
     if (flag("hidden")) options = options.hidden(true)
-    Option(index.get("expireAfterSeconds")).filter(_.isNumber).foreach(seconds => options = options.expireAfter(seconds.asNumber().longValue(), java.util.concurrent.TimeUnit.SECONDS))
-    Option(index.get("partialFilterExpression")).filter(_.isDocument).foreach(filter => options = options.partialFilterExpression(filter.asDocument()))
-    Option(index.get("weights")).filter(_.isDocument).foreach(weights => options = options.weights(weights.asDocument()))
-    Option(index.get("default_language")).filter(_.isString).foreach(language => options = options.defaultLanguage(language.asString().getValue))
-    Option(index.get("language_override")).filter(_.isString).foreach(field => options = options.languageOverride(field.asString().getValue))
-    Option(index.get("textIndexVersion")).filter(_.isNumber).foreach(version => options = options.textVersion(version.asNumber().intValue()))
-    Option(index.get("collation")).filter(_.isDocument).foreach(
-      collation => {
-        // the database adds the version of the collation library to what was asked for
-        val map = IndexInfoService.toPlainMap(collation.asDocument()).removed("version")
-        options = options.collation(this.collation(map))
-      }
-    )
+    Option(index.get("expireAfterSeconds"))
+      .filter(_.isNumber)
+      .foreach(
+        seconds => options = options.expireAfter(seconds.asNumber().longValue(), java.util.concurrent.TimeUnit.SECONDS)
+      )
+    Option(index.get("partialFilterExpression"))
+      .filter(_.isDocument)
+      .foreach(
+        filter => options = options.partialFilterExpression(filter.asDocument())
+      )
+    Option(index.get("weights"))
+      .filter(_.isDocument)
+      .foreach(
+        weights => options = options.weights(weights.asDocument())
+      )
+    Option(index.get("default_language"))
+      .filter(_.isString)
+      .foreach(
+        language => options = options.defaultLanguage(language.asString().getValue)
+      )
+    Option(index.get("language_override"))
+      .filter(_.isString)
+      .foreach(
+        field => options = options.languageOverride(field.asString().getValue)
+      )
+    Option(index.get("textIndexVersion"))
+      .filter(_.isNumber)
+      .foreach(
+        version => options = options.textVersion(version.asNumber().intValue())
+      )
+    Option(index.get("collation"))
+      .filter(_.isDocument)
+      .foreach(
+        collation => {
+          // the database adds the version of the collation library to what was asked for
+          val map = IndexInfoService.toPlainMap(collation.asDocument()).removed("version")
+          options = options.collation(this.collation(map))
+        }
+      )
     options
   }
 
@@ -135,24 +164,48 @@ object IndexCreateService {
     var indexOptions = IndexOptions()
     request.foreach(
       indexOptionsRequest => {
-        indexOptionsRequest.name.foreach(name => indexOptions = indexOptions.name(name))
-        indexOptionsRequest.background.foreach(background => indexOptions = indexOptions.background(background))
-        indexOptionsRequest.defaultLanguage.foreach(defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage))
-        indexOptionsRequest.unique.foreach(unique => indexOptions = indexOptions.unique(unique))
-        indexOptionsRequest.textVersion.foreach(textVersion => indexOptions = indexOptions.textVersion(textVersion))
-        indexOptionsRequest.max.foreach(max => indexOptions = indexOptions.max(max))
-        indexOptionsRequest.min.foreach(min => indexOptions = indexOptions.min(min))
+        indexOptionsRequest.name.foreach(
+          name => indexOptions = indexOptions.name(name)
+        )
+        indexOptionsRequest.background.foreach(
+          background => indexOptions = indexOptions.background(background)
+        )
+        indexOptionsRequest.defaultLanguage.foreach(
+          defaultLanguage => indexOptions = indexOptions.defaultLanguage(defaultLanguage)
+        )
+        indexOptionsRequest.unique.foreach(
+          unique => indexOptions = indexOptions.unique(unique)
+        )
+        indexOptionsRequest.textVersion.foreach(
+          textVersion => indexOptions = indexOptions.textVersion(textVersion)
+        )
+        indexOptionsRequest.max.foreach(
+          max => indexOptions = indexOptions.max(max)
+        )
+        indexOptionsRequest.min.foreach(
+          min => indexOptions = indexOptions.min(min)
+        )
         indexOptionsRequest.expireAfter.foreach(
           expireAfter => {
             val expire = scala.concurrent.duration.Duration(expireAfter)
             indexOptions = indexOptions.expireAfter(expire._1, expire._2)
           }
         )
-        indexOptionsRequest.sparse.foreach(sparse => indexOptions = indexOptions.sparse(sparse))
-        indexOptionsRequest.hidden.foreach(hidden => indexOptions = indexOptions.hidden(hidden))
-        indexOptionsRequest.partialFilterExpression.foreach(filter => indexOptions = indexOptions.partialFilterExpression(mapToBson(filter)))
-        indexOptionsRequest.weights.foreach(weights => indexOptions = indexOptions.weights(mapToBson(weights)))
-        indexOptionsRequest.collation.foreach(map => indexOptions = indexOptions.collation(collation(map)))
+        indexOptionsRequest.sparse.foreach(
+          sparse => indexOptions = indexOptions.sparse(sparse)
+        )
+        indexOptionsRequest.hidden.foreach(
+          hidden => indexOptions = indexOptions.hidden(hidden)
+        )
+        indexOptionsRequest.partialFilterExpression.foreach(
+          filter => indexOptions = indexOptions.partialFilterExpression(mapToBson(filter))
+        )
+        indexOptionsRequest.weights.foreach(
+          weights => indexOptions = indexOptions.weights(mapToBson(weights))
+        )
+        indexOptionsRequest.collation.foreach(
+          map => indexOptions = indexOptions.collation(collation(map))
+        )
       }
     )
     indexOptions

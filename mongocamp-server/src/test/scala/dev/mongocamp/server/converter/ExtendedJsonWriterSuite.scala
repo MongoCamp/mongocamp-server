@@ -11,8 +11,7 @@ class ExtendedJsonWriterSuite extends munit.FunSuite {
   private object Decoder extends CirceSchema
 
   // every type of the database, written as canonical Extended JSON that the driver reads
-  private val original = BsonDocument.parse(
-    """{
+  private val original = BsonDocument.parse("""{
       |  "_id": {"$oid": "507f1f77bcf86cd799439011"},
       |  "int": {"$numberInt": "5"},
       |  "long": {"$numberLong": "9007199254740993"},
@@ -31,8 +30,7 @@ class ExtendedJsonWriterSuite extends munit.FunSuite {
       |  "flag": true,
       |  "nothing": null,
       |  "nested": {"list": [{"$numberInt": "1"}, "a", {"$numberDecimal": "2"}], "child": {"n": {"$numberLong": "7"}}}
-      |}""".stripMargin
-  )
+      |}""".stripMargin)
 
   test("canonical: every number has a wrapper") {
     val map = ExtendedJsonWriter.toMap(original, ExtendedJsonWriter.Canonical)

@@ -42,7 +42,14 @@ class DocumentExtendedJsonReadSuite extends MongoCampBaseServerSuite {
   }
 
   private def raw(id: String): BsonDocument =
-    MongoDatabase.databaseProvider.collection(collection).find[BsonDocument]().resultList().find(d => d.get("_id").toString.contains(id)).getOrElse(fail(s"no document $id"))
+    MongoDatabase.databaseProvider
+      .collection(collection)
+      .find[BsonDocument]()
+      .resultList()
+      .find(
+        d => d.get("_id").toString.contains(id)
+      )
+      .getOrElse(fail(s"no document $id"))
 
   private val typed =
     s"""{"_id": {"$$oid": "$oid"}, "int": {"$$numberInt": "5"}, "long": {"$$numberLong": "9007199254740993"}, "double": {"$$numberDouble": "2.0"},
@@ -111,7 +118,10 @@ class DocumentExtendedJsonReadSuite extends MongoCampBaseServerSuite {
     assertEquals(aggregate._1, 200)
     assertEquals(aggregate._2.hcursor.downArray.downField("int").get[String]("$numberInt"), Right("5"))
     // without the parameter the aggregation is as before
-    assertEquals(post("/aggregate", """{"pipeline": [{"stage": "project", "value": {"int": 1}}], "allowDiskUse": false}""")._2.hcursor.downArray.get[Int]("int"), Right(5))
+    assertEquals(
+      post("/aggregate", """{"pipeline": [{"stage": "project", "value": {"int": 1}}], "allowDiskUse": false}""")._2.hcursor.downArray.get[Int]("int"),
+      Right(5)
+    )
   }
 
   test("another value is a bad request") {
@@ -125,9 +135,14 @@ class DocumentExtendedJsonReadSuite extends MongoCampBaseServerSuite {
     val copy      = json.mapObject(_.add("_id", Json.fromString("copyOfTyped")))
     assertEquals(put("/documents", copy.noSpaces)._1, 200)
     val (original, stored) = (raw(oid), raw("copyOfTyped"))
-    original.keySet().toArray.map(_.toString).filter(_ != "_id").foreach(
-      key => assertEquals(stored.get(key), original.get(key), s"field $key")
-    )
+    original
+      .keySet()
+      .toArray
+      .map(_.toString)
+      .filter(_ != "_id")
+      .foreach(
+        key => assertEquals(stored.get(key), original.get(key), s"field $key")
+      )
   }
 
   test("a text that looks like a date is stored as a text with the wrapper $string, a plain value is a date") {
@@ -135,7 +150,10 @@ class DocumentExtendedJsonReadSuite extends MongoCampBaseServerSuite {
     assertEquals(stored.get("asText").getBsonType, BsonType.STRING)
     assertEquals(stored.get("asText").asString().getValue, "2024-06-15T12:00:00Z")
     assertEquals(stored.get("text").getBsonType, BsonType.STRING)
-    val plain = put("/documents", """{"_id": "dates", "plainIso": "2024-06-15T12:00:00Z", "wrapped": {"$string": "2024-06-15T12:00:00Z"}, "list": [{"$string": "2024-01-01T00:00:00Z"}], "deep": {"x": {"$string": "2024-01-01T00:00:00Z"}}}""")
+    val plain = put(
+      "/documents",
+      """{"_id": "dates", "plainIso": "2024-06-15T12:00:00Z", "wrapped": {"$string": "2024-06-15T12:00:00Z"}, "list": [{"$string": "2024-01-01T00:00:00Z"}], "deep": {"x": {"$string": "2024-01-01T00:00:00Z"}}}"""
+    )
     assertEquals(plain._1, 200)
     val dates = raw("dates")
     assertEquals(dates.get("plainIso").getBsonType, BsonType.DATE_TIME)
