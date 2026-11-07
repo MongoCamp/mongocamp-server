@@ -1,3 +1,16 @@
+## [v1.8.1] - 2026-11-07
+### :sparkles: New Features
+- [`e2b0839`](https://github.com/MongoCamp/mongocamp-server/commit/e2b0839d4da8dff0c3880f9f923e29c1218afa93) - the fields of a collection with their types (GET .../fields/detail) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`4c02910`](https://github.com/MongoCamp/mongocamp-server/commit/4c02910f1520b0a718a346d3feabde7da987372a) - the indices of a collection with the order of their keys and all options (GET .../index/details) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`56ba530`](https://github.com/MongoCamp/mongocamp-server/commit/56ba530b0be7d88a3b41d7a08f71263256dd15b0) - create indices with ordered keys and the options of the newer versions *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`041fd88`](https://github.com/MongoCamp/mongocamp-server/commit/041fd884bbca44729fa2d74c10ec63c07f3f4608) - rename a collection in the database (POST .../collections/{name}/rename) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`8f7cd80`](https://github.com/MongoCamp/mongocamp-server/commit/8f7cd80590c9636d5a2f3fa5db2ec5f7ac3bcbab) - copy a collection in the database (POST .../collections/{name}/copy) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`95bdd34`](https://github.com/MongoCamp/mongocamp-server/commit/95bdd34e1499f4e9e5bbb1172e239ce7face68fa) - all MongoDB Extended JSON wrappers in a request body *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`26a4fca`](https://github.com/MongoCamp/mongocamp-server/commit/26a4fca378cc73e5b8657cf7df61d9b2e48d8077) - typed reads (extendedJson=relaxed|canonical) and a text that looks like a date ($string) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`1c12616`](https://github.com/MongoCamp/mongocamp-server/commit/1c126164ce9a9f5023ac310eae8f13801e852df0) - stream the documents of a collection as a download (GET .../documents/export) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`1878750`](https://github.com/MongoCamp/mongocamp-server/commit/18787509cbf8d16ca02faac06c66e540698581dd) - import documents from a stream of lines (POST .../documents/import) *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.7.1] - 2026-11-06
 ### :bug: Bug Fixes
 - [`7da2c08`](https://github.com/MongoCamp/mongocamp-server/commit/7da2c083db79ec30a0bd9e071a05d11232f78b8b) - register InsertError for the serialization of events in the native image *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -454,3 +467,4 @@
 [v1.6.4]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.3...v1.6.4
 [v1.7.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.4...v1.7.0
 [v1.7.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.0...v1.7.1
+[v1.8.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.1...v1.8.1
