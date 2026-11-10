@@ -305,3 +305,14 @@ MongoDB 6.0 and later is supported, see [Getting started](/guide/getting-started
 The operation counters are totals since the start of the database server: a client computes rates from two reads. A server that is part of a replica set also gives `replicaSet` (`name`, `state` of the member that answered, `memberCount`, `healthyMembers`). The answer has no host names and no addresses.
 When the database user of the server is not allowed to read the server status (it needs the role `clusterMonitor`) the answer is `partial: true` and has no `uptimeSeconds`, `connections` and `opcounters`.
 
+## System capabilities
+`GET /system/capabilities` (every logged in user) tells a client what the server can do, so that it adapts to the version it talks to:
+
+```json
+{ "serverVersion": "1.9.0", "mongoDbMajor": 7, "features": ["permissions", "count", "export", "import"], "limits": { "importMaxBytes": 1073741824, "grantDeniedStatus": 401 }, "aggregationStagesDenied": ["$accumulator", "$function", "$out"] }
+```
+
+`features` names the features of this server (`export`, `import`, `collectionCopy`, `collectionRename`, `fieldsDetail`, `indexDetails`, `extendedJsonRead`, `systemStats`, ...). A server that has no `/system/capabilities` route (a `404`) is an older version, a client takes the feature set of that version.
+`limits` are the settings that change what a client can do: `importMaxBytes` (`IMPORT_MAX_BYTES`) and `grantDeniedStatus`, the status of a request without the grant (`AUTH_GRANT_DENIED_STATUS`, `401` or `403`). `aggregationStagesDenied` is the list of operators that an aggregation refuses (`AGGREGATION_STAGES_DENIED`): a client that keeps its own list of dangerous stages can use this one.
+`mongoDbMajor` is the major version of MongoDB and is not given when the database does not answer. The whole version is for administrators, see `GET /system/info`.
+

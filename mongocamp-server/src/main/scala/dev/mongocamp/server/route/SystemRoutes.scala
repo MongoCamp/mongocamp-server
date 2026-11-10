@@ -3,10 +3,12 @@ package dev.mongocamp.server.route
 import dev.mongocamp.server.converter.JGroupsConverter
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.exception.ErrorDescription
+import dev.mongocamp.server.model.Capabilities
 import dev.mongocamp.server.model.ClusterInformation
 import dev.mongocamp.server.model.SystemInfo
 import dev.mongocamp.server.model.SystemStats
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.service.CapabilitiesService
 import dev.mongocamp.server.service.MongoDbInfoService
 import dev.mongocamp.server.service.SystemStatsService
 import io.circe.generic.auto._
@@ -21,6 +23,8 @@ import sttp.tapir.server.ServerEndpoint
 
 object SystemRoutes extends BaseRoute with RoutesPlugin {
   private val systemApiBaseEndpoint = adminEndpoint.tag("System").in("system")
+  // for every logged in user: a client needs the capabilities for every user
+  private val systemApiUserEndpoint = securedEndpoint.tag("System").in("system")
 
   val clusterListRoutes = systemApiBaseEndpoint
     .in("cluster")
@@ -69,6 +73,22 @@ object SystemRoutes extends BaseRoute with RoutesPlugin {
   def systemStats(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SystemStats]] =
     Future.successful(Right(SystemStatsService.systemStats()))
 
+  val systemCapabilitiesRoute = systemApiUserEndpoint
+    .in("capabilities")
+    .out(jsonBody[Capabilities])
+    .summary("System Capabilities")
+    .description(
+      "What this server can do, for every logged in user: the names of the features, the major version of MongoDB, the limits (size of an import, status of a request without the grant) and the operators that an aggregation refuses. A server that has no such route is an older version."
+    )
+    .method(Method.GET)
+    .name("systemCapabilities")
+    .serverLogic(
+      _ => _ => systemCapabilities()
+    )
+
+  def systemCapabilities(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), Capabilities]] =
+    Future.successful(Right(CapabilitiesService.capabilities()))
+
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
-    List(clusterListRoutes, systemInfoRoute, systemStatsRoute)
+    List(clusterListRoutes, systemInfoRoute, systemStatsRoute, systemCapabilitiesRoute)
 }
