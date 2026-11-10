@@ -35,8 +35,8 @@ An empty list for `PUT .../documents/many/insert` answers `400`, a duplicate `_i
 
 ## Lucene filters
 The `filter` parameter of `GET .../documents` is a Lucene query. A filter that cannot be parsed or converted answers `400` with the reason in the `x-error-additional-info` header.
-Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` on fields that are not text are not supported by the query conversion of the driver
-([MongoCamp/mongodb-driver#86](https://github.com/MongoCamp/mongodb-driver/issues/86)).
+Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` are converted by the driver since `mongodb-driver` 3.3.7
+([MongoCamp/mongodb-driver#86](https://github.com/MongoCamp/mongodb-driver/issues/86)). Fuzzy (`city:plain~`) and regular expression (`city:/pl.*/`) queries are not supported and answer `400`.
 
 ## Aggregation
 `POST .../aggregate` takes stages as `{"stage": "match", "value": {...}}`, the value is any JSON value.
