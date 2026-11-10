@@ -288,3 +288,7 @@ A wrong `format`, `filter`, `limit` or `extendedJson` is a `400` before anything
 `index` is the number of the line (1 based, blank lines are counted, so it is the line of the file), `code` is `4008` for a line that is not a document or the error code of the database (`11000` for a duplicate key, without database and collection in the message). At most 1000 errors are listed (`errorsTruncated`), `failed` is always the number of all.
 - The size of the body is limited by the configuration `IMPORT_MAX_BYTES` (default 1 GiB, read for every request): above it the answer is `413` and what was stored before stays stored. The import has no request timeout, the 8 MB limit and the 20 seconds of the HTTP server do not apply to it. A line can be 17 MB at most (`400` for a longer one).
 - A failure that is not a bad line (the database goes away) ends the import with an error, the batches before it are stored: an import is not a transaction. The event `CreateDocumentEvent` is published for every batch with the ids that were stored.
+
+## System information
+`GET /system/info` (administrators only) answers the version of the MongoDB server the server is connected to: `{"mongoDbVersion": "7.0.5", "mongoDbVersionArray": [7, 0, 5, 0]}`. The version is read with the `buildInfo` command and kept for an hour. It is not part of the public `GET /version`, which answers without a login.
+MongoDB 6.0 and later is supported, see [Getting started](/guide/getting-started).

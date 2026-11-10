@@ -4,7 +4,9 @@ import dev.mongocamp.server.converter.JGroupsConverter
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.ClusterInformation
+import dev.mongocamp.server.model.SystemInfo
 import dev.mongocamp.server.plugin.RoutesPlugin
+import dev.mongocamp.server.service.MongoDbInfoService
 import io.circe.generic.auto._
 import scala.concurrent.Future
 import sttp.capabilities
@@ -35,6 +37,20 @@ object SystemRoutes extends BaseRoute with RoutesPlugin {
     })
   }
 
+  val systemInfoRoute = systemApiBaseEndpoint
+    .in("info")
+    .out(jsonBody[SystemInfo])
+    .summary("System Information")
+    .description("Information about the system the server is connected to: the version of the MongoDB server")
+    .method(Method.GET)
+    .name("systemInfo")
+    .serverLogic(
+      _ => _ => systemInfo()
+    )
+
+  def systemInfo(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SystemInfo]] =
+    Future.successful(Right(MongoDbInfoService.systemInfo()))
+
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
-    List(clusterListRoutes)
+    List(clusterListRoutes, systemInfoRoute)
 }
