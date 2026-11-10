@@ -23,6 +23,22 @@ class MongoDbInfoServiceSuite extends munit.FunSuite {
     assertEquals(MongoDbInfoService.parse(Document("ok" -> 1)), SystemInfo("", Nil))
   }
 
+  test("a version older than 6.0 gets a warning with the version in it") {
+    List(SystemInfo("5.0.28", List(5, 0, 28, 0)), SystemInfo("4.4.29", List(4, 4, 29, 0))).foreach(
+      info => {
+        val warning = MongoDbInfoService.unsupportedVersionWarning(info)
+        assert(warning.exists(_.contains(info.mongoDbVersion)), s"no warning for ${info.mongoDbVersion}")
+        assert(warning.exists(_.contains("6.0")), "the minimum is missing in the warning")
+      }
+    )
+  }
+
+  test("a supported or an unknown version gets no warning") {
+    List(SystemInfo("6.0.0", List(6, 0, 0, 0)), seven, eight, SystemInfo("", Nil)).foreach(
+      info => assertEquals(MongoDbInfoService.unsupportedVersionWarning(info), None)
+    )
+  }
+
   test("the cache reads once within its duration") {
     var reads = 0
     var now   = 1000L

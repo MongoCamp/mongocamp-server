@@ -36,6 +36,19 @@ object MongoDbInfoService {
 
   val CacheDurationMillis: Long = 60L * 60L * 1000L
 
+  /** The oldest major version of MongoDB that is tested and supported (the CI runs 6.0 and newer). */
+  val MinimumSupportedMongoDbMajor: Int = 6
+
+  /** The text of the warning for a version that is older than the supported minimum, none for a supported or an unknown version. */
+  def unsupportedVersionWarning(info: SystemInfo): Option[String] =
+    info.mongoDbVersionArray.headOption
+      .filter(
+        major => major < MinimumSupportedMongoDbMajor
+      )
+      .map(
+        _ => s"MongoDB ${info.mongoDbVersion} is not supported, MongoDB $MinimumSupportedMongoDbMajor.0 and later is. The server may work, problems with this version are not fixed."
+      )
+
   private val cache = new MongoDbInfoCache(
     () => readFromDatabase(),
     CacheDurationMillis
