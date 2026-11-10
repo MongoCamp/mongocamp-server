@@ -9,6 +9,8 @@
 
 Universal REST Handling for MongoDB ....
 
+Supported MongoDB versions: **6.0 and later** (tested against 6.0, 7.0, 8.0 and 9.0). MongoDB 4.4 and 5.0 are not supported.
+
 
 ### Contributing
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/MongoCamp/mongocamp-server)
@@ -21,7 +23,7 @@ If you find this library helpfull, so you can see here how you can help:
 Requirements to build and test the project:
 - **GraalVM for JDK 25** (for example `cs java --jvm graalvm-java25:25.0.2`). A plain JDK can not compile the project: the library contains the GraalVM native image substitutions (`com.oracle.svm`) and `native-image` builds the CLI and the server binary.
 - **sbt 2** (the version is pinned in `project/build.properties`) and **Scala 3** (`scalaVersion` in `build.sbt`).
-- **Docker**, the tests start MongoDB with Testcontainers.
+- **Docker**, the tests start MongoDB with Testcontainers. The CI runs the tests against MongoDB 6.0, 7.0, 8.0 and 9.0.
 - **Node.js LTS** (24 at the moment, the documentation tooling needs at least 20.19 or 22.12) and **pnpm** (version pinned in `package.json`) for the documentation: `pnpm install` and `pnpm docs:dev`.
 
 ```shell
