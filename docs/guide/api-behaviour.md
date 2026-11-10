@@ -294,3 +294,14 @@ A wrong `format`, `filter`, `limit` or `extendedJson` is a `400` before anything
 ## System information
 `GET /system/info` (administrators only) answers the version of the MongoDB server the server is connected to: `{"mongoDbVersion": "7.0.5", "mongoDbVersionArray": [7, 0, 5, 0]}`. The version is read with the `buildInfo` command and kept for an hour. It is not part of the public `GET /version`, which answers without a login.
 MongoDB 6.0 and later is supported, see [Getting started](/guide/getting-started).
+
+## System statistics
+`GET /system/stats` (administrators only) answers the numbers of the database server for a server overview:
+
+```json
+{ "uptimeSeconds": 86400, "connections": { "current": 12, "available": 838848, "totalCreated": 340 }, "opcounters": { "insert": 10, "query": 200, "update": 5, "delete": 1, "getmore": 0, "command": 4000 }, "partial": false }
+```
+
+The operation counters are totals since the start of the database server: a client computes rates from two reads. A server that is part of a replica set also gives `replicaSet` (`name`, `state` of the member that answered, `memberCount`, `healthyMembers`). The answer has no host names and no addresses.
+When the database user of the server is not allowed to read the server status (it needs the role `clusterMonitor`) the answer is `partial: true` and has no `uptimeSeconds`, `connections` and `opcounters`.
+

@@ -5,8 +5,10 @@ import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.model.ClusterInformation
 import dev.mongocamp.server.model.SystemInfo
+import dev.mongocamp.server.model.SystemStats
 import dev.mongocamp.server.plugin.RoutesPlugin
 import dev.mongocamp.server.service.MongoDbInfoService
+import dev.mongocamp.server.service.SystemStatsService
 import io.circe.generic.auto._
 import scala.concurrent.Future
 import sttp.capabilities
@@ -51,6 +53,22 @@ object SystemRoutes extends BaseRoute with RoutesPlugin {
   def systemInfo(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SystemInfo]] =
     Future.successful(Right(MongoDbInfoService.systemInfo()))
 
+  val systemStatsRoute = systemApiBaseEndpoint
+    .in("stats")
+    .out(jsonBody[SystemStats])
+    .summary("System Statistics")
+    .description(
+      "The numbers of the database server for a server overview: uptime, connections, operation counters (totals since the start of the database server) and the state of the replica set. A database user without the role clusterMonitor gives partial true and no uptime, connections and counters; a server that is not part of a replica set has no replicaSet. No host names or addresses."
+    )
+    .method(Method.GET)
+    .name("systemStats")
+    .serverLogic(
+      _ => _ => systemStats()
+    )
+
+  def systemStats(): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), SystemStats]] =
+    Future.successful(Right(SystemStatsService.systemStats()))
+
   override def endpoints: List[ServerEndpoint[PekkoStreams with capabilities.WebSockets, Future]] =
-    List(clusterListRoutes, systemInfoRoute)
+    List(clusterListRoutes, systemInfoRoute, systemStatsRoute)
 }
