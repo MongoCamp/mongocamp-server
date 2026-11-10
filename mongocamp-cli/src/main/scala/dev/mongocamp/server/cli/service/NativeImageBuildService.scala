@@ -56,14 +56,9 @@ object NativeImageBuildService {
       throw NativeBuildException(result)
     }
 
-    val runnableMacRegex          = "Produced artifacts:\n(.*?) \\(executable\\)".r
-    val matchesMac                = runnableMacRegex.findAllMatchIn(result).toList
-    val runnableMacResponseOption = matchesMac.lastOption.map(_.matched.replaceAll("Produced artifacts:\n", "").replaceAll("\\(executable\\)", ""))
-
-    val runnableLinuxRegex          = "Build artifacts:\n(.*?) \\(executable\\)".r
-    val matchesLinux                = runnableLinuxRegex.findAllMatchIn(result).toList
-    val runnableLinuxResponseOption = matchesLinux.lastOption.map(_.matched.replaceAll("Produced artifacts:\n", "").replaceAll("\\(executable\\)", ""))
-    val runnableProcessList         = runnableLinuxResponseOption.toList ++ runnableMacResponseOption.toList
+    // the artifact list ("Build artifacts:" or "Produced artifacts:") can hold other files (e.g. a jdk_library) before the executable
+    val runnableRegex       = "(?m)^[ \\t]*(\\S.*?) \\(executable\\)[ \\t]*$".r
+    val runnableProcessList = runnableRegex.findAllMatchIn(result).toList.lastOption.map(_.group(1)).toList
 
     if (runnableProcessList.isEmpty) {
       println(s"Could not find process path.")
