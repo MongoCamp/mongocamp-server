@@ -1,5 +1,5 @@
 FROM debian:12.7-slim AS builder
-ARG GRAAL_VERSION="graalvm-java21:21.0.2"
+ARG GRAAL_VERSION="graalvm-java25:25.0.2"
 ARG UPX_VERSION="4.2.4"
 ENV COURSIER_FOLDER="/opt/coursier/bin"
 ENV PATH="$PATH:$COURSIER_FOLDER"
@@ -10,7 +10,7 @@ RUN /mongocamp-cli/prepare-build.sh;
 RUN chmod +x /mongocamp-cli/prepare-build-upx.sh;
 RUN /mongocamp-cli/prepare-build-upx.sh
 WORKDIR /mongocamp-cli/
-# GraalVM for JDK 21 includes native-image (there is no gu anymore). sbt 2 writes the build output to target/out/jvm/<scala version>/<module>/,
+# GraalVM for JDK 25 includes native-image (there is no gu anymore). sbt 2 writes the build output to target/out/jvm/<scala version>/<module>/,
 # the binary is copied to a fixed path so that a new scala version does not break the following steps
 RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; sbt ";clean;publishLocal;mongocamp-cli/GraalVMNativeImage/packageBin";
 RUN cp "$(find /mongocamp-cli/target/out -type f -path '*/mongocamp-cli/graalvm-native-image/mongocamp-cli' | head -n 1)" /mongocamp-cli/mongocamp-cli-native

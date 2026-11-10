@@ -2,7 +2,7 @@ name := "mongocamp-library"
 
 libraryDependencies += "io.get-coursier" %% "coursier" % "2.1.26"
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "3.3.6"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "3.3.7"
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "2.0.20"
 
