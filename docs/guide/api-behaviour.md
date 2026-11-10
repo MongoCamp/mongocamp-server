@@ -130,13 +130,15 @@ A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$sear
 
 ## Information of all collections
 
-`GET /mongodb/collections/info` returns the numbers of all collections of the default database that the user may read in one request, instead of one `GET /mongodb/collections/{name}` per collection:
+`GET /mongodb/collections/info` returns the numbers of all collections of the default database (or of the database in `?database=`) that the user may read in one request, instead of one `GET /mongodb/collections/{name}` per collection:
 
 ```json
 [{ "name": "accounts", "collectionType": "Standard", "count": 1000, "size": 480000, "storageSize": 215000, "avgObjSize": 480, "nindexes": 1, "totalIndexSize": 36000, "available": true }]
 ```
 
 With `?name=a&name=b` only these collections are given (a collection that the user may not read is never given). A collection without statistics, for example a view, is listed with `available: false` and zeros. The database is asked once per collection, so on a server with very many collections restrict the answer with `name`. A collection with the name `info` is shadowed for `GET /mongodb/collections/info`, its information is available with the other routes of the collection.
+
+With `?database=geodata` the collections of that database are given, with their full names (`geodata:locations`, the form that every other route takes in its path); the read grant is the one of the full name, so a user needs a grant on `geodata:locations`. `name` then filters the names inside that database (`locations` or `geodata:locations`). The default database by its name is the same as no `database`. A database that does not exist is `404` (`database not found`) for an administrator and an empty list for every other user: they cannot find out which databases exist.
 
 ## Fields with types
 

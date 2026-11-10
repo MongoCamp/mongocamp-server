@@ -17,9 +17,12 @@ object CollectionInfoApi {
   */
 class CollectionInfoApi(baseUrl: String) extends ClientCirceSchema {
 
-  def listCollectionInformation(username: String, password: String, bearerToken: String, apiKey: String)(names: Seq[String] = Seq()) =
+  def listCollectionInformation(username: String, password: String, bearerToken: String, apiKey: String)(
+    names: Seq[String] = Seq(),
+    database: Option[String] = None
+  ) =
     basicRequest
-      .method(Method.GET, uri"$baseUrl/mongodb/collections/info?name=$names")
+      .method(Method.GET, uri"$baseUrl/mongodb/collections/info?name=$names&database=$database")
       .contentType("application/json")
       .auth
       .basic(username, password)

@@ -125,28 +125,72 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     .in(mongoDbPath)
     .in("collections")
     .in("info")
-    .in(query[List[String]]("name").description("Only the Collections with these names, by default all Collections that the user may read").default(List()))
+    .in(
+      query[List[String]]("name")
+        .description(
+          "Only the Collections with these names, by default all Collections that the user may read. With `database` the names are the names inside that database (`locations`), the full name (`geodata:locations`) of that database is accepted too."
+        )
+        .default(List())
+    )
+    .in(
+      query[Option[String]]("database")
+        .description("The Collections of this database, by default the default database. The names in the answer are the full names (`geodata:locations`), as they are used in the paths of the other routes.")
+        .default(None)
+    )
     .out(jsonBody[List[CollectionSummary]])
     .summary("Information of all Collections")
     .description(
-      "The numbers of all Collections of the default database that the user may read in one request (count, size, storage size, average size of a document, number and size of the indices). A Collection without statistics, for example a view, is listed with available false."
+      "The numbers of all Collections of the default database (or of the database in `database`) that the user may read in one request (count, size, storage size, average size of a document, number and size of the indices). A Collection without statistics, for example a view, is listed with available false. A database that does not exist is a 404 for an administrator and an empty list for every other user: they cannot find out which databases exist."
     )
     .tag("Collection")
     .method(Method.GET)
     .name("listCollectionInformation")
     .serverLogic(
-      user => names => collectionInformationList(user, names)
+      user => input => collectionInformationList(user, input._1, input._2)
     )
 
   def collectionInformationList(
     userInformation: UserInformation,
-    names: List[String]
+    names: List[String],
+    database: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[CollectionSummary]]] = {
     Future.successful(Right {
-      val readable = MongoDatabase.databaseProvider.collectionNames().filter(userInformation.canRead)
-      val selected = if (names.isEmpty) readable else readable.filter(names.contains)
+      val provider = MongoDatabase.databaseProvider
+      // the default database is addressed with the plain names, as before
+      val otherDatabase = database
+        .map(_.trim)
+        .filter(_.nonEmpty)
+        .filterNot(_.equalsIgnoreCase(provider.DefaultDatabaseName))
+      // an administrator may list the databases, for everybody else the existence of a database is not told: no grant is an empty list, also for a database that is not there
+      otherDatabase.foreach(
+        databaseName =>
+          if (userInformation.isAdmin && !provider.databaseNames.contains(databaseName)) {
+            throw MongoCampException("database not found", StatusCode.NotFound)
+          }
+      )
+      val prefix = otherDatabase.map(_ + CollectionSeparator).getOrElse("")
+      val readable = otherDatabase
+        .map(
+          databaseName => provider.collectionNames(databaseName)
+        )
+        .getOrElse(provider.collectionNames())
+        .filter(
+          collection => userInformation.canRead(prefix + collection)
+        )
+      val wanted = otherDatabase match {
+        case Some(databaseName) =>
+          names
+            .map(CollectionNameService.parse)
+            .collect {
+              case CollectionNameService.CollectionName(None, name)                                     => name
+              case CollectionNameService.CollectionName(Some(nameDatabase), name) if nameDatabase == databaseName => name
+            }
+        case None => names
+      }
+      val selected = if (names.isEmpty) readable else readable.filter(wanted.contains)
       selected.map(
-        name =>
+        collection => {
+          val name = prefix + collection
           try {
             val status = collectionStatusOf(name)
             CollectionSummary(
@@ -164,6 +208,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
           catch {
             case _: Exception => CollectionSummary(name, "unknown", 0, 0, 0, 0, 0, 0, available = false)
           }
+        }
       )
     })
   }
