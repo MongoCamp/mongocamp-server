@@ -1,3 +1,12 @@
+## [v1.8.2] - 2026-11-10
+### :bug: Bug Fixes
+- [`76d81c6`](https://github.com/MongoCamp/mongocamp-server/commit/76d81c6dae7c7814303ec3fe07816831651284e4) - find the native executable in the GraalVM 25 artifact list *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`b0eae65`](https://github.com/MongoCamp/mongocamp-server/commit/b0eae65570d1b2cd92caa50ceb4a57854c193d27) - register mongocamp-classes.json as resource from the feature (GraalVM 25) *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :white_check_mark: Tests
+- [`6dc70c8`](https://github.com/MongoCamp/mongocamp-server/commit/6dc70c88514a285f1d140a884a4e46556e378a9f) - open ranges are converted by mongodb-driver 3.3.7, use a fuzzy filter as the unsupported example *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.8.1] - 2026-11-07
 ### :sparkles: New Features
 - [`e2b0839`](https://github.com/MongoCamp/mongocamp-server/commit/e2b0839d4da8dff0c3880f9f923e29c1218afa93) - the fields of a collection with their types (GET .../fields/detail) *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -468,3 +477,4 @@
 [v1.7.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.6.4...v1.7.0
 [v1.7.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.0...v1.7.1
 [v1.8.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.1...v1.8.1
+[v1.8.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.1...v1.8.2
