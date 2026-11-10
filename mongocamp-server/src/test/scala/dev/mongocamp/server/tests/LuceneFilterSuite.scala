@@ -31,8 +31,18 @@ class LuceneFilterSuite extends MongoCampBaseServerSuite {
     )
   }
 
+  test("open ranges and comparison operators are converted") {
+    List("n:[5 TO *]" -> 3, "n:[* TO 15]" -> 2, "n:>=20" -> 2, "n:>20" -> 1, "_exists_:n" -> 4).foreach(
+      filterAndCount => {
+        val response = list(filterAndCount._1)
+        assertEquals(response.code.code, 200, s"filter `${filterAndCount._1}` failed: ${response.body.fold(identity, _ => "")}")
+        assertEquals(response.body.getOrElse(Nil).size, filterAndCount._2, s"filter `${filterAndCount._1}`")
+      }
+    )
+  }
+
   test("a filter that the driver cannot convert answers 400 with a message") {
-    val response = list("n:[5 TO *]")
+    val response = list("city:plai~")
     assertEquals(response.code.code, 400)
     assertEquals(response.header("x-error-message").exists(!_.isBlank), true)
     assertEquals(response.header("x-error-additional-info").exists(!_.isBlank), true, "the reason is missing")

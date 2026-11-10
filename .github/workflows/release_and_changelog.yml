@@ -43,7 +43,7 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@main
         with:
-          jvm: graalvm-java21:21.0.2
+          jvm: graalvm-java25:25.0.2
           apps: sbt scala scalac
 
       - name: Set up Node

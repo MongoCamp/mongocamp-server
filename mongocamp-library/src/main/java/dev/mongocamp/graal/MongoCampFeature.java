@@ -5,6 +5,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeReflection;
+import org.graalvm.nativeimage.hosted.RuntimeResourceAccess;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,6 +13,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
 import static java.lang.System.out;
 
@@ -79,6 +81,8 @@ public class MongoCampFeature implements Feature {
             Files.deleteIfExists(path);
             Files.createFile(path);
             Files.writeString(path, scanResult.toJSON());
+            // GraalVM 25 resolves the resource patterns before this feature writes the file, so the content is registered directly
+            RuntimeResourceAccess.addResource(MongoCampFeature.class.getModule(), "mongocamp-classes.json", scanResult.toJSON().getBytes(StandardCharsets.UTF_8));
             out.println("MongoCamp-Classes written to " + path);
         } catch (IOException e) {
             out.println("MongoCamp-Classes error on write to " + path);
