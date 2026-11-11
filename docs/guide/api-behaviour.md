@@ -316,3 +316,22 @@ When the database user of the server is not allowed to read the server status (i
 `limits` are the settings that change what a client can do: `importMaxBytes` (`IMPORT_MAX_BYTES`) and `grantDeniedStatus`, the status of a request without the grant (`AUTH_GRANT_DENIED_STATUS`, `401` or `403`). `aggregationStagesDenied` is the list of operators that an aggregation refuses (`AGGREGATION_STAGES_DENIED`): a client that keeps its own list of dangerous stages can use this one.
 `mongoDbMajor` is the major version of MongoDB and is not given when the database does not answer. The whole version is for administrators, see `GET /system/info`.
 
+## Creating a collection and its options
+A collection is created with the first insert or index, or explicitly with `PUT /mongodb/collections/{name}` (`PUT /mongodb/collections/geodata:name` in another database). The administrate grant for the name is needed. Without a body an empty collection is created, the body can have these options (all optional):
+
+```json
+{
+  "capped": true, "sizeInBytes": 1048576, "maxDocuments": 1000,
+  "validator": { "$jsonSchema": { "bsonType": "object", "required": ["name"], "properties": { "name": { "bsonType": "string" } } } },
+  "validationLevel": "strict", "validationAction": "error",
+  "collation": { "locale": "en", "strength": 2 }
+}
+```
+
+- A **capped** collection needs `sizeInBytes` (it keeps the newest documents); `sizeInBytes` and `maxDocuments` are only for a capped collection.
+- `validator` is a MongoDB query or `$jsonSchema`; `validationLevel` is `off`, `moderate` or `strict` (database default `strict`), `validationAction` is `error` or `warn` (default `error`). A document that the validator refuses is `400` (code of the database 121) and the message does not contain the values of the document.
+- `collation` supports `locale`, `strength` (1 to 5), `caseLevel` and `numericOrdering`.
+- An existing collection is `409` (code `4091`); a name that is empty, longer than 120 characters, contains `$` or control characters, is a system collection, has the prefix of the server or is a collection of a bucket is `400` (code `4007`); options that do not fit are `400` (code `4009`).
+
+`GET /mongodb/collections/{name}/options` (read grant) answers the options of a collection in the same form (`404` for a collection that does not exist). `PATCH /mongodb/collections/{name}/options` (administrate grant) changes `validator`, `validationLevel` and `validationAction` with `collMod` and answers the options after the change; `capped`, `sizeInBytes`, `maxDocuments` and `collation` cannot be changed after the creation (`400`).
+
