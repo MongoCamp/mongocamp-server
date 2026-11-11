@@ -46,6 +46,20 @@ Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` are converted b
 - `$lookup`, `$unionWith` and `$graphLookup` read other collections: the user needs the read grant for each of them, otherwise the answer is `403`. The collection of a stage is in the database of the collection of
   the request (`geodata:locations` with `from: "accounts"` reads `geodata:accounts`). A reference to a collection of another database (`{"db": ..., "coll": ...}`) is not supported.
 
+## Aggregation by local time
+The route has no timezone parameter (a pipeline is generic); the convention is the `timezone` option of the date operators inside the pipeline. The database computes the buckets, dates are stored and returned in UTC. `timezone` is an IANA name (`Europe/Berlin`) or an offset (`+02:00`); `$dateTrunc` needs MongoDB 5.0 or later, 6.0 is the supported minimum.
+
+A histogram per day in Berlin time:
+```json
+[
+  { "stage": "group", "value": { "_id": { "$dateToString": { "format": "%Y-%m-%d", "date": "$createdAt", "timezone": "Europe/Berlin" } }, "n": { "$sum": 1 } } },
+  { "stage": "sort", "value": { "_id": 1 } }
+]
+```
+Per hour use `"format": "%Y-%m-%dT%H:00"`, or `$dateTrunc` with `"unit": "hour"` when the bucket should stay a date.
+
+A named zone follows the daylight saving time, an offset does not: on 2026-03-29 (Berlin changes from UTC+1 to UTC+2 at 01:00 UTC) the documents at `00:30Z` and `23:30Z` are both on 2026-03-29 in UTC, but on 2026-03-29 and 2026-03-30 in `Europe/Berlin`. Dates in a request body are the same moment as ISO instant or as `{"$date": ...}`, so both land in the same bucket.
+
 ## Tokens
 `GET /auth/token/refresh` issues a new token. The bearer token that was used for the call stays valid for a grace period (`AUTH_REFRESH_GRACE_DURATION`, default 60 seconds, for concurrent requests) and is
 invalid afterwards. A call with basic auth or an API key has no bearer token and revokes nothing. The token does not contain the API key of the user, `/auth/profile` returns it.
