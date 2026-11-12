@@ -1,3 +1,20 @@
+## [v1.9.0] - 2026-11-12
+### :sparkles: New Features
+- [`cd3ec7a`](https://github.com/MongoCamp/mongocamp-server/commit/cd3ec7a60e409758414728c4ef1856d0a88f291f) - the version of the MongoDB server in GET /system/info *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`6a940cd`](https://github.com/MongoCamp/mongocamp-server/commit/6a940cd6409857d6da9d9bcf58907212a7e4821f) - log the version of MongoDB at the start, warn below 6.0 *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`0162c6a`](https://github.com/MongoCamp/mongocamp-server/commit/0162c6ae26f9589b2c6c2de6d0029a7f0ecd808e) - batch collection info for other databases (GET /mongodb/collections/info?database=) *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`5415d90`](https://github.com/MongoCamp/mongocamp-server/commit/5415d905431b5cdff885e1ac3e9bf26d11ac5df5) - GET /system/stats, the numbers of the database server *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`de8d677`](https://github.com/MongoCamp/mongocamp-server/commit/de8d67766ac20d80649aed0b0eae53936e09433c) - GET /system/capabilities, what the server can do *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`2a0de78`](https://github.com/MongoCamp/mongocamp-server/commit/2a0de7852737c79be02233f2c9473d28a11d43e2) - create collections with options, read and change them *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :bug: Bug Fixes
+- [`7cd5c91`](https://github.com/MongoCamp/mongocamp-server/commit/7cd5c919ea6fb9bd6125a86bad6989087f5722b8) - bucket status and size honour database-prefixed names *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+### :white_check_mark: Tests
+- [`9ba45a8`](https://github.com/MongoCamp/mongocamp-server/commit/9ba45a8faa84388544c824472eb0e00c3843d66d) - timezone convention for date buckets in aggregations *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`dca0bf7`](https://github.com/MongoCamp/mongocamp-server/commit/dca0bf7b800fec7c8dcf8520a03052b65f8291fc) - pin the Lucene filter gaps of mongodb-driver 3.3.7 *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.8.2] - 2026-11-10
 ### :bug: Bug Fixes
 - [`76d81c6`](https://github.com/MongoCamp/mongocamp-server/commit/76d81c6dae7c7814303ec3fe07816831651284e4) - find the native executable in the GraalVM 25 artifact list *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -478,3 +495,4 @@
 [v1.7.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.0...v1.7.1
 [v1.8.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.1...v1.8.1
 [v1.8.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.1...v1.8.2
+[v1.9.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.2...v1.9.0
