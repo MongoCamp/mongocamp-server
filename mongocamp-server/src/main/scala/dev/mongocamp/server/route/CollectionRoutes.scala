@@ -45,6 +45,7 @@ import dev.mongocamp.server.service.AggregationService
 import dev.mongocamp.server.service.CollectionCopyService
 import dev.mongocamp.server.service.CollectionOptionsService
 import dev.mongocamp.server.service.CollectionNameService
+import dev.mongocamp.server.service.CollectionStatusService
 import dev.mongocamp.server.service.ConfigurationService
 import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.service.SchemaService
@@ -109,21 +110,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     case other             => other
   }
 
-  private def collectionStatusOf(collectionName: String): CollectionStatus = {
-    val mongoDatabase = if (collectionName.contains(CollectionSeparator)) {
-      MongoDatabase.databaseProvider.database(collectionName.split(CollectionSeparator).head)
-    }
-    else {
-      MongoDatabase.databaseProvider.database()
-    }
-    val collection = collectionName.split(CollectionSeparator).last
-    mongoDatabase
-      .runCommand(Map("collStats" -> collection))
-      .map(
-        document => CollectionStatus(document)
-      )
-      .result()
-  }
+  private def collectionStatusOf(collectionName: String): CollectionStatus = CollectionStatusService.statusOf(collectionName)
 
   // registered before the collection routes: the path /collections/info would be the information of a collection with the name info otherwise
   val collectionsInfoEndpoint = securedEndpoint

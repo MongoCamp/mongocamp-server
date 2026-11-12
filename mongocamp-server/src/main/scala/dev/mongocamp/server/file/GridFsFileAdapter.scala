@@ -7,6 +7,7 @@ import dev.mongocamp.server.converter.MongoCampBsonConverter.convertIdField
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.model.BucketInformation.GridFsBucketChunksSuffix
 import dev.mongocamp.server.plugin.FilePlugin
+import dev.mongocamp.server.service.CollectionStatusService
 import org.mongodb.scala.bson.ObjectId
 
 class GridFsFileAdapter extends FilePlugin {
@@ -24,7 +25,7 @@ class GridFsFileAdapter extends FilePlugin {
   }
 
   override def size(bucket: String): Double = {
-    MongoDatabase.databaseProvider.dao(s"$bucket$GridFsBucketChunksSuffix").collectionStatus.result().size
+    CollectionStatusService.statusOf(s"$bucket$GridFsBucketChunksSuffix").size
   }
 
   override def delete(bucket: String): Unit = {
