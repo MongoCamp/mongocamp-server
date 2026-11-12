@@ -46,6 +46,18 @@ Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` are converted b
 - `$lookup`, `$unionWith` and `$graphLookup` read other collections: the user needs the read grant for each of them, otherwise the answer is `403`. The collection of a stage is in the database of the collection of
   the request (`geodata:locations` with `from: "accounts"` reads `geodata:accounts`). A reference to a collection of another database (`{"db": ..., "coll": ...}`) is not supported.
 
+The three rules and their errors (the code is in the header `x-error-code`):
+
+| Rule | Status | `x-error-code` |
+|---|---|---|
+| An operator of the denied list anywhere in the value tree (stage name, nested pipeline, expression) | `403` | `4031` |
+| A collection read by `$lookup.from`, `$graphLookup.from` or `$unionWith` (also nested) without the read grant of the user | `403` | `4032` |
+| A stage that reads another database (`from` as `{"db": ..., "coll": ...}`) | `403` | `4032` |
+
+The stage name is accepted with and without `$`. There is no other enforcement: what these rules let through is MongoDB's own behaviour.
+
+A UI that wants to hide stages the server refuses reads the effective list from `GET /system/capabilities` (`aggregationStagesDenied`, see [System capabilities](#system-capabilities)) instead of keeping its own: it follows `AGGREGATION_STAGES_DENIED` of the deployment. The list does not say anything about the grants of `$lookup` collections, those are answered per request.
+
 ## Aggregation by local time
 The route has no timezone parameter (a pipeline is generic); the convention is the `timezone` option of the date operators inside the pipeline. The database computes the buckets, dates are stored and returned in UTC. `timezone` is an IANA name (`Europe/Berlin`) or an offset (`+02:00`); `$dateTrunc` needs MongoDB 5.0 or later, 6.0 is the supported minimum.
 
