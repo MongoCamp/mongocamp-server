@@ -24,7 +24,11 @@ class CollectionOptionsApi(baseUrl: String) extends ClientCirceSchema {
       .auth
       .bearer(bearerToken)
       .header("X-AUTH-APIKEY", apiKey)
-    body.fold(request)(json => request.body(json.noSpaces)).response(asJson[Json])
+    body
+      .fold(request)(
+        json => request.body(json.noSpaces)
+      )
+      .response(asJson[Json])
   }
 
   def getCollectionOptions(username: String, password: String, bearerToken: String, apiKey: String)(collectionName: String) =

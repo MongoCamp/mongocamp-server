@@ -114,8 +114,12 @@ class DatabaseErrorDescriptionSuite extends munit.FunSuite {
   }
 
   test("several errors lose all their details") {
-    val message = "[BulkWriteError{index=0, code=121, message='x', details={\"a\": {\"b\": 1}}}, BulkWriteError{index=1, code=121, message='y', details={\"c\": 2}}]"
-    assertEquals(DatabaseErrorDescription.removeErrorDetails(message), "[BulkWriteError{index=0, code=121, message='x'}, BulkWriteError{index=1, code=121, message='y'}]")
+    val message =
+      "[BulkWriteError{index=0, code=121, message='x', details={\"a\": {\"b\": 1}}}, BulkWriteError{index=1, code=121, message='y', details={\"c\": 2}}]"
+    assertEquals(
+      DatabaseErrorDescription.removeErrorDetails(message),
+      "[BulkWriteError{index=0, code=121, message='x'}, BulkWriteError{index=1, code=121, message='y'}]"
+    )
   }
 
   test("a document that the validator refuses is a bad request, also in a bulk write") {

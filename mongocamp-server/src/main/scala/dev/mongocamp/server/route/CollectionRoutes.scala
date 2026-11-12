@@ -25,10 +25,10 @@ import dev.mongocamp.server.exception.MongoCampException
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
+import dev.mongocamp.server.model.CollectionOptions
 import dev.mongocamp.server.model.CollectionSummary
 import dev.mongocamp.server.model.CopyRequest
 import dev.mongocamp.server.model.CopyResponse
-import dev.mongocamp.server.model.CollectionOptions
 import dev.mongocamp.server.model.CreateCollectionResponse
 import dev.mongocamp.server.model.FieldInfo
 import dev.mongocamp.server.model.JsonSchema
@@ -43,8 +43,8 @@ import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.service.AggregationService
 import dev.mongocamp.server.service.CollectionCopyService
-import dev.mongocamp.server.service.CollectionOptionsService
 import dev.mongocamp.server.service.CollectionNameService
+import dev.mongocamp.server.service.CollectionOptionsService
 import dev.mongocamp.server.service.CollectionStatusService
 import dev.mongocamp.server.service.ConfigurationService
 import dev.mongocamp.server.service.GrantDenied
@@ -126,7 +126,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     )
     .in(
       query[Option[String]]("database")
-        .description("The Collections of this database, by default the default database. The names in the answer are the full names (`geodata:locations`), as they are used in the paths of the other routes.")
+        .description(
+          "The Collections of this database, by default the default database. The names in the answer are the full names (`geodata:locations`), as they are used in the paths of the other routes."
+        )
         .default(None)
     )
     .out(jsonBody[List[CollectionSummary]])
@@ -174,7 +176,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
           names
             .map(CollectionNameService.parse)
             .collect {
-              case CollectionNameService.CollectionName(None, name)                                     => name
+              case CollectionNameService.CollectionName(None, name)                                               => name
               case CollectionNameService.CollectionName(Some(nameDatabase), name) if nameDatabase == databaseName => name
             }
         case None => names
@@ -427,7 +429,10 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       val prefix = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
       val name   = CollectionNameService.parse(authorizedCollectionRequest.collection)
       if (CollectionNameService.isReserved(name.name, prefix)) {
-        throw MongoCampException.badRequestException("the collection belongs to the server or to a bucket and cannot be changed here", ErrorCodes.invalidCollectionName)
+        throw MongoCampException.badRequestException(
+          "the collection belongs to the server or to a bucket and cannot be changed here",
+          ErrorCodes.invalidCollectionName
+        )
       }
       CollectionOptionsService.checkForModify(options)
       val result = CollectionOptionsService.modify(authorizedCollectionRequest.collection, options)

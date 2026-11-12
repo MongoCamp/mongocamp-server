@@ -12,8 +12,8 @@ import org.bson.BsonDocument
 import org.mongodb.scala.bson.collection.immutable.Document
 import scala.jdk.CollectionConverters._
 
-/** The numbers of the database server: `serverStatus` (uptime, connections, operation counters) and `replSetGetStatus` (replica set). Nothing that tells where the
-  * database is (host names, addresses) is given.
+/** The numbers of the database server: `serverStatus` (uptime, connections, operation counters) and `replSetGetStatus` (replica set). Nothing that tells where
+  * the database is (host names, addresses) is given.
   */
 object SystemStatsService extends LazyLogging {
 
@@ -41,13 +41,7 @@ object SystemStatsService extends LazyLogging {
   }
 
   def build(serverStatus: Option[Document], replicaSet: Option[ReplicaSetState], partial: Boolean): SystemStats =
-    SystemStats(
-      serverStatus.flatMap(parseUptime),
-      serverStatus.flatMap(parseConnections),
-      serverStatus.flatMap(parseOpCounters),
-      replicaSet,
-      partial
-    )
+    SystemStats(serverStatus.flatMap(parseUptime), serverStatus.flatMap(parseConnections), serverStatus.flatMap(parseOpCounters), replicaSet, partial)
 
   private def section(document: Document, name: String): Option[BsonDocument] =
     document.get(name).filter(_.isDocument).map(_.asDocument())
@@ -83,13 +77,19 @@ object SystemStatsService extends LazyLogging {
       members = document.get("members").filter(_.isArray).map(_.asArray().getValues.asScala.toList.filter(_.isDocument).map(_.asDocument())).getOrElse(Nil)
     } yield {
       val self = members.find(
-        member => Option(member.get("self")).exists(value => value.isBoolean && value.asBoolean().getValue)
+        member =>
+          Option(member.get("self")).exists(
+            value => value.isBoolean && value.asBoolean().getValue
+          )
       )
       val state = self.flatMap(
         member => Option(member.get("stateStr")).filter(_.isString).map(_.asString().getValue)
       )
       val healthy = members.count(
-        member => Option(member.get("health")).exists(value => value.isNumber && value.asNumber().intValue() == 1)
+        member =>
+          Option(member.get("health")).exists(
+            value => value.isNumber && value.asNumber().intValue() == 1
+          )
       )
       ReplicaSetState(name, state.getOrElse("UNKNOWN"), members.size, healthy)
     }

@@ -6,8 +6,8 @@ import dev.mongocamp.server.test.client.api.CollectionApi
 import dev.mongocamp.server.test.client.api.CollectionOptionsApi
 import dev.mongocamp.server.test.client.api.DocumentApi
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
-import io.circe.Json
 import io.circe.parser.parse
+import io.circe.Json
 
 // create a collection with options, read and change them
 class CollectionOptionsSuite extends MongoCampBaseServerSuite {
@@ -81,11 +81,13 @@ class CollectionOptionsSuite extends MongoCampBaseServerSuite {
   }
 
   test("the validation can be changed") {
-    val warn = executeRequestToResponse(optionsApi.modifyCollectionOptions("", "", adminBearerToken, "")("optionsValidated", json("""{"validationAction": "warn"}""")))
+    val warn =
+      executeRequestToResponse(optionsApi.modifyCollectionOptions("", "", adminBearerToken, "")("optionsValidated", json("""{"validationAction": "warn"}""")))
     assertEquals(warn.hcursor.get[String]("validationAction"), Right("warn"))
     // the warning goes to the log of the database, the document is stored
     assertEquals(executeRequest(documentApi.insert("", "", adminBearerToken, "")("optionsValidated", Map[String, Any]("name" -> 5))).code.code, 200)
-    val off = executeRequestToResponse(optionsApi.modifyCollectionOptions("", "", adminBearerToken, "")("optionsValidated", json("""{"validationLevel": "off"}""")))
+    val off =
+      executeRequestToResponse(optionsApi.modifyCollectionOptions("", "", adminBearerToken, "")("optionsValidated", json("""{"validationLevel": "off"}""")))
     assertEquals(off.hcursor.get[String]("validationLevel"), Right("off"))
     assert(present(off, "validator"), "the validator is kept")
   }
@@ -116,7 +118,10 @@ class CollectionOptionsSuite extends MongoCampBaseServerSuite {
 
   test("the options of a collection that does not exist are a 404") {
     assertEquals(executeRequest(optionsApi.getCollectionOptions("", "", adminBearerToken, "")("optionsNotThere")).code.code, 404)
-    assertEquals(executeRequest(optionsApi.modifyCollectionOptions("", "", adminBearerToken, "")("optionsNotThere", json("""{"validationLevel": "off"}"""))).code.code, 404)
+    assertEquals(
+      executeRequest(optionsApi.modifyCollectionOptions("", "", adminBearerToken, "")("optionsNotThere", json("""{"validationLevel": "off"}"""))).code.code,
+      404
+    )
   }
 
   test("a collection of another database is created and read with its full name") {

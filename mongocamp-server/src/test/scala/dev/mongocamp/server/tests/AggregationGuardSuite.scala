@@ -1,10 +1,10 @@
 package dev.mongocamp.server.tests
 
 import dev.mongocamp.server.config.DefaultConfigurations
+import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.model
 import dev.mongocamp.server.service.AggregationPipelineGuard
 import dev.mongocamp.server.service.ConfigurationService
-import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.test.client.api.CollectionApi
 import dev.mongocamp.server.test.client.model.MongoAggregateRequest
 import dev.mongocamp.server.test.client.model.PipelineStage

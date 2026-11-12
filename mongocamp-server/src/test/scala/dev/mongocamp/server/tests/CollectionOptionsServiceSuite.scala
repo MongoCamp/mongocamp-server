@@ -10,7 +10,8 @@ import org.bson.BsonDocument
 class CollectionOptionsServiceSuite extends munit.FunSuite {
 
   private def refused(options: CollectionOptions, forModify: Boolean = false): String = {
-    val error = intercept[MongoCampException](if (forModify) CollectionOptionsService.checkForModify(options) else CollectionOptionsService.checkForCreate(options))
+    val error =
+      intercept[MongoCampException](if (forModify) CollectionOptionsService.checkForModify(options) else CollectionOptionsService.checkForCreate(options))
     error.getMessage
   }
 

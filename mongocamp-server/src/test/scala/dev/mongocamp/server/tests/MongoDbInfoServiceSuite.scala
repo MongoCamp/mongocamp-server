@@ -42,11 +42,7 @@ class MongoDbInfoServiceSuite extends munit.FunSuite {
   test("the cache reads once within its duration") {
     var reads = 0
     var now   = 1000L
-    val cache = new MongoDbInfoCache(
-      () => { reads += 1; seven },
-      60000L,
-      () => now
-    )
+    val cache = new MongoDbInfoCache(() => { reads += 1; seven }, 60000L, () => now)
     assertEquals(cache.get(), seven)
     now += 59999L
     assertEquals(cache.get(), seven)
@@ -57,11 +53,7 @@ class MongoDbInfoServiceSuite extends munit.FunSuite {
     var reads = 0
     var now   = 1000L
     var info  = seven
-    val cache = new MongoDbInfoCache(
-      () => { reads += 1; info },
-      60000L,
-      () => now
-    )
+    val cache = new MongoDbInfoCache(() => { reads += 1; info }, 60000L, () => now)
     assertEquals(cache.get(), seven)
     info = eight
     now += 60000L
@@ -71,10 +63,7 @@ class MongoDbInfoServiceSuite extends munit.FunSuite {
 
   test("clear makes the next call read again") {
     var reads = 0
-    val cache = new MongoDbInfoCache(
-      () => { reads += 1; seven },
-      60000L
-    )
+    val cache = new MongoDbInfoCache(() => { reads += 1; seven }, 60000L)
     cache.get()
     cache.clear()
     cache.get()

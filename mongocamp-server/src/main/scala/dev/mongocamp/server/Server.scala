@@ -181,9 +181,11 @@ object Server extends LazyLogging with RouteConcatenation with RestServer {
     try {
       val info = MongoDbInfoService.systemInfo()
       logger.info("MongoDB %s".format(info.mongoDbVersion))
-      MongoDbInfoService.unsupportedVersionWarning(info).foreach(
-        warning => logger.warn(warning)
-      )
+      MongoDbInfoService
+        .unsupportedVersionWarning(info)
+        .foreach(
+          warning => logger.warn(warning)
+        )
     }
     catch {
       case e: Exception => logger.debug("the version of the MongoDB server is not available: %s".format(e.getMessage))

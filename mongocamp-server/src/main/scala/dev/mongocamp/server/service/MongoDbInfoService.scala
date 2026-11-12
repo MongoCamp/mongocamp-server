@@ -6,8 +6,8 @@ import dev.mongocamp.server.model.SystemInfo
 import org.mongodb.scala.bson.collection.immutable.Document
 import scala.jdk.CollectionConverters._
 
-/** Keeps the answer of `read` for `durationMillis`. An answer is only kept when `read` succeeded: a failure is thrown to the caller and the next call asks again.
-  * The clock is a parameter for the tests.
+/** Keeps the answer of `read` for `durationMillis`. An answer is only kept when `read` succeeded: a failure is thrown to the caller and the next call asks
+  * again. The clock is a parameter for the tests.
   */
 class MongoDbInfoCache(read: () => SystemInfo, durationMillis: Long, clock: () => Long = () => System.currentTimeMillis()) {
 
@@ -46,13 +46,11 @@ object MongoDbInfoService {
         major => major < MinimumSupportedMongoDbMajor
       )
       .map(
-        _ => s"MongoDB ${info.mongoDbVersion} is not supported, MongoDB $MinimumSupportedMongoDbMajor.0 and later is. The server may work, problems with this version are not fixed."
+        _ =>
+          s"MongoDB ${info.mongoDbVersion} is not supported, MongoDB $MinimumSupportedMongoDbMajor.0 and later is. The server may work, problems with this version are not fixed."
       )
 
-  private val cache = new MongoDbInfoCache(
-    () => readFromDatabase(),
-    CacheDurationMillis
-  )
+  private val cache = new MongoDbInfoCache(() => readFromDatabase(), CacheDurationMillis)
 
   def systemInfo(): SystemInfo = cache.get()
 

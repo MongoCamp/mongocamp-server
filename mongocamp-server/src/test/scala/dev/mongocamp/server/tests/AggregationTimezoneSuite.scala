@@ -17,10 +17,7 @@ class AggregationTimezoneSuite extends MongoCampBaseServerSuite {
   // 2026-03-29: Europe/Berlin changes from UTC+1 to UTC+2 at 01:00 UTC
   private def bucketBy(format: String, timezone: String) = {
     val dateToString = Map("format" -> format, "date" -> "$at", "timezone" -> timezone)
-    List(
-      PipelineStage("group", Map("_id" -> Map("$dateToString" -> dateToString), "n" -> Map("$sum" -> 1))),
-      PipelineStage("sort", Map("_id" -> 1))
-    )
+    List(PipelineStage("group", Map("_id" -> Map("$dateToString" -> dateToString), "n" -> Map("$sum" -> 1))), PipelineStage("sort", Map("_id" -> 1)))
   }
 
   private def run(pipeline: List[PipelineStage]) =
@@ -64,7 +61,7 @@ class AggregationTimezoneSuite extends MongoCampBaseServerSuite {
   }
 
   test("$dateTrunc with timezone passes the stage guard") {
-    val trunc = Map("$dateTrunc" -> Map("date" -> "$at", "unit" -> "day", "timezone" -> "Europe/Berlin"))
+    val trunc    = Map("$dateTrunc" -> Map("date" -> "$at", "unit" -> "day", "timezone" -> "Europe/Berlin"))
     val response = run(List(PipelineStage("group", Map("_id" -> trunc, "n" -> Map("$sum" -> 1))), PipelineStage("sort", Map("_id" -> 1))))
     assertEquals(response.code.code, 200, response.body.fold(_.getMessage, _ => ""))
     assertEquals(response.body.getOrElse(Nil).map(_("n").toString), List("1", "2"))

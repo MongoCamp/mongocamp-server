@@ -55,7 +55,7 @@ class OtherDatabaseSuite extends MongoCampBaseServerSuite {
 
   test("a bucket of another database: upload, read, info, delete the file") {
     val geoFile: File = copyResourceFileToTempDir(TestAdditions.tempDir, "geodata.json")
-    val inserted      = executeRequest(fileApi.insertFile("", "", adminBearerToken, "")(bucket, geoFile.toJava, Map("a" -> "b").asJson.toString(), Some("geo.json")))
+    val inserted = executeRequest(fileApi.insertFile("", "", adminBearerToken, "")(bucket, geoFile.toJava, Map("a" -> "b").asJson.toString(), Some("geo.json")))
     assertEquals(inserted.code.code, 200, inserted.body.fold(_.getMessage, _ => ""))
     val fileId = inserted.body.toOption.get.insertedIds.head
 

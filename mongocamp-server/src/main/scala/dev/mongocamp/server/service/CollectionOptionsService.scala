@@ -40,7 +40,9 @@ object CollectionOptionsService {
 
   def checkForModify(options: CollectionOptions): Unit = {
     if (options.capped.isDefined || options.sizeInBytes.isDefined || options.maxDocuments.isDefined || options.collation.isDefined)
-      throw invalid("capped, sizeInBytes, maxDocuments and collation cannot be changed after the creation, only validator, validationLevel and validationAction")
+      throw invalid(
+        "capped, sizeInBytes, maxDocuments and collation cannot be changed after the creation, only validator, validationLevel and validationAction"
+      )
     if (options.validator.isEmpty && options.validationLevel.isEmpty && options.validationAction.isEmpty)
       throw invalid("nothing to change: send validator, validationLevel or validationAction")
     checkValidation(options)
@@ -132,24 +134,29 @@ object CollectionOptionsService {
   /** The options of the entry of a collection in the answer of `listCollections` (its field `options`). */
   def parseOptions(entry: BsonDocument): CollectionOptions = {
     val options = Option(entry.get("options")).filter(_.isDocument).map(_.asDocument()).getOrElse(new BsonDocument())
-    val capped  = Option(options.get("capped")).exists(
+    val capped = Option(options.get("capped")).exists(
       value => value.isBoolean && value.asBoolean().getValue
     )
-    val validator = Option(options.get("validator")).filter(_.isDocument).map(
-      value => documentToMap(value.asDocument())
-    )
-    val collation = Option(options.get("collation")).filter(_.isDocument).map(_.asDocument()).flatMap(
-      document =>
-        textOf(document, "locale").map(
-          locale =>
-            CollectionCollation(
-              locale,
-              numberOf(document, "strength").map(_.toInt),
-              Option(document.get("caseLevel")).filter(_.isBoolean).map(_.asBoolean().getValue),
-              Option(document.get("numericOrdering")).filter(_.isBoolean).map(_.asBoolean().getValue)
-            )
-        )
-    )
+    val validator = Option(options.get("validator"))
+      .filter(_.isDocument)
+      .map(
+        value => documentToMap(value.asDocument())
+      )
+    val collation = Option(options.get("collation"))
+      .filter(_.isDocument)
+      .map(_.asDocument())
+      .flatMap(
+        document =>
+          textOf(document, "locale").map(
+            locale =>
+              CollectionCollation(
+                locale,
+                numberOf(document, "strength").map(_.toInt),
+                Option(document.get("caseLevel")).filter(_.isBoolean).map(_.asBoolean().getValue),
+                Option(document.get("numericOrdering")).filter(_.isBoolean).map(_.asBoolean().getValue)
+              )
+          )
+      )
     CollectionOptions(
       Some(capped),
       if (capped) numberOf(options, "size") else None,

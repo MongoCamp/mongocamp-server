@@ -12,19 +12,16 @@ class SystemStatsServiceSuite extends munit.FunSuite {
 
   // the host and the version are in the real answer, they must not get into the statistics
   private val serverStatus = Document(
-    "host"    -> "db-1.internal:27017",
-    "version" -> "7.0.5",
-    "uptime"  -> 1234.7,
+    "host"        -> "db-1.internal:27017",
+    "version"     -> "7.0.5",
+    "uptime"      -> 1234.7,
     "connections" -> Document("current" -> 3, "available" -> 800, "totalCreated" -> 10L),
     "opcounters"  -> Document("insert" -> 1L, "query" -> 2L, "update" -> 3L, "delete" -> 4L, "getmore" -> 5L, "command" -> 6L)
   )
 
   test("the numbers of the server status") {
     val stats = SystemStatsService.build(Some(serverStatus), None, partial = false)
-    assertEquals(
-      stats,
-      SystemStats(Some(1234L), Some(ConnectionStats(3, 800, 10)), Some(OpCounters(1, 2, 3, 4, 5, 6)), None, partial = false)
-    )
+    assertEquals(stats, SystemStats(Some(1234L), Some(ConnectionStats(3, 800, 10)), Some(OpCounters(1, 2, 3, 4, 5, 6)), None, partial = false))
   }
 
   test("a section that is missing is not given") {
