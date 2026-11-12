@@ -36,7 +36,12 @@ An empty list for `PUT .../documents/many/insert` answers `400`, a duplicate `_i
 ## Lucene filters
 The `filter` parameter of `GET .../documents` is a Lucene query. A filter that cannot be parsed or converted answers `400` with the reason in the `x-error-additional-info` header.
 Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` are converted by the driver since `mongodb-driver` 3.3.7
-([MongoCamp/mongodb-driver#86](https://github.com/MongoCamp/mongodb-driver/issues/86)). Fuzzy (`city:plain~`) and regular expression (`city:/pl.*/`) queries are not supported and answer `400`.
+([MongoCamp/mongodb-driver#86](https://github.com/MongoCamp/mongodb-driver/issues/86)). Fuzzy (`city:plain~`), regular expression (`city:/pl.*/`) and boost (`city:plain^2`) queries are not supported and answer `400`.
+
+Known gaps of the driver (checked with `mongodb-driver` 3.3.7, pinned in `LuceneFilterLeftoversSuite`):
+- `-(A AND B)` and `NOT (A AND B)` are evaluated as `-A AND -B` (`-(n:10 AND city:a)` finds only documents that have neither). Workaround: `-A OR -B` written out, or a MongoDB filter with `$nor`/`$not`. `-(A OR B)` is correct.
+- Wildcards on numbers (`n:1*`, `n:2?`) answer `200` with no documents. Use a range (`n:[10 TO 19]`).
+- A date without a time (`d:>=2024-06-15`, `d:[2024-06-15 TO 2024-06-16]`) is read as midnight in the **time zone of the server JVM**, not UTC (checked: a server in `Europe/Berlin` reads `2024-06-15` as `2024-06-14T22:00:00Z`). A container runs in UTC unless `TZ` is set, a server started on a machine with another zone answers differently. A bare day (`d:2024-06-15`, `d:2024-06-15*`) or a range with the same day on both sides is an exact match with that midnight and finds nothing. Use a half-open range with full instants or the `$date` wrapper in a MongoDB filter for day buckets.
 
 ## Aggregation
 `POST .../aggregate` takes stages as `{"stage": "match", "value": {...}}`, the value is any JSON value.
