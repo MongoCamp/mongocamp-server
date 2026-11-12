@@ -9,6 +9,7 @@ object ErrorCodes {
   val invalidCollectionName: Int = 4007
   val collectionExists: Int      = 4091
   val invalidImportLine: Int     = 4008
+  val invalidCollectionOptions: Int = 4009
   val badInsertRequest: Int      = 4401
   val idMissingForReplace: Int   = 4402
 

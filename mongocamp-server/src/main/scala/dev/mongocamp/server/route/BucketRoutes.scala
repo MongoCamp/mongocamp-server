@@ -7,6 +7,7 @@ import dev.mongocamp.server.event.bucket.DropBucketEvent
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.exception.ErrorDescription
 import dev.mongocamp.server.file.FileAdapterHolder
+import dev.mongocamp.server.service.CollectionStatusService
 import dev.mongocamp.server.model.auth.AuthorizedCollectionRequest
 import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.BucketInformation
@@ -71,10 +72,10 @@ object BucketRoutes extends BucketBaseRoute with RoutesPlugin {
     authorizedCollectionRequest: AuthorizedCollectionRequest
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), BucketInformation]] = {
     Future.successful(Right {
-      val collectionStatus = MongoDatabase.databaseProvider.dao(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix").collectionStatus.result()
+      val collectionStatus = CollectionStatusService.statusOf(s"${authorizedCollectionRequest.collection}$BucketCollectionSuffix")
       val fileSizes        = FileAdapterHolder.handler.size(authorizedCollectionRequest.collection)
       val completeSize     = fileSizes + collectionStatus.size
-      BucketInformation(authorizedCollectionRequest.collection, collectionStatus.count, completeSize, completeSize / collectionStatus.count)
+      BucketInformation(authorizedCollectionRequest.collection, collectionStatus.count, completeSize, if (collectionStatus.count > 0) completeSize / collectionStatus.count else 0.0)
     })
   }
 

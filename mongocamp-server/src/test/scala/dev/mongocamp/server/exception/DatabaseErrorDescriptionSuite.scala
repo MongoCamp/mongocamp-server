@@ -99,4 +99,31 @@ class DatabaseErrorDescriptionSuite extends munit.FunSuite {
     val message = DatabaseErrorDescription.describe(exception).msg
     assertEquals(message, "E11000 duplicate key error, index: email_1")
   }
+
+  test("the details of a write error are removed, they hold the values that were considered") {
+    val message =
+      "Write error: WriteError{code=121, message='Document failed validation', details={ \"failingDocumentId\": 1, \"details\": { \"operatorName\": \"$jsonSchema\", \"propertiesNotSatisfied\": [ { \"propertyName\": \"age\", \"details\": [ { \"consideredValue\": \"secret-value-xyz\" } ] } ] } }}"
+    val cleaned = DatabaseErrorDescription.removeErrorDetails(message)
+    assert(!cleaned.contains("secret-value-xyz"), cleaned)
+    assertEquals(cleaned, "Write error: WriteError{code=121, message='Document failed validation'}")
+  }
+
+  test("a message without details stays as it is") {
+    val message = "Write error: WriteError{code=11000, message='E11000 duplicate key error'}"
+    assertEquals(DatabaseErrorDescription.removeErrorDetails(message), message)
+  }
+
+  test("several errors lose all their details") {
+    val message = "[BulkWriteError{index=0, code=121, message='x', details={\"a\": {\"b\": 1}}}, BulkWriteError{index=1, code=121, message='y', details={\"c\": 2}}]"
+    assertEquals(DatabaseErrorDescription.removeErrorDetails(message), "[BulkWriteError{index=0, code=121, message='x'}, BulkWriteError{index=1, code=121, message='y'}]")
+  }
+
+  test("a document that the validator refuses is a bad request, also in a bulk write") {
+    import com.mongodb.bulk.BulkWriteResult
+    import com.mongodb.bulk.BulkWriteError
+    import com.mongodb.MongoBulkWriteException
+    val error     = new BulkWriteError(121, "Document failed validation", new BsonDocument(), 0)
+    val exception = new MongoBulkWriteException(BulkWriteResult.unacknowledged(), java.util.List.of(error), null, address, java.util.Set.of[String]())
+    assertEquals(DatabaseErrorDescription.statusCode(exception), sttp.model.StatusCode.BadRequest)
+  }
 }

@@ -15,6 +15,7 @@ import dev.mongocamp.server.plugin.ServerPlugin
 import dev.mongocamp.server.route._
 import dev.mongocamp.server.route.docs.ApiDocsRoutes
 import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.service.MongoDbInfoService
 import dev.mongocamp.server.service.PluginDownloadService
 import dev.mongocamp.server.service.PluginService
 import dev.mongocamp.server.service.ReflectionService
@@ -164,6 +165,7 @@ object Server extends LazyLogging with RouteConcatenation with RestServer {
         serverBinding => {
           AuthHolder.handler
           logger.warn("init server with interface: %s at port: %s".format(interface, port))
+          logMongoDbVersion()
           if (ApiDocsRoutes.isSwaggerEnabled) {
             logger.warn("For Swagger go to: http://%s:%s/docs".format(interface, port))
           }
@@ -173,6 +175,19 @@ object Server extends LazyLogging with RouteConcatenation with RestServer {
         }
       )
   }
+
+  /** The version of the database in the log, a warning for a version that is not supported. A database that does not answer never stops the start. */
+  private def logMongoDbVersion(): Unit =
+    try {
+      val info = MongoDbInfoService.systemInfo()
+      logger.info("MongoDB %s".format(info.mongoDbVersion))
+      MongoDbInfoService.unsupportedVersionWarning(info).foreach(
+        warning => logger.warn(warning)
+      )
+    }
+    catch {
+      case e: Exception => logger.debug("the version of the MongoDB server is not available: %s".format(e.getMessage))
+    }
 
   private def doBeforeServerStartUp(): Unit = {
     activateServerPlugins()

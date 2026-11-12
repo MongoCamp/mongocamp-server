@@ -15,7 +15,9 @@ WORKDIR /mongocamp-cli/
 RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; sbt ";clean;publishLocal;mongocamp-cli/GraalVMNativeImage/packageBin";
 RUN cp "$(find /mongocamp-cli/target/out -type f -path '*/mongocamp-cli/graalvm-native-image/mongocamp-cli' | head -n 1)" /mongocamp-cli/mongocamp-cli-native
 RUN /bin/upx --best /mongocamp-cli/mongocamp-cli-native
-RUN /mongocamp-cli/mongocamp-cli-native prepare native
+# the CLI takes JAVA_HOME if set, otherwise it downloads the highest graalvm-java25 of the coursier index (a newer build than GRAAL_VERSION
+# since 2026-11, its native-image output is not understood by the CLI): pin the same GraalVM as the sbt step
+RUN eval "$(cs java --jvm $GRAAL_VERSION --env)"; /mongocamp-cli/mongocamp-cli-native prepare native
 RUN /bin/upx --best /mongocamp-cli/server-raw
 
 FROM debian:12.7-slim

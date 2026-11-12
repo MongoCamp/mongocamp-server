@@ -14,7 +14,9 @@ import dev.mongocamp.server.database.paging.PaginationInfo
 import dev.mongocamp.server.database.MongoDatabase
 import dev.mongocamp.server.event.collection.ClearCollectionEvent
 import dev.mongocamp.server.event.collection.CopyCollectionEvent
+import dev.mongocamp.server.event.collection.CreateCollectionEvent
 import dev.mongocamp.server.event.collection.DropCollectionEvent
+import dev.mongocamp.server.event.collection.ModifyCollectionEvent
 import dev.mongocamp.server.event.collection.RenameCollectionEvent
 import dev.mongocamp.server.event.EventSystem
 import dev.mongocamp.server.exception.ErrorCodes
@@ -26,6 +28,8 @@ import dev.mongocamp.server.model.BucketInformation.BucketCollectionSuffix
 import dev.mongocamp.server.model.CollectionSummary
 import dev.mongocamp.server.model.CopyRequest
 import dev.mongocamp.server.model.CopyResponse
+import dev.mongocamp.server.model.CollectionOptions
+import dev.mongocamp.server.model.CreateCollectionResponse
 import dev.mongocamp.server.model.FieldInfo
 import dev.mongocamp.server.model.JsonSchema
 import dev.mongocamp.server.model.JsonValue
@@ -39,7 +43,9 @@ import dev.mongocamp.server.route.parameter.paging.PagingFunctions
 import dev.mongocamp.server.route.parameter.ExtendedJsonFunctions
 import dev.mongocamp.server.service.AggregationService
 import dev.mongocamp.server.service.CollectionCopyService
+import dev.mongocamp.server.service.CollectionOptionsService
 import dev.mongocamp.server.service.CollectionNameService
+import dev.mongocamp.server.service.CollectionStatusService
 import dev.mongocamp.server.service.ConfigurationService
 import dev.mongocamp.server.service.GrantDenied
 import dev.mongocamp.server.service.SchemaService
@@ -104,49 +110,79 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
     case other             => other
   }
 
-  private def collectionStatusOf(collectionName: String): CollectionStatus = {
-    val mongoDatabase = if (collectionName.contains(CollectionSeparator)) {
-      MongoDatabase.databaseProvider.database(collectionName.split(CollectionSeparator).head)
-    }
-    else {
-      MongoDatabase.databaseProvider.database()
-    }
-    val collection = collectionName.split(CollectionSeparator).last
-    mongoDatabase
-      .runCommand(Map("collStats" -> collection))
-      .map(
-        document => CollectionStatus(document)
-      )
-      .result()
-  }
+  private def collectionStatusOf(collectionName: String): CollectionStatus = CollectionStatusService.statusOf(collectionName)
 
   // registered before the collection routes: the path /collections/info would be the information of a collection with the name info otherwise
   val collectionsInfoEndpoint = securedEndpoint
     .in(mongoDbPath)
     .in("collections")
     .in("info")
-    .in(query[List[String]]("name").description("Only the Collections with these names, by default all Collections that the user may read").default(List()))
+    .in(
+      query[List[String]]("name")
+        .description(
+          "Only the Collections with these names, by default all Collections that the user may read. With `database` the names are the names inside that database (`locations`), the full name (`geodata:locations`) of that database is accepted too."
+        )
+        .default(List())
+    )
+    .in(
+      query[Option[String]]("database")
+        .description("The Collections of this database, by default the default database. The names in the answer are the full names (`geodata:locations`), as they are used in the paths of the other routes.")
+        .default(None)
+    )
     .out(jsonBody[List[CollectionSummary]])
     .summary("Information of all Collections")
     .description(
-      "The numbers of all Collections of the default database that the user may read in one request (count, size, storage size, average size of a document, number and size of the indices). A Collection without statistics, for example a view, is listed with available false."
+      "The numbers of all Collections of the default database (or of the database in `database`) that the user may read in one request (count, size, storage size, average size of a document, number and size of the indices). A Collection without statistics, for example a view, is listed with available false. A database that does not exist is a 404 for an administrator and an empty list for every other user: they cannot find out which databases exist."
     )
     .tag("Collection")
     .method(Method.GET)
     .name("listCollectionInformation")
     .serverLogic(
-      user => names => collectionInformationList(user, names)
+      user => input => collectionInformationList(user, input._1, input._2)
     )
 
   def collectionInformationList(
     userInformation: UserInformation,
-    names: List[String]
+    names: List[String],
+    database: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), List[CollectionSummary]]] = {
     Future.successful(Right {
-      val readable = MongoDatabase.databaseProvider.collectionNames().filter(userInformation.canRead)
-      val selected = if (names.isEmpty) readable else readable.filter(names.contains)
+      val provider = MongoDatabase.databaseProvider
+      // the default database is addressed with the plain names, as before
+      val otherDatabase = database
+        .map(_.trim)
+        .filter(_.nonEmpty)
+        .filterNot(_.equalsIgnoreCase(provider.DefaultDatabaseName))
+      // an administrator may list the databases, for everybody else the existence of a database is not told: no grant is an empty list, also for a database that is not there
+      otherDatabase.foreach(
+        databaseName =>
+          if (userInformation.isAdmin && !provider.databaseNames.contains(databaseName)) {
+            throw MongoCampException("database not found", StatusCode.NotFound)
+          }
+      )
+      val prefix = otherDatabase.map(_ + CollectionSeparator).getOrElse("")
+      val readable = otherDatabase
+        .map(
+          databaseName => provider.collectionNames(databaseName)
+        )
+        .getOrElse(provider.collectionNames())
+        .filter(
+          collection => userInformation.canRead(prefix + collection)
+        )
+      val wanted = otherDatabase match {
+        case Some(databaseName) =>
+          names
+            .map(CollectionNameService.parse)
+            .collect {
+              case CollectionNameService.CollectionName(None, name)                                     => name
+              case CollectionNameService.CollectionName(Some(nameDatabase), name) if nameDatabase == databaseName => name
+            }
+        case None => names
+      }
+      val selected = if (names.isEmpty) readable else readable.filter(wanted.contains)
       selected.map(
-        name =>
+        collection => {
+          val name = prefix + collection
           try {
             val status = collectionStatusOf(name)
             CollectionSummary(
@@ -164,6 +200,7 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
           catch {
             case _: Exception => CollectionSummary(name, "unknown", 0, 0, 0, 0, 0, 0, available = false)
           }
+        }
       )
     })
   }
@@ -316,6 +353,86 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       dao.drop().result()
       EventSystem.publish(DropCollectionEvent(authorizedCollectionRequest.userInformation, authorizedCollectionRequest.collection))
       JsonValue(true)
+    })
+  }
+
+  val createCollectionEndpoint = administrateCollectionEndpoint
+    .in(jsonBody[Option[CollectionOptions]].description("The options of the new Collection, all of them are optional"))
+    .out(jsonBody[CreateCollectionResponse])
+    .summary("Create Collection")
+    .description(
+      "Create a Collection with options: capped (`capped`, `sizeInBytes`, `maxDocuments`), a validator (`validator`, `validationLevel` off, moderate or strict, `validationAction` error or warn) and a collation. Without a body an empty Collection is created. The administrate grant for the name is needed; a name of another database is `database:name`. An existing Collection is a conflict (409), reserved names (system collections, the prefix of the server, the collections of a bucket) and options that do not fit are 400."
+    )
+    .tag("Collection")
+    .method(Method.PUT)
+    .name("createCollection")
+    .serverLogic(
+      collectionRequest => options => createCollection(collectionRequest, options)
+    )
+
+  def createCollection(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    options: Option[CollectionOptions]
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CreateCollectionResponse]] = {
+    Future.successful(Right {
+      val user      = authorizedCollectionRequest.userInformation
+      val prefix    = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val name      = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      val provider  = MongoDatabase.databaseProvider
+      val database  = name.database.getOrElse(provider.DefaultDatabaseName)
+      val requested = options.getOrElse(CollectionOptions())
+      CollectionNameService.checkName(name.name, prefix, "the name of the collection")
+      CollectionOptionsService.checkForCreate(requested)
+      if (provider.collectionNames(database).contains(name.name)) {
+        throw MongoCampException(s"the collection ${name.full} exists", StatusCode.Conflict, ErrorCodes.collectionExists)
+      }
+      provider.database(database).createCollection(name.name, CollectionOptionsService.toCreateCollectionOptions(requested)).result()
+      EventSystem.publish(CreateCollectionEvent(user, name.full))
+      CreateCollectionResponse(name.full)
+    })
+  }
+
+  val getCollectionOptionsEndpoint = readCollectionEndpoint
+    .in("options")
+    .out(jsonBody[CollectionOptions])
+    .summary("Collection Options")
+    .description("The options of a Collection: capped, the validator with its level and action, the collation. 404 for a Collection that does not exist.")
+    .tag("Collection")
+    .method(Method.GET)
+    .name("getCollectionOptions")
+    .serverLogic(
+      collectionRequest => _ => Future.successful(Right(CollectionOptionsService.read(collectionRequest.collection)))
+    )
+
+  val modifyCollectionOptionsEndpoint = administrateCollectionEndpoint
+    .in("options")
+    .in(jsonBody[CollectionOptions])
+    .out(jsonBody[CollectionOptions])
+    .summary("Change the Validation of a Collection")
+    .description(
+      "Change the validator, the validationLevel and the validationAction of a Collection (collMod), the answer is the options after the change. A capped Collection and the collation cannot be changed after the creation (400). The administrate grant is needed."
+    )
+    .tag("Collection")
+    .method(Method.PATCH)
+    .name("modifyCollectionOptions")
+    .serverLogic(
+      collectionRequest => options => modifyCollectionOptions(collectionRequest, options)
+    )
+
+  def modifyCollectionOptions(
+    authorizedCollectionRequest: AuthorizedCollectionRequest,
+    options: CollectionOptions
+  ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), CollectionOptions]] = {
+    Future.successful(Right {
+      val prefix = ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthPrefix)
+      val name   = CollectionNameService.parse(authorizedCollectionRequest.collection)
+      if (CollectionNameService.isReserved(name.name, prefix)) {
+        throw MongoCampException.badRequestException("the collection belongs to the server or to a bucket and cannot be changed here", ErrorCodes.invalidCollectionName)
+      }
+      CollectionOptionsService.checkForModify(options)
+      val result = CollectionOptionsService.modify(authorizedCollectionRequest.collection, options)
+      EventSystem.publish(ModifyCollectionEvent(authorizedCollectionRequest.userInformation, name.full))
+      result
     })
   }
 
@@ -575,6 +692,9 @@ object CollectionRoutes extends CollectionBaseRoute with RoutesPlugin {
       getSchemaAnalysisEndpoint,
       deleteCollectionStatusEndpoint,
       renameCollectionEndpoint,
+      createCollectionEndpoint,
+      getCollectionOptionsEndpoint,
+      modifyCollectionOptionsEndpoint,
       copyCollectionEndpoint,
       deleteAllEndpoint,
       aggregateEndpoint,

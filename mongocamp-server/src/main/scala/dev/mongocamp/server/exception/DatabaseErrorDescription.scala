@@ -66,7 +66,8 @@ object DatabaseErrorDescription {
     52, // DollarPrefixedFieldName
     67, // CannotCreateIndex
     72, // InvalidOptions
-    73  // InvalidNamespace
+    73, // InvalidNamespace
+    121 // DocumentValidationFailure: a document that the validator of the collection refuses
   )
   // the server reports the checks of a stage or an expression ("a group specification must include an _id") with a code of the form Location<number>
   private val locationCodeName = """Location\d+""".r
@@ -83,9 +84,14 @@ object DatabaseErrorDescription {
       case bulk: MongoBulkWriteException => bulk.getWriteErrors.asScala.exists(_.getCategory == ErrorCategory.DUPLICATE_KEY)
       case _                             => false
     }
+    // the code of a bulk write is -1, the code of its first write error tells what went wrong (a document that the validator refuses is 121)
+    val bulkCode = exception match {
+      case bulk: MongoBulkWriteException => bulk.getWriteErrors.asScala.headOption.map(_.getCode)
+      case _                             => None
+    }
     val (code, codeName) = exception match {
       case command: MongoCommandException => (command.getErrorCode, command.getErrorCodeName)
-      case other                          => (other.getCode, null)
+      case other                          => (bulkCode.getOrElse(other.getCode), null)
     }
     if (bulkDuplicate || conflictCodes.contains(code)) StatusCode.Conflict
     else if (notFoundCodes.contains(code)) StatusCode.NotFound
@@ -105,7 +111,32 @@ object DatabaseErrorDescription {
   }
 
   def removeInternalDetails(message: String): String = {
-    removeInternalNames(completeResponse.replaceAllIn(serverAddress.replaceAllIn(message, ""), ""))
+    removeInternalNames(removeErrorDetails(completeResponse.replaceAllIn(serverAddress.replaceAllIn(message, ""), "")))
+  }
+
+  /** Removes the `details={...}` of a write error: for a document that the validator refuses they hold the values that were considered (`consideredValue`). */
+  def removeErrorDetails(message: String): String = {
+    val marker = "details={"
+    val start  = message.indexOf(marker)
+    if (start < 0) message
+    else {
+      var depth = 0
+      var end   = start + marker.length - 1
+      var found = false
+      while (!found && end < message.length) {
+        message.charAt(end) match {
+          case '{' => depth += 1
+          case '}' =>
+            depth -= 1
+            if (depth == 0) found = true
+          case _ =>
+        }
+        end += 1
+      }
+      // the text before the details loses its separator: "..., details={...}" becomes "..."
+      val before = message.substring(0, start).stripSuffix(" ").stripSuffix(",")
+      removeErrorDetails(before + (if (found) message.substring(end) else ""))
+    }
   }
 
   /** Removes the names of the database and the collection, the ids of index builds and the values of a duplicate key from a message of the database. */

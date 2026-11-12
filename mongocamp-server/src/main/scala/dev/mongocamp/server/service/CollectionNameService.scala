@@ -39,6 +39,19 @@ object CollectionNameService {
       throw invalid(s"the collection ${source.name} belongs to the server or to a bucket and cannot be renamed or copied here")
     }
 
+  /** The rules for the name of a collection that is created or the target of a rename or copy; `subject` starts the messages ("the name of the target"). */
+  def checkName(name: String, systemPrefix: String, subject: String): Unit = {
+    if (name.isBlank) throw invalid(s"$subject is empty")
+    if (name.length > MaxNameLength) throw invalid(s"$subject is longer than $MaxNameLength characters")
+    if (
+      name.exists(
+        c => c == '$' || c == '\u0000' || c.isControl
+      )
+    ) throw invalid(s"$subject contains characters that are not allowed ($$, control characters)")
+    if (isReserved(name, systemPrefix))
+      throw invalid(s"the name $name is reserved (system collections, the prefix of the server and the collections of a bucket)")
+  }
+
   /** The target in the database of the source. A target with another database is refused: the database cannot rename or copy to another database. */
   def resolveTarget(source: CollectionName, target: String, defaultDatabase: String, systemPrefix: String): CollectionName = {
     val parsed         = parse(target.trim)
@@ -50,15 +63,7 @@ object CollectionNameService {
         }
     )
     val name = parsed.name
-    if (name.isBlank) throw invalid("the name of the target is empty")
-    if (name.length > MaxNameLength) throw invalid(s"the name of the target is longer than $MaxNameLength characters")
-    if (
-      name.exists(
-        c => c == '$' || c == '\u0000' || c.isControl
-      )
-    ) throw invalid("the name of the target contains characters that are not allowed ($, control characters)")
-    if (isReserved(name, systemPrefix))
-      throw invalid(s"the name $name is reserved (system collections, the prefix of the server and the collections of a bucket)")
+    checkName(name, systemPrefix, "the name of the target")
     val resolved = CollectionName(source.database, name)
     if (resolved.name == source.name) throw invalid("the target is the collection itself")
     resolved

@@ -7,6 +7,12 @@
       "name":"dev.mongocamp.server.event.collection.CopyCollectionEvent"
     },
     {
+      "name":"dev.mongocamp.server.event.collection.CreateCollectionEvent"
+    },
+    {
+      "name":"dev.mongocamp.server.event.collection.ModifyCollectionEvent"
+    },
+    {
       "name":"dev.mongocamp.server.event.collection.DropCollectionEvent"
     },
     {

@@ -4,6 +4,7 @@ import dev.mongocamp.server.config.DefaultConfigurations
 import dev.mongocamp.server.model
 import dev.mongocamp.server.service.AggregationPipelineGuard
 import dev.mongocamp.server.service.ConfigurationService
+import dev.mongocamp.server.exception.ErrorCodes
 import dev.mongocamp.server.test.client.api.CollectionApi
 import dev.mongocamp.server.test.client.model.MongoAggregateRequest
 import dev.mongocamp.server.test.client.model.PipelineStage
@@ -21,6 +22,7 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
 
   private def assertRefused(response: sttp.client3.Response[?], operator: String): Unit = {
     assertEquals(response.code.code, 403)
+    assertEquals(response.header("x-error-code"), Some(ErrorCodes.forbiddenStage.toString))
     assertEquals(response.header("x-error-message").exists(_.contains(operator)), true, s"message does not name $operator")
   }
 
@@ -116,6 +118,7 @@ class AggregationGuardSuite extends MongoCampBaseServerSuite {
   test("a lookup into another database is not supported") {
     val response = aggregateAs(testUserBearerToken, "accounts", lookup(Map("db" -> "other", "coll" -> "users")))
     assertEquals(response.code.code, 403)
+    assertEquals(response.header("x-error-code"), Some(ErrorCodes.forbiddenCollectionInStage.toString))
     assertEquals(response.header("x-error-message").exists(_.contains("not supported")), true)
   }
 

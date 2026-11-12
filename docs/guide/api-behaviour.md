@@ -36,7 +36,12 @@ An empty list for `PUT .../documents/many/insert` answers `400`, a duplicate `_i
 ## Lucene filters
 The `filter` parameter of `GET .../documents` is a Lucene query. A filter that cannot be parsed or converted answers `400` with the reason in the `x-error-additional-info` header.
 Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` are converted by the driver since `mongodb-driver` 3.3.7
-([MongoCamp/mongodb-driver#86](https://github.com/MongoCamp/mongodb-driver/issues/86)). Fuzzy (`city:plain~`) and regular expression (`city:/pl.*/`) queries are not supported and answer `400`.
+([MongoCamp/mongodb-driver#86](https://github.com/MongoCamp/mongodb-driver/issues/86)). Fuzzy (`city:plain~`), regular expression (`city:/pl.*/`) and boost (`city:plain^2`) queries are not supported and answer `400`.
+
+Known gaps of the driver (checked with `mongodb-driver` 3.3.7, pinned in `LuceneFilterLeftoversSuite`):
+- `-(A AND B)` and `NOT (A AND B)` are evaluated as `-A AND -B` (`-(n:10 AND city:a)` finds only documents that have neither). Workaround: `-A OR -B` written out, or a MongoDB filter with `$nor`/`$not`. `-(A OR B)` is correct.
+- Wildcards on numbers (`n:1*`, `n:2?`) answer `200` with no documents. Use a range (`n:[10 TO 19]`).
+- A date without a time (`d:>=2024-06-15`, `d:[2024-06-15 TO 2024-06-16]`) is read as midnight in the **time zone of the server JVM**, not UTC (checked: a server in `Europe/Berlin` reads `2024-06-15` as `2024-06-14T22:00:00Z`). A container runs in UTC unless `TZ` is set, a server started on a machine with another zone answers differently. A bare day (`d:2024-06-15`, `d:2024-06-15*`) or a range with the same day on both sides is an exact match with that midnight and finds nothing. Use a half-open range with full instants or the `$date` wrapper in a MongoDB filter for day buckets.
 
 ## Aggregation
 `POST .../aggregate` takes stages as `{"stage": "match", "value": {...}}`, the value is any JSON value.
@@ -45,6 +50,32 @@ Open ranges (`n:[5 TO *]`), `>=` / `>`, `_exists_` and `field:*` are converted b
   The list is configured with [`AGGREGATION_STAGES_DENIED`](../config/environment-db.md#aggregation), the default is `$function`, `$accumulator`, `$where`, `$out`, `$merge`, `$currentOp`, `$listSessions`, `$collStats` and `$indexStats`. The statistics stages are denied because their result contains the address of the database server (`host`) and the namespace (`ns`); the usage of the indexes is available from `GET .../index/stats`. A deployment that saved its own list keeps it, add the two stages to it.
 - `$lookup`, `$unionWith` and `$graphLookup` read other collections: the user needs the read grant for each of them, otherwise the answer is `403`. The collection of a stage is in the database of the collection of
   the request (`geodata:locations` with `from: "accounts"` reads `geodata:accounts`). A reference to a collection of another database (`{"db": ..., "coll": ...}`) is not supported.
+
+The three rules and their errors (the code is in the header `x-error-code`):
+
+| Rule | Status | `x-error-code` |
+|---|---|---|
+| An operator of the denied list anywhere in the value tree (stage name, nested pipeline, expression) | `403` | `4031` |
+| A collection read by `$lookup.from`, `$graphLookup.from` or `$unionWith` (also nested) without the read grant of the user | `403` | `4032` |
+| A stage that reads another database (`from` as `{"db": ..., "coll": ...}`) | `403` | `4032` |
+
+The stage name is accepted with and without `$`. There is no other enforcement: what these rules let through is MongoDB's own behaviour.
+
+A UI that wants to hide stages the server refuses reads the effective list from `GET /system/capabilities` (`aggregationStagesDenied`, see [System capabilities](#system-capabilities)) instead of keeping its own: it follows `AGGREGATION_STAGES_DENIED` of the deployment. The list does not say anything about the grants of `$lookup` collections, those are answered per request.
+
+## Aggregation by local time
+The route has no timezone parameter (a pipeline is generic); the convention is the `timezone` option of the date operators inside the pipeline. The database computes the buckets, dates are stored and returned in UTC. `timezone` is an IANA name (`Europe/Berlin`) or an offset (`+02:00`); `$dateTrunc` needs MongoDB 5.0 or later, 6.0 is the supported minimum.
+
+A histogram per day in Berlin time:
+```json
+[
+  { "stage": "group", "value": { "_id": { "$dateToString": { "format": "%Y-%m-%d", "date": "$createdAt", "timezone": "Europe/Berlin" } }, "n": { "$sum": 1 } } },
+  { "stage": "sort", "value": { "_id": 1 } }
+]
+```
+Per hour use `"format": "%Y-%m-%dT%H:00"`, or `$dateTrunc` with `"unit": "hour"` when the bucket should stay a date.
+
+A named zone follows the daylight saving time, an offset does not: on 2026-03-29 (Berlin changes from UTC+1 to UTC+2 at 01:00 UTC) the documents at `00:30Z` and `23:30Z` are both on 2026-03-29 in UTC, but on 2026-03-29 and 2026-03-30 in `Europe/Berlin`. Dates in a request body are the same moment as ISO instant or as `{"$date": ...}`, so both land in the same bucket.
 
 ## Tokens
 `GET /auth/token/refresh` issues a new token. The bearer token that was used for the call stays valid for a grace period (`AUTH_REFRESH_GRACE_DURATION`, default 60 seconds, for concurrent requests) and is
@@ -130,13 +161,15 @@ A pipeline that has to start with a special stage (`$geoNear`, `$search`, `$sear
 
 ## Information of all collections
 
-`GET /mongodb/collections/info` returns the numbers of all collections of the default database that the user may read in one request, instead of one `GET /mongodb/collections/{name}` per collection:
+`GET /mongodb/collections/info` returns the numbers of all collections of the default database (or of the database in `?database=`) that the user may read in one request, instead of one `GET /mongodb/collections/{name}` per collection:
 
 ```json
 [{ "name": "accounts", "collectionType": "Standard", "count": 1000, "size": 480000, "storageSize": 215000, "avgObjSize": 480, "nindexes": 1, "totalIndexSize": 36000, "available": true }]
 ```
 
 With `?name=a&name=b` only these collections are given (a collection that the user may not read is never given). A collection without statistics, for example a view, is listed with `available: false` and zeros. The database is asked once per collection, so on a server with very many collections restrict the answer with `name`. A collection with the name `info` is shadowed for `GET /mongodb/collections/info`, its information is available with the other routes of the collection.
+
+With `?database=geodata` the collections of that database are given, with their full names (`geodata:locations`, the form that every other route takes in its path); the read grant is the one of the full name, so a user needs a grant on `geodata:locations`. `name` then filters the names inside that database (`locations` or `geodata:locations`). The default database by its name is the same as no `database`. A database that does not exist is `404` (`database not found`) for an administrator and an empty list for every other user: they cannot find out which databases exist.
 
 ## Fields with types
 
@@ -288,3 +321,48 @@ A wrong `format`, `filter`, `limit` or `extendedJson` is a `400` before anything
 `index` is the number of the line (1 based, blank lines are counted, so it is the line of the file), `code` is `4008` for a line that is not a document or the error code of the database (`11000` for a duplicate key, without database and collection in the message). At most 1000 errors are listed (`errorsTruncated`), `failed` is always the number of all.
 - The size of the body is limited by the configuration `IMPORT_MAX_BYTES` (default 1 GiB, read for every request): above it the answer is `413` and what was stored before stays stored. The import has no request timeout, the 8 MB limit and the 20 seconds of the HTTP server do not apply to it. A line can be 17 MB at most (`400` for a longer one).
 - A failure that is not a bad line (the database goes away) ends the import with an error, the batches before it are stored: an import is not a transaction. The event `CreateDocumentEvent` is published for every batch with the ids that were stored.
+
+## System information
+`GET /system/info` (administrators only) answers the version of the MongoDB server the server is connected to: `{"mongoDbVersion": "7.0.5", "mongoDbVersionArray": [7, 0, 5, 0]}`. The version is read with the `buildInfo` command and kept for an hour. It is not part of the public `GET /version`, which answers without a login.
+MongoDB 6.0 and later is supported, see [Getting started](/guide/getting-started).
+
+## System statistics
+`GET /system/stats` (administrators only) answers the numbers of the database server for a server overview:
+
+```json
+{ "uptimeSeconds": 86400, "connections": { "current": 12, "available": 838848, "totalCreated": 340 }, "opcounters": { "insert": 10, "query": 200, "update": 5, "delete": 1, "getmore": 0, "command": 4000 }, "partial": false }
+```
+
+The operation counters are totals since the start of the database server: a client computes rates from two reads. A server that is part of a replica set also gives `replicaSet` (`name`, `state` of the member that answered, `memberCount`, `healthyMembers`). The answer has no host names and no addresses.
+When the database user of the server is not allowed to read the server status (it needs the role `clusterMonitor`) the answer is `partial: true` and has no `uptimeSeconds`, `connections` and `opcounters`.
+
+## System capabilities
+`GET /system/capabilities` (every logged in user) tells a client what the server can do, so that it adapts to the version it talks to:
+
+```json
+{ "serverVersion": "1.9.0", "mongoDbMajor": 7, "features": ["permissions", "count", "export", "import"], "limits": { "importMaxBytes": 1073741824, "grantDeniedStatus": 401 }, "aggregationStagesDenied": ["$accumulator", "$function", "$out"] }
+```
+
+`features` names the features of this server (`export`, `import`, `collectionCopy`, `collectionRename`, `fieldsDetail`, `indexDetails`, `extendedJsonRead`, `systemStats`, ...). A server that has no `/system/capabilities` route (a `404`) is an older version, a client takes the feature set of that version.
+`limits` are the settings that change what a client can do: `importMaxBytes` (`IMPORT_MAX_BYTES`) and `grantDeniedStatus`, the status of a request without the grant (`AUTH_GRANT_DENIED_STATUS`, `401` or `403`). `aggregationStagesDenied` is the list of operators that an aggregation refuses (`AGGREGATION_STAGES_DENIED`): a client that keeps its own list of dangerous stages can use this one.
+`mongoDbMajor` is the major version of MongoDB and is not given when the database does not answer. The whole version is for administrators, see `GET /system/info`.
+
+## Creating a collection and its options
+A collection is created with the first insert or index, or explicitly with `PUT /mongodb/collections/{name}` (`PUT /mongodb/collections/geodata:name` in another database). The administrate grant for the name is needed. Without a body an empty collection is created, the body can have these options (all optional):
+
+```json
+{
+  "capped": true, "sizeInBytes": 1048576, "maxDocuments": 1000,
+  "validator": { "$jsonSchema": { "bsonType": "object", "required": ["name"], "properties": { "name": { "bsonType": "string" } } } },
+  "validationLevel": "strict", "validationAction": "error",
+  "collation": { "locale": "en", "strength": 2 }
+}
+```
+
+- A **capped** collection needs `sizeInBytes` (it keeps the newest documents); `sizeInBytes` and `maxDocuments` are only for a capped collection.
+- `validator` is a MongoDB query or `$jsonSchema`; `validationLevel` is `off`, `moderate` or `strict` (database default `strict`), `validationAction` is `error` or `warn` (default `error`). A document that the validator refuses is `400` (code of the database 121) and the message does not contain the values of the document.
+- `collation` supports `locale`, `strength` (1 to 5), `caseLevel` and `numericOrdering`.
+- An existing collection is `409` (code `4091`); a name that is empty, longer than 120 characters, contains `$` or control characters, is a system collection, has the prefix of the server or is a collection of a bucket is `400` (code `4007`); options that do not fit are `400` (code `4009`).
+
+`GET /mongodb/collections/{name}/options` (read grant) answers the options of a collection in the same form (`404` for a collection that does not exist). `PATCH /mongodb/collections/{name}/options` (administrate grant) changes `validator`, `validationLevel` and `validationAction` with `collMod` and answers the options after the change; `capped`, `sizeInBytes`, `maxDocuments` and `collation` cannot be changed after the creation (`400`).
+
