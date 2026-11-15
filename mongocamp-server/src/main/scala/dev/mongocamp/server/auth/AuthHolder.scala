@@ -9,8 +9,8 @@ import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.service.ConfigurationService
-import io.circe.Json
 import io.circe.syntax._
+import io.circe.Json
 import java.security.MessageDigest
 import java.time.Instant
 import java.util.UUID

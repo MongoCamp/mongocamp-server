@@ -194,9 +194,7 @@ object AuthRoutes extends BaseRoute {
     .in(auth.bearer[Option[String]]())
     .out(jsonBody[JsonValue[Boolean]])
     .summary("Update Password")
-    .description(
-      "Change Password of logged in User. The other tokens of the user are revoked, the bearer token that was used for the call stays valid."
-    )
+    .description("Change Password of logged in User. The other tokens of the user are revoked, the bearer token that was used for the call stays valid.")
     .method(Method.PATCH)
     .name("updatePassword")
     .serverLogic(
