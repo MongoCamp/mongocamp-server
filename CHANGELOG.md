@@ -1,3 +1,9 @@
+## [v1.9.1] - 2026-11-15
+### :bug: Bug Fixes
+- [`70eff82`](https://github.com/MongoCamp/mongocamp-server/commit/70eff825e1d5f2410c718696913d63899cef9eec) - **auth**: keep roles and grants out of the token claims *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`24e5fff`](https://github.com/MongoCamp/mongocamp-server/commit/24e5fff9a795f5727c0c3be75e5f28821e43cccf) - **auth**: revoke tokens when a user's password changes or the user is deleted *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.9.0] - 2026-11-12
 ### :sparkles: New Features
 - [`cd3ec7a`](https://github.com/MongoCamp/mongocamp-server/commit/cd3ec7a60e409758414728c4ef1856d0a88f291f) - the version of the MongoDB server in GET /system/info *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -496,3 +502,4 @@
 [v1.8.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.7.1...v1.8.1
 [v1.8.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.1...v1.8.2
 [v1.9.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.2...v1.9.0
+[v1.9.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.9.0...v1.9.1
