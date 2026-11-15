@@ -1,0 +1,1 @@
+var e=`/logo_with_text_right.png`;export{e as t};
