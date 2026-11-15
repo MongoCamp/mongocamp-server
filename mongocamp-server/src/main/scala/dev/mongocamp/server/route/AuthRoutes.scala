@@ -191,21 +191,25 @@ object AuthRoutes extends BaseRoute {
     .in("profile")
     .in("password")
     .in(jsonBody[PasswordUpdateRequest])
+    .in(auth.bearer[Option[String]]())
     .out(jsonBody[JsonValue[Boolean]])
     .summary("Update Password")
-    .description("Change Password of logged in User")
+    .description(
+      "Change Password of logged in User. The other tokens of the user are revoked, the bearer token that was used for the call stays valid."
+    )
     .method(Method.PATCH)
     .name("updatePassword")
     .serverLogic(
-      loggedInUser => loginToUpdate => updatePassword(loggedInUser, loginToUpdate)
+      loggedInUser => parameter => updatePassword(loggedInUser, parameter._1, parameter._2)
     )
 
   def updatePassword(
     loggedInUser: UserInformation,
-    loginToUpdate: PasswordUpdateRequest
+    loginToUpdate: PasswordUpdateRequest,
+    token: Option[String] = None
   ): Future[Either[(StatusCode, ErrorDescription, ErrorDescription), JsonValue[Boolean]]] = {
     Future.successful {
-      val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password)
+      val result = AuthHolder.handler.asInstanceOf[MongoAuthHolder].updatePasswordForUser(loggedInUser.userId, loginToUpdate.password, token)
       if (result) {
         EventSystem.publish(UpdatePasswordEvent(loggedInUser, loggedInUser.userId))
       }

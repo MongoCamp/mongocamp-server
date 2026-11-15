@@ -21,6 +21,7 @@ import scala.jdk.CollectionConverters._
 object TokenCache {
   val keyToken   = "token"
   val keyValidTo = "validTo"
+  val keyUserId  = "userId"
 
   private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
 
@@ -125,6 +126,35 @@ object TokenCache {
     supersededTokens.remove(token)
     internalTokenCache.invalidate(token)
     tokenCacheDao.deleteMany(Map(keyToken -> token)).resultOption()
+  }
+
+  /** Revokes the tokens of a user (password changed, user deleted). `keep` stays valid, so that a user who changes the own password stays logged in.
+    *
+    * Other instances that share the token database keep their in-memory copy for up to five minutes (the cache duration with AUTH_CACHE_DB).
+    */
+  def invalidateUserTokens(userId: String, keep: Option[String] = None): Unit = {
+    tokensOfUser(userId).filterNot(keep.contains).foreach(invalidateToken)
+    if (authTokenCacheDB) {
+      val filter: Map[String, Any] = keep match {
+        case Some(token) => Map(keyUserId -> userId, keyToken -> Map("$ne" -> token))
+        case None        => Map(keyUserId -> userId)
+      }
+      tokenCacheDao.deleteMany(filter).result()
+    }
+  }
+
+  /** A token holds a copy of its user (roles, api key) from the login, it is replaced when the user is changed. */
+  def refreshUserTokens(userInformation: UserInformation): Unit = {
+    tokensOfUser(userInformation.userId).foreach(internalTokenCache.put(_, userInformation))
+  }
+
+  private def tokensOfUser(userId: String): List[String] = {
+    internalTokenCache
+      .asMap()
+      .collect {
+        case (token, user) if user.userId == userId => token
+      }
+      .toList
   }
 
   def saveToken(token: String, userInformation: UserInformation): Unit = {

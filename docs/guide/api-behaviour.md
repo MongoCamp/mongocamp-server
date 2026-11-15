@@ -83,6 +83,13 @@ invalid afterwards. A call with basic auth or an API key has no bearer token and
 
 The token only identifies the user: its claims are `user` and `isAdmin` (plus `exp`, `iat`, `jti` and `iss`). It does not contain the API key, the roles or the grants, so its size does not grow with the grants of the user (browsers drop cookies over about 4 KB, proxies often limit headers to about 8 KB). The server resolves roles and grants itself on every request. `/auth/profile` returns the API key, roles and grants, `/auth/permissions` returns what the user may do.
 
+Changes to a user apply to the tokens that are already issued (`mongo` auth handler):
+- a new password revokes all tokens of the user. `PATCH /auth/profile/password` keeps the bearer token that was used for the call, so the user stays logged in and the other sessions end.
+- deleting a user revokes all tokens of the user.
+- new roles and a new API key apply to the existing tokens right away. Changed grants of a role always did, the server reads the roles on every check.
+
+With `AUTH_CACHE_DB` and several server instances, the other instances keep their in-memory copy of a token for up to five minutes.
+
 ## Permissions
 
 `GET /auth/permissions` returns what the logged in user may do, resolved by the server with the same matching that protects the routes (case-insensitive names, the `*` wildcard, admins may do everything):

@@ -95,17 +95,28 @@ class MongoAuthHolder extends AuthHolder {
   def updateUsersRoles(userId: String, roles: List[String]): UserInformation = {
     val userInformation = findUser(userId)
     userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(roles = roles)).result()
-    findUser(userId)
+    val updatedUser = findUser(userId)
+    // the tokens of the user use the new roles right away
+    TokenCache.refreshUserTokens(updatedUser)
+    updatedUser
   }
 
   def deleteUser(userId: String): Boolean = {
     val insertResult = userDao.deleteOne(Map(KeyUserId -> userId)).result()
-    insertResult.wasAcknowledged() && insertResult.getDeletedCount == 1
+    val deleted      = insertResult.wasAcknowledged() && insertResult.getDeletedCount == 1
+    if (deleted) {
+      TokenCache.invalidateUserTokens(userId)
+    }
+    deleted
   }
 
-  def updatePasswordForUser(userId: String, newPassword: String): Boolean = {
+  /** Revokes the tokens of the user (the old password may have leaked), except `keepToken` (the token of a user who changes the own password). */
+  def updatePasswordForUser(userId: String, newPassword: String, keepToken: Option[String] = None): Boolean = {
     val userInformation = findUser(userId)
     val updateResult    = userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(password = encryptPassword(newPassword))).result()
+    if (updateResult.wasAcknowledged() && updateResult.getMatchedCount == 1) {
+      TokenCache.invalidateUserTokens(userId, keepToken)
+    }
     updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1
   }
 
@@ -114,6 +125,7 @@ class MongoAuthHolder extends AuthHolder {
     val apiKey          = Random.alphanumeric.take(ConfigurationService.getConfigValue[Long](DefaultConfigurations.ConfigKeyAuthApiKeyLength).toInt).mkString
     val updateResult    = userDao.replaceOne(Map(KeyUserId -> userId), userInformation.copy(apiKey = Some(apiKey))).result()
     if (updateResult.wasAcknowledged() && updateResult.getModifiedCount == 1) {
+      TokenCache.refreshUserTokens(findUser(userId))
       apiKey
     }
     else {

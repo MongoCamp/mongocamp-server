@@ -100,7 +100,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .in(jsonBody[PasswordUpdateRequest])
     .out(jsonBody[JsonValue[Boolean]])
     .summary("Update Password")
-    .description("Change Password of User")
+    .description("Change Password of User. All tokens of the user are revoked.")
     .method(Method.PATCH)
     .name("updatePasswordForUser")
     .serverLogic(
@@ -146,7 +146,7 @@ object AdminRoutes extends BaseRoute with RoutesPlugin {
     .in(path[String]("userId").description("UserId to Delete"))
     .out(jsonBody[JsonValue[Boolean]])
     .summary("Delete User")
-    .description("Delete User")
+    .description("Delete User. All tokens of the user are revoked.")
     .method(Method.DELETE)
     .name("deleteUser")
     .serverLogic(
