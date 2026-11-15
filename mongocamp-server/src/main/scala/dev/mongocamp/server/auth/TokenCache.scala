@@ -10,6 +10,8 @@ import dev.mongocamp.server.model.auth.UserInformation
 import dev.mongocamp.server.model.JobConfig
 import dev.mongocamp.server.plugin.JobPlugin
 import dev.mongocamp.server.service.ConfigurationService
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import org.joda.time.DateTime
@@ -22,6 +24,18 @@ object TokenCache {
   val keyToken   = "token"
   val keyValidTo = "validTo"
   val keyUserId  = "userId"
+
+  /** The token database holds the SHA-256 of a token, not the token: whoever can read the collection cannot use the tokens. Tokens are long random
+    * values, so a salt adds nothing.
+    */
+  def hashToken(token: String): String = {
+    MessageDigest.getInstance("SHA-256").digest(token.getBytes(StandardCharsets.UTF_8)).map("%02x".format(_)).mkString
+  }
+
+  // entries written before 1.9.2 hold the token itself, they are still found until they expire (AUTH_EXPIRING_DURATION)
+  private def storedTokenValues(token: String): List[String] = List(hashToken(token), token)
+
+  private def tokenFilter(token: String): Map[String, Any] = Map(keyToken -> Map("$in" -> storedTokenValues(token)))
 
   private lazy val internalTokenCache = Scaffeine().recordStats().expireAfterWrite(cacheDuration).build[String, UserInformation]()
 
@@ -72,7 +86,7 @@ object TokenCache {
     val cachedToken = internalTokenCache.getIfPresent(token)
     if (cachedToken.isEmpty && authTokenCacheDB) {
       val userOption = tokenCacheDao
-        .find(Map(keyToken -> token))
+        .find(tokenFilter(token))
         .resultOption()
         .filter(
           tokenCache => {
@@ -115,7 +129,7 @@ object TokenCache {
       // the other instances read the token from the database when their local copy is gone
       tokenCacheDao
         .updateOne(
-          Map(keyToken -> token, keyValidTo -> Map("$gt" -> new DateTime(revokeAt).toDate)),
+          tokenFilter(token) ++ Map(keyValidTo -> Map("$gt" -> new DateTime(revokeAt).toDate)),
           Map("$set"   -> Map(keyValidTo -> new DateTime(revokeAt).toDate))
         )
         .asFuture()
@@ -125,7 +139,7 @@ object TokenCache {
   def invalidateToken(token: String): Unit = {
     supersededTokens.remove(token)
     internalTokenCache.invalidate(token)
-    tokenCacheDao.deleteMany(Map(keyToken -> token)).resultOption()
+    tokenCacheDao.deleteMany(tokenFilter(token)).resultOption()
   }
 
   /** Revokes the tokens of a user (password changed, user deleted). `keep` stays valid, so that a user who changes the own password stays logged in.
@@ -136,7 +150,7 @@ object TokenCache {
     tokensOfUser(userId).filterNot(keep.contains).foreach(invalidateToken)
     if (authTokenCacheDB) {
       val filter: Map[String, Any] = keep match {
-        case Some(token) => Map(keyUserId -> userId, keyToken -> Map("$ne" -> token))
+        case Some(token) => Map(keyUserId -> userId, keyToken -> Map("$nin" -> storedTokenValues(token)))
         case None        => Map(keyUserId -> userId)
       }
       tokenCacheDao.deleteMany(filter).result()
@@ -160,7 +174,7 @@ object TokenCache {
   def saveToken(token: String, userInformation: UserInformation): Unit = {
     internalTokenCache.put(token, userInformation)
     val element = dev.mongocamp.server.model.auth.TokenCacheElement(
-      token,
+      hashToken(token),
       userInformation.userId,
       // plusMillis takes an Int, which overflows for durations of more than about 24.8 days
       new DateTime(System.currentTimeMillis() + ConfigurationService.getConfigValue[Duration](DefaultConfigurations.ConfigKeyAuthExpiringDuration).toMillis)

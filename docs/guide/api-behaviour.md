@@ -90,6 +90,8 @@ Changes to a user apply to the tokens that are already issued (`mongo` auth hand
 
 With `AUTH_CACHE_DB` and several server instances, the other instances keep their in-memory copy of a token for up to five minutes.
 
+The token database (`AUTH_CACHE_DB`) holds the SHA-256 of each token, not the token, so reading the collection does not give usable tokens. Entries written before 1.9.2 hold the token itself; they stay valid until they expire (`AUTH_EXPIRING_DURATION`), so nobody has to log in again after the upgrade.
+
 ## Permissions
 
 `GET /auth/permissions` returns what the logged in user may do, resolved by the server with the same matching that protects the routes (case-insensitive names, the `*` wildcard, admins may do everything):

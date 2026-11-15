@@ -4,9 +4,12 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.server.auth.TokenCache
 import dev.mongocamp.server.database.MongoDaoHolder.tokenCacheDao
 import dev.mongocamp.server.database.TestAdditions
+import dev.mongocamp.server.model.auth.TokenCacheElement
 import dev.mongocamp.server.test.client.api.AuthApi
 import dev.mongocamp.server.test.client.model.Login
 import dev.mongocamp.server.test.MongoCampBaseServerSuite
+import java.util.UUID
+import org.joda.time.DateTime
 import scala.concurrent.duration.DurationInt
 
 class TokenCacheSuite extends MongoCampBaseServerSuite {
@@ -42,7 +45,7 @@ class TokenCacheSuite extends MongoCampBaseServerSuite {
     Thread.sleep(300)
     TokenCache.supersede(token, 30.seconds)
     Thread.sleep(500)
-    val entry = tokenCacheDao.find(Map(TokenCache.keyToken -> token)).resultOption()
+    val entry = tokenCacheDao.find(Map(TokenCache.keyToken -> TokenCache.hashToken(token))).resultOption()
     assertEquals(entry.isDefined, true)
     assertEquals(entry.get.validTo.isBefore(System.currentTimeMillis() + 31000), true)
   }
@@ -52,5 +55,23 @@ class TokenCacheSuite extends MongoCampBaseServerSuite {
     TokenCache.supersede(token, 0.seconds)
     TokenCache.supersede(token, 1.hour)
     assertEquals(TokenCache.validateToken(token).isDefined, false)
+  }
+
+  test("the token database holds the hash of a token, not the token") {
+    val token = newToken()
+    Thread.sleep(300)
+    assertEquals(tokenCacheDao.find(Map(TokenCache.keyToken -> token)).resultOption().isDefined, false, "the token is stored as it is")
+    val entry = tokenCacheDao.find(Map(TokenCache.keyToken -> TokenCache.hashToken(token))).resultOption()
+    assertEquals(entry.map(_.userId), Some(TestAdditions.adminUser))
+  }
+
+  test("an entry written before the tokens were hashed is valid until logout") {
+    // only the database knows this token, like after a restart
+    val legacyToken = s"legacy-${UUID.randomUUID()}"
+    tokenCacheDao.insertOne(TokenCacheElement(legacyToken, TestAdditions.adminUser, new DateTime().plusHours(1))).result()
+    assertEquals(TokenCache.validateToken(legacyToken).map(_.userId), Some(TestAdditions.adminUser))
+    TokenCache.invalidateToken(legacyToken)
+    assertEquals(TokenCache.validateToken(legacyToken).isDefined, false)
+    assertEquals(tokenCacheDao.find(Map(TokenCache.keyToken -> legacyToken)).resultOption().isDefined, false)
   }
 }
