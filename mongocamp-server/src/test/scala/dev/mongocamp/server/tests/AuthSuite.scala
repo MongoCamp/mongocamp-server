@@ -108,7 +108,7 @@ class AuthSuite extends MongoCampBaseServerSuite {
     assertEquals(updateResponse.value, userProfile.apiKey.getOrElse("not_set"))
   }
 
-  test("token claims do not contain the api key") {
+  test("token claims do not contain the api key, roles or grants") {
     clearAdminToken
     val apiKey  = executeRequestToResponse(adminApi.generateNewApiKey("", "", adminBearerToken, "")()).value
     val login   = executeRequestToResponse(adminApi.login(Login(TestAdditions.adminUser, TestAdditions.adminPassword)))
@@ -121,6 +121,10 @@ class AuthSuite extends MongoCampBaseServerSuite {
         assertEquals(payload.contains("apiKey"), false, s"token claims contain the apiKey field: $payload")
         assertEquals(payload.contains(apiKey), false, s"token claims contain the api key value: $payload")
         assertEquals(payload.contains("\"user\":\"admin\""), true, s"token claims lost the user: $payload")
+        assertEquals(payload.contains("\"isAdmin\":true"), true, s"token claims lost isAdmin: $payload")
+        // the token must not grow with the grants of the user (cookie and header size limits)
+        assertEquals(payload.contains("grants"), false, s"token claims contain the grants: $payload")
+        assertEquals(payload.contains("roles"), false, s"token claims contain the roles: $payload")
       }
     )
   }

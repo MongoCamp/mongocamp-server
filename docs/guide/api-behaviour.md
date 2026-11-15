@@ -79,7 +79,9 @@ A named zone follows the daylight saving time, an offset does not: on 2026-03-29
 
 ## Tokens
 `GET /auth/token/refresh` issues a new token. The bearer token that was used for the call stays valid for a grace period (`AUTH_REFRESH_GRACE_DURATION`, default 60 seconds, for concurrent requests) and is
-invalid afterwards. A call with basic auth or an API key has no bearer token and revokes nothing. The token does not contain the API key of the user, `/auth/profile` returns it.
+invalid afterwards. A call with basic auth or an API key has no bearer token and revokes nothing.
+
+The token only identifies the user: its claims are `user` and `isAdmin` (plus `exp`, `iat`, `jti` and `iss`). It does not contain the API key, the roles or the grants, so its size does not grow with the grants of the user (browsers drop cookies over about 4 KB, proxies often limit headers to about 8 KB). The server resolves roles and grants itself on every request. `/auth/profile` returns the API key, roles and grants, `/auth/permissions` returns what the user may do.
 
 ## Permissions
 

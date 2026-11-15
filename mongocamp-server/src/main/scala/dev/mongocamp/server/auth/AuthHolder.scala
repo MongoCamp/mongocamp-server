@@ -9,7 +9,7 @@ import dev.mongocamp.server.library.BuildInfo
 import dev.mongocamp.server.model.auth._
 import dev.mongocamp.server.route.parameter.paging.Paging
 import dev.mongocamp.server.service.ConfigurationService
-import io.circe.generic.auto._
+import io.circe.Json
 import io.circe.syntax._
 import java.security.MessageDigest
 import java.time.Instant
@@ -44,10 +44,12 @@ trait AuthHolder {
 
   def encryptPassword(password: String): String = MessageDigest.getInstance("SHA-256").digest(password.getBytes("UTF-8")).map("%02x".format(_)).mkString
 
-  // The api key is a long-lived credential and the token is exposed to clients (cookies, storage, logs), so it must not be part of the claims.
-  // A client that needs its own api key reads it from the profile endpoint.
-  private val secretClaimKeys = Set("apiKey")
-
+  // The token only identifies the user. The server never reads the claims back (a token is validated against the TokenCache, which holds
+  // the user), so roles and grants are not needed in it:
+  // - grants make the token grow with every grant, and clients store it in cookies (about 4 KB per cookie) and send it as a header
+  //   (proxies often limit headers to about 8 KB)
+  // - the api key is a long-lived credential, and the token is exposed to clients (cookies, storage, logs)
+  // Clients read roles, grants and the api key from the profile and permissions endpoints.
   def encodeToken(userProfile: UserProfile, expirationDate: DateTime): String = {
     val claim = JwtClaim(
       expiration = Some(expirationDate.toDate.toInstant.getEpochSecond),
@@ -55,7 +57,7 @@ trait AuthHolder {
       // two tokens of a user in the same second would be identical otherwise, and revoking one would revoke the other
       jwtId = Some(UUID.randomUUID().toString),
       issuer = Some(s"${BuildInfo.name}/${BuildInfo.version}"),
-      content = userProfile.asJson.mapObject(_.filterKeys(!secretClaimKeys.contains(_))).noSpaces
+      content = Json.obj("user" -> userProfile.user.asJson, "isAdmin" -> userProfile.isAdmin.asJson).noSpaces
     )
     val algo  = JwtAlgorithm.HS256
     val token = JwtCirce.encode(claim, ConfigurationService.getConfigValue[String](DefaultConfigurations.ConfigKeyAuthSecret), algo)
