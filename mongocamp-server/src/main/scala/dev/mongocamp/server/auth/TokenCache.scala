@@ -25,8 +25,8 @@ object TokenCache {
   val keyValidTo = "validTo"
   val keyUserId  = "userId"
 
-  /** The token database holds the SHA-256 of a token, not the token: whoever can read the collection cannot use the tokens. Tokens are long random
-    * values, so a salt adds nothing.
+  /** The token database holds the SHA-256 of a token, not the token: whoever can read the collection cannot use the tokens. Tokens are long random values, so a
+    * salt adds nothing.
     */
   def hashToken(token: String): String = {
     MessageDigest.getInstance("SHA-256").digest(token.getBytes(StandardCharsets.UTF_8)).map("%02x".format(_)).mkString
@@ -130,7 +130,7 @@ object TokenCache {
       tokenCacheDao
         .updateOne(
           tokenFilter(token) ++ Map(keyValidTo -> Map("$gt" -> new DateTime(revokeAt).toDate)),
-          Map("$set"   -> Map(keyValidTo -> new DateTime(revokeAt).toDate))
+          Map("$set" -> Map(keyValidTo -> new DateTime(revokeAt).toDate))
         )
         .asFuture()
     }
