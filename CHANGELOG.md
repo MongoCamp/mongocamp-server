@@ -1,3 +1,8 @@
+## [v1.9.2] - 2026-11-15
+### :bug: Bug Fixes
+- [`b6b7164`](https://github.com/MongoCamp/mongocamp-server/commit/b6b7164290220aa8c4068a016580b27fa8a0a82b) - **auth**: store token hashes in the token database *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v1.9.1] - 2026-11-15
 ### :bug: Bug Fixes
 - [`70eff82`](https://github.com/MongoCamp/mongocamp-server/commit/70eff825e1d5f2410c718696913d63899cef9eec) - **auth**: keep roles and grants out of the token claims *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -503,3 +508,4 @@
 [v1.8.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.1...v1.8.2
 [v1.9.0]: https://github.com/MongoCamp/mongocamp-server/compare/v1.8.2...v1.9.0
 [v1.9.1]: https://github.com/MongoCamp/mongocamp-server/compare/v1.9.0...v1.9.1
+[v1.9.2]: https://github.com/MongoCamp/mongocamp-server/compare/v1.9.1...v1.9.2
